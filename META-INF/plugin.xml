@@ -1,0 +1,47 @@
+<idea-plugin version="2">
+  <name>Haskell Support</name>
+  <description>Language plugin for Haskell</description>
+  <version>0.1</version>
+  <vendor>JetBrains</vendor>
+
+  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="107.105"/>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+
+      <component>
+          <implementation-class>org.jetbrains.haskell.HaskellProjectComponent</implementation-class>
+      </component>
+
+  </project-components>
+
+  <actions>
+      <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
+              text="Haskell module" description="Create new Haskell module">
+          <add-to-group group-id="NewGroup" anchor="first"/>
+      </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+      <fileTypeFactory implementation="org.jetbrains.haskell.fileType.HaskellFileTypeFactory"/>
+      <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
+      <completion.contributor language="Haskell"
+                              implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
+      <lang.braceMatcher language="Haskell"
+                         implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
+      <lang.parserDefinition language="Haskell"
+                             implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
+      <configurationType implementation="org.jetbrains.haskell.run.HaskellRunConfigurationType"/>
+      <configurationProducer implementation="org.jetbrains.haskell.run.HaskellRunConfigurationProducer"/>
+      <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
+      <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
+      <lang.syntaxHighlighterFactory key="Haskell"
+                                     implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
+      <lang.fileViewProviderFactory language="Haskell"
+                                    implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
+  </extensions>
+</idea-plugin>
