@@ -14,7 +14,6 @@ public final class HaskellModuleBuilder extends JavaModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
-        ProjectJdkTable table = ProjectJdkTable.getInstance();
         super.setupRootModel(rootModel);
     }
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.haskell.HaskellLanguage;
+import org.jetbrains.haskell.icons.HaskellIcons;
 
 import javax.swing.*;
 
@@ -18,7 +19,7 @@ public class HaskellFileType extends LanguageFileType {
 
     private HaskellFileType() {
         super(HaskellLanguage.INSTANCE);
-        myIcon = IconLoader.findIcon("/org/jetbrains/haskell/haskell_16.png");
+        myIcon = HaskellIcons.DEFAULT;
     }
 
     @NotNull

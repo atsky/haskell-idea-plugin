@@ -5,7 +5,6 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.HaskellLanguage;
 
 import javax.swing.*;
 
@@ -18,7 +17,7 @@ public class CabalFileType extends LanguageFileType {
 
     private CabalFileType() {
         super(CabalLanguage.INSTANCE);
-        myIcon = IconLoader.findIcon("/org/jetbrains/haskell/haskell_16.png");
+        myIcon = IconLoader.findIcon("/org/jetbrains/haskell/icons/haskell_16.png");
     }
 
     @NotNull

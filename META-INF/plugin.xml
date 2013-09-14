@@ -24,6 +24,39 @@
               text="Haskell module" description="Create new Haskell module">
           <add-to-group group-id="NewGroup" anchor="first"/>
       </action>
+
+      <group id="Haskell.REPL.Group"
+             class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
+             text="Haskell REPL" description="Haskell" popup="true">
+
+          <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
+                  class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
+                  text="Load/Reload Current File in REPL...">
+              <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
+          </action>
+
+
+          <action id="ideah.repl.actions.RunHaskellConsoleAction"
+                  class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
+                  text="Start Haskell REPL" description="Runs Haskell REPL">
+              <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F10"/>
+          </action>
+
+
+          <add-to-group group-id="ToolsMenu" anchor="last"/>
+      </group>
+
+      <action id="Haskell.Console.Execute"
+              class="com.intellij.openapi.actionSystem.EmptyAction"
+              text="Execute Current Haskell Statement">
+          <keyboard-shortcut keymap="$default" first-keystroke="ENTER"/>
+      </action>
+
+      <action id="Haskell.Console.Execute.Immediately"
+              class="com.intellij.openapi.actionSystem.EmptyAction"
+              text="Execute Current Haskell Statement">
+          <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -41,6 +74,8 @@
       <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
       <lang.syntaxHighlighterFactory key="Haskell"
                                      implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
+      <lang.syntaxHighlighterFactory key="Cabal"
+                                     implementationClass="org.jetbrains.haskell.cabal.highlight.CabalHighlighterFactory"/>
       <lang.fileViewProviderFactory language="Haskell"
                                     implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
   </extensions>

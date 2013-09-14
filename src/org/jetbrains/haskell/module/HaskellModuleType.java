@@ -4,6 +4,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.haskell.fileType.HaskellFileType;
+import org.jetbrains.haskell.icons.HaskellIcons;
 
 import javax.swing.*;
 
@@ -28,7 +29,7 @@ public final class HaskellModuleType extends ModuleType<HaskellModuleBuilder> {
     }
 
     public Icon getBigIcon() {
-        return IconLoader.findIcon("/org/jetbrains/haskell/haskell.png");
+        return HaskellIcons.DEFAULT;
     }
 
     public Icon getNodeIcon(boolean isOpened) {

@@ -35,7 +35,7 @@ public class HaskellSdkConfigurableForm {
         this.modified = modified;
     }
 
-    public void init(String libPath, String cabalPath, String ghcOptions) {
+    public void init(String ghcOptions) {
 
     }
 }

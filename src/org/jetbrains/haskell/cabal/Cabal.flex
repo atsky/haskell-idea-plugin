@@ -41,23 +41,13 @@ IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
-{EOL_COMMENT}         { return HaskellTokenTypes.END_OF_LINE_COMMENT; }
-"{"                   { return HaskellTokenTypes.LEFT_BRACE; }
-"}"                   { return HaskellTokenTypes.RIGHT_BRACE; }
-"["                   { return HaskellTokenTypes.LEFT_BRACKET; }
-"]"                   { return HaskellTokenTypes.RIGHT_BRACKET; }
-"("                   { return HaskellTokenTypes.LEFT_PAREN; }
-")"                   { return HaskellTokenTypes.RIGHT_PAREN; }
-":"                   { return HaskellTokenTypes.COLON;}
-";"                   { return HaskellTokenTypes.SEMICOLON;}
-"..."                 { return HaskellTokenTypes.THREE_DOTS; }
-"."                   { return HaskellTokenTypes.DOT; }
-","                   { return HaskellTokenTypes.COMMA; }
-"="                   { return HaskellTokenTypes.ASSIGNMENT; }
-"|"                   { return HaskellTokenTypes.VERTICAL_BAR;}
-"{-"[^#]              { yybegin(BLOCK_COMMENT); return HaskellTokenTypes.COMMENT; }
-({DIGIT})+            { return HaskellTokenTypes.NUMBER; }
-\"([^\"]|"\\\"")*\"   { return HaskellTokenTypes.STRING;}
+{EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
+":"                   { return CabalTokelTypes.COLON;}
+"."                   { return CabalTokelTypes.DOT; }
+","                   { return CabalTokelTypes.COMMA; }
+"{-"[^#]              { yybegin(BLOCK_COMMENT); return CabalTokelTypes.COMMENT; }
+({DIGIT})+            { return CabalTokelTypes.NUMBER; }
+\"([^\"]|"\\\"")*\"   { return CabalTokelTypes.STRING;}
 
-{IDENTIFIER}          { return HaskellTokenTypes.ID; }
+{IDENTIFIER}          { return CabalTokelTypes.ID; }
 .                     { return TokenType.BAD_CHARACTER; }

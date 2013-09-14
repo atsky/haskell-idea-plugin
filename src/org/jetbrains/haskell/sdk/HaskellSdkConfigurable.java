@@ -39,8 +39,6 @@ public final class HaskellSdkConfigurable implements AdditionalDataConfigurable 
             String ghcCommandPath = GHCUtil.getGhcCommandPath(ghcHome);
             if (ghcCommandPath == null)
                 return null;
-            //ProcessLauncher getLibdirLauncher = new ProcessLauncher(true, null, ghcCommandPath, "--print-libdir");
-            //ghcLib = getLibdirLauncher.getStdOut().trim();
         } catch (Exception e) {
             LOG.error(e);
         }
@@ -63,29 +61,6 @@ public final class HaskellSdkConfigurable implements AdditionalDataConfigurable 
         return null;
     }
 
-    @Nullable
-    private static String suggestCabalPath(@Nullable String libPath) {
-        String cabalExe = GHCUtil.getExeName("cabal");
-        if (SystemInfo.isUnix) {
-            try {
-                //ProcessLauncher getCabalDir = new ProcessLauncher(true, null, "which", "cabal");
-                //File cabal = new File(getCabalDir.getStdOut().trim(), cabalExe);
-                //if (cabal.isFile())
-                //    return cabal.getPath();
-            } catch (Exception e) {
-                LOG.error(e.getMessage());
-            }
-        } else if (SystemInfo.isWindows) {
-            if (libPath != null) {
-                File cabalDir = new File(libPath + File.separator + "extralibs" + File.separator + "bin");
-                File cabal = new File(cabalDir, cabalExe);
-                if (cabal.isFile())
-                    return cabal.getPath();
-            }
-        }
-        return getPathFor(cabalExe);
-    }
-
     public void setSdk(Sdk sdk) {
         mySdk = sdk;
     }
@@ -99,10 +74,7 @@ public final class HaskellSdkConfigurable implements AdditionalDataConfigurable 
     }
 
     public void apply() {
-        String libPath = myForm.getLibPath();
-        String cabalPath = myForm.getCabalPath();
-        String ghcOptions = myForm.getGhcOptions();
-        HaskellSdkAdditionalData newData = new HaskellSdkAdditionalData(libPath, cabalPath, ghcOptions);
+        HaskellSdkAdditionalData newData = new HaskellSdkAdditionalData();
         final SdkModificator modificator = mySdk.getSdkModificator();
         modificator.setSdkAdditionalData(newData);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -124,19 +96,9 @@ public final class HaskellSdkConfigurable implements AdditionalDataConfigurable 
             ghcData = null;
         }
         boolean modified = false;
-        String libPath = ghcData == null ? null : ghcData.getLibPath();
-        if (libPath == null) {
-            libPath = suggestLibPath(mySdk);
-            modified = true;
-        }
-        String cabalPath = ghcData == null ? null : ghcData.getCabalPath();
-        if (cabalPath == null) {
-            cabalPath = suggestCabalPath(libPath);
-            modified = true;
-        }
         String initialGhcOptions = "-W";
         String ghcOptions = ghcData == null ? initialGhcOptions : ghcData.getGhcOptions();
-        myForm.init(libPath, cabalPath, ghcOptions);
+        myForm.init(ghcOptions);
         myForm.setModified(modified);
     }
 

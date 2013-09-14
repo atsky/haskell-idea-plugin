@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.haskell.fileType.HaskellFileType;
+import org.jetbrains.haskell.icons.HaskellIcons;
 
 import javax.swing.*;
 
@@ -33,7 +34,7 @@ public final class HaskellRunConfigurationType implements ConfigurationType {
     }
 
     public Icon getIcon() {
-        return HaskellFileType.INSTANCE.getIcon();
+        return HaskellIcons.APPLICATION;
     }
 
     @NotNull
