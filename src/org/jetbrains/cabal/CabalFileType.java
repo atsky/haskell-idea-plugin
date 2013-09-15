@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.cabal;
+package org.jetbrains.cabal;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;

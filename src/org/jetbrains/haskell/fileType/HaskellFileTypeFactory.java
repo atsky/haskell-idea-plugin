@@ -3,8 +3,7 @@ package org.jetbrains.haskell.fileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.cabal.CabalFileType;
-import org.jetbrains.haskell.fileType.HaskellFileType;
+import org.jetbrains.cabal.CabalFileType;
 
 
 public class HaskellFileTypeFactory extends FileTypeFactory {

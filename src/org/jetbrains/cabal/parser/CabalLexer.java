@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.cabal;
+package org.jetbrains.cabal.parser;
 
 import com.intellij.lexer.FlexAdapter;
 

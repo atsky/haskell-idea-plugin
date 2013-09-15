@@ -66,17 +66,19 @@
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
-      <lang.parserDefinition language="Haskell"
-                             implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
       <configurationType implementation="org.jetbrains.haskell.run.HaskellRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.haskell.run.HaskellRunConfigurationProducer"/>
       <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
       <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
       <lang.syntaxHighlighterFactory key="Haskell"
                                      implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
-      <lang.syntaxHighlighterFactory key="Cabal"
-                                     implementationClass="org.jetbrains.haskell.cabal.highlight.CabalHighlighterFactory"/>
       <lang.fileViewProviderFactory language="Haskell"
                                     implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
+-- Cabal
+      <lang.syntaxHighlighterFactory key="Cabal"
+                                     implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
+      <lang.parserDefinition language="Cabal"
+                             implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
+      <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator" />
   </extensions>
 </idea-plugin>

@@ -1,11 +1,10 @@
-package org.jetbrains.haskell.cabal;
+package org.jetbrains.cabal;
 
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.HaskellLanguage;
 
 public class CabalFile extends PsiFileBase {
 

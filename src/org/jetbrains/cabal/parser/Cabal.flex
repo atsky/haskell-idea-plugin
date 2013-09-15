@@ -29,21 +29,20 @@ DIGIT =[0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
 INDENT = [\n] {WHITE_SPACE_CHAR}*
 EOL_COMMENT = "--"[^\n]*
-LETTER = [^0-9\"\[\]{}(),.\ \n\t\f;\\]
+LETTER = [^0-9\"(),\ \n\t\f:\\]
 IDENTIFIER_PART = ({DIGIT}|{LETTER})
-IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
+IDENTIFIER = {IDENTIFIER_PART} +
 
 %%
 
-<BLOCK_COMMENT>([^-]|"-"[^}])+ {return HaskellTokenTypes.COMMENT;}
-<BLOCK_COMMENT>("-}") {  yybegin(YYINITIAL); return HaskellTokenTypes.COMMENT; }
+<BLOCK_COMMENT>([^-]|"-"[^}])+ {return CabalTokelTypes.COMMENT;}
+<BLOCK_COMMENT>("-}") {  yybegin(YYINITIAL); return CabalTokelTypes.COMMENT; }
 
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 ":"                   { return CabalTokelTypes.COLON;}
-"."                   { return CabalTokelTypes.DOT; }
 ","                   { return CabalTokelTypes.COMMA; }
 "{-"[^#]              { yybegin(BLOCK_COMMENT); return CabalTokelTypes.COMMENT; }
 ({DIGIT})+            { return CabalTokelTypes.NUMBER; }
