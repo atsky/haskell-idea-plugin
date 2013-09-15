@@ -33,6 +33,8 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
 
     private String myWorkingDir;
     private String mainFile;
+    private String myProgramParameters;
+    private Map<String, String> myEnvs;
 
     public HaskellRunConfiguration(String name, Project project, ConfigurationFactory factory) {
         super(name, new RunConfigurationModule(project), factory);
@@ -129,13 +131,13 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
 
     @Override
     public void setProgramParameters(@Nullable String value) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        myProgramParameters = value;
     }
 
     @Nullable
     @Override
     public String getProgramParameters() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return myProgramParameters;
     }
 
     @Override
@@ -151,13 +153,13 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
 
     @Override
     public void setEnvs(@NotNull Map<String, String> envs) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        myEnvs = envs;
     }
 
     @NotNull
     @Override
     public Map<String, String> getEnvs() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return myEnvs;
     }
 
     @Override
@@ -167,7 +169,7 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
 
     @Override
     public boolean isPassParentEnvs() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     public static Module getDeclModule(PsiFile psiFile) {
