@@ -6,8 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessRunner {
+    private String myWorkingDirectory = null;
 
     public ProcessRunner() {
+    }
+
+    public ProcessRunner(String workingDirectory) {
+        myWorkingDirectory = workingDirectory;
     }
 
     public static void readData(InputStream input, Callback callback) throws IOException {
@@ -28,9 +33,7 @@ public class ProcessRunner {
     public String execute(String [] cmd, String input) {
 
         try {
-            final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
-            processBuilder.redirectErrorStream(true);
-            Process process = processBuilder.start();
+            Process process = getProcess(cmd);
             if (input != null) {
                 final OutputStreamWriter streamWriter = new OutputStreamWriter(process.getOutputStream());
                 streamWriter.write(input);
@@ -45,6 +48,15 @@ public class ProcessRunner {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Process getProcess(String ... cmd) throws IOException {
+        final ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+        if (myWorkingDirectory != null) {
+            processBuilder.directory(new File(myWorkingDirectory));
+        }
+        processBuilder.redirectErrorStream(true);
+        return processBuilder.start();
     }
 
     private static String readData(InputStream input) throws IOException {

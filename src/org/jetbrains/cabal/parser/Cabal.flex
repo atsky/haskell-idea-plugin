@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.cabal;
+package org.jetbrains.cabal.parser;
 
 import java.util.*;
 import com.intellij.lexer.*;

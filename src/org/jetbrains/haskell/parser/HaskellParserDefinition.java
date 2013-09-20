@@ -52,7 +52,7 @@ public class HaskellParserDefinition implements ParserDefinition {
             @NotNull
             @Override
             public ASTNode parse(IElementType root, PsiBuilder builder) {
-                return new HaskelExternallParser(root, builder).parse();
+                return new DummyHaskellParser(root, builder).parse();
             }
         };
     }

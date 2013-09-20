@@ -25,6 +25,24 @@
           <add-to-group group-id="NewGroup" anchor="first"/>
       </action>
 
+      <group id="Cabal.Buld.Group"
+             text="Cabal"
+             description="Cabal"
+             popup="true">
+
+          <action id="Cabal.Buld.Configure"
+                  class="org.jetbrains.cabal.actions.RunConfigureAction"
+                  text="Cabal configure">
+          </action>
+
+          <action id="Cabal.Buld.Build"
+                  class="org.jetbrains.cabal.actions.RunBuildAction"
+                  text="Cabal build">
+          </action>
+
+          <add-to-group group-id="BuildMenu" anchor="last"/>
+      </group>
+
       <group id="Haskell.REPL.Group"
              class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
              text="Haskell REPL" description="Haskell" popup="true">
@@ -74,11 +92,15 @@
                                      implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
       <lang.fileViewProviderFactory language="Haskell"
                                     implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
--- Cabal
+
+      <!-- Cabal -->
       <lang.syntaxHighlighterFactory key="Cabal"
                                      implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
       <lang.parserDefinition language="Cabal"
                              implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
       <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator" />
+      <!--
+      <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal_13.png" anchor="right" factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory" />
+      -->
   </extensions>
 </idea-plugin>
