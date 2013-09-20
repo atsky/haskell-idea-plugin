@@ -23,10 +23,12 @@ public interface HaskellTokenTypes {
     IElementType DATA_KEYWORD = new HaskellToken("data");
     IElementType DO_KEYWORD = new HaskellToken("do");
     IElementType DOT = new HaskellToken(".");
+    IElementType ELSE_KEYWORD = new HaskellToken("else");
     IElementType END_OF_LINE_COMMENT = new HaskellToken("--");
     IElementType FIELD_KEYWORD = new HaskellToken("field");
     IElementType FORALL = new HaskellToken("forall");
     IElementType HIDING_KEYWORD = new HaskellToken("hiding");
+    IElementType IF_KEYWORD = new HaskellToken("if");
     IElementType ID = new HaskellToken("id");
     IElementType IMPORT_KEYWORD = new HaskellToken("import");
     IElementType IN_KEYWORD = new HaskellToken("in");
@@ -39,6 +41,7 @@ public interface HaskellTokenTypes {
     IElementType MODULE_KEYWORD = new HaskellToken("module");
     IElementType MUTUAL_KEYWORD = new HaskellToken("mutual");
     IElementType NUMBER = new HaskellToken("number");
+    IElementType OF_KEYWORD = new HaskellToken("of");
     IElementType OPEN_KEYWORD = new HaskellToken("open");
     IElementType POSTULATE_KEYWORD = new HaskellToken("postulate");
     IElementType PRAGMA = new HaskellToken("pragma");
@@ -50,6 +53,7 @@ public interface HaskellTokenTypes {
     IElementType RIGHT_PAREN = new HaskellToken(")");
     IElementType SEMICOLON = new HaskellToken(";");
     IElementType STRING = new HaskellToken("string");
+    IElementType THEN_KEYWORD = new HaskellToken("then");
     IElementType TYPE_CONS = new HaskellToken("type_cons");
     IElementType TYPE_KEYWORD = new HaskellToken("type");
     IElementType THREE_DOTS = new HaskellToken("...");

@@ -61,12 +61,14 @@ IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 "case"                { return HaskellTokenTypes.CASE_KEYWORD; }
 "data"                { return HaskellTokenTypes.DATA_KEYWORD; }
 "do"                  { return HaskellTokenTypes.DO_KEYWORD; }
+"else"                { return HaskellTokenTypes.ELSE_KEYWORD; }
+"if"                  { return HaskellTokenTypes.IF_KEYWORD; }
 "in"                  { return HaskellTokenTypes.IN_KEYWORD; }
 "instance"            { return HaskellTokenTypes.INSTANCE_KEYWORD; }
+"hiding"              { return HaskellTokenTypes.HIDING_KEYWORD; }
 "let"                 { return HaskellTokenTypes.LET_KEYWORD; }
-"where"               { return HaskellTokenTypes.WHERE_KEYWORD; }
-"with"                { return HaskellTokenTypes.WITH_KEYWORD; }
 "module"              { return HaskellTokenTypes.MODULE_KEYWORD; }
+"of"                  { return HaskellTokenTypes.OF_KEYWORD; }
 "open"                { return HaskellTokenTypes.OPEN_KEYWORD; }
 "import"              { return HaskellTokenTypes.IMPORT_KEYWORD; }
 "record"              { return HaskellTokenTypes.RECORD_KEYWORD; }
@@ -77,9 +79,11 @@ IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 "field"               { return HaskellTokenTypes.FIELD_KEYWORD; }
 "public"              { return HaskellTokenTypes.PUBLIC_KEYWORD; }
 "using"               { return HaskellTokenTypes.USING_KEYWORD; }
-"hiding"              { return HaskellTokenTypes.HIDING_KEYWORD; }
+"then"                { return HaskellTokenTypes.THEN_KEYWORD; }
 "type"                { return HaskellTokenTypes.TYPE_KEYWORD; }
 "renaming"            { return HaskellTokenTypes.RENAMING_KEYWORD; }
+"where"               { return HaskellTokenTypes.WHERE_KEYWORD; }
+"with"                { return HaskellTokenTypes.WITH_KEYWORD; }
 "{-#".*"#-}"          { return HaskellTokenTypes.PRAGMA; }
 "{-"[^#]              { yybegin(BLOCK_COMMENT); return HaskellTokenTypes.COMMENT; }
 ({DIGIT})+            { return HaskellTokenTypes.NUMBER; }

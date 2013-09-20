@@ -26,6 +26,7 @@ import org.jetbrains.haskell.fileType.HaskellFile;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
@@ -34,7 +35,7 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
     private String myWorkingDir;
     private String mainFile;
     private String myProgramParameters;
-    private Map<String, String> myEnvs;
+    private Map<String, String> myEnvs = new HashMap<String, String>();
 
     public HaskellRunConfiguration(String name, Project project, ConfigurationFactory factory) {
         super(name, new RunConfigurationModule(project), factory);

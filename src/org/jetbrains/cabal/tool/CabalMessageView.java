@@ -17,6 +17,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Evgeny.Kurbatsky
@@ -51,37 +53,33 @@ public class CabalMessageView {
 
     private final class GhcMessageFilter implements Filter {
         public Result applyFilter(String line, int entireLength) {
-            int afterLineNumberIndex = line.indexOf(": "); // end of file_name_and_line_number sequence
-            if (afterLineNumberIndex == -1) {
+            final Matcher matcher = Pattern.compile("(([^:]+):(\\d+):(\\d+):).*").matcher(line);
+            if (!matcher.find()) {
                 return null;
             }
 
-            String fileAndLineNumber = line.substring(0, afterLineNumberIndex);
-            int index = fileAndLineNumber.lastIndexOf(':');
+            final String fileName = matcher.group(2);
 
-            if (index == -1) {
-                return null;
-            }
-
-            final String fileName = fileAndLineNumber.substring(0, index);
-            String lineNumberStr = fileAndLineNumber.substring(index + 1, fileAndLineNumber.length()).trim();
             int lineNumber;
+            int colNumber;
             try {
-                lineNumber = Integer.parseInt(lineNumberStr);
+                lineNumber = Integer.parseInt(matcher.group(3));
+                colNumber = Integer.parseInt(matcher.group(4));
             }
             catch (NumberFormatException e) {
                 return null;
             }
 
-            final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fileName.replace(File.separatorChar, '/'));
+            final String path = myProject.getBasePath() + "/" + fileName.replace(File.separatorChar, '/');
+            final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
             if (file == null) {
                 return null;
             }
 
             int textStartOffset = entireLength - line.length();
-            int highlightEndOffset = textStartOffset + afterLineNumberIndex;
+            int highlightEndOffset = textStartOffset + matcher.group(1).length();
 
-            OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, file, lineNumber - 1);
+            OpenFileHyperlinkInfo info = new OpenFileHyperlinkInfo(myProject, file, lineNumber - 1, colNumber - 1);
             return new Result(textStartOffset, highlightEndOffset, info);
         }
     }
