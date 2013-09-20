@@ -27,7 +27,7 @@ import com.intellij.psi.tree.IElementType;
 
 DIGIT =[0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
-INDENT = [\n] {WHITE_SPACE_CHAR}*
+INDENT = [\n] ({WHITE_SPACE_CHAR}|"\n")*
 EOL_COMMENT = "--"[^\n]*
 LETTER = [^0-9\"(),\ \n\t\f:\\]
 IDENTIFIER_PART = ({DIGIT}|{LETTER})

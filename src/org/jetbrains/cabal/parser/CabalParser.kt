@@ -72,7 +72,15 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         while (!builder.eof()) {
             if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
                 if (indentSize(builder.getTokenText()!!) < indent) {
-                    return true
+                    val marker = mark()
+
+                    builder.advanceLexer()
+                    if (builder.getTokenType() == CabalTokelTypes.ID) {
+                        marker.rollbackTo()
+                        return true;
+                    } else {
+                        marker.rollbackTo()
+                    }
                 }
                 builder.advanceLexer()
             }
