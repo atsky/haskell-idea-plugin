@@ -1,7 +1,5 @@
 module Main where
 
---invoke: ghci -package ghc A.hs
-
 import GHC
 import Outputable
 import Data.Maybe
@@ -14,6 +12,18 @@ main = do
    name <- return "Prelude" --getLine
    res <- getNames name
    putStrLn $ showSDoc tracingDynFlags ( ppr res )
+
+
+parseFile name = runGhc (Just libdir) $ do
+    dflags <- getSessionDynFlags
+    let dflags' = foldl xopt_set dflags [Opt_Cpp, Opt_ImplicitPrelude, Opt_MagicHash]
+    setSessionDynFlags dflags'
+    target <- guessTarget name Nothing
+    setTargets [target]
+    load LoadAllTargets
+    modSum <- getModSummary $ mkModuleName "Main"
+    p <- parseModule modSum
+    return p
 
 getNames name = runGhc (Just libdir) $ do
     dflags <- getSessionDynFlags

@@ -1,24 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/actions/NewHaskellFileAction.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/compiler/HaskellCompiler.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/module/HaskellModuleBuilder.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/module/HaskellModuleConfigEditor.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/module/HaskellModuleType.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/module/OutputEditor.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/ConfigurationEditor.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/HaskellCommandLineState.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/HaskellRunConfiguration.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/HaskellRunConfigurationProducer.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/HaskellRunConfigurationType.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/run/ModuleComboBoxRenderer.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/sdk/GHCDir.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/sdk/HaskellSdkAdditionalData.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/sdk/HaskellSdkConfigurable.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/sdk/HaskellSdkType.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/util/GHCUtil.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/src/org/jetbrains/haskell/util/GHCVersion.java" charset="windows-1251" />
-  </component>
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
 </project>
 
