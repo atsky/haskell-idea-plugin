@@ -42,6 +42,8 @@ IDENTIFIER = {IDENTIFIER_PART} +
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
+"("                   { return CabalTokelTypes.LEFT_PAREN;}
+")"                   { return CabalTokelTypes.RIGHT_PAREN;}
 ":"                   { return CabalTokelTypes.COLON;}
 ","                   { return CabalTokelTypes.COMMA; }
 "{-"[^#]              { yybegin(BLOCK_COMMENT); return CabalTokelTypes.COMMENT; }

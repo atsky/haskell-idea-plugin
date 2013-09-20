@@ -18,15 +18,15 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         token(CabalTokelTypes.ID)
     }
 
-    fun indentSize(str : String) : Int  {
+    fun indentSize(str: String): Int {
         val indexOf = str.lastIndexOf('\n')
         return str.size - indexOf - 1
     }
 
-    fun parsePropertyValue(level : Int) = start(CabalTokelTypes.PROPERTY_VALUE) {
+    fun parsePropertyValue(level: Int) = start(CabalTokelTypes.PROPERTY_VALUE) {
         while (!builder.eof()) {
             if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                if (indentSize(builder.getTokenText()!!) == level) {
+                if (indentSize(builder.getTokenText()!!) <= level) {
                     break;
                 }
             }
@@ -35,34 +35,61 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         true;
     }
 
-    fun parseProperty(level : Int) = start(CabalTokelTypes.PROPERTY) {
+    fun parseProperty(level: Int) = start(CabalTokelTypes.PROPERTY) {
         var r = parsePropertyKey()
         r = r && token(CabalTokelTypes.COLON)
         r = r && parsePropertyValue(level)
         r
     }
 
+    fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
+        val result = start(CabalTokelTypes.PROPERTY_KEY) { matches(CabalTokelTypes.ID, "if") }
+        if (result) {
+            while (!builder.eof()) {
+                if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                    break
+                }
+                builder.advanceLexer()
+            }
+            parsePropertyies(indentSize(builder.getTokenText()!!))
+        } else {
+            false
+        }
+    }
+
+    fun parseElse(level: Int) = start(CabalTokelTypes.PROPERTY) {
+        var r = start(CabalTokelTypes.PROPERTY_KEY) { matches(CabalTokelTypes.ID, "else") }
+        r = r && parsePropertyies(indentSize(builder.getTokenText()!!));
+        r
+    }
+
+
     fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
         token(CabalTokelTypes.ID);
     }
 
-    fun parsePropertyies(indent : Int) {
+    fun parsePropertyies(indent: Int): Boolean {
         while (!builder.eof()) {
-            if (!parseProperty(indent)) {
-                if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                    if (indentSize(builder.getTokenText()!!) < indent) {
-                        return
-                    }
+            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                if (indentSize(builder.getTokenText()!!) < indent) {
+                    return true
                 }
                 builder.advanceLexer()
             }
+            var result = parseProperty(indent)
+            result = result || parseIf(indent)
+            result = result || parseElse(indent)
+            if (!result) {
+                builder.advanceLexer()
+            }
         }
+        return true;
     }
 
-    fun parseSection(level : Int) = start(CabalTokelTypes.SECTION) {
+    fun parseSection(level: Int) = start(CabalTokelTypes.SECTION) {
         val sections = listOf("source-repository", "flag", "executable")
 
-        val result : Boolean = if (sections.contains(builder.getTokenText())) {
+        val result: Boolean = if (sections.contains(builder.getTokenText())) {
             parseSectionType() && token(CabalTokelTypes.ID)
         } else if (builder.getTokenText() == "library") {
             parseSectionType()
@@ -71,8 +98,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         }
         if (result) {
             if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                val newIndent = indentSize(builder.getTokenText()!!)
-                parsePropertyies(newIndent);
+                parsePropertyies(indentSize(builder.getTokenText()!!));
             }
         }
         result

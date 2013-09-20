@@ -21,6 +21,8 @@ public trait CabalTokelTypes {
         val COLON: IElementType = HaskellToken(":")
         val COMMA: IElementType = HaskellToken(",")
         val COMMENT: IElementType = HaskellToken("COMMENT")
+        val LEFT_PAREN : IElementType = HaskellToken("(")
+        val RIGHT_PAREN : IElementType = HaskellToken(")")
         val DOT: IElementType = HaskellToken(".")
         val END_OF_LINE_COMMENT: IElementType? = HaskellToken("--")
         val STRING: IElementType = HaskellToken("string")
