@@ -84,6 +84,8 @@
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
+      <lang.parserDefinition language="Haskell"
+                             implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
       <configurationType implementation="org.jetbrains.haskell.run.HaskellRunConfigurationType"/>
       <configurationProducer implementation="org.jetbrains.haskell.run.HaskellRunConfigurationProducer"/>
       <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
