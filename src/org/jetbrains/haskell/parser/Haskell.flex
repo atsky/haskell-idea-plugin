@@ -23,7 +23,7 @@ import com.intellij.psi.tree.IElementType;
   return;
 %eof}
 
-%xstate STRING, BLOCK_COMMENT
+%xstate BLOCK_COMMENT, TEX
 
 DIGIT =[0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
@@ -34,6 +34,14 @@ IDENTIFIER_PART = ({DIGIT}|{LETTER})
 IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 
 %%
+
+<TEX> {
+    [^\\]+             { return HaskellTokenTypes.COMMENT; }
+    "\\begin{code}"   { yybegin(YYINITIAL); return HaskellTokenTypes.COMMENT; }
+    \\+*              { return HaskellTokenTypes.COMMENT; }
+
+}
+
 
 <BLOCK_COMMENT>([^-]|"-"[^}])+ {return HaskellTokenTypes.COMMENT;}
 <BLOCK_COMMENT>("-}") {  yybegin(YYINITIAL); return HaskellTokenTypes.COMMENT; }
@@ -90,6 +98,7 @@ IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 (forall)|(\u2200)     { return HaskellTokenTypes.FORALL; }
 \'([^\']|\\\')*\'     { return HaskellTokenTypes.CHARACTER; }
 \"([^\"]|\\\")*\"     { return HaskellTokenTypes.STRING;}
+"\\end{code}"         { yybegin(TEX); return HaskellTokenTypes.COMMENT; }
 
 [A-Z]{IDENTIFIER_PART}* {return HaskellTokenTypes.TYPE_CONS;}
 {IDENTIFIER}          { return HaskellTokenTypes.ID; }
