@@ -4,21 +4,21 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.SdkModel;
 import org.jdom.Element;
-import org.jetbrains.haskell.util.GHCUtil;
-
-import java.io.File;
+import org.jetbrains.annotations.NotNull;
 
 public final class HaskellSdkAdditionalData implements SdkAdditionalData {
-    private static final String GHC_OPTIONS = "ghcOptions";
+    private static final String GHC_OPTIONS = "GhcOptions";
+    private static final String CABAL_PATH = "CabalPath";
 
-    private String ghcOptions = "";
+    private String myGhcOptions = "";
+    private String myCabalPath = "";
 
     public HaskellSdkAdditionalData() {
 
     }
 
     public HaskellSdkAdditionalData(Element element) {
-        this.ghcOptions = element.getAttributeValue(GHC_OPTIONS);
+        this.myGhcOptions = element.getAttributeValue(GHC_OPTIONS);
     }
 
     public void checkValid(SdkModel sdkModel) throws ConfigurationException {
@@ -30,16 +30,26 @@ public final class HaskellSdkAdditionalData implements SdkAdditionalData {
     }
 
     public void save(Element element) {
-        if (ghcOptions != null) {
-            element.setAttribute(GHC_OPTIONS, ghcOptions);
+        if (myGhcOptions != null) {
+            element.setAttribute(GHC_OPTIONS, myGhcOptions);
+            element.setAttribute(CABAL_PATH, myCabalPath);
         }
     }
 
     public String getGhcOptions() {
-        return ghcOptions == null ? "" : ghcOptions;
+        return myGhcOptions == null ? "" : myGhcOptions;
     }
 
     public void setGhcOptions(String ghcOptions) {
-        this.ghcOptions = ghcOptions;
+        this.myGhcOptions = ghcOptions;
+    }
+
+    @NotNull
+    public String getCabalPath() {
+        return myCabalPath == null ? "" : myCabalPath;
+    }
+
+    public void setCabalPath(String cabalPath) {
+        this.myCabalPath = cabalPath;
     }
 }
