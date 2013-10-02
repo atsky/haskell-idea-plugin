@@ -15,8 +15,12 @@ import org.jetbrains.cabal.tool.CabalMessageView
 import org.jetbrains.haskell.util.ProcessRunner
 import javax.swing.*
 import java.io.IOException
+import com.intellij.openapi.util.Key
+
+private val KEY : Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
 public open class CabalInterface(project: Project) {
+
     private val myProject: Project = project
 
     public open fun configure(): Unit {
@@ -26,8 +30,15 @@ public open class CabalInterface(project: Project) {
     private open fun runCommand(canonicalPath: String, command: String): Unit {
         val process = ProcessRunner(canonicalPath).getProcess("cabal", command)!!
         val ijMessageView = MessageView.SERVICE.getInstance(myProject)!!
-        val component: JComponent? = CabalMessageView(myProject, process).getComponent()
-        val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(component, "Cabal console", true)
+        for (content in ijMessageView.getContentManager()!!.getContents()) {
+            val cabalMessageView = content.getUserData(KEY)
+            if (cabalMessageView != null) {
+                ijMessageView.getContentManager()?.removeContent(content, true)
+            }
+        }
+        val cabalMessageView = CabalMessageView(myProject, process)
+        val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.getComponent(), "Cabal console", true)
+        content.putUserData(KEY, cabalMessageView)
         ijMessageView.getContentManager()!!.addContent(content)
         ijMessageView.getContentManager()!!.setSelectedContent(content)
 
