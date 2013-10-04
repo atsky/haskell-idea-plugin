@@ -87,7 +87,7 @@ public final class HaskellCompiler implements TranslatingCompiler {
         sink.add(outputDir.getPath(), output, VfsUtil.toVirtualFileArray(toCompile));
 
         for (VirtualFile file : toCompile) {
-            for (GHCMessage message : new GHCInterface().runGHC(file, outputDir)) {
+            for (GHCMessage message : new GHCInterface().runGHC(module, file, outputDir)) {
                 context.addMessage(CompilerMessageCategory.ERROR,
                         message.myText, "file://" + message.myFile, message.myLine, message.myCol);
             }
