@@ -47,13 +47,6 @@
              class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
              text="Haskell REPL" description="Haskell" popup="true">
 
-          <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
-                  class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
-                  text="Load/Reload Current File in REPL...">
-              <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
-          </action>
-
-
           <action id="ideah.repl.actions.RunHaskellConsoleAction"
                   class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
                   text="Start Haskell REPL" description="Runs Haskell REPL">
@@ -63,6 +56,13 @@
 
           <add-to-group group-id="ToolsMenu" anchor="last"/>
       </group>
+
+      <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
+              class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
+              text="Load/Reload Current File in REPL...">
+          <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
+          <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      </action>
 
       <action id="Haskell.Console.Execute"
               class="com.intellij.openapi.actionSystem.EmptyAction"
@@ -82,6 +82,7 @@
       <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
       <completion.contributor language="Haskell"
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
+      <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" />
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
       <lang.parserDefinition language="Haskell"

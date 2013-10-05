@@ -38,7 +38,7 @@ final class HaskellCommandLineState extends CommandLineState {
     private GeneralCommandLine createCommandLine() throws ExecutionException {
         GeneralCommandLine commandLine = new GeneralCommandLine();
 
-        String exePath = GHCInterface.getRunGHC();
+        String exePath = GHCInterface.object$.getRunGHC();
         if (!new File(exePath).exists()) {
             throw new CantRunException("Cannot find runghc executable");
         }

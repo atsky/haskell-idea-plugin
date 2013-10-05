@@ -28,7 +28,7 @@ public open class CabalInterface(project: Project) {
     }
 
     private open fun runCommand(canonicalPath: String, command: String): Unit {
-        val process = ProcessRunner(canonicalPath).getProcess("cabal", command)!!
+        val process = ProcessRunner(canonicalPath).getProcess(array("cabal", command))
         val ijMessageView = MessageView.SERVICE.getInstance(myProject)!!
         for (content in ijMessageView.getContentManager()!!.getContents()) {
             val cabalMessageView = content.getUserData(KEY)
@@ -59,7 +59,7 @@ public open class CabalInterface(project: Project) {
                 if (cachedDocument != null) {
                     ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {
                         public override fun run(): Unit {
-                            FileDocumentManager.getInstance()?.saveDocument(cachedDocument!!)
+                            FileDocumentManager.getInstance()?.saveDocument(cachedDocument)
                         }
 
 

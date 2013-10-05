@@ -14,61 +14,58 @@ import java.util.Iterator
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-public open class GHCInterface() {
-    public open fun runGHC(module: Module, file: VirtualFile, outputDir: VirtualFile): List<GHCMessage> {
-        val command: Array<String> = array<String>(getGHC(module), "-c", "-outputdir", outputDir?.getPath(), file?.getPath())
-        val result: String = ProcessRunner().execute(command)!!
+public class GHCInterface() {
+    public fun runGHC(module: Module, file: VirtualFile, outputDir: VirtualFile): List<GHCMessage> {
+        val command: Array<String> = array<String>(getGHC(module), "-c", "-outputdir", outputDir.getPath()!!, file.getPath()!!)
+        val result: String = ProcessRunner(null).execute(command)
         System.out.println(result)
         val lines: List<String> = result.split("\n").toList()
-        val iterator: java.util.Iterator<String> = lines.iterator()
-        var messages: List<GHCMessage?>? = ArrayList<GHCMessage?>()
-        while (iterator?.hasNext()!!)
+        val iterator = lines.iterator()
+        val messages: MutableList<GHCMessage> = ArrayList<GHCMessage>()
+        while (iterator.hasNext())
         {
-            var line: String? = iterator?.next()
+            var line  = iterator.next()
             if (isError(line))
             {
-                var matcher: Matcher? = Pattern.compile("(.*):(\\d+):(\\d+):")?.matcher(line)
-                matcher?.find()
-                var message: GHCMessage? = GHCMessage(matcher?.group(1), matcher?.group(2), matcher?.group(3))
+                var matcher = Pattern.compile("(.*):(\\d+):(\\d+):").matcher(line)
+                matcher.find()
+                val message = GHCMessage(matcher.group(1), matcher.group(2), matcher.group(3))
                 var msg: String? = ""
-                while (iterator?.hasNext()!!)
+                while (iterator.hasNext())
                 {
-                    var msgLine: String? = iterator?.next()
+                    var msgLine: String? = iterator.next()
                     msg += msgLine + "\n"
-                    if ((msgLine?.trim()?.length())!! == 0)
+                    if ((msgLine?.trim()?.length()) == 0)
                     {
                         break
                     }
 
                 }
-                message?.setText(msg)
-                messages?.add(message)
+                message.setText(msg)
+                messages.add(message)
             }
 
         }
         return messages
     }
-    private open fun isError(line: String?): Boolean {
+    private fun isError(line: String?): Boolean {
         return line?.matches(".*:.*:.*:")!!
     }
 
     class object {
-        public open fun getGHC(module: Module): String {
+        public fun getGHC(module: Module): String {
             var sdk = ModuleRootManager.getInstance(module)!!.getSdk()!!
             if ((sdk.getSdkType() is HaskellSdkType)) {
                 val homeDirectory : VirtualFile = sdk.getHomeDirectory()!!
                 val ghc: String =
-                if (System.getProperty("os.name")?.toLowerCase()?.contains("win")!!)
-                    "ghc.exe"
-                else
-                    "ghc"
+                if (System.getProperty("os.name")!!.toLowerCase().contains("win")) "ghc.exe" else "ghc"
 
-                return homeDirectory.toString() + File.separator + "bin" + File.separator + ghc
+                return homeDirectory.getCanonicalPath() + File.separator + "bin" + File.separator + ghc
             }
 
             throw RuntimeException("Ghc not found!!!")
         }
-        public open fun getRunGHC(): String {
+        public fun getRunGHC(): String {
             if (System.getProperty("os.name")?.toLowerCase()?.contains("win")!!) {
                 return "C:\\Program Files (x86)\\Haskell Platform\\2013.2.0.0\\bin\\runghc.exe"
             } else {

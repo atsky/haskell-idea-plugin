@@ -37,7 +37,7 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
         return builder.mark()!!
     }
 
-    inline fun atom(inline body: () -> Boolean): Boolean {
+    inline fun atom(body: () -> Boolean): Boolean {
         val marker = mark()
         val result = body()
         if (result) {
@@ -48,20 +48,20 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
         return result
     }
 
-    inline fun oneOrMore(inline body: () -> Boolean): Boolean {
+    inline fun oneOrMore(body: () -> Boolean): Boolean {
         val result = body()
         while (body()) {
         }
         return result
     }
 
-    inline fun zeroOrMore(inline body: () -> Boolean): Boolean {
+    inline fun zeroOrMore(body: () -> Boolean): Boolean {
         while (body()) {
         }
         return true
     }
 
-    inline fun start(elementType: IElementType, inline body: () -> Boolean): Boolean {
+    inline fun start(elementType: IElementType, body: () -> Boolean): Boolean {
         val marker = mark()
         val result = body()
         return done(marker, result, elementType)

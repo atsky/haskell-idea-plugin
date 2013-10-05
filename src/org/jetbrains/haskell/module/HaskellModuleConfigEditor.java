@@ -22,7 +22,7 @@ public final class HaskellModuleConfigEditor implements ModuleConfigurationEdito
         String moduleName = module.getName();
         List<ModuleConfigurationEditor> editors = new ArrayList<ModuleConfigurationEditor>();
         editors.add(new ContentEntriesEditor(moduleName, state));
-        editors.add(new ClasspathEditor(state));
+        editors.add(new PackagesEditor(state, module.getProject()));
         editors.add(new OutputEditor(state));
         return editors.toArray(new ModuleConfigurationEditor[editors.size()]);
     }
