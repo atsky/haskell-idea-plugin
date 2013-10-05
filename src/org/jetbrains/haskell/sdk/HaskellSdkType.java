@@ -140,8 +140,8 @@ public final class HaskellSdkType extends SdkType {
             return null;
         }
         try {
-            String output = new ProcessRunner().execute(homePath + File.separator + "bin" + File.separator + "ghc",
-                    "--numeric-version");
+            String output = new ProcessRunner(null).execute(new String[]{homePath + File.separator + "bin" + File.separator + "ghc",
+                    "--numeric-version"});
             return output.trim();
         } catch (Exception ex) {
             // ignore
@@ -161,7 +161,7 @@ public final class HaskellSdkType extends SdkType {
 
     @Override
     public SdkAdditionalData loadAdditionalData(Element additional) {
-        return new HaskellSdkAdditionalData(additional);
+        return HaskellSdkAdditionalData.object$.load(additional);
     }
 
     public String getPresentableName() {
@@ -176,11 +176,6 @@ public final class HaskellSdkType extends SdkType {
     @Override
     public Icon getIconForAddAction() {
         return getIcon();
-    }
-
-    @Override
-    public String adjustSelectedSdkHome(String homePath) {
-        return super.adjustSelectedSdkHome(homePath); // todo: if 'bin' or 'ghc' selected, choose parent folder
     }
 
     @Override

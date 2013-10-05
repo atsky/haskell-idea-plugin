@@ -30,7 +30,8 @@ public final class HaskellSdkConfigurable implements AdditionalDataConfigurable 
     }
 
     public void apply() {
-        HaskellSdkAdditionalData newData = new HaskellSdkAdditionalData();
+        HaskellSdkAdditionalData newData = new HaskellSdkAdditionalData(myForm.getGhcOptions(), myForm.getCabalPath());
+
         final SdkModificator modificator = mySdk.getSdkModificator();
         modificator.setSdkAdditionalData(newData);
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
