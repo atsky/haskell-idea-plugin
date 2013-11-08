@@ -94,23 +94,38 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         return true;
     }
 
-    fun parseSection(level: Int) = start(CabalTokelTypes.SECTION) {
-        val sections = listOf("source-repository", "flag", "executable")
-
-        val result: Boolean = if (sections.contains(builder.getTokenText())) {
-            parseSectionType() && token(CabalTokelTypes.ID)
-        } else if (builder.getTokenText() == "library") {
-            parseSectionType()
+    fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
+        if (matches(CabalTokelTypes.ID, "executable")) {
+            token(CabalTokelTypes.ID) &&
+            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                parsePropertyies(indentSize(builder.getTokenText()!!));
+            } else {
+                false
+            }
         } else {
             false
         }
-        if (result) {
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                parsePropertyies(indentSize(builder.getTokenText()!!));
-            }
-        }
-        result
     }
+
+    fun parseSection(level: Int) =
+            parseExecutable(level) ||
+            start(CabalTokelTypes.SECTION) {
+                val sections = listOf("source-repository", "flag")
+
+                val result: Boolean = if (sections.contains(builder.getTokenText())) {
+                    parseSectionType() && token(CabalTokelTypes.ID)
+                } else if (builder.getTokenText() == "library") {
+                    parseSectionType()
+                } else {
+                    false
+                }
+                if (result) {
+                    if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                        parsePropertyies(indentSize(builder.getTokenText()!!));
+                    }
+                }
+                result
+            }
 
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()

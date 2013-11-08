@@ -8,8 +8,7 @@ import org.jetbrains.haskell.parser.HaskellToken
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.cabal.psi.PropertyKey
-import org.jetbrains.cabal.psi.SectionType
+import org.jetbrains.cabal.psi.*
 
 public trait CabalTokelTypes {
 
@@ -32,6 +31,7 @@ public trait CabalTokelTypes {
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val PROPERTY_KEY: IElementType = CabalCompositeElementType("PROPERTY_KEY", { PropertyKey(it) })
         val PROPERTY_VALUE: IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
+        val EXECUTABLE: IElementType = CabalCompositeElementType("EXECUTABLE", { Executable(it) })
         val SECTION: IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
         val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
