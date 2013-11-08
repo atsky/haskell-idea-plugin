@@ -1,5 +1,6 @@
 .idea/workspace.xml
 lib/kotlin-runtime.jar
+lib/kotlin-runtime-sources.jar
 haskell/out
 haskell/dist
 haskell/.idea/workspace.xml
