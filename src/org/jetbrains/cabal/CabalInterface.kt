@@ -23,11 +23,11 @@ public open class CabalInterface(project: Project) {
 
     private val myProject: Project = project
 
-    public open fun configure(): Unit {
-        runCommand(findCabal()!!, "configure")
-    }
+    public open fun configure() : Process =
+        runCommand(findCabal(), "configure")
 
-    private open fun runCommand(canonicalPath: String, command: String): Unit {
+
+    private open fun runCommand(canonicalPath: String, command: String): Process {
         val process = ProcessRunner(canonicalPath).getProcess(array("cabal", command))
         val ijMessageView = MessageView.SERVICE.getInstance(myProject)!!
         for (content in ijMessageView.getContentManager()!!.getContents()) {
@@ -44,15 +44,16 @@ public open class CabalInterface(project: Project) {
 
         val messageToolWindow = ToolWindowManager.getInstance(myProject)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
         messageToolWindow?.activate(null)
+        return process
     }
 
-    public open fun build(): Unit {
+    public open fun build(): Process =
         runCommand(findCabal()!!, "build")
-    }
+
     public open fun clean(): Unit {
-        runCommand(findCabal()!!, "clean")
+        runCommand(findCabal(), "clean")
     }
-    private open fun findCabal(): String? {
+    private open fun findCabal(): String {
         for (file : VirtualFile? in myProject.getBaseDir()!!.getChildren()!!) {
             if ("cabal".equals(file?.getExtension())) {
                 val cachedDocument: Document? = FileDocumentManager.getInstance()?.getCachedDocument(file!!)
@@ -65,11 +66,11 @@ public open class CabalInterface(project: Project) {
 
                     })
                 }
-                return file.getParent()?.getCanonicalPath()
+                return file.getParent()?.getCanonicalPath()!!
             }
 
         }
-        return null
+        throw RuntimeException("Can't find cabal file in base directory")
     }
 
 }

@@ -23,10 +23,25 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         return str.size - indexOf - 1
     }
 
-    fun parsePropertyValue(level: Int) = start(CabalTokelTypes.PROPERTY_VALUE) {
+    fun findLevel(currentLevel : Int?): Int? {
+        var level: Int? = null;
+        val marker = builder.mark()!!
+        while (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+            level = indentSize(builder.getTokenText()!!)
+            builder.advanceLexer();
+        }
+        if (currentLevel != null && level != currentLevel) {
+            marker.rollbackTo()
+            return null;
+        }
+        marker.drop()
+        return level
+    }
+
+    fun parsePropertyValue(prevLevel: Int) = start(CabalTokelTypes.PROPERTY_VALUE) {
         while (!builder.eof()) {
             if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                if (indentSize(builder.getTokenText()!!) <= level) {
+                if (indentSize(builder.getTokenText()!!) <= prevLevel) {
                     break;
                 }
             }
@@ -51,7 +66,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
                 }
                 builder.advanceLexer()
             }
-            parsePropertyies(indentSize(builder.getTokenText()!!))
+            parseProperties(level)
         } else {
             false
         }
@@ -59,7 +74,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
 
     fun parseElse(level: Int) = start(CabalTokelTypes.PROPERTY) {
         var r = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
-        r = r && parsePropertyies(indentSize(builder.getTokenText()!!));
+        r = r && parseProperties(level);
         r
     }
 
@@ -68,25 +83,24 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         token(CabalTokelTypes.ID);
     }
 
-    fun parsePropertyies(indent: Int): Boolean {
+    fun parseProperties(prevLevel: Int): Boolean {
+        var currentLevel : Int? = null;
         while (!builder.eof()) {
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                if (indentSize(builder.getTokenText()!!) < indent) {
-                    val marker = mark()
-
-                    builder.advanceLexer()
-                    if (builder.getTokenType() == CabalTokelTypes.ID) {
-                        marker.rollbackTo()
-                        return true;
-                    } else {
-                        marker.rollbackTo()
-                    }
-                }
-                builder.advanceLexer()
+            val level = findLevel(currentLevel)
+            if (level == null) {
+                break;
             }
-            var result = parseProperty(indent)
-            result = result || parseIf(indent)
-            result = result || parseElse(indent)
+            if (currentLevel == null) {
+                if (level > prevLevel) {
+                    currentLevel = level
+                } else {
+                    return false;
+                }
+            }
+
+            var result = parseProperty(currentLevel!!)
+            result = result || parseIf(currentLevel!!)
+            result = result || parseElse(currentLevel!!)
             if (!result) {
                 builder.advanceLexer()
             }
@@ -96,25 +110,15 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
-            token(CabalTokelTypes.ID) &&
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                parsePropertyies(indentSize(builder.getTokenText()!!));
-            } else {
-                false
-            }
+            token(CabalTokelTypes.ID) && parseProperties(level)
         } else {
             false
         }
     }
 
-    fun parseTestSuite(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
+    fun parseTestSuite(level: Int) = start(CabalTokelTypes.TEST_SUITE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "test-suite")) {
-            token(CabalTokelTypes.ID) &&
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                parsePropertyies(indentSize(builder.getTokenText()!!));
-            } else {
-                false
-            }
+            token(CabalTokelTypes.ID) && parseProperties(level);
         } else {
             false
         }
@@ -134,9 +138,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
                     false
                 }
                 if (result) {
-                    if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                        parsePropertyies(indentSize(builder.getTokenText()!!));
-                    }
+                    parseProperties(level);
                 }
                 result
             }
