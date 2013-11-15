@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.run;
+package org.jetbrains.haskell.run.haskell;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;

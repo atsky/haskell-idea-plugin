@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.run;
+package org.jetbrains.haskell.run.cmd;
 
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -6,31 +6,30 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.icons.HaskellIcons;
 
 import javax.swing.*;
 
-public final class HaskellRunConfigurationType implements ConfigurationType {
+public final class CmdLineRunConfigurationType implements ConfigurationType {
 
-    public static final HaskellRunConfigurationType INSTANCE = new HaskellRunConfigurationType();
+    public static final CmdLineRunConfigurationType INSTANCE = new CmdLineRunConfigurationType();
 
     private final ConfigurationFactory myFactory;
 
-    public HaskellRunConfigurationType() {
+    public CmdLineRunConfigurationType() {
         this.myFactory = new ConfigurationFactoryEx(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
-                return new HaskellRunConfiguration(project, this);
+                return new CmdLineRunConfiguration(project, this);
             }
         };
     }
 
     public String getDisplayName() {
-        return "Haskell";
+        return "Cmd line";
     }
 
     public String getConfigurationTypeDescription() {
-        return "Haskell application";
+        return "Cmd line application";
     }
 
     public Icon getIcon() {
@@ -39,7 +38,7 @@ public final class HaskellRunConfigurationType implements ConfigurationType {
 
     @NotNull
     public String getId() {
-        return "HaskellRunConfiguration";
+        return "CmdLineRunConfiguration";
     }
 
     public ConfigurationFactory[] getConfigurationFactories() {

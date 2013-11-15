@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.run
+package org.jetbrains.haskell.run.haskell
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.module.Module
@@ -11,8 +11,9 @@ import org.jetbrains.haskell.util.*
 import com.intellij.ui.RawCommandLineEditor
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import java.awt.Insets
+import org.jetbrains.haskell.run.ModuleComboBoxRenderer
 
-public class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
+class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var mainFileComponent: TextFieldWithBrowseButton
     private var moduleComboBox: JComboBox<Module>
     private var programParametersComponent : RawCommandLineEditor

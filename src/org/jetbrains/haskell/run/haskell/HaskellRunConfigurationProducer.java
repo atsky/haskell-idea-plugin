@@ -1,18 +1,17 @@
-package org.jetbrains.haskell.run;
+package org.jetbrains.haskell.run.haskell;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
 import org.jetbrains.haskell.fileType.HaskellFile;
+import org.jetbrains.haskell.run.haskell.HaskellRunConfiguration;
+import org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType;
 
 public final class HaskellRunConfigurationProducer extends RuntimeConfigurationProducer {
 

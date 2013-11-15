@@ -5,7 +5,7 @@ import com.intellij.ui.ListCellRendererWrapper;
 
 import javax.swing.*;
 
-final class ModuleComboBoxRenderer extends ListCellRendererWrapper<Module> {
+public final class ModuleComboBoxRenderer extends ListCellRendererWrapper<Module> {
 
     @Override
     public void customize(JList list, Module value, int index, boolean selected, boolean hasFocus) {
