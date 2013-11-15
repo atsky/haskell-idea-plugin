@@ -8,5 +8,6 @@ executable ghcApi
   hs-source-dirs:  src
   build-depends:   base,
                    ghc,
+                   Cabal,
                    ghc-paths
-  ghc-options:     -Wall
+
