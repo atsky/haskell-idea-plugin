@@ -32,6 +32,7 @@ public trait CabalTokelTypes {
         val PROPERTY_KEY: IElementType = CabalCompositeElementType("PROPERTY_KEY", { PropertyKey(it) })
         val PROPERTY_VALUE: IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
         val EXECUTABLE: IElementType = CabalCompositeElementType("EXECUTABLE", { Executable(it) })
+        val TEST_SUITE: IElementType = CabalCompositeElementType("TEST_SUITE", { TestSuite(it) })
         val SECTION: IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
         val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)

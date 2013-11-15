@@ -107,8 +107,22 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         }
     }
 
+    fun parseTestSuite(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
+        if (matchesIgnoreCase(CabalTokelTypes.ID, "test-suite")) {
+            token(CabalTokelTypes.ID) &&
+            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                parsePropertyies(indentSize(builder.getTokenText()!!));
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
     fun parseSection(level: Int) =
             parseExecutable(level) ||
+            parseTestSuite(level) ||
             start(CabalTokelTypes.SECTION) {
                 val sections = listOf("source-repository", "flag")
 
