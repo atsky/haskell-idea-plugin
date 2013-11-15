@@ -6,7 +6,9 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.compiler.HaskellCompiler;
+
+import org.jetbrains.haskell.compiler.HaskellCabalCompiler;
+
 import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.fileType.HiFileType;
 
@@ -24,7 +26,7 @@ public final class HaskellProjectComponent implements ProjectComponent {
         HashSet<FileType> inputSet = new HashSet<FileType>(Collections.singleton(HaskellFileType.INSTANCE));
         HashSet<FileType> outputSet = new HashSet<FileType>(Collections.singleton(HiFileType.INSTANCE));
         manager.addCompilableFileType(HaskellFileType.INSTANCE);
-        manager.addTranslatingCompiler(new HaskellCompiler(project), inputSet, outputSet);
+        manager.addTranslatingCompiler(new HaskellCabalCompiler(project), inputSet, outputSet);
     }
 
     public void projectOpened() {
