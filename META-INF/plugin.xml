@@ -87,8 +87,9 @@
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
       <lang.parserDefinition language="Haskell"
                              implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
-      <configurationType implementation="org.jetbrains.haskell.run.HaskellRunConfigurationType"/>
-      <configurationProducer implementation="org.jetbrains.haskell.run.HaskellRunConfigurationProducer"/>
+      <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>
+      <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/>
+      <configurationProducer implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationProducer"/>
       <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
       <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
       <lang.syntaxHighlighterFactory key="Haskell"
@@ -102,8 +103,10 @@
       <lang.parserDefinition language="Cabal"
                              implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
       <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator" />
-      <!--
+      <completion.contributor language="Cabal"
+                              implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor" />
+
       <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal_13.png" anchor="right" factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory" />
-      -->
+
   </extensions>
 </idea-plugin>

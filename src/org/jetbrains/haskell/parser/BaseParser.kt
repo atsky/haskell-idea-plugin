@@ -24,6 +24,15 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
         return false;
     }
 
+    fun matchesIgnoreCase(tokenType: IElementType, text : String): Boolean {
+        val elementType = builder.getTokenType()
+        if (elementType == tokenType && builder.getTokenText()?.toLowerCase() == text.toLowerCase()) {
+            builder.advanceLexer()
+            return true;
+        }
+        return false;
+    }
+
     fun matches(tokenType: IElementType, text : String): Boolean {
         val elementType = builder.getTokenType()
         if (elementType == tokenType && builder.getTokenText() == text) {

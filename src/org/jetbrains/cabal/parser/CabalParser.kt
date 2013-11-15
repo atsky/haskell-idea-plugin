@@ -43,7 +43,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
     }
 
     fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        val result = start(CabalTokelTypes.PROPERTY_KEY) { matches(CabalTokelTypes.ID, "if") }
+        val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
         if (result) {
             while (!builder.eof()) {
                 if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
@@ -58,7 +58,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
     }
 
     fun parseElse(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        var r = start(CabalTokelTypes.PROPERTY_KEY) { matches(CabalTokelTypes.ID, "else") }
+        var r = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
         r = r && parsePropertyies(indentSize(builder.getTokenText()!!));
         r
     }
@@ -95,7 +95,7 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
     }
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
-        if (matches(CabalTokelTypes.ID, "executable")) {
+        if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
             token(CabalTokelTypes.ID) &&
             if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
                 parsePropertyies(indentSize(builder.getTokenText()!!));
@@ -112,9 +112,9 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
             start(CabalTokelTypes.SECTION) {
                 val sections = listOf("source-repository", "flag")
 
-                val result: Boolean = if (sections.contains(builder.getTokenText())) {
+                val result: Boolean = if (sections.contains(builder.getTokenText()?.toLowerCase())) {
                     parseSectionType() && token(CabalTokelTypes.ID)
-                } else if (builder.getTokenText() == "library") {
+                } else if (builder.getTokenText()?.toLowerCase() == "library") {
                     parseSectionType()
                 } else {
                     false
