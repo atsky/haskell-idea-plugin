@@ -23,7 +23,7 @@ parseCommandArgs :: [String] -> Args
 parseCommandArgs (command : args) = case command of
     "list" -> ListImports (args !! 0)
     "parse" -> ParseFile (args !! 0)
-    "cabal-list" -> CabalList
+    "packages-list" -> CabalList
     "cabal" -> ParseCabalFile (args !! 0)
     _ -> Error "Unknown command"
 
@@ -42,7 +42,8 @@ run (ParseFile name) = do
     mod <- parseFile name
     putStrLn $ showSDoc tracingDynFlags (ppr $ pm_parsed_source mod)
 run CabalList = do
-    putStrLn "Cabal list"
+    packages <- listPackages
+    forM_ packages putStrLn
 run (ParseCabalFile name) = do
     getCabalFile name
 

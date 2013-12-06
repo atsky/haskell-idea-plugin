@@ -8,6 +8,7 @@ executable ghcApi
   hs-source-dirs:  src
   build-depends:   base,
                    ghc,
+                   hackage-db,
                    Cabal,
                    ghc-paths
 
