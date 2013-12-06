@@ -14,17 +14,20 @@ import org.jetbrains.haskell.fileType.HiFileType;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public final class HaskellProjectComponent implements ProjectComponent {
-    private final Project project;
+    //private final Project project;
    
     public HaskellProjectComponent(Project project, CompilerManager manager) {
-        this.project = project;
+        //this.project = project;
 
-        HashSet<FileType> inputSet = new HashSet<FileType>(Collections.singleton(HaskellFileType.INSTANCE));
-        HashSet<FileType> outputSet = new HashSet<FileType>(Collections.singleton(HiFileType.INSTANCE));
+        CompilerWorkspaceConfiguration.getInstance(project).USE_OUT_OF_PROCESS_BUILD = false;
         manager.addCompilableFileType(HaskellFileType.INSTANCE);
-        manager.addTranslatingCompiler(new HaskellCabalCompiler(project), inputSet, outputSet);
+        manager.addTranslatingCompiler(
+                new HaskellCabalCompiler(project),
+                Collections.<FileType>singleton(HaskellFileType.INSTANCE),
+                Collections.<FileType>singleton(HiFileType.INSTANCE));
     }
 
     public void projectOpened() {
