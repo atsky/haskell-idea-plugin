@@ -15,7 +15,7 @@ public class AddPackageAction(val packages: DefaultListModel<String>) :
     public override fun actionPerformed(e: AnActionEvent?): Unit {
         val dataContext = e!!.getDataContext()
 
-        val project = PlatformDataKeys.PROJECT.getData(dataContext)!!
+        val project = PlatformDataKeys.PROJECT_CONTEXT.getData(dataContext)!!
 
         val packageName = Messages.showInputDialog(project, "Enter package name", "New packge", Messages.getQuestionIcon())
         if (packageName != null) {

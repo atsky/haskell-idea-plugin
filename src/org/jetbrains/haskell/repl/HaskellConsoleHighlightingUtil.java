@@ -1,6 +1,7 @@
 package org.jetbrains.haskell.repl;
 
 import com.intellij.execution.console.LanguageConsoleImpl;
+import com.intellij.execution.console.LanguageConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Key;
 
@@ -18,6 +19,6 @@ final class HaskellConsoleHighlightingUtil {
 
     static void processOutput(LanguageConsoleImpl console, String text, Key<?> attributes) {
         ConsoleViewContentType outputType = ConsoleViewContentType.NORMAL_OUTPUT;
-        LanguageConsoleImpl.printToConsole(console, text, outputType, null);
+        new LanguageConsoleViewImpl(console).print(text, outputType);
     }
 }

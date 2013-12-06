@@ -21,8 +21,6 @@ public final class HaskellProjectComponent implements ProjectComponent {
     public HaskellProjectComponent(Project project, CompilerManager manager) {
         this.project = project;
 
-        CompilerWorkspaceConfiguration.getInstance(project).USE_COMPILE_SERVER = false;
-
         HashSet<FileType> inputSet = new HashSet<FileType>(Collections.singleton(HaskellFileType.INSTANCE));
         HashSet<FileType> outputSet = new HashSet<FileType>(Collections.singleton(HiFileType.INSTANCE));
         manager.addCompilableFileType(HaskellFileType.INSTANCE);
