@@ -108,9 +108,13 @@ class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builde
         return true;
     }
 
+    fun parseName() = start(CabalTokelTypes.NAME) {
+        token(CabalTokelTypes.ID)
+    }
+
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
-            token(CabalTokelTypes.ID) && parseProperties(level)
+            parseName() && parseProperties(level)
         } else {
             false
         }

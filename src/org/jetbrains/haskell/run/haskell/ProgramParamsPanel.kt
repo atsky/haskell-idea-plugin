@@ -21,13 +21,13 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var environmentVariables : EnvironmentVariablesComponent
 
 
-    public fun applyTo(s: HaskellRunConfiguration): Unit {
+    public fun applyTo(s: CabalRunConfiguration): Unit {
         s.setMainFile(moduleComboBox.getSelectedItem() as Module, mainFileComponent.getText())
         s.setProgramParameters(programParametersComponent.getText())
         s.setWorkingDirectory(workingDirectoryComponent.getText())
         s.setEnvs(environmentVariables.getEnvs())
     }
-    public fun reset(s: HaskellRunConfiguration): Unit {
+    public fun reset(s: CabalRunConfiguration): Unit {
         mainFileComponent.setText(s.getMainFile())
         programParametersComponent.setText(s.getProgramParameters())
         workingDirectoryComponent.setText(s.getWorkingDirectory())

@@ -29,19 +29,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
-    private static final Logger LOG = Logger.getInstance("ideah.run.HaskellRunConfiguration");
+public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
+    private static final Logger LOG = Logger.getInstance("ideah.run.CabalRunConfiguration");
 
     private String myWorkingDir;
     private String mainFile;
     private String myProgramParameters;
     private Map<String, String> myEnvs = new HashMap<String, String>();
 
-    public HaskellRunConfiguration(String name, Project project, ConfigurationFactory factory) {
+    public CabalRunConfiguration(String name, Project project, ConfigurationFactory factory) {
         super(name, new RunConfigurationModule(project), factory);
     }
 
-    public HaskellRunConfiguration(Project project, ConfigurationFactory factory) {
+    public CabalRunConfiguration(Project project, ConfigurationFactory factory) {
         this("Haskell", project, factory);
     }
 
@@ -56,8 +56,8 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
     }
 
     @Override
-    protected HaskellRunConfiguration createInstance() {
-        return new HaskellRunConfiguration(getName(), getProject(), getFactory());
+    protected CabalRunConfiguration createInstance() {
+        return new CabalRunConfiguration(getName(), getProject(), getFactory());
     }
 
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
@@ -112,7 +112,8 @@ public final class HaskellRunConfiguration extends ModuleBasedConfiguration<RunC
         if (file == null) {
             return "Unnamed";
         } else {
-            return file.getName();
+            String name = file.getName();
+            return name.substring(0, name.length() - 3);
         }
     }
 

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-final class ConfigurationEditor extends SettingsEditor<HaskellRunConfiguration> {
+final class ConfigurationEditor extends SettingsEditor<CabalRunConfiguration> {
 
     private final ProgramParamsPanel programParams;
 
@@ -14,11 +14,11 @@ final class ConfigurationEditor extends SettingsEditor<HaskellRunConfiguration> 
         programParams = new ProgramParamsPanel(modules);
     }
 
-    protected void applyEditorTo(HaskellRunConfiguration s) {
+    protected void applyEditorTo(CabalRunConfiguration s) {
         programParams.applyTo(s);
     }
 
-    protected void resetEditorFrom(HaskellRunConfiguration s) {
+    protected void resetEditorFrom(CabalRunConfiguration s) {
         programParams.reset(s);
     }
 

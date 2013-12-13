@@ -25,8 +25,12 @@ import org.jetbrains.cabal.CabalInterface
 import javax.swing.SwingUtilities
 import com.sun.awt.AWTUtilities
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationType
+import org.jetbrains.cabal.findCabal
 
-public class HaskellCabalCompiler(val project: Project) : TranslatingCompiler {
+public class CabalCompiler(val project: Project) : TranslatingCompiler {
 
 
     public override fun isCompilableFile(file: VirtualFile?, context: CompileContext?): Boolean {
@@ -54,10 +58,15 @@ public class HaskellCabalCompiler(val project: Project) : TranslatingCompiler {
     private fun compile(context: CompileContext, module: Module): Unit {
         SwingUtilities.invokeAndWait(object : Runnable {
             override fun run() {
-                val process = CabalInterface(module.getProject()).configure()
-                process.waitFor();
-                if (process.exitValue() == 0) {
-                    CabalInterface(module.getProject()).build().waitFor();
+                val cabalInterface = findCabal(module)
+                if (cabalInterface == null) {
+                    Notifications.Bus.notify(Notification("Cabal.Error", "Cabal error", "Can't find cabal file.", NotificationType.ERROR))
+                } else {
+                    val process = cabalInterface.configure()
+                    process.waitFor();
+                    if (process.exitValue() == 0) {
+                        cabalInterface.build().waitFor();
+                    }
                 }
             }
         })

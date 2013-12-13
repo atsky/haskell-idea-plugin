@@ -10,8 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.haskell.fileType.HaskellFile;
-import org.jetbrains.haskell.run.haskell.HaskellRunConfiguration;
-import org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType;
 
 public final class HaskellRunConfigurationProducer extends RuntimeConfigurationProducer {
 
@@ -39,7 +37,7 @@ public final class HaskellRunConfigurationProducer extends RuntimeConfigurationP
             runFile = hsFile;
             Project project = file.getProject();
             RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
-            HaskellRunConfiguration configuration = (HaskellRunConfiguration) settings.getConfiguration();
+            CabalRunConfiguration configuration = (CabalRunConfiguration) settings.getConfiguration();
             configuration.setMainFile(runFile);
             VirtualFile baseDir = project.getBaseDir();
             if (baseDir != null) {

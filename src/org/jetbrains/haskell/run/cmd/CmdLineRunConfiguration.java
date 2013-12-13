@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class CmdLineRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
-    private static final Logger LOG = Logger.getInstance("ideah.run.HaskellRunConfiguration");
+    private static final Logger LOG = Logger.getInstance("ideah.run.CabalRunConfiguration");
 
     private String myWorkingDir;
     private String execFile;

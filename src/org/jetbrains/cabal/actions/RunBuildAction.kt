@@ -7,7 +7,7 @@ import java.io.IOException
 
 public class RunBuildAction() : AnAction() {
     public override fun actionPerformed(e: AnActionEvent?): Unit {
-        CabalInterface(e!!.getProject()!!).build()
+        //CabalInterface(e!!.getProject()!!).build()
     }
 
 

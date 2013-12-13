@@ -29,6 +29,7 @@ public trait CabalTokelTypes {
         val ID: IElementType = HaskellToken("id")
 
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
+        val NAME: IElementType = CabalCompositeElementType("NAME", { Name(it) })
         val PROPERTY_KEY: IElementType = CabalCompositeElementType("PROPERTY_KEY", { PropertyKey(it) })
         val PROPERTY_VALUE: IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
         val EXECUTABLE: IElementType = CabalCompositeElementType("EXECUTABLE", { Executable(it) })

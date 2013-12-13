@@ -19,7 +19,7 @@ public final class HaskellRunConfigurationType implements ConfigurationType {
     public HaskellRunConfigurationType() {
         this.myFactory = new ConfigurationFactoryEx(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
-                return new HaskellRunConfiguration(project, this);
+                return new CabalRunConfiguration(project, this);
             }
         };
     }
@@ -38,7 +38,7 @@ public final class HaskellRunConfigurationType implements ConfigurationType {
 
     @NotNull
     public String getId() {
-        return "HaskellRunConfiguration";
+        return "CabalRunConfiguration";
     }
 
     public ConfigurationFactory[] getConfigurationFactories() {

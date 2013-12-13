@@ -7,14 +7,12 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import org.jetbrains.haskell.compiler.HaskellCabalCompiler;
+import org.jetbrains.haskell.compiler.CabalCompiler;
 
 import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.fileType.HiFileType;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 public final class HaskellProjectComponent implements ProjectComponent {
     //private final Project project;
@@ -25,7 +23,7 @@ public final class HaskellProjectComponent implements ProjectComponent {
         CompilerWorkspaceConfiguration.getInstance(project).USE_OUT_OF_PROCESS_BUILD = false;
         manager.addCompilableFileType(HaskellFileType.INSTANCE);
         manager.addTranslatingCompiler(
-                new HaskellCabalCompiler(project),
+                new CabalCompiler(project),
                 Collections.<FileType>singleton(HaskellFileType.INSTANCE),
                 Collections.<FileType>singleton(HiFileType.INSTANCE));
     }
