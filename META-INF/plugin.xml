@@ -5,7 +5,7 @@
   <vendor url="https://github.com/Atsky/haskell-idea-plugin">JetBrains</vendor>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="123.72"/>
+  <idea-version since-build="133.193"/>
 
   <application-components>
     <!-- Add your application components here -->
@@ -23,6 +23,11 @@
       <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
               text="Haskell module" description="Create new Haskell module">
           <add-to-group group-id="NewGroup" anchor="first"/>
+      </action>
+
+      <action id="Cabal.Update" class="org.jetbrains.cabal.actions.UpdateModule"
+              text="Update module" description="Update module">
+          <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       </action>
 
       <group id="Cabal.Buld.Group"
@@ -82,7 +87,7 @@
       <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
       <completion.contributor language="Haskell"
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
-      <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" />
+      <!-- <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" /> -->
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
       <lang.parserDefinition language="Haskell"
