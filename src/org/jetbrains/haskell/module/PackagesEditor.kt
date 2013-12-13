@@ -14,9 +14,10 @@ import com.intellij.openapi.project.Project
 import java.util.Collections
 import javax.swing.event.ListDataListener
 import javax.swing.event.ListDataEvent
+import java.util.Enumeration
 
 public class PackagesEditor(state: ModuleConfigurationState, val project : Project) : ModuleElementsEditor(state) {
-    val packages = DefaultListModel<String>()
+    val packages = DefaultListModel()
 
     protected override fun createComponentImpl(): JComponent {
         val resultPanel = JPanel(BorderLayout())
@@ -43,7 +44,8 @@ public class PackagesEditor(state: ModuleConfigurationState, val project : Proje
         return true;
     }
     public override fun saveData(): Unit {
-        CabalPackagesContainer.getInstance(project).getState()!!.myPackages = Collections.list(packages.elements());
+        CabalPackagesContainer.getInstance(project).getState()!!.myPackages =
+                Collections.list(packages.elements() as Enumeration<Any?>) as List<String>;
     }
 
     public override fun getDisplayName(): String {

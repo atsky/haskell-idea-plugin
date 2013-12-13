@@ -48,7 +48,7 @@ public open class CabalInterface(project: Project) {
     }
 
     public open fun build(): Process =
-        runCommand(findCabal()!!, "build")
+        runCommand(findCabal(), "build")
 
     public open fun clean(): Unit {
         runCommand(findCabal(), "clean")

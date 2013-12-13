@@ -19,8 +19,7 @@ public open class UpdateModule() : AnAction() {
         val project = anActionEvent.getProject()!!
         val projectFileIndex = ProjectRootManager.getInstance(project)!!.getFileIndex()
         val module = projectFileIndex.getModuleForFile(file.getVirtualFile()!!)!!
-        //module.get
-        System.out.println(module.getName())
+        //System.out.println(module.getName())
     }
 
 

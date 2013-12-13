@@ -30,17 +30,17 @@ public class HaskellHighlighter extends SyntaxHighlighterBase {
 
   public static final TextAttributesKey STRING_LITERAL = TextAttributesKey.createTextAttributesKey(
     "STRING_LITERAL",
-    DefaultLanguageHighlighterColors.STRING.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.STRING
   );
 
   public static final TextAttributesKey KEYWORD_VALUE = TextAttributesKey.createTextAttributesKey(
     "KEYWORD.VALUE",
-    DefaultLanguageHighlighterColors.KEYWORD.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.KEYWORD
   );
 
   public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey(
     "COMMENT",
-    DefaultLanguageHighlighterColors.LINE_COMMENT.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.LINE_COMMENT
   );
 
   public static final TextAttributesKey TYPE = TextAttributesKey.createTextAttributesKey(
