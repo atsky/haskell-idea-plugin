@@ -31,9 +31,10 @@ import java.util.Map;
 
 public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
     private static final Logger LOG = Logger.getInstance("ideah.run.CabalRunConfiguration");
+    public static final String EXECUTABLE_NAME_ELEMENT = "executableName";
 
     private String myWorkingDir;
-    private String mainFile;
+    private String executableName;
     private String myProgramParameters;
     private Map<String, String> myEnvs = new HashMap<String, String>();
 
@@ -74,46 +75,31 @@ public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunCon
     @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
         super.checkConfiguration();
-        VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(this.mainFile);
-        if (file == null || !file.exists())
-            throw new RuntimeConfigurationException("Main file does not exist");
     }
 
     // getters/setters
 
 
-    public String getMainFile() {
-        return ExternalizablePath.localPathValue(mainFile);
+    public String getExecutableName() {
+        return executableName;
     }
 
-    public void setMainFile(HaskellFile mainFile) {
-        VirtualFile file = mainFile.getVirtualFile();
-        if (file != null) {
-            this.mainFile = file.getUrl();
-            Module module = getDeclModule(mainFile);
-            setModule(module);
-        }
+    public void setExecutableName(String name) {
+        executableName = name;
     }
 
     public void setMainFile(Module module, String path) {
         setModule(module);
-        this.mainFile = ExternalizablePath.urlValue(path);
+        this.executableName = ExternalizablePath.urlValue(path);
     }
 
 
     @Override
     public String suggestedName() {
-        VirtualFile file;
-        if (mainFile == null) {
-            file = null;
+        if (executableName != null) {
+            return executableName;
         } else {
-            file = VirtualFileManager.getInstance().findFileByUrl(mainFile);
-        }
-        if (file == null) {
             return "Unnamed";
-        } else {
-            String name = file.getName();
-            return name.substring(0, name.length() - 3);
         }
     }
 
@@ -121,13 +107,13 @@ public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunCon
         PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
         readModule(element);
-        mainFile = JDOMExternalizer.readString(element, "mainFile");
+        executableName = JDOMExternalizer.readString(element, EXECUTABLE_NAME_ELEMENT);
     }
 
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         writeModule(element);
-        JDOMExternalizer.write(element, "mainFile", mainFile);
+        JDOMExternalizer.write(element, EXECUTABLE_NAME_ELEMENT, executableName);
         PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
     }
 

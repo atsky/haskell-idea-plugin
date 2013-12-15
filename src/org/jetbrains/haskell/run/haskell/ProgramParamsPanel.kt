@@ -28,7 +28,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
         s.setEnvs(environmentVariables.getEnvs())
     }
     public fun reset(s: CabalRunConfiguration): Unit {
-        mainFileComponent.setText(s.getMainFile())
+        mainFileComponent.setText(s.getExecutableName())
         programParametersComponent.setText(s.getProgramParameters())
         workingDirectoryComponent.setText(s.getWorkingDirectory())
         moduleComboBox.setSelectedItem(s.getModule())

@@ -47,21 +47,21 @@ public class CabalToolWindowFactory implements ToolWindowFactory {
         panel.add(new JButton(new AbstractAction("Configure") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CabalInterface(myProject).configure();
+                //new CabalInterface(myProject).configure();
             }
         }));
 
         panel.add(new JButton(new AbstractAction("Build") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CabalInterface(myProject).build();
+                //new CabalInterface(myProject).build();
             }
         }));
 
         panel.add(new JButton(new AbstractAction("Clean") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new CabalInterface(myProject).clean();
+                //new CabalInterface(myProject).clean();
             }
         }));
         return panel;

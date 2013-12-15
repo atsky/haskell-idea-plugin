@@ -37,7 +37,7 @@ class HaskellCommandLineState(environment: ExecutionEnvironment, val configurati
         val path = File(module.getModuleFilePath())
         commandLine.setWorkDirectory(path.getParent())
         commandLine.setExePath(exePath)
-        commandLine.addParameter(configuration.getMainFile()!!)
+        commandLine.addParameter(configuration.getExecutableName()!!)
         return commandLine
     }
 

@@ -39,10 +39,12 @@ public class CabalCompiler(val project: Project) : TranslatingCompiler {
     }
 
 
-    override fun compile(context: CompileContext?, moduleChunk: Chunk<Module>?, files: Array<out VirtualFile>?, sink: TranslatingCompiler.OutputSink?) {
-
+    override fun compile(context: CompileContext?,
+                         moduleChunk: Chunk<Module>?,
+                         files: Array<out VirtualFile>?,
+                         sink: TranslatingCompiler.OutputSink?) {
         for (module : Module in moduleChunk!!.getNodes()!!) {
-            compile(context!!, module);
+            compileModule(context!!, module);
         }
 
     }
@@ -55,7 +57,7 @@ public class CabalCompiler(val project: Project) : TranslatingCompiler {
         return true
     }
 
-    private fun compile(context: CompileContext, module: Module): Unit {
+    private fun compileModule(context: CompileContext, module: Module): Unit {
         SwingUtilities.invokeAndWait(object : Runnable {
             override fun run() {
                 val cabalInterface = findCabal(module)
@@ -65,7 +67,13 @@ public class CabalCompiler(val project: Project) : TranslatingCompiler {
                     val process = cabalInterface.configure()
                     process.waitFor();
                     if (process.exitValue() == 0) {
-                        cabalInterface.build().waitFor();
+                        val process2 = cabalInterface.build();
+                        process2.waitFor();
+                        if (process2.exitValue() != 0) {
+                            context.addMessage(CompilerMessageCategory.ERROR, "Cabal build failed", null, -1, -1)
+                        }
+                    } else {
+                        context.addMessage(CompilerMessageCategory.ERROR, "Cabal configure failed", null, -1, -1)
                     }
                 }
             }
