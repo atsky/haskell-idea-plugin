@@ -2,7 +2,6 @@ package org.jetbrains.haskell.run.haskell;
 
 import com.intellij.execution.CommonProgramRunConfigurationParameters;
 import com.intellij.execution.Executor;
-import com.intellij.execution.ExternalizablePath;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -17,12 +16,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.haskell.fileType.HaskellFile;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,9 +29,13 @@ import java.util.Map;
 public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
     private static final Logger LOG = Logger.getInstance("ideah.run.CabalRunConfiguration");
     public static final String EXECUTABLE_NAME_ELEMENT = "executableName";
+    public static final String PARAMETERS_ELEMENT = "parameters";
+    public static final String WORKING_DIR = "workingDir";
+    public static final String ENVIRONMENT_VARIABLES = "environmetVariables";
+    public static final String VAR_ENTRY_NAME = "var";
 
     private String myWorkingDir;
-    private String executableName;
+    private String myExecutableName;
     private String myProgramParameters;
     private Map<String, String> myEnvs = new HashMap<String, String>();
 
@@ -80,24 +81,19 @@ public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunCon
     // getters/setters
 
 
-    public String getExecutableName() {
-        return executableName;
+    public String getMyExecutableName() {
+        return myExecutableName;
     }
 
-    public void setExecutableName(String name) {
-        executableName = name;
-    }
-
-    public void setMainFile(Module module, String path) {
-        setModule(module);
-        this.executableName = ExternalizablePath.urlValue(path);
+    public void setMyExecutableName(String name) {
+        myExecutableName = name;
     }
 
 
     @Override
     public String suggestedName() {
-        if (executableName != null) {
-            return executableName;
+        if (myExecutableName != null) {
+            return myExecutableName;
         } else {
             return "Unnamed";
         }
@@ -107,13 +103,19 @@ public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunCon
         PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
         readModule(element);
-        executableName = JDOMExternalizer.readString(element, EXECUTABLE_NAME_ELEMENT);
+        myExecutableName = JDOMExternalizer.readString(element, EXECUTABLE_NAME_ELEMENT);
+        myProgramParameters = JDOMExternalizer.readString(element, PARAMETERS_ELEMENT);
+        myWorkingDir = JDOMExternalizer.readString(element, WORKING_DIR);
+        JDOMExternalizer.readMap(element, myEnvs, ENVIRONMENT_VARIABLES, VAR_ENTRY_NAME);
     }
 
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         writeModule(element);
-        JDOMExternalizer.write(element, EXECUTABLE_NAME_ELEMENT, executableName);
+        JDOMExternalizer.write(element, EXECUTABLE_NAME_ELEMENT, myExecutableName);
+        JDOMExternalizer.write(element, PARAMETERS_ELEMENT, myProgramParameters);
+        JDOMExternalizer.write(element, WORKING_DIR, myWorkingDir);
+        JDOMExternalizer.writeMap(element, myEnvs, ENVIRONMENT_VARIABLES, VAR_ENTRY_NAME);
         PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
     }
 

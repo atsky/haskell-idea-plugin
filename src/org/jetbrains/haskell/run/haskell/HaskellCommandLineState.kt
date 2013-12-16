@@ -22,22 +22,23 @@ class HaskellCommandLineState(environment: ExecutionEnvironment, val configurati
     private fun createCommandLine(): GeneralCommandLine {
         val module = configuration.getModule()!!
 
-        val psiFile = findCabal(module)?.getPsiFile()!!
-        val name = psiFile.getExecutables()[0].getExecutableName()
-
+        val name = configuration.getMyExecutableName()!!
         val commandLine = GeneralCommandLine()
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
         val exePath = baseDir + File.separator + "dist" + File.separator + "build" + File.separator + name + File.separator + name
 
         if (!File(exePath).exists()) {
-            throw CantRunException("Cannot find runghc executable")
+            throw CantRunException("Cannot run: " + exePath)
         }
 
         val path = File(module.getModuleFilePath())
         commandLine.setWorkDirectory(path.getParent())
         commandLine.setExePath(exePath)
-        commandLine.addParameter(configuration.getExecutableName()!!)
+        val parameters = configuration.getProgramParameters()
+        if (parameters != null) {
+            commandLine.addParameter(parameters)
+        }
         return commandLine
     }
 

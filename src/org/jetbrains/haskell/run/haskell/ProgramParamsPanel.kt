@@ -14,7 +14,7 @@ import java.awt.Insets
 import org.jetbrains.haskell.run.ModuleComboBoxRenderer
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
-    private var mainFileComponent: TextFieldWithBrowseButton
+    private var executableComponent: TextFieldWithBrowseButton
     private var moduleComboBox: JComboBox
     private var programParametersComponent : RawCommandLineEditor
     private var workingDirectoryComponent : TextFieldWithBrowseButton
@@ -22,13 +22,14 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
 
 
     public fun applyTo(s: CabalRunConfiguration): Unit {
-        s.setMainFile(moduleComboBox.getSelectedItem() as Module, mainFileComponent.getText())
+        s.setModule(moduleComboBox.getSelectedItem() as Module)
+        s.setMyExecutableName(executableComponent.getText())
         s.setProgramParameters(programParametersComponent.getText())
         s.setWorkingDirectory(workingDirectoryComponent.getText())
         s.setEnvs(environmentVariables.getEnvs())
     }
     public fun reset(s: CabalRunConfiguration): Unit {
-        mainFileComponent.setText(s.getExecutableName())
+        executableComponent.setText(s.getMyExecutableName())
         programParametersComponent.setText(s.getProgramParameters())
         workingDirectoryComponent.setText(s.getWorkingDirectory())
         moduleComboBox.setSelectedItem(s.getModule())
@@ -37,8 +38,8 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
 
     {
         this.setLayout(GridBagLayout())
-        mainFileComponent = TextFieldWithBrowseButton();
-        mainFileComponent.addBrowseFolderListener("Main file", "Main File", null, FileChooserDescriptor(true, false, false, false, true, false))
+        executableComponent = TextFieldWithBrowseButton();
+        executableComponent.addBrowseFolderListener("Main file", "Main File", null, FileChooserDescriptor(true, false, false, false, true, false))
         moduleComboBox = JComboBox(DefaultComboBoxModel(modules))
         moduleComboBox.setRenderer(ModuleComboBoxRenderer())
 
@@ -61,7 +62,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
             weightx = 0.1
         })
 
-        add(mainFileComponent, base().setConstraints {
+        add(executableComponent, base().setConstraints {
             gridx = 1
             fill = GridBagConstraints.HORIZONTAL
             weightx = 1.0

@@ -1,7 +1,5 @@
 package org.jetbrains.haskell.run.haskell;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.openapi.diagnostic.Logger;
@@ -44,7 +42,7 @@ public final class CabalRunConfigurationProducer extends RunConfigurationProduce
             CabalFile psiFile = CabalPackage.findCabal(module).getPsiFile();
             String name = psiFile.getExecutables().get(0).getExecutableName();
 
-            configuration.setExecutableName(name);
+            configuration.setMyExecutableName(name);
             configuration.setModule(module);
 
             VirtualFile baseDir = project.getBaseDir();
