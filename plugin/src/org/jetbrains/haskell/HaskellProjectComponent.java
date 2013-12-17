@@ -1,6 +1,5 @@
 package org.jetbrains.haskell;
 
-import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.fileTypes.FileType;
@@ -20,7 +19,7 @@ public final class HaskellProjectComponent implements ProjectComponent {
     public HaskellProjectComponent(Project project, CompilerManager manager) {
         //this.project = project;
 
-        CompilerWorkspaceConfiguration.getInstance(project).USE_OUT_OF_PROCESS_BUILD = false;
+        //CompilerWorkspaceConfiguration.getInstance(project).USE_OUT_OF_PROCESS_BUILD = false;
         manager.addCompilableFileType(HaskellFileType.INSTANCE);
         manager.addTranslatingCompiler(
                 new CabalCompiler(project),

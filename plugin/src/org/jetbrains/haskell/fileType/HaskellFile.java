@@ -5,7 +5,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.HaskellLanguage;
 
 public class HaskellFile extends PsiFileBase {

@@ -4,7 +4,6 @@ import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.process.ColoredProcessHandler;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.haskell.fileType.HaskellFileType;
 
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;

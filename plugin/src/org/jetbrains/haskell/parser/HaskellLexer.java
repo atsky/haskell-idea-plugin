@@ -2,7 +2,6 @@ package org.jetbrains.haskell.parser;
 
 import com.intellij.lexer.FlexAdapter;
 
-import java.io.InputStream;
 import java.io.Reader;
 
 /**

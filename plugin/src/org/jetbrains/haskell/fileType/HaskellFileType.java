@@ -1,34 +1,34 @@
-package org.jetbrains.cabal;
+package org.jetbrains.haskell.fileType;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.haskell.HaskellLanguage;
 import org.jetbrains.haskell.icons.HaskellIcons;
 
 import javax.swing.*;
 
-public class CabalFileType extends LanguageFileType {
-    public static final CabalFileType INSTANCE = new CabalFileType();
+public class HaskellFileType extends LanguageFileType {
+    public static final HaskellFileType INSTANCE = new HaskellFileType();
     @NonNls
-    public static final String DEFAULT_EXTENSION = "cabal";
+    public static final String DEFAULT_EXTENSION = "hs";
 
     private Icon myIcon;
 
-    private CabalFileType() {
-        super(CabalLanguage.INSTANCE);
-        myIcon = HaskellIcons.CABAL;
+    private HaskellFileType() {
+        super(HaskellLanguage.INSTANCE);
+        myIcon = HaskellIcons.DEFAULT;
     }
 
     @NotNull
     public String getName() {
-        return "Cabal file";
+        return "Haskell file";
     }
 
     @NotNull
     public String getDescription() {
-        return "Cabal file";
+        return "Haskell file";
     }
 
     @NotNull

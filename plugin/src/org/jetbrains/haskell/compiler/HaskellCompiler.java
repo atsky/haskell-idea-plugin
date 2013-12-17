@@ -18,10 +18,8 @@ import com.intellij.util.Chunk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.module.HaskellModuleType;
-import org.jetbrains.haskell.util.ProcessRunner;
 
 
-import java.io.IOException;
 import java.util.*;
 
 public final class HaskellCompiler implements TranslatingCompiler {

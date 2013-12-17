@@ -2,7 +2,6 @@ package org.jetbrains.haskell.module;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.icons.HaskellIcons;
 

@@ -2,7 +2,6 @@
 
 package org.jetbrains.haskell.parser;
 
-import java.util.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.*;
 import org.jetbrains.haskell.parser.token.*;
