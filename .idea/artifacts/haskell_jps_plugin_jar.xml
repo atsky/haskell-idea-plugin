@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/lib/</output-path>
     <root id="archive" name="haskell-jps-plugin.jar">
       <element id="module-output" name="jps-plugin" />
+      <element id="module-output" name="common" />
     </root>
   </artifact>
 </component>

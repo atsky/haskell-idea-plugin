@@ -16,78 +16,105 @@
 package org.jetbrains.jps.cabal;
 
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.SystemProperties;
-import com.intellij.util.containers.ContainerUtilRt;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.ClassReader;
 import org.jetbrains.jps.ModuleChunk;
-import org.jetbrains.jps.ProjectPaths;
-import org.jetbrains.jps.builders.BuildRootIndex;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
-import org.jetbrains.jps.builders.FileProcessor;
-import org.jetbrains.jps.builders.java.JavaBuilderUtil;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
-import org.jetbrains.jps.builders.java.dependencyView.Callbacks;
-import org.jetbrains.jps.builders.java.dependencyView.Mappings;
-import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
-import org.jetbrains.jps.cmdline.ClasspathBootstrap;
-import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.*;
-import org.jetbrains.jps.incremental.java.ClassPostProcessor;
-import org.jetbrains.jps.incremental.java.JavaBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
-import org.jetbrains.jps.javac.OutputFileObject;
-import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.java.JpsJavaSdkType;
-import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerConfiguration;
-import org.jetbrains.jps.model.library.sdk.JpsSdk;
-import org.jetbrains.jps.service.JpsServiceManager;
-import org.jetbrains.jps.service.SharedThreadPool;
+import org.jetbrains.jps.model.module.JpsModule;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
-import java.util.concurrent.Future;
 
 
 public class CabalBuilder extends ModuleLevelBuilder {
 
 
-  public CabalBuilder() {
-    super(BuilderCategory.TRANSLATOR);
-  }
+    public CabalBuilder() {
+        super(BuilderCategory.TRANSLATOR);
+    }
 
 
-  public ExitCode build(final CompileContext context,
-                                           ModuleChunk chunk,
-                                           DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
-                                           OutputConsumer outputConsumer) throws ProjectBuildException {
-      return ExitCode.ABORT;
-  }
+    public ExitCode build(final CompileContext context,
+                          final ModuleChunk chunk,
+                          final DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
+                          final OutputConsumer outputConsumer) throws ProjectBuildException {
+        try {
+            for (JpsModule module : chunk.getModules()) {
+                File cabalFile = getCabalFile(module);
+                CabalJspInterface cabal = new CabalJspInterface(cabalFile);
+
+                context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
+
+                Process process = cabal.configure();
+
+                BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
+                String line;
+                StringBuilder text = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    text.append(line).append("\n");
+                }
+
+                if (process.waitFor() != 0) {
+                    context.processMessage(new CompilerMessage(
+                            "cabal",
+                            BuildMessage.Kind.ERROR,
+                            "configure failed: " + text.toString()));
+                    return ExitCode.ABORT;
+                }
+                context.processMessage(new CompilerMessage("ghc", BuildMessage.Kind.INFO, "Start build"));
+                if (cabal.build().waitFor() == 0) {
+                    return ExitCode.OK;
+                } else {
+                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build error: " + text.toString()));
+                }
+            }
+            return ExitCode.ABORT;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ExitCode.ABORT;
+    }
+
+    private File getCabalFile(JpsModule module) {
+        String url = module.getContentRootsList().getUrls().get(0);
+        try {
+            for (File file : new File(new URL(url).getFile()).listFiles()) {
+                if (file.getName().endsWith(".cabal")) {
+                    return file;
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
-  @Override
-  public List<String> getCompilableFileExtensions() {
-    return Arrays.asList("hs");
-  }
 
-  @Override
-  public String toString() {
-    return getPresentableName();
-  }
+    @Override
+    public List<String> getCompilableFileExtensions() {
+        return Arrays.asList("hs");
+    }
 
-  @NotNull
-  public String getPresentableName() {
-    return "Cabal builder";
-  }
+    @Override
+    public String toString() {
+        return getPresentableName();
+    }
+
+    @NotNull
+    public String getPresentableName() {
+        return "Cabal builder";
+    }
 
 }

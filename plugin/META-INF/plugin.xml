@@ -25,29 +25,7 @@
           <add-to-group group-id="NewGroup" anchor="first"/>
       </action>
 
-      <action id="Cabal.Update" class="org.jetbrains.cabal.actions.UpdateModule"
-              text="Update module" description="Update module">
-          <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-      </action>
-
-      <group id="Cabal.Buld.Group"
-             text="Cabal"
-             description="Cabal"
-             popup="true">
-
-          <action id="Cabal.Buld.Configure"
-                  class="org.jetbrains.cabal.actions.RunConfigureAction"
-                  text="Cabal configure">
-          </action>
-
-          <action id="Cabal.Buld.Build"
-                  class="org.jetbrains.cabal.actions.RunBuildAction"
-                  text="Cabal build">
-          </action>
-
-          <add-to-group group-id="BuildMenu" anchor="last"/>
-      </group>
-
+<!--
       <group id="Haskell.REPL.Group"
              class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
              text="Haskell REPL" description="Haskell" popup="true">
@@ -61,7 +39,7 @@
 
           <add-to-group group-id="ToolsMenu" anchor="last"/>
       </group>
-
+-->
       <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
               class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
               text="Load/Reload Current File in REPL...">

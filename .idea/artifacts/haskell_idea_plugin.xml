@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact name="haskell-idea-plugin">
-    <output-path>$PROJECT_DIR$/out/artifacts/haskell_idea_plugin</output-path>
-    <root id="root">
-      <element id="module-output" name="haskell-plugin" />
-      <element id="library" level="project" name="KotlinJavaRuntime" />
-    </root>
-  </artifact>
-</component>
