@@ -22,14 +22,11 @@ import org.jetbrains.jps.incremental.ModuleLevelBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author peter
- */
 public class CabalBuilderService extends BuilderService {
   @NotNull
   @Override
   public List<? extends ModuleLevelBuilder> createModuleLevelBuilders() {
-    return Arrays.asList(new org.jetbrains.jps.incremental.groovy.GroovyBuilder(true));
+    return Arrays.asList(new CabalBuilder());
   }
 
 }

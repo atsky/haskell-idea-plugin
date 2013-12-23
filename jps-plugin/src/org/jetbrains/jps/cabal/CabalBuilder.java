@@ -64,7 +64,6 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
   public CabalBuilder() {
     super(BuilderCategory.TRANSLATOR);
-
   }
 
 
@@ -72,15 +71,9 @@ public class CabalBuilder extends ModuleLevelBuilder {
                                            ModuleChunk chunk,
                                            DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
                                            OutputConsumer outputConsumer) throws ProjectBuildException {
+      return ExitCode.ABORT;
   }
 
-
-
-  @Override
-  public void chunkBuildFinished(CompileContext context, ModuleChunk chunk) {
-    JavaBuilderUtil.cleanupChunkResources(context);
-    STUB_TO_SRC.set(context, null);
-  }
 
   @Override
   public List<String> getCompilableFileExtensions() {
