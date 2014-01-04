@@ -49,7 +49,7 @@ public class CabalBuilder() : ModuleLevelBuilder(BuilderCategory.TRANSLATOR) {
 
     private fun runBuild(context: CompileContext, cabal: CabalJspInterface): Boolean {
         context.processMessage(ProgressMessage("Cabal build"))
-        val buildProcess = cabal.build()!!
+        val buildProcess = cabal.build()
         processCabalOutput(context, collectOutput(buildProcess))
         if (buildProcess.waitFor() != 0) {
             context.processMessage(CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build errors."))
@@ -61,7 +61,7 @@ public class CabalBuilder() : ModuleLevelBuilder(BuilderCategory.TRANSLATOR) {
 
     private fun runConfinguration(context: CompileContext, cabal: CabalJspInterface): Boolean {
         context.processMessage(CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"))
-        val configureProcess = cabal.configure()!!
+        val configureProcess = cabal.configure()
         processCabalOutput(context, collectOutput(configureProcess))
         if (configureProcess.waitFor() != 0) {
             context.processMessage(CompilerMessage("cabal", BuildMessage.Kind.ERROR, "configure failed."))
@@ -72,17 +72,13 @@ public class CabalBuilder() : ModuleLevelBuilder(BuilderCategory.TRANSLATOR) {
         return false
     }
     private fun processCabalOutput(context: CompileContext, processOut: Iterator<String>): Unit {
-        while (processOut.hasNext()!!)
-        {
+        while (processOut.hasNext()) {
             val line = processOut.next()
             val warningPrefix = "Warning: "
-            if (line.startsWith(warningPrefix)!!)
-            {
-                val text = line.substring(warningPrefix.length()!!) + "\n" + processOut.next()
+            if (line.startsWith(warningPrefix)) {
+                val text = line.substring(warningPrefix.length()) + "\n" + processOut.next()
                 context.processMessage(CompilerMessage("cabal", BuildMessage.Kind.WARNING, text))
-            }
-            else
-            {
+            } else {
                 context.processMessage(CompilerMessage("cabal", BuildMessage.Kind.INFO, line))
             }
         }
@@ -97,16 +93,12 @@ public class CabalBuilder() : ModuleLevelBuilder(BuilderCategory.TRANSLATOR) {
             }
 
             private fun fetch(): String? {
-                if (line == null)
-                {
-                    try
-                    {
+                if (line == null) {
+                    try {
                         line = reader.readLine()
-                    }
-                    catch (e: IOException) {
+                    } catch (e: IOException) {
                         e.printStackTrace()
                     }
-
                 }
 
                 return line
@@ -120,17 +112,20 @@ public class CabalBuilder() : ModuleLevelBuilder(BuilderCategory.TRANSLATOR) {
 
         }
     }
-    private fun getCabalFile(module: JpsModule): File? {
+
+    private fun getContentRoot(module: JpsModule): String {
         val url = module.getContentRootsList().getUrls().get(0)
+        return URL(url).getFile()!!
+    }
+
+    private fun getCabalFile(module: JpsModule): File? {
         try {
-            for (file in File(URL(url).getFile()!!).listFiles()!!) {
+            for (file in File(getContentRoot(module)).listFiles()!!) {
                 if (file.getName().endsWith(".cabal")) {
                     return file
                 }
-
             }
-        }
-        catch (e: MalformedURLException) {
+        } catch (e: MalformedURLException) {
             e.printStackTrace()
         }
 
