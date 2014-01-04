@@ -6,6 +6,8 @@ import Distribution.Package
 import Distribution.Verbosity
 import qualified Distribution.Hackage.DB as DB
 import Distribution.Text ( display )
+import System.Directory
+import System.FilePath
 import Data.List
 import SExpr
 
@@ -18,9 +20,13 @@ getCabalFile path = do
     package <- readPackageDescription silent path
     putStrLn $ show $ map dependencyToName $ condTreeConstraints (snd ((condExecutables package) !! 0))
 
+getDefaultCabalDir :: IO FilePath
+getDefaultCabalDir = getAppUserDataDirectory "cabal"
+
 listPackages :: IO [String]
 listPackages = do
-   db <- DB.readHackage
+   cabalDir <- getDefaultCabalDir
+   db <- DB.readHackage' (joinPath [cabalDir, "packages", "hackage.haskell.org", "00-index.tar"])
    let packages = concat $ map DB.elems (DB.elems db)
    let grouppedPackages = groupBy (\a b -> pkgName a == pkgName b) (map (package . packageDescription) packages)
    let packageVersions = map (\x -> (pkgName $ head x, map pkgVersion x)) grouppedPackages

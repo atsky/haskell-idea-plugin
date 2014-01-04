@@ -11,5 +11,6 @@ executable ghcApi
                    hackage-db,
                    Cabal,
                    json,
-                   ghc-paths
+                   ghc-paths,
+                   directory
 

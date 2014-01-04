@@ -61,7 +61,7 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-      <compileServer.plugin classpath="haskell-jps-plugin.jar"/>
+      <compileServer.plugin classpath="haskell-jps-plugin.jar;kotlin-runtime.jar"/>
       <fileTypeFactory implementation="org.jetbrains.haskell.fileType.HaskellFileTypeFactory"/>
       <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
       <completion.contributor language="Haskell"
