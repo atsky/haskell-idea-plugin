@@ -12,6 +12,8 @@ import org.jetbrains.cabal.CabalFile
 import org.jetbrains.haskell.compiler.GHCInterface
 import java.io.File
 import org.jetbrains.cabal.findCabal
+import org.jetbrains.haskell.util.joinPath
+import org.jetbrains.haskell.util.OS
 
 class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -26,7 +28,9 @@ class HaskellCommandLineState(environment: ExecutionEnvironment, val configurati
         val commandLine = GeneralCommandLine()
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
-        val exePath = baseDir + File.separator + "dist" + File.separator + "build" + File.separator + name + File.separator + name
+
+        val executableName = if (OS.isWindows) name + ".exe" else name
+        val exePath = joinPath(baseDir!!, "dist", "build", name, executableName)
 
         if (!File(exePath).exists()) {
             throw CantRunException("Cannot run: " + exePath)

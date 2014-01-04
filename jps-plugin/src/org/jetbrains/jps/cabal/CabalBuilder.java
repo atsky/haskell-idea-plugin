@@ -54,27 +54,42 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
                 context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
 
-                Process process = cabal.configure();
+                Process configureProcess = cabal.configure();
 
-                BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
-                String line;
-                StringBuilder text = new StringBuilder();
-                while ((line = reader.readLine()) != null) {
-                    text.append(line).append("\n");
+                Iterator<String> processOut = collectOutput(configureProcess);
+
+                while (processOut.hasNext()) {
+                    String line = processOut.next();
+                    String warningPrefix = "Warning: ";
+                    if (line.startsWith(warningPrefix)) {
+                        String text = line.substring(warningPrefix.length()) + "\n" + processOut.next();
+                        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.WARNING, text));
+                    } else {
+                        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, line));
+                    }
                 }
 
-                if (process.waitFor() != 0) {
+                if (configureProcess.waitFor() != 0) {
                     context.processMessage(new CompilerMessage(
                             "cabal",
                             BuildMessage.Kind.ERROR,
-                            "configure failed: " + text.toString()));
+                            "configure failed."));
                     return ExitCode.ABORT;
                 }
+                context.processMessage(new ProgressMessage("Build build"));
                 context.processMessage(new CompilerMessage("ghc", BuildMessage.Kind.INFO, "Start build"));
-                if (cabal.build().waitFor() == 0) {
+                Process buildProcess = cabal.build();
+                processOut = collectOutput(buildProcess);
+
+                while (processOut.hasNext()) {
+                    String line = processOut.next();
+                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, line));
+                }
+
+                if (buildProcess.waitFor() == 0) {
                     return ExitCode.OK;
                 } else {
-                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build error: " + text.toString()));
+                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build errors."));
                 }
             }
             return ExitCode.ABORT;
@@ -84,6 +99,42 @@ public class CabalBuilder extends ModuleLevelBuilder {
             e.printStackTrace();
         }
         return ExitCode.ABORT;
+    }
+
+    private Iterator<String> collectOutput(Process process) throws IOException {
+        final BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
+        return new Iterator<String>() {
+
+            String line = null;
+
+            @Override
+            public boolean hasNext() {
+                return fetch() != null;
+            }
+
+            private String fetch() {
+                if (line == null) {
+                    try {
+                        line = reader.readLine();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return line;
+            }
+
+            @Override
+            public String next() {
+                String result = fetch();
+                line = null;
+                return result;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
     private File getCabalFile(JpsModule module) {

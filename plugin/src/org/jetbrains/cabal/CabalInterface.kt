@@ -61,11 +61,8 @@ public open class CabalInterface(val project: Project, val cabalFile: VirtualFil
     }
 
     private open fun findCabal(): String? {
-        var cabalFile: VirtualFile? = null;
-
         for (file : VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
             if ("cabal".equals(file?.getExtension())) {
-                cabalFile = file;
                 val cachedDocument: Document? = FileDocumentManager.getInstance()?.getCachedDocument(file!!)
                 if (cachedDocument != null) {
                     ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {

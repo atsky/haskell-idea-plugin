@@ -6,6 +6,7 @@ import Distribution.Package
 import Distribution.Verbosity
 import qualified Distribution.Hackage.DB as DB
 import Distribution.Text ( display )
+import Data.List
 import SExpr
 
 
@@ -21,5 +22,7 @@ listPackages :: IO [String]
 listPackages = do
    db <- DB.readHackage
    let packages = concat $ map DB.elems (DB.elems db)
-   return (map (show . package . packageDescription) packages)
+   let grouppedPackages = groupBy (\a b -> pkgName a == pkgName b) (map (package . packageDescription) packages)
+   let packageVersions = map (\x -> (pkgName $ head x, map pkgVersion x)) grouppedPackages
+   return (map show packageVersions)
 
