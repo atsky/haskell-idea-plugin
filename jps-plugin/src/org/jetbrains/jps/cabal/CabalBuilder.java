@@ -33,6 +33,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CabalBuilder extends ModuleLevelBuilder {
@@ -52,47 +54,10 @@ public class CabalBuilder extends ModuleLevelBuilder {
                 File cabalFile = getCabalFile(module);
                 CabalJspInterface cabal = new CabalJspInterface(cabalFile);
 
-                context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
-
-                Process configureProcess = cabal.configure();
-
-                Iterator<String> processOut = collectOutput(configureProcess);
-
-                while (processOut.hasNext()) {
-                    String line = processOut.next();
-                    String warningPrefix = "Warning: ";
-                    if (line.startsWith(warningPrefix)) {
-                        String text = line.substring(warningPrefix.length()) + "\n" + processOut.next();
-                        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.WARNING, text));
-                    } else {
-                        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, line));
-                    }
-                }
-
-                if (configureProcess.waitFor() != 0) {
-                    context.processMessage(new CompilerMessage(
-                            "cabal",
-                            BuildMessage.Kind.ERROR,
-                            "configure failed."));
-                    return ExitCode.ABORT;
-                }
-                context.processMessage(new ProgressMessage("Build build"));
-                context.processMessage(new CompilerMessage("ghc", BuildMessage.Kind.INFO, "Start build"));
-                Process buildProcess = cabal.build();
-                processOut = collectOutput(buildProcess);
-
-                while (processOut.hasNext()) {
-                    String line = processOut.next();
-                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, line));
-                }
-
-                if (buildProcess.waitFor() == 0) {
-                    return ExitCode.OK;
-                } else {
-                    context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build errors."));
-                }
+                if (runConfigure(context, module, cabal)) return ExitCode.ABORT;
+                if (runBuild(context, module, cabal)) return ExitCode.ABORT;
             }
-            return ExitCode.ABORT;
+            return ExitCode.OK;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -101,8 +66,78 @@ public class CabalBuilder extends ModuleLevelBuilder {
         return ExitCode.ABORT;
     }
 
+    private boolean runBuild(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
+        context.processMessage(new ProgressMessage("cabal build"));
+        context.processMessage(new CompilerMessage("ghc", BuildMessage.Kind.INFO, "Start build"));
+        Process buildProcess = cabal.build();
+        processOut(context, buildProcess, module);
+
+        if (buildProcess.waitFor() != 0) {
+            context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build errors."));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean runConfigure(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
+        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
+
+        Process configureProcess = cabal.configure();
+
+        processOut(context, configureProcess, module);
+
+        if (configureProcess.waitFor() != 0) {
+            context.processMessage(new CompilerMessage(
+                    "cabal",
+                    BuildMessage.Kind.ERROR,
+                    "configure failed."));
+            return true;
+        }
+        return false;
+    }
+
+    private void processOut(CompileContext context, Process process, JpsModule module) throws IOException {
+        Iterator<String> processOut = collectOutput(process);
+
+        while (processOut.hasNext()) {
+            String line = processOut.next();
+            String warningPrefix = "Warning: ";
+            if (line.startsWith(warningPrefix)) {
+                String text = line.substring(warningPrefix.length()) + "\n" + processOut.next();
+                context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.WARNING, text));
+            } else if (isError(line)) {
+                Matcher matcher = Pattern.compile("(.*):(\\d+):(\\d+):").matcher(line);
+                if (!matcher.find()) {
+                    throw new RuntimeException("Pattern not matched");
+                }
+                String file = matcher.group(1);
+                long lineNum = Long.parseLong(matcher.group(2));
+                long colNum = Long.parseLong(matcher.group(3));
+                String msg = "";
+                while (processOut.hasNext()) {
+                    String msgLine = processOut.next();
+                    msg += msgLine + "\n";
+                    if (msgLine.trim().length() == 0) {
+                        break;
+                    }
+                }
+
+                String sourcePath = getContentRootPath(module) + "/" + file.replace('\\', '/');
+                context.processMessage(new CompilerMessage(
+                        "ghc",
+                        BuildMessage.Kind.ERROR,
+                        msg,
+                        sourcePath,
+                        -1L, -1L, -1L,
+                        lineNum, colNum));
+            } else {
+                context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, line));
+            }
+        }
+    }
+
     private Iterator<String> collectOutput(Process process) throws IOException {
-        final BufferedReader reader = new BufferedReader (new InputStreamReader(process.getInputStream()));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         return new Iterator<String>() {
 
             String line = null;
@@ -138,25 +173,31 @@ public class CabalBuilder extends ModuleLevelBuilder {
     }
 
     private File getCabalFile(JpsModule module) {
-        String url = module.getContentRootsList().getUrls().get(0);
-        try {
-            for (File file : new File(new URL(url).getFile()).listFiles()) {
-                if (file.getName().endsWith(".cabal")) {
-                    return file;
-                }
+        String pathname = getContentRootPath(module);
+        for (File file : new File(pathname).listFiles()) {
+            if (file.getName().endsWith(".cabal")) {
+                return file;
             }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         }
+
         return null;
     }
 
+    private String getContentRootPath(JpsModule module) {
+        String url = module.getContentRootsList().getUrls().get(0);
+        return url.substring("file://".length());
+    }
 
 
     @Override
     public List<String> getCompilableFileExtensions() {
         return Arrays.asList("hs");
     }
+
+    private boolean isError(String line) {
+        return line.matches(".*:.*:.*:");
+    }
+
 
     @Override
     public String toString() {
