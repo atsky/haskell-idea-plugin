@@ -72,7 +72,7 @@
       <lang.parserDefinition language="Haskell"
                              implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
       <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>
-      <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/>
+      <!-- <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/> -->
       <runConfigurationProducer implementation="org.jetbrains.haskell.run.haskell.CabalRunConfigurationProducer"/>
       <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
       <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>

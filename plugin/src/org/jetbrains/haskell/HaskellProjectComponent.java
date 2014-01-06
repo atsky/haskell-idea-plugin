@@ -15,17 +15,13 @@ import org.jetbrains.haskell.fileType.HiFileType;
 import java.util.Collections;
 
 public final class HaskellProjectComponent implements ProjectComponent {
-    //private final Project project;
-   
-    public HaskellProjectComponent(Project project, CompilerManager manager) {
-        //this.project = project;
 
-        //CompilerWorkspaceConfiguration.getInstance(project).USE_OUT_OF_PROCESS_BUILD = false;
-        //manager.addCompilableFileType(HaskellFileType.INSTANCE);
-        //manager.addTranslatingCompiler(
-        //        new CabalCompiler(project),
-        //        Collections.<FileType>singleton(HaskellFileType.INSTANCE),
-        //        Collections.<FileType>singleton(HiFileType.INSTANCE));
+    public HaskellProjectComponent(Project project, CompilerManager manager) {
+        manager.addCompilableFileType(HaskellFileType.INSTANCE);
+        manager.addTranslatingCompiler(
+                new CabalCompiler(project),
+                Collections.<FileType>singleton(HaskellFileType.INSTANCE),
+                Collections.<FileType>singleton(HiFileType.INSTANCE));
     }
 
     public void projectOpened() {
