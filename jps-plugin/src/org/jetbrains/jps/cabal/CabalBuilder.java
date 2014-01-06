@@ -52,6 +52,11 @@ public class CabalBuilder extends ModuleLevelBuilder {
         try {
             for (JpsModule module : chunk.getModules()) {
                 File cabalFile = getCabalFile(module);
+                if (cabalFile == null) {
+                    //context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR,
+                    //        "Can't find cabal file in " + getContentRootPath(module)));
+                    continue;
+                }
                 CabalJspInterface cabal = new CabalJspInterface(cabalFile);
 
                 if (runConfigure(context, module, cabal)) return ExitCode.ABORT;

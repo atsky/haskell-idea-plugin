@@ -1,13 +1,16 @@
 package org.jetbrains.jps.cabal;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 
 
 public class CabalJspInterface{
+    @NotNull
     private File myCabalFile;
 
-    CabalJspInterface(File cabalFile) {
+    CabalJspInterface(@NotNull File cabalFile) {
         myCabalFile = cabalFile;
     }
 
