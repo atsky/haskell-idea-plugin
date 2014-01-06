@@ -4,8 +4,6 @@
       <root url="jar://$PROJECT_DIR$/lib/haskell-jps-plugin.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/jps-plugin/src" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>
