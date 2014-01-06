@@ -60,14 +60,14 @@ public class CabalCompiler(val project: Project) : TranslatingCompiler {
     private fun compileModule(context: CompileContext, module: Module): Unit {
         SwingUtilities.invokeAndWait(object : Runnable {
             override fun run() {
-                val cabalInterface = findCabal(module)
-                if (cabalInterface == null) {
+                val cabalFile = findCabal(module)
+                if (cabalFile == null) {
                     Notifications.Bus.notify(Notification("Cabal.Error", "Cabal error", "Can't find cabal file.", NotificationType.ERROR))
                 } else {
-                    val process = cabalInterface.configure()
+                    val process = CabalInterface(module.getProject()).configure(cabalFile)
                     process.waitFor();
                     if (process.exitValue() == 0) {
-                        val process2 = cabalInterface.build();
+                        val process2 = CabalInterface(module.getProject()).build(cabalFile);
                         process2.waitFor();
                         if (process2.exitValue() != 0) {
                             context.addMessage(CompilerMessageCategory.ERROR, "Cabal build failed", null, -1, -1)

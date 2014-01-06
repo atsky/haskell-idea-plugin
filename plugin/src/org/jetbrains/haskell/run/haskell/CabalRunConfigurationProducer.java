@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.cabal.CabalFile;
+import org.jetbrains.cabal.CabalInterface;
 import org.jetbrains.cabal.CabalPackage;
 import org.jetbrains.haskell.fileType.HaskellFile;
 
@@ -39,7 +40,7 @@ public final class CabalRunConfigurationProducer extends RunConfigurationProduce
 
             Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(virtualFile);
 
-            CabalFile psiFile = CabalPackage.findCabal(module).getPsiFile();
+            CabalFile psiFile = new CabalInterface(project).getPsiFile(CabalPackage.findCabal(module));
             String name = psiFile.getExecutables().get(0).getExecutableName();
 
             configuration.setMyExecutableName(name);

@@ -2,7 +2,6 @@ package org.jetbrains.haskell.util
 
 import java.io.*
 import java.util.ArrayList
-import java.util.List
 
 public class ProcessRunner(workingDirectory: String?) {
     private val myWorkingDirectory: String? = workingDirectory
@@ -15,7 +14,7 @@ public class ProcessRunner(workingDirectory: String?) {
 
     public fun execute(cmd: Array<String>, input: String?): String {
         try {
-            val process = getProcess(cmd)
+            val process = getProcess(cmd.toList())
             if (input != null) {
                 val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
                 streamWriter.write(input)
@@ -36,8 +35,8 @@ public class ProcessRunner(workingDirectory: String?) {
         return ""
     }
 
-    public fun getProcess(cmd: Array<String>): Process {
-        val processBuilder: ProcessBuilder = ProcessBuilder(cmd.toList())
+    public fun getProcess(cmd: List<String>): Process {
+        val processBuilder: ProcessBuilder = ProcessBuilder(cmd)
         if (myWorkingDirectory != null)
         {
             processBuilder.directory(File(myWorkingDirectory))

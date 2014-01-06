@@ -23,13 +23,28 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiManager
+import java.util.ArrayList
+import java.util.TreeMap
+import org.jetbrains.haskell.util.*
+import java.io.File
+import java.util.LinkedList
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
-public open class CabalInterface(val project: Project, val cabalFile: VirtualFile) {
+public class CabalPackageShort(val name : String, val versions : List<String>) {
 
-    private open fun runCommand(canonicalPath: String, command: String): Process {
-        val process = ProcessRunner(canonicalPath).getProcess(array("cabal", command))
+}
+
+
+public open class CabalInterface(val project: Project) {
+
+    private open fun runCommand(canonicalPath: String, vararg commands: String): Process {
+        val command = LinkedList<String>();
+        command.add("cabal")
+        for (i in commands.indices) {
+            command.add(commands[i])
+        }
+        val process = ProcessRunner(canonicalPath).getProcess(command)
         val ijMessageView = MessageView.SERVICE.getInstance(project)!!
         for (content in ijMessageView.getContentManager()!!.getContents()) {
             val cabalMessageView = content.getUserData(KEY)
@@ -48,15 +63,15 @@ public open class CabalInterface(val project: Project, val cabalFile: VirtualFil
         return process
     }
 
-    public open fun configure(): Process {
+    public open fun configure(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "configure")
     }
 
-    public open fun build(): Process {
+    public open fun build(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "build")
     }
 
-    public open fun clean(): Process {
+    public open fun clean(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "clean")
     }
 
@@ -81,14 +96,56 @@ public open class CabalInterface(val project: Project, val cabalFile: VirtualFil
         return null
     }
 
-    fun getPsiFile() : CabalFile {
+    fun getPsiFile(cabalFile: VirtualFile) : CabalFile {
         return PsiManager.getInstance(project).findFile(cabalFile) as CabalFile
     }
+
+
+    public fun getPackagesList() : List<CabalPackageShort> {
+        val path = joinPath(OS.getProgramDataFolder("cabal"),
+                "packages",
+                "hackage.haskell.org",
+                "00-index.cache")
+
+        val result = ArrayList<CabalPackageShort>()
+
+        val map = TreeMap<String, MutableList<String>>()
+
+        for (str in fileToIterable(File(path))) {
+            val strings = str.split(' ')
+            if (strings[0] == "pkg:") {
+                val key = strings[1]
+                val value = strings[2]
+                val list = map[key]
+
+                if (list == null) {
+                    map[key] = ArrayList<String>(listOf(value))
+                } else {
+                    list.add(value)
+                }
+
+            }
+        }
+        for ((key, value) in map) {
+            result.add(CabalPackageShort(key, value))
+        }
+
+        return result
+    }
+
+    public fun update() {
+        runCommand(project.getBasePath().toString(), "update")
+    }
+
+    public fun install(pkg : String): Process {
+        return runCommand(project.getBasePath().toString(), "install", pkg)
+    }
+
 
 }
 
 
-public fun findCabal(module: Module): CabalInterface? {
+public fun findCabal(module: Module): VirtualFile? {
     val children = module.getModuleFile()?.getParent()?.getChildren()
     var cabalFile: VirtualFile? = null;
 
@@ -101,12 +158,12 @@ public fun findCabal(module: Module): CabalInterface? {
         }
     }
     if (cabalFile != null) {
-        return CabalInterface(module.getProject(), cabalFile!!)
+        return cabalFile!!
     }
     return null;
 }
 
-public fun findCabal(file: PsiFile, project: Project): CabalInterface? {
+public fun findCabal(file: PsiFile, project: Project): VirtualFile? {
     val projectFileIndex = ProjectRootManager.getInstance(project)!!.getFileIndex()
     return findCabal(projectFileIndex.getModuleForFile(file.getVirtualFile()!!)!!)
 }
