@@ -6,7 +6,7 @@ import com.intellij.openapi.roots.ui.configuration.ModuleElementsEditor
 import org.jetbrains.annotations.Nls
 import javax.swing.*
 
-class OutputEditor(state: ModuleConfigurationState) : ModuleElementsEditor(state) {
+public class OutputEditor(state: ModuleConfigurationState) : ModuleElementsEditor(state) {
     private val myCompilerOutputEditor: BuildElementsEditor
 
     protected override fun createComponentImpl(): JComponent {
