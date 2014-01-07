@@ -2,6 +2,7 @@ package org.jetbrains.haskell.module;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.haskell.fileType.HaskellFileType;
 import org.jetbrains.haskell.icons.HaskellIcons;
 
@@ -15,14 +16,17 @@ public final class HaskellModuleType extends ModuleType<HaskellModuleBuilder> {
         super("HASKELL_MODULE");
     }
 
+    @NotNull
     public HaskellModuleBuilder createModuleBuilder() {
         return new HaskellModuleBuilder();
     }
 
+    @NotNull
     public String getName() {
         return "Haskell Module";
     }
 
+    @NotNull
     public String getDescription() {
         return "Haskell module";
     }
@@ -35,7 +39,7 @@ public final class HaskellModuleType extends ModuleType<HaskellModuleBuilder> {
         return HaskellFileType.INSTANCE.getIcon();
     }
 
-    public static ModuleType<?> get(Module module) {
+    public static ModuleType<?> get(@NotNull Module module) {
         return ModuleType.get(module);
     }
 }
