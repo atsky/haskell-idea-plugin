@@ -12,6 +12,7 @@ import com.intellij.ui.RawCommandLineEditor
 import com.intellij.execution.configuration.EnvironmentVariablesComponent
 import java.awt.Insets
 import org.jetbrains.haskell.run.ModuleComboBoxRenderer
+import java.awt.BorderLayout
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var executableComponent: TextFieldWithBrowseButton
@@ -46,7 +47,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
         programParametersComponent = RawCommandLineEditor()
         workingDirectoryComponent = TextFieldWithBrowseButton()
         environmentVariables = EnvironmentVariablesComponent()
-        environmentVariables.getLabelLocation()
+        environmentVariables.setLabelLocation(BorderLayout.WEST)
 
 
         val base : () -> GridBagConstraints = {
@@ -56,10 +57,12 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
             result
         }
 
-        add(JLabel("Main module"), base().setConstraints {
+        val moduleLabel = JLabel("Main module")
+        add(moduleLabel, base().setConstraints {
             gridx = 0
             gridy = 0
             weightx = 0.1
+            fill = GridBagConstraints.HORIZONTAL
         })
 
         add(executableComponent, base().setConstraints {
@@ -93,18 +96,14 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
             fill = GridBagConstraints.HORIZONTAL
         })
 
-        add(JLabel("Environment variables"), base().setConstraints {
+        add(environmentVariables, base().setConstraints {
             gridx = 0
+            gridwidth = 2
             gridy = 3
             weightx = 0.1
             fill = GridBagConstraints.HORIZONTAL
         })
-
-        add(environmentVariables, base().setConstraints {
-            gridx = 1
-            gridy = 3
-            weightx = 0.1
-        })
+        //environmentVariables.setAnchor(moduleLabel)
 
         add(JLabel("Module"), base().setConstraints {
             gridy = 4

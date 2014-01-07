@@ -15,12 +15,13 @@ import org.jetbrains.cabal.findCabal
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.OS
 
-class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
+public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
 
     protected override fun startProcess(): ProcessHandler {
         return JavaCommandLineStateUtil.startProcess(createCommandLine())
     }
+
     private fun createCommandLine(): GeneralCommandLine {
         val module = configuration.getModule()!!
 
@@ -41,7 +42,7 @@ class HaskellCommandLineState(environment: ExecutionEnvironment, val configurati
         commandLine.setExePath(exePath)
         val parameters = configuration.getProgramParameters()
         if (parameters != null) {
-            commandLine.addParameter(parameters)
+            commandLine.getParametersList()!!.addParametersString(parameters)
         }
         return commandLine
     }
