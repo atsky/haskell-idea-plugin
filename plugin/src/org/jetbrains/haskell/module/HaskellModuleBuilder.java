@@ -90,7 +90,7 @@ public final class HaskellModuleBuilder extends ModuleBuilder {
 
     public void makeMain(String path) throws IOException {
         final String text =
-                "package Main\n" +
+                "module Main where\n" +
                 "\n";
 
         FileWriter writer = new FileWriter(path);
