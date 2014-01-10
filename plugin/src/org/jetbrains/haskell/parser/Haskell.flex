@@ -25,13 +25,42 @@ import com.intellij.psi.tree.IElementType;
 
 %xstate BLOCK_COMMENT, TEX
 
+unispace    = \x05
+white_no_nl = [\ \n\r\f]|{unispace}
+whitechar   = {white_no_nl}|[\n]
+//tab         = \t
+
+ascdigit  = [0-9]
+unidigit  = \x03
+decdigit  = {ascdigit}
+digit     = {ascdigit}|{unidigit}
+
+//special   = [\(\)\,\;\[\]\`\{\}]
+ascsymbol = [\!\#\$\%\&\*\+\.\/\<\=\>\?\@\\\^\|\-\~]
+symbol    = {ascsymbol}|{unisymbol}
+
+large     = [A-Z]
+
+ascsmall  = [a-z]
+small     = {ascsmall}|"_"
+
+graphic   = {small}|{large}|{symbol}|{digit}|{special}|[\:\"\']
+
+//octit     = [0-7]
+//hexit     = [$decdigit A-F a-f]
+//symchar   = [$symbol \:]
+//nl        = [\n\r]
+idchar      = {small}|{large}|{digit}|[\']
+
+//pragmachar = [$small $large $digit]
+
+docsym      = [\| \^ \* \$]
+
+
 DIGIT =[0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
 INDENT = [\n] {WHITE_SPACE_CHAR}*
 EOL_COMMENT = "--"[^\n]*
-LETTER = [^0-9\"\[\]{}(),.\ \n\t\f;\\]
-IDENTIFIER_PART = ({DIGIT}|{LETTER})
-IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 
 %%
 
@@ -96,10 +125,10 @@ IDENTIFIER = {LETTER} {IDENTIFIER_PART} *
 "{-"[^#]              { yybegin(BLOCK_COMMENT); return HaskellTokenTypes.COMMENT; }
 ({DIGIT})+            { return HaskellTokenTypes.NUMBER; }
 (forall)|(\u2200)     { return HaskellTokenTypes.FORALL; }
-\'([^\']|\\\')*\'     { return HaskellTokenTypes.CHARACTER; }
+\'([^']|\\.)\'        { return HaskellTokenTypes.CHARACTER; }
 \"([^\"]|\\\")*\"     { return HaskellTokenTypes.STRING;}
 "\\end{code}"         { yybegin(TEX); return HaskellTokenTypes.COMMENT; }
 
-[A-Z]{IDENTIFIER_PART}* {return HaskellTokenTypes.TYPE_CONS;}
-{IDENTIFIER}          { return HaskellTokenTypes.ID; }
+{large}{idchar}*      { return HaskellTokenTypes.TYPE_CONS;}
+{small}{idchar}*      { return HaskellTokenTypes.ID; }
 .                     { return TokenType.BAD_CHARACTER; }
