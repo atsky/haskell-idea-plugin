@@ -15,6 +15,7 @@ import java.util.ArrayList
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.vcs.changes.RunnableBackgroundableWrapper
+import com.intellij.ui.TreeUIHelper
 
 
 public class CabalToolWindowFactory() : ToolWindowFactory {
@@ -39,6 +40,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
             list.add(pkg.name)
         }
         packages = JBList(list)
+        TreeUIHelper.getInstance()!!.installListSpeedSearch(packages)
         panel.add(JScrollPane(packages), BorderLayout.CENTER)
         return panel
     }
