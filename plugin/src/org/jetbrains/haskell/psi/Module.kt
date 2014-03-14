@@ -8,8 +8,8 @@ import com.intellij.lang.ASTNode
  */
 public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun getImportDecl() : Array<ImportDecl> {
-        return findChildrenByClass(javaClass<ImportDecl>())
+    public fun getImportDecl() : Array<Import> {
+        return findChildrenByClass(javaClass<Import>())
     }
 
 }

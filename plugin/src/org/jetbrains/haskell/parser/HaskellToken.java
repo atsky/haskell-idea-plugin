@@ -5,9 +5,11 @@ import org.jetbrains.haskell.HaskellLanguage;
 import org.jetbrains.annotations.NonNls;
 
 public class HaskellToken extends IElementType {
+    public final String myName;
 
     public HaskellToken(@NonNls String debugName) {
         super(debugName, HaskellLanguage.INSTANCE);
+        myName = debugName;
     }
 
     @SuppressWarnings({"HardCodedStringLiteral"})

@@ -8,7 +8,7 @@ import org.jetbrains.cabal.parser.CabalTokelTypes
 import com.intellij.psi.TokenType
 
 
-class CabalParser(p0: IElementType, builder: PsiBuilder) : BaseParser(p0, builder) {
+class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
     public fun parse(): ASTNode {
         return parseInternal(root)

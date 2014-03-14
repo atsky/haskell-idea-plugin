@@ -14,6 +14,8 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.haskell.fileType.HaskellFile;
 import org.jetbrains.haskell.HaskellLanguage;
+import org.jetbrains.haskell.parser.lexer.HaskellLexer;
+import org.jetbrains.haskell.parser.lexer.LexerPackage;
 import org.jetbrains.haskell.parser.token.HaskellTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +44,7 @@ public class HaskellParserDefinition implements ParserDefinition {
 
     @NotNull
     public TokenSet getStringLiteralElements() {
-        return TokenSet.create(HaskellTokenTypes.STRING);
+        return TokenSet.create(LexerPackage.getSTRING());
     }
 
     @NotNull

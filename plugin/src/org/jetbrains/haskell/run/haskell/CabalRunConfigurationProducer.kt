@@ -12,7 +12,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.cabal.CabalFile
 import org.jetbrains.cabal.CabalInterface
-import org.jetbrains.cabal.CabalPackage
 import org.jetbrains.haskell.fileType.HaskellFile
 import org.jetbrains.cabal.findCabal
 

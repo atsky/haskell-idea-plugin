@@ -15,6 +15,8 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
         return result;
     }
 
+    fun maybe(b : Boolean) : Boolean = true;
+
     fun token(tokenType: IElementType): Boolean {
         val elementType = builder.getTokenType()
         if (elementType == tokenType) {
@@ -32,6 +34,8 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
         }
         return false;
     }
+
+
 
     fun matches(tokenType: IElementType, text : String): Boolean {
         val elementType = builder.getTokenType()

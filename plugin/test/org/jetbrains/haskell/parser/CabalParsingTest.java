@@ -1,4 +1,4 @@
-package org.jetbrains.haskell;
+package org.jetbrains.haskell.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
 import org.jetbrains.cabal.parser.CaballParserDefinition;
