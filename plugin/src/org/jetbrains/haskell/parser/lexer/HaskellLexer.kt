@@ -2,7 +2,6 @@ package org.jetbrains.haskell.parser.lexer
 
 import com.intellij.lexer.LexerBase
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.highlight.HaskellHighlighter
 import org.jetbrains.haskell.parser.token.*
@@ -13,7 +12,7 @@ import org.jetbrains.haskell.parser.HaskellToken
  * Created by atsky on 3/6/14.
  */
 
-public class HaskellLexer() : LexerBase(), HaskellTokenTypes {
+public class HaskellLexer() : LexerBase() {
     val operators = listOf<HaskellToken>(
             COMMA,
             DOT,

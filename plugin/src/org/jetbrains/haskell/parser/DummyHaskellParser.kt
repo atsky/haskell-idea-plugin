@@ -4,9 +4,7 @@ import com.intellij.lang.PsiParser
 import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes;
 
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes
 import org.jetbrains.haskell.util.ProcessRunner
 import org.jetbrains.haskell.util.lisp.LispParser
 import org.jetbrains.haskell.util.lisp.SList
@@ -39,13 +37,13 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
         return builder.getTreeBuilt()!!
     }
 
-    fun parseFqName() = start(HaskellTokenTypes.FQ_NAME) {
+    fun parseFqName() = start(FQ_NAME) {
         token(TYPE_CONS) && zeroOrMore {
             token(DOT) && token(TYPE_CONS)
         }
     }
 
-    fun importElement() = atom {
+    fun importElement() = start(IMPORT_ELEMENT) {
         token(ID) || (token(TYPE_CONS) && maybe(atom {
                 token(LEFT_PAREN) && token(DOT) && token(DOT) && token(RIGHT_PAREN)
         }))
@@ -57,19 +55,23 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
         }
     })
 
-    fun parseImport() = start(HaskellTokenTypes.IMPORT) {
+    fun parseImportAsPart() = start(IMPORT_AS_PART) {
+        token(AS_KEYWORD) && parseFqName()
+    }
+
+    fun parseImport() = start(IMPORT) {
         val result = token(IMPORT_KEYWORD) && maybe(token(QUALIFIED_KEYWORD)) && parseFqName()
-        atom {
-            token(AS_KEYWORD) && parseFqName()
-        }
+
+        parseImportAsPart()
+
         atom {
             token(HIDING_KEYWORD)
-            token(LEFT_PAREN) && commaSeparatedImportList() && token(HaskellTokenTypes.RIGHT_PAREN)
+            token(LEFT_PAREN) && commaSeparatedImportList() && token(RIGHT_PAREN)
         }
         result
     }
 
-    fun parseModule() = start(HaskellTokenTypes.MODULE) {
+    fun parseModule() = start(MODULE) {
         val result = token(MODULE_KEYWORD) && parseFqName() && token(WHERE_KEYWORD)
 
 
@@ -78,7 +80,7 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
         }
 
         while (!builder.eof()) {
-            start(HaskellTokenTypes.HASKELL_TOKEN) {
+            start(HASKELL_TOKEN) {
                 builder.advanceLexer()
                 true
             }

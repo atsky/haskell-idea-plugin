@@ -4,10 +4,9 @@ import com.intellij.lang.PsiParser
 import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes;
+
 
 import org.jetbrains.haskell.parser.token.*
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes
 import org.jetbrains.haskell.util.ProcessRunner
 import org.jetbrains.haskell.util.lisp.LispParser
 import org.jetbrains.haskell.util.lisp.SList
@@ -44,7 +43,7 @@ public class HaskelExternallParser(val p0: IElementType, val p1: PsiBuilder) {
             }
             System.out.println(expression);
 
-            for (token in HaskellTokenTypes.TOKENS) {
+            for (token in TOKENS) {
                 addToken(token)
             }
         }

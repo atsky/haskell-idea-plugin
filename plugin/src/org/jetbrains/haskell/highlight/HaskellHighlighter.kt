@@ -13,7 +13,6 @@ import com.intellij.psi.tree.IElementType
 import gnu.trove.THashMap
 import org.jetbrains.haskell.parser.lexer.*
 import org.jetbrains.haskell.parser.HaskellToken
-import org.jetbrains.haskell.parser.token.HaskellTokenTypes
 import java.awt.*
 import org.jetbrains.haskell.parser.token.*
 
