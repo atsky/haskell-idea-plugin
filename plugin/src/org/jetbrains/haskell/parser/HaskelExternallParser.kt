@@ -36,7 +36,7 @@ public class HaskelExternallParser(val p0: IElementType, val p1: PsiBuilder) {
             "/home/atsky/Dropbox/haskell-plugin/haskell/src/parserApi"
         }
         if (File(file).exists()) {
-            val result = ProcessRunner(null).execute(array(file), programm)
+            val result = ProcessRunner(null).execute(listOf(file), programm)
             val expression = LispParser(result).parseExpression()
             if (expression.isListStarting("ParseOk")) {
                 tree = expression.get(1)

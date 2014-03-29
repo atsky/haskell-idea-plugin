@@ -140,9 +140,9 @@ public final class HaskellSdkType extends SdkType {
             return null;
         }
         try {
-            String output = new ProcessRunner(null).execute(new String[]{homePath + File.separator + "bin" + File.separator + "ghc",
-                    "--numeric-version"});
-            return output.trim();
+            final List<String> cmd = Arrays.asList(homePath + File.separator + "bin" + File.separator + "ghc",
+                    "--numeric-version");
+            return new ProcessRunner(null).execute(cmd).trim();
         } catch (Exception ex) {
             // ignore
         }

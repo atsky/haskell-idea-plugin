@@ -7,12 +7,12 @@ public class ProcessRunner(workingDirectory: String?) {
     private val myWorkingDirectory: String? = workingDirectory
 
 
-    public fun execute(cmd: Array<String>): String {
+    public fun execute(cmd: List<String>): String {
         return execute(cmd, null)
     }
 
 
-    public fun execute(cmd: Array<String>, input: String?): String {
+    public fun execute(cmd: List<String>, input: String?): String {
         try {
             val process = getProcess(cmd.toList())
             if (input != null) {

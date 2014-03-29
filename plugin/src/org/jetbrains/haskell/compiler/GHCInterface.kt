@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 
 public class GHCInterface() {
     public fun runGHC(module: Module, file: VirtualFile, outputDir: VirtualFile): List<GHCMessage> {
-        val command: Array<String> = array<String>(getGHC(module), "-c", "-outputdir", outputDir.getPath()!!, file.getPath()!!)
+        val command = listOf<String>(getGHC(module), "-c", "-outputdir", outputDir.getPath()!!, file.getPath()!!)
         val result: String = ProcessRunner(null).execute(command)
         System.out.println(result)
         val lines: List<String> = result.split("\n").toList()
