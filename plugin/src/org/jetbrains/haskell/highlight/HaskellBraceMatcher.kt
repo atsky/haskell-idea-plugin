@@ -22,8 +22,8 @@ public class HaskellBraceMatcher() : PairedBraceMatcher {
 
     class object {
         val PAIRS: Array<BracePair> = array<BracePair>(
-                BracePair(LEFT_PAREN, RIGHT_PAREN, true),
-                BracePair(LEFT_BRACE, RIGHT_BRACE, true),
-                BracePair(LEFT_BRACKET, RIGHT_BRACKET, true))
+                BracePair(org.jetbrains.haskell.parser.token.LEFT_PAREN, org.jetbrains.haskell.parser.token.RIGHT_PAREN, true),
+                BracePair(org.jetbrains.haskell.parser.token.LEFT_BRACE, org.jetbrains.haskell.parser.token.RIGHT_BRACE, true),
+                BracePair(org.jetbrains.haskell.parser.token.LEFT_BRACKET, org.jetbrains.haskell.parser.token.RIGHT_BRACKET, true))
     }
 }

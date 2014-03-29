@@ -20,12 +20,10 @@ public class HaskellSdkAdditionalData(ghcOptions: String?, cabalPath: String?) :
         return super<Cloneable>.clone()
     }
     public fun save(element: Element): Unit {
-        if (myGhcOptions != null)
-        {
-            element.setAttribute(GHC_OPTIONS, myGhcOptions)
-            element.setAttribute(CABAL_PATH, myCabalPath)
+        if (myGhcOptions != null) {
+            element.setAttribute(GHC_OPTIONS, myGhcOptions!!)
+            element.setAttribute(CABAL_PATH, myCabalPath!!)
         }
-
     }
     public fun getGhcOptions(): String? {
         return (if (myGhcOptions == null)

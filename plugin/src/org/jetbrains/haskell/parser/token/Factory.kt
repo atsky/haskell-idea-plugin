@@ -12,7 +12,7 @@ import org.jetbrains.haskell.parser.HaskellCompositeElementType
  */
 
 
-public fun createElement(node: ASTNode): PsiElement {
+public fun createPsiElement(node: ASTNode): PsiElement {
     val elementType = node.getElementType()
     if (elementType is HaskellCompositeElementType) {
         val constructor = (node as HaskellCompositeElementType).constructor

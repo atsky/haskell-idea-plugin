@@ -1,6 +1,8 @@
-package org.jetbrains.haskell.parser.lexer
+package org.jetbrains.haskell.parser.token
 
 import org.jetbrains.haskell.parser.HaskellToken
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.TokenType
 
 /**
  * Created by atsky on 3/12/14.
@@ -76,3 +78,5 @@ public val KEYWORDS: Array<HaskellToken> = array<HaskellToken>(
         TYPE_KEYWORD,
         WHERE_KEYWORD)
 
+val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
+val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, TokenType.NEW_LINE_INDENT)

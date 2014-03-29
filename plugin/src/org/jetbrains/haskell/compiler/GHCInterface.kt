@@ -21,12 +21,10 @@ public class GHCInterface() {
         val lines: List<String> = result.split("\n").toList()
         val iterator = lines.iterator()
         val messages: MutableList<GHCMessage> = ArrayList<GHCMessage>()
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             var line  = iterator.next()
-            if (isError(line))
-            {
-                var matcher = Pattern.compile("(.*):(\\d+):(\\d+):")!!.matcher(line)
+            if (isError(line)) {
+                var matcher = Pattern.compile("(.*):(\\d+):(\\d+):").matcher(line)
                 matcher.find()
                 val message = GHCMessage(matcher.group(1), matcher.group(2), matcher.group(3))
                 var msg: String? = ""

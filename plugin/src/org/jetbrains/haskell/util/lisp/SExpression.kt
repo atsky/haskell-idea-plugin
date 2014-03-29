@@ -16,8 +16,6 @@ public abstract class SExpression() {
     }
     public abstract fun get(i: Int): SExpression?
 
-    public abstract fun toString(): String
-
 }
 
 public class SAtom(public val value: String) : SExpression() {

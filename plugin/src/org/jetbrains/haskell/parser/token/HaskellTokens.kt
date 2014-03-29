@@ -3,6 +3,8 @@ package org.jetbrains.haskell.parser.token
 import org.jetbrains.haskell.parser.HaskellCompositeElementType
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.psi.Import
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.TokenType
 
 /**
  * Created by atsky on 3/14/14.
