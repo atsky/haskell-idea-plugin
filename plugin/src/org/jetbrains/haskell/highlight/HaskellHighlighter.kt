@@ -42,16 +42,18 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     {
         keys1 = THashMap<IElementType, TextAttributesKey>()
-        keys1.put(org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT, COMMENT_STYLE)
-        keys1.put(org.jetbrains.haskell.parser.token.COMMENT, COMMENT_STYLE)
+        keys1.put(END_OF_LINE_COMMENT, COMMENT_STYLE)
+        keys1.put(COMMENT, COMMENT_STYLE)
+
         for (keyword in org.jetbrains.haskell.parser.token.KEYWORDS)
         {
             keys1.put(keyword, KEYWORD_VALUE)
         }
-        keys1.put(org.jetbrains.haskell.parser.token.PRAGMA, COMMENT_STYLE)
-        keys1.put(org.jetbrains.haskell.parser.token.TYPE_CONS, CONSTRUCTOR)
-        keys1.put(org.jetbrains.haskell.parser.token.STRING, STRING_LITERAL)
-        keys1.put(org.jetbrains.haskell.parser.token.CHARACTER, STRING_LITERAL)
+        keys1.put(PRAGMA, COMMENT_STYLE)
+        keys1.put(TYPE_CONS, CONSTRUCTOR)
+        keys1.put(STRING, STRING_LITERAL)
+        keys1.put(CHARACTER, STRING_LITERAL)
+        keys1.put(NUMBER, DefaultLanguageHighlighterColors.NUMBER)
         keys1.put(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, PROPERTIES_VALID_STRING_ESCAPE)
         keys1.put(StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)
         keys1.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)

@@ -41,7 +41,7 @@ public class LexerTest : TestCase() {
 
     Test
     public fun testMerge() {
-        checkFsm(fromStr("a") + fromStr("b")) {
+        checkFsm(str("a") + str("b")) {
             accepts("ab")
             notAccepts("a")
         }
@@ -51,7 +51,7 @@ public class LexerTest : TestCase() {
 
     Test
     public fun testNot() {
-        checkFsm(not(fromStr("lol"))) {
+        checkFsm(not(str("lol"))) {
             accepts("trol")
             accepts("lo")
             notAccepts("lol")
@@ -60,7 +60,7 @@ public class LexerTest : TestCase() {
 
     Test
     public fun testMerge2() {
-        checkFsm(merge(noneOf("-"), fromStr("-") + noneOf("}")) + fromStr("-}")) {
+        checkFsm(merge(noneOf("-"), str("-") + noneOf("}")) + str("-}")) {
             accepts("-a-}")
             notAccepts("-a")
         }
@@ -68,7 +68,7 @@ public class LexerTest : TestCase() {
 
     Test
     public fun testLoop() {
-        checkFsm(not(anything() + fromStr("lo") + anything())) {
+        checkFsm(not(anything() + str("lo") + anything())) {
             accepts("trol")
             notAccepts("ololo")
         }
@@ -76,7 +76,7 @@ public class LexerTest : TestCase() {
 
     Test
     public fun testComment() {
-        checkFsm(fromStr("--") + noneOfStar("\n").loop()) {
+        checkFsm(str("--") + noneOf("\n").star()) {
             accepts("--test")
             notAccepts("--test\n")
         }
@@ -91,16 +91,23 @@ public class LexerTest : TestCase() {
         }
     }
 
+    Test
     public fun testCommentMerger() {
-        checkFsm(merge(fromStr("--") + noneOfStar("\n").loop(), HaskellLexer.COMMENT_RULE)) {
+        checkFsm(merge(str("--") + noneOf("\n").star(), HaskellLexer.COMMENT_RULE)) {
             accepts("--test")
             notAccepts("--test\n")
             notAccepts("{-")
             notAccepts("")
             accepts("{-aaa-}")
         }
+    }
 
-
+    Test
+    public fun testIndent() {
+        checkFsm(str("\n") + oneOf(" \t\r").star()) {
+            accepts("\n   ")
+            notAccepts("    \n")
+        }
     }
 
     Test

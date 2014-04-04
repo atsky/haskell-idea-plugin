@@ -14,11 +14,11 @@ import org.jetbrains.haskell.parser.HaskellToken
 
 public class HaskellLexer() : LexerBase() {
     val operators = listOf<HaskellToken>(
-            org.jetbrains.haskell.parser.token.COMMA,
-            org.jetbrains.haskell.parser.token.DOT,
-            org.jetbrains.haskell.parser.token.SEMICOLON,
-            org.jetbrains.haskell.parser.token.LEFT_PAREN,
-            org.jetbrains.haskell.parser.token.RIGHT_PAREN)
+            COMMA,
+            DOT,
+            SEMICOLON,
+            LEFT_PAREN,
+            RIGHT_PAREN)
 
     var myBuffer : CharSequence? = null
     var myBufferStartOffset: Int = 0
@@ -35,32 +35,45 @@ public class HaskellLexer() : LexerBase() {
 
     fun makeFsm() : State<IElementType> {
         val fsm = buildFsm<IElementType> {
+
             add(TokenType.WHITE_SPACE,
-                    anyOf(" \t\n\r").many())
+                    oneOf(" \t").plus())
 
-            add(org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT,
-                    fromStr("--") + noneOfStar("\n").loop())
+            add(TokenType.NEW_LINE_INDENT,
+                    str("\n") + oneOf(" \t").star())
 
-            add(org.jetbrains.haskell.parser.token.PRAGMA,
-                    fromStr("#") + noneOfStar("\n").loop())
+            add(END_OF_LINE_COMMENT,
+                    str("--") + noneOf("\n").star())
+
+            add(PRAGMA,
+                    str("#") + noneOf("\n").star())
 
 
-            add(org.jetbrains.haskell.parser.token.COMMENT,
+            add(COMMENT,
                     COMMENT_RULE)
 
-            for (keyword in org.jetbrains.haskell.parser.token.KEYWORDS) {
-                add(keyword, fromStr(keyword.myName!!))
+            for (keyword in KEYWORDS) {
+                add(keyword, str(keyword.myName))
             }
 
             for (operator in operators) {
-                add(operator, fromStr(operator.myName!!))
+                add(operator, str(operator.myName))
             }
 
-            add(org.jetbrains.haskell.parser.token.ID,
-                    anyOf('a'..'z') + anyOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').loop())
+            add(ID,
+                    oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').star())
 
-            add(org.jetbrains.haskell.parser.token.TYPE_CONS,
-                    anyOf('A'..'Z') + anyOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').loop())
+            add(TYPE_CONS,
+                    oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').star())
+
+            add(NUMBER,
+                    oneOf('0'..'9').plus())
+
+            add(STRING,
+                    str("\"") + noneOf("\"").star() + str("\""))
+
+            add(CHARACTER,
+                    str("'") + noneOf("'").star() + str("'"))
 
         }
 
@@ -146,6 +159,6 @@ public class HaskellLexer() : LexerBase() {
     }
 
     class object {
-        val COMMENT_RULE : State<Boolean> = fromStr("{-") + merge(noneOf("-"), fromStr("-") + noneOf("}")).loop() + fromStr("-}")
+        val COMMENT_RULE : State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
     }
 }

@@ -67,7 +67,7 @@ fun <A>merge(f1: State<A>, f2: State<A>): State<A> {
 }
 
 
-fun fromStr(str: String): State<Boolean> {
+fun str(str: String): State<Boolean> {
     var current = State(true);
     for (ch in str.reverse()) {
         val prev = State<Boolean>(null)
@@ -78,7 +78,7 @@ fun fromStr(str: String): State<Boolean> {
 }
 
 
-fun anyOf(str: Iterable<Char>): State<Boolean> {
+fun oneOf(str: Iterable<Char>): State<Boolean> {
     val fsm = State<Boolean>(null);
 
     val end = State<Boolean>(true);
@@ -87,7 +87,7 @@ fun anyOf(str: Iterable<Char>): State<Boolean> {
     return fsm;
 }
 
-fun anyOf(str: String): State<Boolean> {
+fun oneOf(str: String): State<Boolean> {
     val fsm = State<Boolean>(null);
 
     val end = State<Boolean>(true);
@@ -125,10 +125,10 @@ fun noneOf(str: String): State<Boolean> {
     return fsm;
 }
 
-fun State<Boolean>.many(): State<Boolean> = this + this.loop()
+fun State<Boolean>.plus(): State<Boolean> = this + this.star()
 
 
-fun State<Boolean>.loop(): State<Boolean> {
+fun State<Boolean>.star(): State<Boolean> {
     val start = copy()
 
     start.trace {
