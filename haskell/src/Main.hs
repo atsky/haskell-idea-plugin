@@ -25,7 +25,7 @@ parseCommandArgs (command : args) = case command of
     "parse" -> ParseFile (args !! 0)
     "packages-list" -> CabalList
     "cabal" -> ParseCabalFile (args !! 0)
-    _ -> Error "Unknown command"
+    _ -> Error ("Unknown command: " ++ command)
 
 parseCommandArgs _ = Error "Arguments required"
 
@@ -63,12 +63,12 @@ getNames name = runGhc (Just libdir) $ do
 
 parseFile :: String -> IO ParsedModule
 parseFile name = runGhc (Just libdir) $ do
-    dflags <- getSessionDynFlags
-    let dflags' = foldl xopt_set dflags [Opt_Cpp, Opt_ImplicitPrelude, Opt_MagicHash]
-    _ <- setSessionDynFlags dflags'
+    --dflags <- getSessionDynFlags
+    --let dflags' = foldl xopt_set dflags [Opt_Cpp, Opt_ImplicitPrelude, Opt_MagicHash]
+    --_ <- setSessionDynFlags dflags'
     target <- guessTarget name Nothing
     setTargets [target]
-    load LoadAllTargets
-    modSum <- getModSummary $ mkModuleName "Main"
+    --load LoadAllTargets
+    modSum <- getModSummary $ mkModuleName "Test"
     p <- parseModule modSum
     return p

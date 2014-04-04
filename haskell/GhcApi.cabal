@@ -4,7 +4,7 @@ Build-Type:        Simple
 cabal-version:     >= 1.2
 
 executable ghcApi
-  main-is:         GhcApi.hs
+  main-is:         Main.hs
   hs-source-dirs:  src
   build-depends:   base,
                    ghc,
