@@ -20,7 +20,7 @@ import org.jetbrains.haskell.parser.lexer.*
 
 
 
-public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
+public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
 
     public fun parse(): ASTNode {
@@ -65,6 +65,10 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
         token(AS_KEYWORD) && parseFqName()
     }
 
+    fun parseFunctionDeclaration() = start(FUNCTION_DECLARATION) {
+        token(ID) && token(COLON) && token(COLON)
+    }
+
     fun parseImport() = start(IMPORT) {
         val result = token(IMPORT_KEYWORD) && maybe(token(QUALIFIED_KEYWORD)) && parseModuleName()
 
@@ -82,7 +86,9 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
 
 
         result && zeroOrMore {
-            parseImport()
+            token(VIRTUAL_SEMICOLON) ||
+            parseImport() ||
+            parseFunctionDeclaration()
         }
 
         while (!builder.eof()) {

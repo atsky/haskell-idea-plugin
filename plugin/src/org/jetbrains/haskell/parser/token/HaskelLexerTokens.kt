@@ -9,6 +9,7 @@ import com.intellij.psi.TokenType
  */
 
 public val ARROW: HaskellToken                = HaskellToken("->")
+public val LEFT_ARROW: HaskellToken           = HaskellToken("<-")
 public val AS_KEYWORD: HaskellToken           = HaskellToken("as")
 public val ASSIGNMENT: HaskellToken           = HaskellToken("=")
 public val CASE_KEYWORD: HaskellToken         = HaskellToken("case")
@@ -19,6 +20,7 @@ public val COMMA : HaskellToken               = HaskellToken(",")
 public val COMMENT : HaskellToken             = HaskellToken("COMMENT")
 public val DATA_KEYWORD : HaskellToken        = HaskellToken("data")
 public val DO_KEYWORD : HaskellToken          = HaskellToken("do")
+public val DOLLAR : HaskellToken              = HaskellToken("$")
 public val DOT : HaskellToken                 = HaskellToken(".")
 public val ELSE_KEYWORD : HaskellToken        = HaskellToken("else")
 public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")

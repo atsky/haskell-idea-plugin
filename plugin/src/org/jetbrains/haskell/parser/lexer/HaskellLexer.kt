@@ -22,7 +22,11 @@ public class HaskellLexer() : LexerBase() {
             DOT,
             SEMICOLON,
             LEFT_PAREN,
-            RIGHT_PAREN)
+            RIGHT_PAREN,
+            LEFT_ARROW,
+            SEMICOLON,
+            COLON,
+            DOLLAR)
 
     var myBuffer : CharSequence? = null
     var myBufferStartOffset: Int = 0

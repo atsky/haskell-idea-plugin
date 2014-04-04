@@ -37,7 +37,7 @@ public class HaskellParserDefinition() : ParserDefinition {
     override fun createParser(project: Project?): PsiParser =
         object : PsiParser {
             override fun parse(root: IElementType?, builder: PsiBuilder?): ASTNode {
-                return DummyHaskellParser(root!!, builder!!).parse()
+                return HaskellParser(root!!, builder!!).parse()
             }
         }
 
