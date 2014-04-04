@@ -43,6 +43,12 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
         }
     }
 
+    fun parseModuleName() = start(MODULE_NAME) {
+        token(TYPE_CONS) && zeroOrMore {
+            token(DOT) && token(TYPE_CONS)
+        }
+    }
+
     fun importElement() = start(IMPORT_ELEMENT) {
         token(ID) || (token(TYPE_CONS) && maybe(atom {
                 token(LEFT_PAREN) && token(DOT) && token(DOT) && token(RIGHT_PAREN)
@@ -60,7 +66,7 @@ public class DummyHaskellParser(root: IElementType, builder: PsiBuilder) : BaseP
     }
 
     fun parseImport() = start(IMPORT) {
-        val result = token(IMPORT_KEYWORD) && maybe(token(QUALIFIED_KEYWORD)) && parseFqName()
+        val result = token(IMPORT_KEYWORD) && maybe(token(QUALIFIED_KEYWORD)) && parseModuleName()
 
         parseImportAsPart()
 

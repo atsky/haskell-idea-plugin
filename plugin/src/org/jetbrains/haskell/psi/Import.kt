@@ -5,8 +5,8 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 
 public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun getModuleName() : FqName? =
-        findChildByClass(javaClass<FqName>())
+    public fun getModuleName() : ModuleName? =
+        findChildByClass(javaClass<ModuleName>())
 
 
 }

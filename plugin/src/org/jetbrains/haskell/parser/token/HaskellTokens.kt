@@ -5,7 +5,7 @@ import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.psi.Import
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.TokenType
-import org.jetbrains.haskell.psi.FqName
+import org.jetbrains.haskell.psi.*
 
 /**
  * Created by atsky on 3/14/14.
@@ -17,10 +17,10 @@ val IMPORT_AS_PART : HaskellCompositeElementType = HaskellCompositeElementType("
 val IMPORT_ELEMENT : HaskellCompositeElementType = HaskellCompositeElementType("Import element")
 val INST_DECL : HaskellCompositeElementType      = HaskellCompositeElementType("InstDecl")
 val FQ_NAME : HaskellCompositeElementType        = HaskellCompositeElementType("fqName", { FqName(it) })
+val MODULE_NAME : HaskellCompositeElementType    = HaskellCompositeElementType("ModuleName", { ModuleName(it) })
 val FUN_BIND : HaskellCompositeElementType       = HaskellCompositeElementType("FunBind")
 val MATCH : HaskellCompositeElementType          = HaskellCompositeElementType("Match")
 val MODULE : HaskellCompositeElementType         = HaskellCompositeElementType("Module", { Module(it) })
-val MODULE_NAME : HaskellCompositeElementType    = HaskellCompositeElementType("ModuleName")
 val PAT_BIND : HaskellCompositeElementType       = HaskellCompositeElementType("PatBind")
 val TYPE_SIG : HaskellCompositeElementType       = HaskellCompositeElementType("TypeSig")
 val UN_GUARDED_RHD : HaskellCompositeElementType = HaskellCompositeElementType("UnGuardedRhs")
