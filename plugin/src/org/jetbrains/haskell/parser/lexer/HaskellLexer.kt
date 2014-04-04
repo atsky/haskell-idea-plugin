@@ -13,6 +13,10 @@ import org.jetbrains.haskell.parser.HaskellToken
  */
 
 public class HaskellLexer() : LexerBase() {
+    class object {
+        val COMMENT_RULE : State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
+    }
+
     val operators = listOf<HaskellToken>(
             COMMA,
             DOT,
@@ -61,10 +65,10 @@ public class HaskellLexer() : LexerBase() {
             }
 
             add(ID,
-                    oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').star())
+                    oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
             add(TYPE_CONS,
-                    oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_').star())
+                    oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
             add(NUMBER,
                     oneOf('0'..'9').plus())
@@ -110,7 +114,9 @@ public class HaskellLexer() : LexerBase() {
     override fun getBufferEnd(): Int = myBufferEndOffset;
 
     fun nextChar() {
-        myOffset++;
+        if (myOffset < getBufferEnd()) {
+            myOffset++;
+        }
     }
 
     override fun advance() {
@@ -158,7 +164,5 @@ public class HaskellLexer() : LexerBase() {
         }
     }
 
-    class object {
-        val COMMENT_RULE : State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
-    }
+
 }
