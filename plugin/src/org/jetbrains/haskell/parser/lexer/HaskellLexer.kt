@@ -18,6 +18,7 @@ public class HaskellLexer() : LexerBase() {
     }
 
     val operators = listOf<HaskellToken>(
+            ASSIGNMENT,
             COMMA,
             DOT,
             SEMICOLON,
@@ -71,7 +72,7 @@ public class HaskellLexer() : LexerBase() {
             add(ID,
                     oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
-            add(TYPE_CONS,
+            add(TYPE_OR_CONS,
                     oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
             add(NUMBER,

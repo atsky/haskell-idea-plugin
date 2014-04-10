@@ -1,10 +1,26 @@
-package org.jetbrains.haskell.parser
+package org.jetbrains.haskell.parser.rules
 
 import com.intellij.lang.PsiBuilder
 import com.intellij.psi.tree.IElementType
 
+inline fun atom(builder: PsiBuilder, body: () -> Boolean): Boolean {
+    val marker = builder.mark()!!
+    val result = body()
+    if (result) {
+        marker.drop();
+    } else {
+        marker.rollbackTo()
+    }
+    return result
+}
 
-open class BaseParser(public val root: IElementType, public val builder: PsiBuilder) {
+
+fun notEmptyList(element : Rule, separator : Rule) : Rule = ListRule(element, separator, false)
+
+fun aList(element : Rule, separator : Rule?) : Rule = ListRule(element, separator, true)
+
+
+public open class BaseParser(public val root: IElementType, public val builder: PsiBuilder) {
 
     fun done(marker: PsiBuilder.Marker, result: Boolean, elementType: IElementType): Boolean {
         if (result) {
@@ -18,6 +34,15 @@ open class BaseParser(public val root: IElementType, public val builder: PsiBuil
     fun maybe(b : Boolean) : Boolean = true;
 
     fun token(tokenType: IElementType): Boolean {
+        val elementType = builder.getTokenType()
+        if (elementType == tokenType) {
+            builder.advanceLexer()
+            return true;
+        }
+        return false;
+    }
+
+    fun tokenRule(tokenType: IElementType): Boolean {
         val elementType = builder.getTokenType()
         if (elementType == tokenType) {
             builder.advanceLexer()

@@ -50,7 +50,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
             keys1.put(keyword, KEYWORD_VALUE)
         }
         keys1.put(PRAGMA, COMMENT_STYLE)
-        keys1.put(TYPE_CONS, CONSTRUCTOR)
+        keys1.put(TYPE_OR_CONS, CONSTRUCTOR)
         keys1.put(STRING, STRING_LITERAL)
         keys1.put(CHARACTER, STRING_LITERAL)
         keys1.put(NUMBER, DefaultLanguageHighlighterColors.NUMBER)

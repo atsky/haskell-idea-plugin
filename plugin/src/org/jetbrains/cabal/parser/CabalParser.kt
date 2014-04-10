@@ -3,9 +3,9 @@ package org.jetbrains.haskell.cabal
 import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import org.jetbrains.haskell.parser.BaseParser
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import com.intellij.psi.TokenType
+import org.jetbrains.haskell.parser.rules.BaseParser
 
 
 class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {

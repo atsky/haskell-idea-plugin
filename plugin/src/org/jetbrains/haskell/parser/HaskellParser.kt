@@ -17,7 +17,10 @@ import org.jetbrains.haskell.util.lisp.SAtom
 import org.jetbrains.haskell.compiler.GHCInterface
 import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.haskell.parser.lexer.*
-
+import org.jetbrains.haskell.parser.rules.BaseParser
+import org.jetbrains.haskell.parser.rules.notEmptyList
+import org.jetbrains.haskell.parser.rules.rule
+import org.jetbrains.haskell.parser.rules.aList
 
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
@@ -37,20 +40,20 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         return builder.getTreeBuilt()!!
     }
 
+
+
     fun parseFqName() = start(FQ_NAME) {
-        token(TYPE_CONS) && zeroOrMore {
-            token(DOT) && token(TYPE_CONS)
-        }
+        notEmptyList(TYPE_OR_CONS, DOT).parse(builder)
     }
 
     fun parseModuleName() = start(MODULE_NAME) {
-        token(TYPE_CONS) && zeroOrMore {
-            token(DOT) && token(TYPE_CONS)
+        token(TYPE_OR_CONS) && zeroOrMore {
+            token(DOT) && token(TYPE_OR_CONS)
         }
     }
 
     fun importElement() = start(IMPORT_ELEMENT) {
-        token(ID) || (token(TYPE_CONS) && maybe(atom {
+        token(ID) || (token(TYPE_OR_CONS) && maybe(atom {
                 token(LEFT_PAREN) && token(DOT) && token(DOT) && token(RIGHT_PAREN)
         }))
     }
@@ -81,6 +84,16 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         result
     }
 
+    val aType = rule(TYPE, TYPE_OR_CONS)
+
+    val aConstructor = rule(CONSTRUCTOR_DECLARATION,
+        TYPE_OR_CONS and aList(aType, null))
+
+    fun parseDataDeclaration() = start(DATA_DECLARATION) {
+        (DATA_KEYWORD and TYPE_OR_CONS and ASSIGNMENT).parse(builder)
+    }
+
+
     fun parseModule() = start(MODULE) {
         val result = token(MODULE_KEYWORD) && parseFqName() && token(WHERE_KEYWORD)
 
@@ -88,6 +101,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         result && zeroOrMore {
             token(VIRTUAL_SEMICOLON) ||
             parseImport() ||
+            parseDataDeclaration() ||
             parseFunctionDeclaration()
         }
 

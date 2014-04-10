@@ -50,7 +50,7 @@ public class HaskelExternallParser(val p0: IElementType, val p1: PsiBuilder) {
     }
 
     fun addToken(aType: HaskellCompositeElementType) {
-        tokenTypes[aType.getDebugName()!!] = aType
+        tokenTypes[aType.getDebugName()] = aType
     }
 
     fun getLineStarts(text: String): List<Int> {
