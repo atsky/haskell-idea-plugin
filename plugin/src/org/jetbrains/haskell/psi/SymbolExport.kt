@@ -4,8 +4,9 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 
 /**
- * @author Evgeny.Kurbatsky
+ * Created by atsky on 4/11/14.
  */
-public class Var(node : ASTNode) : ASTWrapperPsiElement(node) {
+
+public class SymbolExport(node: ASTNode) : ASTWrapperPsiElement(node) {
 
 }

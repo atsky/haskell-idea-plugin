@@ -25,18 +25,21 @@ public class HaskellCompletionContributor() : CompletionContributor() {
 
     private fun findCompletion(element: PsiElement) : Set<String> {
         val names = HashSet<String>()
-        var topLevel = element
+        val module = Module.findModule(element)
 
-        while (!(topLevel is PsiFile || topLevel is Module)) {
-            topLevel = topLevel.getParent()!!
-        }
-
-        if (topLevel is Module) {
-            val list = (topLevel as Module).getImportList()
+        if (module != null) {
+            val list = (module as Module).getImportList()
             for (import in list) {
-                val moduleName = import.getModuleName()!!.getText()
-                for (name in GhcMod().getModuleContent(moduleName!!)) {
-                     names.add(name)
+                val moduleExports = import.getModuleExports()
+                if (moduleExports != null) {
+                    for (export in moduleExports.getSymbolExportList()) {
+                        names.add(export.getText()!!)
+                    }
+                } else {
+                    val moduleName = import.getModuleName()!!.getText()
+                    for (name in GhcMod().getModuleContent(moduleName!!)) {
+                        names.add(name)
+                    }
                 }
             }
         }
