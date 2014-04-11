@@ -45,7 +45,7 @@ public class HaskellLexer() : LexerBase() {
                 }
 
                 add(OPERATOR,
-                        oneOf("<>+-=*/").plus())
+                        oneOf("!#$%&*+./<=>?@\\^|-~:").plus())
 
                 add(ID,
                         oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
@@ -53,8 +53,12 @@ public class HaskellLexer() : LexerBase() {
                 add(TYPE_OR_CONS,
                         oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
+                val decimal = oneOf('0'..'9').plus()
+                val octalNumber = str("0") + oneOf("oO") + oneOf('0'..'7').plus()
+
+
                 add(NUMBER,
-                        oneOf('0'..'9').plus())
+                        merge(decimal, octalNumber))
 
                 add(STRING,
                         str("\"") + merge(noneOf("\""), str("\\\"")).star() + str("\""))

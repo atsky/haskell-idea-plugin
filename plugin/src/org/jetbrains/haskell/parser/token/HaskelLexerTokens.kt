@@ -19,62 +19,77 @@ fun keyword(name : String) : HaskellToken {
 }
 
 // Keywords
-public val AS_KW: HaskellToken           = keyword("as")
-public val CASE_KW: HaskellToken         = keyword("case")
-public val CLASS_KW: HaskellToken        = keyword("class")
+public val AS_KW: HaskellToken          = keyword("as")
+public val CASE_KW: HaskellToken        = keyword("case")
+public val CLASS_KW: HaskellToken       = keyword("class")
 public val DATA_KW: HaskellToken        = keyword("data")
+public val DEFAULT_KW: HaskellToken     = keyword("default")
 public val DERIVING_KW: HaskellToken    = keyword("deriving")
 public val DO_KW: HaskellToken          = keyword("do")
 public val ELSE_KW: HaskellToken        = keyword("else")
+public val EXPORT: HaskellToken         = keyword("export")
 public val HIDING_KW: HaskellToken      = keyword("hiding")
 public val IF_KW: HaskellToken          = keyword("if")
 public val IMPORT_KW: HaskellToken      = keyword("import")
 public val IN_KW: HaskellToken          = keyword("in")
+public val INFIX_KW: HaskellToken       = keyword("infix")
+public val INFIXL_KW: HaskellToken      = keyword("infixl")
+public val INFIXR_KW: HaskellToken      = keyword("infixr")
 public val INSTANCE_KW: HaskellToken    = keyword("instance")
+public val FOREIGN_KW: HaskellToken     = keyword("foreign")
 public val LET_KW: HaskellToken         = keyword("let")
 public val MODULE_KW: HaskellToken      = keyword("module")
+public val NEWTYPE_KW: HaskellToken     = keyword("newtype")
 public val OF_KW: HaskellToken          = keyword("of")
 public val QUALIFIED_KW: HaskellToken   = keyword("qualified")
 public val THEN_KW: HaskellToken        = keyword("then")
 public val WHERE_KW: HaskellToken       = keyword("where")
 public val TYPE_KW: HaskellToken        = keyword("type")
+public val SAFE: HaskellToken           = keyword("safe")
+public val UNSAFE: HaskellToken         = keyword("unsafe")
 
-
-public val ARROW: HaskellToken                = HaskellToken("->")
+// Operators
+public val RIGHT_ARROW: HaskellToken          = HaskellToken("->")
 public val LEFT_ARROW: HaskellToken           = HaskellToken("<-")
-public val ASSIGNMENT: HaskellToken           = HaskellToken("=")
-public val CHARACTER: HaskellToken            = HaskellToken("character")
+public val EQUALS: HaskellToken               = HaskellToken("=")
 public val COLON : HaskellToken               = HaskellToken(":")
+public val DOUBLE_COLON : HaskellToken        = HaskellToken("::")
 public val COMMA : HaskellToken               = HaskellToken(",")
-public val COMMENT : HaskellToken             = HaskellToken("COMMENT")
-public val DOLLAR : HaskellToken              = HaskellToken("$")
 public val DOT : HaskellToken                 = HaskellToken(".")
-public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")
-public val ID : HaskellToken                  = HaskellToken("id")
-public val LAMBDA : HaskellToken              = HaskellToken("\\")
+public val DOT_DOT : HaskellToken             = HaskellToken("..")
+public val DOLLAR : HaskellToken              = HaskellToken("$")
+public val BACK_SLASH: HaskellToken           = HaskellToken("\\")
+public val VERTICAL_BAR : HaskellToken        = HaskellToken("|")
+public val SEMICOLON : HaskellToken           = HaskellToken(";")
+public val AT : HaskellToken                  = HaskellToken("@")
+public val TILDE : HaskellToken               = HaskellToken("~")
+public val DOUBLE_ARROW : HaskellToken        = HaskellToken("=>")
+public val EXCLAMATION : HaskellToken         = HaskellToken("!")
+public val UNDERSCORE : HaskellToken          = HaskellToken("_")
+
+
+// Braces
 public val LEFT_BRACKET : HaskellToken        = HaskellToken("[")
 public val LEFT_PAREN : HaskellToken          = HaskellToken("(")
 public val LEFT_BRACE : HaskellToken          = HaskellToken("{")
-public val NUMBER : HaskellToken              = HaskellToken("number")
-public val OPERATOR : HaskellToken            = HaskellToken("opertor")
-public val PRAGMA : HaskellToken              = HaskellToken("PRAGMA")
 public val RIGHT_BRACE : HaskellToken         = HaskellToken("}")
 public val RIGHT_BRACKET : HaskellToken       = HaskellToken("]")
 public val RIGHT_PAREN : HaskellToken         = HaskellToken(")")
-public val SEMICOLON : HaskellToken           = HaskellToken(";")
-public val STRING : HaskellToken              = HaskellToken("string")
-public val TYPE_OR_CONS: HaskellToken         = HaskellToken("type_cons")
-public val VERTICAL_BAR : HaskellToken        = HaskellToken("|")
-public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN")
-public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
-public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
+
 
 public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
-        ARROW,
-        ASSIGNMENT,
+        AT,
+        TILDE,
+        BACK_SLASH,
+        DOUBLE_ARROW,
+        EXCLAMATION,
+        RIGHT_ARROW,
+        LEFT_ARROW,
+        EQUALS,
         COMMA,
         DOT,
-        SEMICOLON,
+        DOT_DOT,
+        DOUBLE_COLON,
         LEFT_PAREN,
         RIGHT_PAREN,
         LEFT_BRACE,
@@ -85,7 +100,21 @@ public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
         SEMICOLON,
         COLON,
         DOLLAR,
-        VERTICAL_BAR)
+        VERTICAL_BAR,
+        UNDERSCORE)
+
+public val CHARACTER: HaskellToken            = HaskellToken("character")
+public val COMMENT : HaskellToken             = HaskellToken("COMMENT")
+public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")
+public val ID : HaskellToken                  = HaskellToken("id")
+public val NUMBER : HaskellToken              = HaskellToken("number")
+public val OPERATOR : HaskellToken            = HaskellToken("opertor")
+public val PRAGMA : HaskellToken              = HaskellToken("PRAGMA")
+public val STRING : HaskellToken              = HaskellToken("string")
+public val TYPE_OR_CONS: HaskellToken         = HaskellToken("type_cons")
+public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN")
+public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
+public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
 
 
 val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)

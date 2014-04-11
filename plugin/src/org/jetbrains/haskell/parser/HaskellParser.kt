@@ -73,7 +73,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
 
         val qcnames = notEmptyList(qcnameExt, COMMA)
 
-        val exportSubspec = inParentheses(maybe((DOT + DOT) or qcnames))
+        val exportSubspec = inParentheses(maybe((DOT_DOT) or qcnames))
 
         (qcnameExt + maybe(exportSubspec)) or
             (MODULE_KW + aModuleName)
@@ -86,7 +86,8 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
     val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
-        rule(NAME, { ID }) + COLON + COLON + aType
+        val name = rule(NAME, { ID })
+        notEmptyList(name, COMMA) + DOUBLE_COLON + aType
     }
 
     val anImport = rule(IMPORT) {
@@ -98,7 +99,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         aArrowType or aApplicationType
     }
     private val aArrowType : Rule = rule(ARROW_TYPE) {
-        aApplicationType + ARROW + aType
+        aApplicationType + RIGHT_ARROW + aType
     }
 
     val aApplicationType : Rule = rule(APPLICATION_TYPE) {
@@ -111,13 +112,22 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         (LEFT_PAREN + RIGHT_PAREN)
     }
 
+    val typedBinding = lazy {
+        rule(NAME, { ID }) + DOUBLE_COLON + aType
+    }
+
+    val extendedConstructor = lazy {
+        LEFT_BRACE + aList(typedBinding, COMMA) + RIGHT_BRACE
+    }
+
     val aConstructor = rule(CONSTRUCTOR_DECLARATION) {
-        rule(NAME, { TYPE_OR_CONS }) + aList(aType, null)
+        rule(NAME, { TYPE_OR_CONS }) +
+            (extendedConstructor or aList(aType, null))
     }
 
     val aDataDeclaration = rule(DATA_DECLARATION) {
         val derivingSection = DERIVING_KW + LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN
-        DATA_KW + rule(NAME, { TYPE_OR_CONS }) + ASSIGNMENT + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
+        DATA_KW + rule(NAME, { TYPE_OR_CONS }) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
     }
 
 
@@ -125,19 +135,31 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         (aList(VIRTUAL_SEMICOLON, null) + MODULE_KW + aFqName + maybe(aModuleExports) + WHERE_KW)
     }
 
-
-
-
-    val EXPRESSION : Rule = lazy {
-        ID or
-        rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
-        (LEFT_BRACKET + aList(EXPRESSION, COMMA) + RIGHT_BRACKET)
+    val anExpression: Rule = lazy {
+        aList(anAtomExpression, null)
     }
 
-    val expressionList = aList(EXPRESSION, null)
+    val listLiteral = lazy{
+        (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
+    }
+
+    val anAtomExpression: Rule = lazy {
+        UNDERSCORE or
+        COLON or
+        STRING or
+        NUMBER or
+        ID or
+        OPERATOR or
+        DOLLAR or
+        rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
+        inParentheses(anExpression) or
+        listLiteral
+    }
+
+    val expressionList = aList(anAtomExpression, null)
 
     val aFunctionBody = rule(FUNCTION_BODY) {
-        ID + expressionList + ASSIGNMENT + EXPRESSION
+        ID + expressionList + EQUALS + anExpression
     }
 
     val aSomeID = rule(SOME_ID) {
