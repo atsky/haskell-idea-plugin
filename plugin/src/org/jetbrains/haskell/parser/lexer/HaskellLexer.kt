@@ -18,16 +18,22 @@ public class HaskellLexer() : LexerBase() {
     }
 
     val operators = listOf<HaskellToken>(
+            ARROW,
             ASSIGNMENT,
             COMMA,
             DOT,
             SEMICOLON,
             LEFT_PAREN,
             RIGHT_PAREN,
+            LEFT_BRACE,
+            RIGHT_BRACE,
+            LEFT_BRACKET,
+            RIGHT_BRACKET,
             LEFT_ARROW,
             SEMICOLON,
             COLON,
-            DOLLAR)
+            DOLLAR,
+            VERTICAL_BAR)
 
     var myBuffer : CharSequence? = null
     var myBufferStartOffset: Int = 0
@@ -79,7 +85,7 @@ public class HaskellLexer() : LexerBase() {
                     oneOf('0'..'9').plus())
 
             add(STRING,
-                    str("\"") + noneOf("\"").star() + str("\""))
+                    str("\"") + merge(noneOf("\""), str("\\\"")).star() + str("\""))
 
             add(CHARACTER,
                     str("'") + noneOf("'").star() + str("'"))

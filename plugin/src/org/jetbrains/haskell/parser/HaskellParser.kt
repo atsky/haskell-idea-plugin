@@ -21,6 +21,8 @@ import org.jetbrains.haskell.parser.rules.BaseParser
 import org.jetbrains.haskell.parser.rules.notEmptyList
 import org.jetbrains.haskell.parser.rules.rule
 import org.jetbrains.haskell.parser.rules.aList
+import org.jetbrains.haskell.parser.rules.Rule
+import org.jetbrains.haskell.parser.rules.maybe
 
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
@@ -40,78 +42,82 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         return builder.getTreeBuilt()!!
     }
 
-
-
-    fun parseFqName() = start(FQ_NAME) {
-        notEmptyList(TYPE_OR_CONS, DOT).parse(builder)
+    private val aFqName = rule(FQ_NAME) {
+        notEmptyList(TYPE_OR_CONS, DOT)
     }
 
-    fun parseModuleName() = start(MODULE_NAME) {
-        token(TYPE_OR_CONS) && zeroOrMore {
-            token(DOT) && token(TYPE_OR_CONS)
-        }
+    private val aModuleName = rule(MODULE_NAME) {
+        notEmptyList(TYPE_OR_CONS, DOT)
     }
 
-    fun importElement() = start(IMPORT_ELEMENT) {
-        token(ID) || (token(TYPE_OR_CONS) && maybe(atom {
-                token(LEFT_PAREN) && token(DOT) && token(DOT) && token(RIGHT_PAREN)
-        }))
+    val anImportElement = rule(IMPORT_ELEMENT) {
+        ID or (TYPE_OR_CONS + maybe(LEFT_PAREN + DOT + DOT + RIGHT_PAREN))
     }
 
-    fun commaSeparatedImportList() = maybe(atom {
-        importElement() && zeroOrMore {
-            token(COMMA) && importElement()
-        }
-    })
-
-    fun parseImportAsPart() = start(IMPORT_AS_PART) {
-        token(AS_KEYWORD) && parseFqName()
+    val aImportAsPart = rule(IMPORT_AS_PART) {
+        AS_KEYWORD + aFqName
     }
 
-    fun parseFunctionDeclaration() = start(FUNCTION_DECLARATION) {
-        token(ID) && token(COLON) && token(COLON)
+    val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
+        ID + COLON + COLON + aType
     }
 
-    fun parseImport() = start(IMPORT) {
-        val result = token(IMPORT_KEYWORD) && maybe(token(QUALIFIED_KEYWORD)) && parseModuleName()
+    val parseImport = rule(IMPORT) {
+        val importList = LEFT_PAREN + aList(anImportElement, COMMA) + RIGHT_PAREN
 
-        parseImportAsPart()
-
-        atom {
-            token(HIDING_KEYWORD)
-            token(LEFT_PAREN) && commaSeparatedImportList() && token(RIGHT_PAREN)
-        }
-        result
+        IMPORT_KEYWORD + maybe(QUALIFIED_KEYWORD) + aModuleName + maybe(aImportAsPart) +
+              maybe(HIDING_KEYWORD) + maybe(importList)
     }
 
-    val aType = rule(TYPE, TYPE_OR_CONS)
+    val aType : Rule = rule(TYPE) {
+        aArrowType or aApplicationType
+    }
 
-    val aConstructor = rule(CONSTRUCTOR_DECLARATION,
-        TYPE_OR_CONS and aList(aType, null))
+    private val aArrowType : Rule = rule(ARROW_TYPE) {
+        aApplicationType + ARROW + aType
+    }
 
-    fun parseDataDeclaration() = start(DATA_DECLARATION) {
-        (DATA_KEYWORD and TYPE_OR_CONS and ASSIGNMENT).parse(builder)
+    val aApplicationType : Rule = rule(APPLICATION_TYPE) {
+        (aPrimitiveType + aApplicationType) or aPrimitiveType
+    }
+
+    val aPrimitiveType : Rule = rule(TYPE) {
+        TYPE_OR_CONS or
+        (LEFT_BRACKET + aType + RIGHT_BRACKET) or
+        (LEFT_PAREN + RIGHT_PAREN)
+    }
+
+    val aConstructor = rule(CONSTRUCTOR_DECLARATION) {
+        TYPE_OR_CONS + aList(aType, null)
+    }
+
+    val aDataDeclaration = rule(DATA_DECLARATION) {
+        DATA_KEYWORD + TYPE_OR_CONS + ASSIGNMENT + aList(aConstructor, VERTICAL_BAR)
     }
 
 
     fun parseModule() = start(MODULE) {
-        val result = token(MODULE_KEYWORD) && parseFqName() && token(WHERE_KEYWORD)
+        val result = (aList(VIRTUAL_SEMICOLON, null) + MODULE_KEYWORD + aFqName + WHERE_KEYWORD).parse(builder)
 
+        if (result) {
+            val rule = VIRTUAL_SEMICOLON or parseImport or aDataDeclaration or aFunctionDeclaration
 
-        result && zeroOrMore {
-            token(VIRTUAL_SEMICOLON) ||
-            parseImport() ||
-            parseDataDeclaration() ||
-            parseFunctionDeclaration()
-        }
+            while (!builder.eof()) {
 
-        while (!builder.eof()) {
-            start(HASKELL_TOKEN) {
-                builder.advanceLexer()
-                true
+                if (!rule.parse(builder)) {
+                    while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
+                           builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
+                           !builder.eof()) {
+
+                        start(HASKELL_TOKEN) {
+                            builder.advanceLexer()
+                            true
+                        }
+                    }
+                    builder.advanceLexer()
+                }
             }
         }
-
         true
     }
 

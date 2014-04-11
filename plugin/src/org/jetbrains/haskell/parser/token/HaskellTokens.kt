@@ -10,6 +10,8 @@ import org.jetbrains.haskell.psi.*
 /**
  * Created by atsky on 3/14/14.
  */
+val ARROW_TYPE              = HaskellCompositeElementType("ArrowType", { ArrowType(it) })
+val APPLICATION_TYPE        = HaskellCompositeElementType("APPLICATION_TYPE", { ArrowType(it) })
 val CLASS_DECL              = HaskellCompositeElementType("ClassDecl")
 val CONSTRUCTOR_DECLARATION = HaskellCompositeElementType("CunstructorDeclaration")
 val DATA_DECLARATION        = HaskellCompositeElementType("DataDecl")

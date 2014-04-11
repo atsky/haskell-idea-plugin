@@ -15,10 +15,17 @@ inline fun atom(builder: PsiBuilder, body: () -> Boolean): Boolean {
 }
 
 
-fun notEmptyList(element : Rule, separator : Rule) : Rule = ListRule(element, separator, false)
+public fun notEmptyList(element : Rule, separator : Rule) : Rule = ListRule(element, separator, false)
 
-fun aList(element : Rule, separator : Rule?) : Rule = ListRule(element, separator, true)
+public fun aList(element : Rule, separator : Rule?) : Rule = ListRule(element, separator, true)
 
+public fun maybe(rule : Rule) : Rule = object : Rule {
+
+    override fun parse(builder: PsiBuilder): Boolean {
+        rule.parse(builder)
+        return true
+    }
+}
 
 public open class BaseParser(public val root: IElementType, public val builder: PsiBuilder) {
 
@@ -31,18 +38,7 @@ public open class BaseParser(public val root: IElementType, public val builder: 
         return result;
     }
 
-    fun maybe(b : Boolean) : Boolean = true;
-
     fun token(tokenType: IElementType): Boolean {
-        val elementType = builder.getTokenType()
-        if (elementType == tokenType) {
-            builder.advanceLexer()
-            return true;
-        }
-        return false;
-    }
-
-    fun tokenRule(tokenType: IElementType): Boolean {
         val elementType = builder.getTokenType()
         if (elementType == tokenType) {
             builder.advanceLexer()
