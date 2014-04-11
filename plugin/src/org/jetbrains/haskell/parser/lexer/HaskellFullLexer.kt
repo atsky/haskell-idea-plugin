@@ -42,7 +42,6 @@ public class HaskellFullLexer() : LexerBase() {
             if (tokenType == TokenType.NEW_LINE_INDENT) {
                 val nextToken = lexer.getTokenType()
                 if (nextToken != null && !WHITESPACES.contains(nextToken) && !COMMENTS.contains(nextToken)) {
-
                     if (tokenSize == indentStack.last!!) {
                         addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
                     } else {

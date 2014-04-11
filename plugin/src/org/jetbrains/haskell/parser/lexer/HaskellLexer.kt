@@ -14,26 +14,64 @@ import org.jetbrains.haskell.parser.HaskellToken
 
 public class HaskellLexer() : LexerBase() {
     class object {
-        val COMMENT_RULE : State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
+        val COMMENT_RULE: State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
+        val fsm: State<IElementType> = makeFsm();
+
+        fun makeFsm(): State<IElementType> {
+            val fsm = buildFsm<IElementType> {
+
+                add(TokenType.WHITE_SPACE,
+                        oneOf(" \t").plus())
+
+                add(TokenType.NEW_LINE_INDENT,
+                        str("\n") + oneOf(" \t").star())
+
+                add(END_OF_LINE_COMMENT,
+                        str("--") + noneOf("\n").star())
+
+                add(PRAGMA,
+                        str("#") + noneOf("\n").star())
+
+
+                add(COMMENT,
+                        COMMENT_RULE)
+
+                for (keyword in KEYWORDS) {
+                    add(keyword, str(keyword.myName))
+                }
+
+                for (operator in OPERATORS) {
+                    add(operator, str(operator.myName))
+                }
+
+                add(ID,
+                        oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
+
+                add(TYPE_OR_CONS,
+                        oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
+
+                add(NUMBER,
+                        oneOf('0'..'9').plus())
+
+                add(STRING,
+                        str("\"") + merge(noneOf("\""), str("\\\"")).star() + str("\""))
+
+                add(CHARACTER,
+                        str("'") + merge(noneOf("'"), str("\\'")).star() + str("'"))
+
+            }
+
+            var count = 0;
+
+            fsm trace {
+                count++
+            }
+            System.out.println(count)
+
+            return fsm;
+        }
     }
 
-    val operators = listOf<HaskellToken>(
-            ARROW,
-            ASSIGNMENT,
-            COMMA,
-            DOT,
-            SEMICOLON,
-            LEFT_PAREN,
-            RIGHT_PAREN,
-            LEFT_BRACE,
-            RIGHT_BRACE,
-            LEFT_BRACKET,
-            RIGHT_BRACKET,
-            LEFT_ARROW,
-            SEMICOLON,
-            COLON,
-            DOLLAR,
-            VERTICAL_BAR)
 
     var myBuffer : CharSequence? = null
     var myBufferStartOffset: Int = 0
@@ -46,61 +84,10 @@ public class HaskellLexer() : LexerBase() {
     var myTokenStart: Int = 0
     var myTokenEnd: Int = 0
 
-    val fsm: State<IElementType> = makeFsm();
-
-    fun makeFsm() : State<IElementType> {
-        val fsm = buildFsm<IElementType> {
-
-            add(TokenType.WHITE_SPACE,
-                    oneOf(" \t").plus())
-
-            add(TokenType.NEW_LINE_INDENT,
-                    str("\n") + oneOf(" \t").star())
-
-            add(END_OF_LINE_COMMENT,
-                    str("--") + noneOf("\n").star())
-
-            add(PRAGMA,
-                    str("#") + noneOf("\n").star())
 
 
-            add(COMMENT,
-                    COMMENT_RULE)
 
-            for (keyword in KEYWORDS) {
-                add(keyword, str(keyword.myName))
-            }
 
-            for (operator in operators) {
-                add(operator, str(operator.myName))
-            }
-
-            add(ID,
-                    oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
-
-            add(TYPE_OR_CONS,
-                    oneOf('A'..'Z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
-
-            add(NUMBER,
-                    oneOf('0'..'9').plus())
-
-            add(STRING,
-                    str("\"") + merge(noneOf("\""), str("\\\"")).star() + str("\""))
-
-            add(CHARACTER,
-                    str("'") + noneOf("'").star() + str("'"))
-
-        }
-
-        var count = 0;
-
-        fsm trace {
-            count++
-        }
-        System.out.println(count)
-
-        return fsm;
-    }
 
 
     override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {

@@ -11,7 +11,7 @@ class GhcMod {
 
     fun getModuleContent(module : String) : List<String> {
         val text = ProcessRunner(null).execute(listOf(PROGRAM, "browse", module))
-        if (text.contains(":Error:")) {
+        if (!text.contains(":Error:")) {
             return text.split('\n').toList()
         } else {
             return listOf()

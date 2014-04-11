@@ -27,6 +27,13 @@ import org.jetbrains.haskell.parser.rules.maybe
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
+    class object {
+        private val aFqName = rule(FQ_NAME) {
+            notEmptyList(TYPE_OR_CONS, DOT)
+        }
+
+
+    }
 
     public fun parse(): ASTNode {
         return parseInternal(root)
@@ -42,16 +49,20 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         return builder.getTreeBuilt()!!
     }
 
-    private val aFqName = rule(FQ_NAME) {
-        notEmptyList(TYPE_OR_CONS, DOT)
-    }
+
 
     private val aModuleName = rule(MODULE_NAME) {
         notEmptyList(TYPE_OR_CONS, DOT)
     }
 
+    private val aModuleExports = rule(MODULE_EXPORTS) {
+        LEFT_PAREN + aList(anImportElement, COMMA) + maybe(COMMA) + RIGHT_PAREN
+    }
+
     val anImportElement = rule(IMPORT_ELEMENT) {
-        ID or (TYPE_OR_CONS + maybe(LEFT_PAREN + DOT + DOT + RIGHT_PAREN))
+        ID or
+        (TYPE_OR_CONS + maybe(LEFT_PAREN + DOT + DOT + RIGHT_PAREN)) or
+        (MODULE_KEYWORD + aFqName)
     }
 
     val aImportAsPart = rule(IMPORT_AS_PART) {
@@ -63,10 +74,9 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
     val parseImport = rule(IMPORT) {
-        val importList = LEFT_PAREN + aList(anImportElement, COMMA) + RIGHT_PAREN
 
         IMPORT_KEYWORD + maybe(QUALIFIED_KEYWORD) + aModuleName + maybe(aImportAsPart) +
-              maybe(HIDING_KEYWORD) + maybe(importList)
+              maybe(HIDING_KEYWORD) + maybe(aModuleExports)
     }
 
     val aType : Rule = rule(TYPE) {
@@ -97,7 +107,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
 
 
     fun parseModule() = start(MODULE) {
-        val result = (aList(VIRTUAL_SEMICOLON, null) + MODULE_KEYWORD + aFqName + WHERE_KEYWORD).parse(builder)
+        val result = (aList(VIRTUAL_SEMICOLON, null) + MODULE_KEYWORD + aFqName + maybe(aModuleExports) + WHERE_KEYWORD).parse(builder)
 
         if (result) {
             val rule = VIRTUAL_SEMICOLON or parseImport or aDataDeclaration or aFunctionDeclaration
@@ -116,6 +126,12 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
                     }
                     builder.advanceLexer()
                 }
+            }
+        }
+        while (!builder.eof()) {
+            start(HASKELL_TOKEN) {
+                builder.advanceLexer()
+                true
             }
         }
         true
