@@ -23,6 +23,7 @@ import org.jetbrains.haskell.parser.rules.rule
 import org.jetbrains.haskell.parser.rules.aList
 import org.jetbrains.haskell.parser.rules.Rule
 import org.jetbrains.haskell.parser.rules.maybe
+import org.jetbrains.haskell.parser.rules.lazy
 
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
@@ -62,27 +63,27 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     val anImportElement = rule(IMPORT_ELEMENT) {
         ID or
         (TYPE_OR_CONS + maybe(LEFT_PAREN + DOT + DOT + RIGHT_PAREN)) or
-        (MODULE_KEYWORD + aFqName)
+        (MODULE_KW + aFqName) or
+        (LEFT_PAREN + OPERATOR + RIGHT_PAREN)
     }
 
     val aImportAsPart = rule(IMPORT_AS_PART) {
-        AS_KEYWORD + aFqName
+        AS_KW + aFqName
     }
 
     val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
         ID + COLON + COLON + aType
     }
 
-    val parseImport = rule(IMPORT) {
+    val anImport = rule(IMPORT) {
 
-        IMPORT_KEYWORD + maybe(QUALIFIED_KEYWORD) + aModuleName + maybe(aImportAsPart) +
-              maybe(HIDING_KEYWORD) + maybe(aModuleExports)
+        IMPORT_KW + maybe(QUALIFIED_KW) + aModuleName + maybe(aImportAsPart) +
+              maybe(HIDING_KW) + maybe(aModuleExports)
     }
 
-    val aType : Rule = rule(TYPE) {
+    val aType : Rule = lazy {
         aArrowType or aApplicationType
     }
-
     private val aArrowType : Rule = rule(ARROW_TYPE) {
         aApplicationType + ARROW + aType
     }
@@ -102,15 +103,37 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
     val aDataDeclaration = rule(DATA_DECLARATION) {
-        DATA_KEYWORD + TYPE_OR_CONS + ASSIGNMENT + aList(aConstructor, VERTICAL_BAR)
+        val derivingSection = DERIVING_KW + LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN
+        DATA_KW + TYPE_OR_CONS + ASSIGNMENT + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
     }
 
 
+    val aModuleHeader = rule(MODULE_HEADER) {
+        (aList(VIRTUAL_SEMICOLON, null) + MODULE_KW + aFqName + maybe(aModuleExports) + WHERE_KW)
+    }
+
+
+    val EXPRESSION : Rule = lazy {
+        ID or
+        TYPE_OR_CONS or
+        (LEFT_BRACKET + aList(EXPRESSION, COMMA) + RIGHT_BRACKET)
+    }
+
+    val expressionList = aList(EXPRESSION, null)
+
+    val aFunctionBody = rule(FUNCTION_BODY) {
+        ID + expressionList + ASSIGNMENT + EXPRESSION
+    }
+
     fun parseModule() = start(MODULE) {
-        val result = (aList(VIRTUAL_SEMICOLON, null) + MODULE_KEYWORD + aFqName + maybe(aModuleExports) + WHERE_KEYWORD).parse(builder)
+        val result = aModuleHeader.parse(builder)
 
         if (result) {
-            val rule = VIRTUAL_SEMICOLON or parseImport or aDataDeclaration or aFunctionDeclaration
+            val rule = VIRTUAL_SEMICOLON or
+                       anImport or
+                       aDataDeclaration or
+                       aFunctionDeclaration or
+                       aFunctionBody
 
             while (!builder.eof()) {
 

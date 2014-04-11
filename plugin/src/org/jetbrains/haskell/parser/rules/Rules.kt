@@ -19,7 +19,7 @@ public trait Rule {
 
 }
 
-class AndRule(val first: Rule, val second: Rule) : Rule {
+private class AndRule(val first: Rule, val second: Rule) : Rule {
 
     override fun parse(builder: PsiBuilder): Boolean =
             atom(builder) {
@@ -28,7 +28,7 @@ class AndRule(val first: Rule, val second: Rule) : Rule {
 
 }
 
-class OrRule(val first: Rule, val second: Rule) : Rule {
+private class OrRule(val first: Rule, val second: Rule) : Rule {
 
     override fun parse(builder: PsiBuilder): Boolean =
             first.parse(builder) || second.parse(builder)
@@ -36,7 +36,7 @@ class OrRule(val first: Rule, val second: Rule) : Rule {
 
 }
 
-class ListRule(val element: Rule, val separator: Rule?, val canBeEmpty: Boolean) : Rule {
+private class ListRule(val element: Rule, val separator: Rule?, val canBeEmpty: Boolean) : Rule {
 
     override fun parse(builder: PsiBuilder): Boolean =
             atom(builder) {
@@ -49,6 +49,19 @@ class ListRule(val element: Rule, val separator: Rule?, val canBeEmpty: Boolean)
 
                 result
             } || canBeEmpty
+
+}
+
+private class LazyRule(val body : () -> Rule) : Rule {
+
+    var rule : Rule? = null
+
+    override fun parse(builder: PsiBuilder): Boolean {
+        if (rule == null) {
+            rule = body()
+        }
+        return rule!!.parse(builder)
+    }
 
 }
 
@@ -70,3 +83,4 @@ public fun rule(elementType: IElementType, ruleConsrturtor: () -> Rule): Rule {
     }
 }
 
+public fun lazy(body : () -> Rule) : Rule = LazyRule(body)

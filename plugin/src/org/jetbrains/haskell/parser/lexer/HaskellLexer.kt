@@ -44,6 +44,9 @@ public class HaskellLexer() : LexerBase() {
                     add(operator, str(operator.myName))
                 }
 
+                add(OPERATOR,
+                        oneOf("<>+-=*/").plus())
+
                 add(ID,
                         oneOf('a'..'z') + oneOf(('a'..'z') + ('A'..'Z') + ('0'..'9') + '_' + '\'').star())
 
