@@ -5,33 +5,148 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
 
-import org.jetbrains.haskell.util.ProcessRunner
-import org.jetbrains.haskell.util.lisp.LispParser
-import org.jetbrains.haskell.util.lisp.SList
-import org.jetbrains.haskell.util.lisp.SExpression
 import java.util.ArrayList
 import org.jaxen.expr.Expr
 import java.util.LinkedList
 import java.util.HashMap
-import org.jetbrains.haskell.util.lisp.SAtom
-import org.jetbrains.haskell.compiler.GHCInterface
 import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.haskell.parser.lexer.*
-import org.jetbrains.haskell.parser.rules.BaseParser
-import org.jetbrains.haskell.parser.rules.notEmptyList
-import org.jetbrains.haskell.parser.rules.rule
-import org.jetbrains.haskell.parser.rules.aList
-import org.jetbrains.haskell.parser.rules.Rule
-import org.jetbrains.haskell.parser.rules.maybe
-import org.jetbrains.haskell.parser.rules.lazy
+import org.jetbrains.haskell.parser.rules.*
+import org.jetbrains.haskell.psi.*
+
+
+public fun inParentheses(rule : Rule) : Rule {
+    return LEFT_PAREN + rule + RIGHT_PAREN
+}
 
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
     class object {
-        private val aFqName = rule(FQ_NAME) {
+        private val FQ_NAME = RuleBasedElementType("FQ name", FqName) {
             notEmptyList(TYPE_OR_CONS, DOT)
         }
+
+        val aPrimitiveType : Rule = rule(TYPE) {
+            TYPE_OR_CONS or
+            (LEFT_BRACKET + aType + RIGHT_BRACKET) or
+            (LEFT_PAREN + RIGHT_PAREN)
+        }
+
+        val aApplicationType : Rule = rule(APPLICATION_TYPE) {
+            (aPrimitiveType + aApplicationType) or aPrimitiveType
+        }
+
+        private val aArrowType : Rule = rule(ARROW_TYPE) {
+            aApplicationType + RIGHT_ARROW + aType
+        }
+
+        val aType : Rule = lazy {
+            aArrowType or aApplicationType
+        }
+
+
+        val anExpression: Rule = lazy {
+            aList(anAtomExpression, null)
+        }
+
+        val listLiteral = lazy{
+            (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
+        }
+
+        val anAtomExpression: Rule = lazy {
+            UNDERSCORE or
+            COLON or
+            STRING or
+            NUMBER or
+            ID or
+            OPERATOR or
+            DOLLAR or
+            rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
+            inParentheses(anExpression) or
+            listLiteral
+        }
+
+        val expressionList = aList(anAtomExpression, null)
+
+        val aFunctionBody = rule(FUNCTION_BODY) {
+            ID + expressionList + EQUALS + anExpression
+        }
+
+        val INSTANCE_BODY = lazy {
+            aFunctionBody
+        }
+
+        val INSTANCE_DECLARATION = RuleBasedElementType("Instance declaration", InstanceDeclaration) {
+            val body = VIRTUAL_LEFT_PAREN + INSTANCE_BODY + VIRTUAL_RIGHT_PAREN
+
+            INSTANCE_KW + TYPE_OR_CONS + aList(aType, null) + WHERE_KW + body
+        }
+
+        private val aModuleName = rule(MODULE_NAME) {
+            notEmptyList(TYPE_OR_CONS, DOT)
+        }
+
+        private val aModuleExports = rule(MODULE_EXPORTS) {
+            LEFT_PAREN + aList(anExport, COMMA) + maybe(COMMA) + RIGHT_PAREN
+        }
+
+
+        val anExport = lazy {
+            val symbolExport = rule(SYMBOL_EXPORT) {
+                ID or TYPE_OR_CONS or inParentheses(OPERATOR)
+            }
+
+            val qcnameExt = maybe(TYPE_KW) + symbolExport
+
+            val qcnames = notEmptyList(qcnameExt, COMMA)
+
+            val exportSubspec = inParentheses(maybe((DOT_DOT) or qcnames))
+
+            (qcnameExt + maybe(exportSubspec)) or
+            (MODULE_KW + aModuleName)
+        }
+
+        val aImportAsPart = rule(IMPORT_AS_PART) {
+            AS_KW + FQ_NAME
+        }
+
+        val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
+            val name = rule(NAME, { ID })
+            notEmptyList(name, COMMA) + DOUBLE_COLON + aType
+        }
+
+        val anImport = rule(IMPORT) {
+            IMPORT_KW + maybe(QUALIFIED_KW) + aModuleName + maybe(aImportAsPart) +
+            maybe(HIDING_KW) + maybe(aModuleExports)
+        }
+
+        val typedBinding = lazy {
+            rule(NAME, { ID }) + DOUBLE_COLON + aType
+        }
+
+        val extendedConstructor = lazy {
+            LEFT_BRACE + aList(typedBinding, COMMA) + RIGHT_BRACE
+        }
+
+        val aConstructor = rule(CONSTRUCTOR_DECLARATION) {
+            rule(NAME, { TYPE_OR_CONS }) +
+            (extendedConstructor or aList(aType, null))
+        }
+
+        val aDataDeclaration = rule(DATA_DECLARATION) {
+            val derivingSection = DERIVING_KW + LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN
+            DATA_KW + rule(NAME, { TYPE_OR_CONS }) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
+        }
+
+        val SOME_ID = RuleBasedElementType("Some id", SomeId) {
+            ID or TYPE_OR_CONS or OPERATOR
+        }
+
+        val aModuleHeader = rule(MODULE_HEADER) {
+            (aList(VIRTUAL_SEMICOLON, null) + MODULE_KW + FQ_NAME + maybe(aModuleExports) + WHERE_KW)
+        }
+
 
 
     }
@@ -51,121 +166,6 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
 
-    fun inParentheses(rule : Rule) : Rule {
-        return LEFT_PAREN + rule + RIGHT_PAREN
-    }
-
-    private val aModuleName = rule(MODULE_NAME) {
-        notEmptyList(TYPE_OR_CONS, DOT)
-    }
-
-    private val aModuleExports = rule(MODULE_EXPORTS) {
-        LEFT_PAREN + aList(anExport, COMMA) + maybe(COMMA) + RIGHT_PAREN
-    }
-
-
-    val anExport = lazy {
-        val symbolExport = rule(SYMBOL_EXPORT) {
-            ID or TYPE_OR_CONS or inParentheses(OPERATOR)
-        }
-
-        val qcnameExt = maybe(TYPE_KW) + symbolExport
-
-        val qcnames = notEmptyList(qcnameExt, COMMA)
-
-        val exportSubspec = inParentheses(maybe((DOT_DOT) or qcnames))
-
-        (qcnameExt + maybe(exportSubspec)) or
-            (MODULE_KW + aModuleName)
-    }
-
-
-
-    val aImportAsPart = rule(IMPORT_AS_PART) {
-        AS_KW + aFqName
-    }
-
-    val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
-        val name = rule(NAME, { ID })
-        notEmptyList(name, COMMA) + DOUBLE_COLON + aType
-    }
-
-    val anImport = rule(IMPORT) {
-        IMPORT_KW + maybe(QUALIFIED_KW) + aModuleName + maybe(aImportAsPart) +
-              maybe(HIDING_KW) + maybe(aModuleExports)
-    }
-
-    val aType : Rule = lazy {
-        aArrowType or aApplicationType
-    }
-    private val aArrowType : Rule = rule(ARROW_TYPE) {
-        aApplicationType + RIGHT_ARROW + aType
-    }
-
-    val aApplicationType : Rule = rule(APPLICATION_TYPE) {
-        (aPrimitiveType + aApplicationType) or aPrimitiveType
-    }
-
-    val aPrimitiveType : Rule = rule(TYPE) {
-        TYPE_OR_CONS or
-        (LEFT_BRACKET + aType + RIGHT_BRACKET) or
-        (LEFT_PAREN + RIGHT_PAREN)
-    }
-
-    val typedBinding = lazy {
-        rule(NAME, { ID }) + DOUBLE_COLON + aType
-    }
-
-    val extendedConstructor = lazy {
-        LEFT_BRACE + aList(typedBinding, COMMA) + RIGHT_BRACE
-    }
-
-    val aConstructor = rule(CONSTRUCTOR_DECLARATION) {
-        rule(NAME, { TYPE_OR_CONS }) +
-            (extendedConstructor or aList(aType, null))
-    }
-
-    val aDataDeclaration = rule(DATA_DECLARATION) {
-        val derivingSection = DERIVING_KW + LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN
-        DATA_KW + rule(NAME, { TYPE_OR_CONS }) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
-    }
-
-
-    val aModuleHeader = rule(MODULE_HEADER) {
-        (aList(VIRTUAL_SEMICOLON, null) + MODULE_KW + aFqName + maybe(aModuleExports) + WHERE_KW)
-    }
-
-    val anExpression: Rule = lazy {
-        aList(anAtomExpression, null)
-    }
-
-    val listLiteral = lazy{
-        (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
-    }
-
-    val anAtomExpression: Rule = lazy {
-        UNDERSCORE or
-        COLON or
-        STRING or
-        NUMBER or
-        ID or
-        OPERATOR or
-        DOLLAR or
-        rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
-        inParentheses(anExpression) or
-        listLiteral
-    }
-
-    val expressionList = aList(anAtomExpression, null)
-
-    val aFunctionBody = rule(FUNCTION_BODY) {
-        ID + expressionList + EQUALS + anExpression
-    }
-
-    val aSomeID = rule(SOME_ID) {
-        ID or TYPE_OR_CONS or OPERATOR
-    }
-
     fun parseModule() = start(MODULE) {
         val result = aModuleHeader.parse(builder)
 
@@ -173,6 +173,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             val rule = VIRTUAL_SEMICOLON or
                        anImport or
                        aDataDeclaration or
+                       INSTANCE_DECLARATION or
                        aFunctionDeclaration or
                        aFunctionBody
 
@@ -183,7 +184,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
                            builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
                            !builder.eof()) {
 
-                        aSomeID.parse(builder) || start(HASKELL_TOKEN) {
+                        SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
                             builder.advanceLexer()
                             true
                         }
@@ -193,7 +194,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             }
         }
         while (!builder.eof()) {
-            aSomeID.parse(builder) || start(HASKELL_TOKEN) {
+            SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
                 builder.advanceLexer()
                 true
             }

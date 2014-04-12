@@ -17,7 +17,7 @@ public fun createPsiElement(node: ASTNode): PsiElement {
     if (elementType is HaskellCompositeElementType) {
         val constructor = elementType.constructor
         if (constructor != null) {
-            return constructor(node)
+            return constructor.create(node)
         }
     }
 

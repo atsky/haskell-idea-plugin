@@ -65,11 +65,11 @@ private class LazyRule(val body : () -> Rule) : Rule {
 
 }
 
-public fun rule(elementType: IElementType, ruleConsrturtor: () -> Rule): Rule {
+public fun rule(elementType: IElementType, ruleConstructor: () -> Rule): Rule {
     return object : Rule {
         override fun parse(builder: PsiBuilder): Boolean {
             val marker = builder.mark()!!
-            val result = ruleConsrturtor().parse(builder)
+            val result = ruleConstructor().parse(builder)
 
             if (result) {
                 marker.done(elementType);

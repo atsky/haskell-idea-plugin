@@ -36,7 +36,13 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
             val module = ProjectRootManager.getInstance(project)!!.getFileIndex().getModuleForFile(virtualFile)
 
             val psiFile = CabalInterface(project).getPsiFile(findCabal(module!!)!!)
-            val name = psiFile.getExecutables().get(0).getExecutableName()
+            val executables = psiFile.getExecutables()
+
+            val name = if (executables.size > 0) {
+                executables.get(0).getExecutableName()
+            } else {
+                "Default"
+            }
 
             configuration!!.setMyExecutableName(name)
             configuration.setModule(module)

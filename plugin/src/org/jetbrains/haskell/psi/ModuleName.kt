@@ -16,11 +16,16 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.haskell.fileType.HaskellFile
+import org.jetbrains.haskell.parser.ElementFactory
 
 /**
  * Created by atsky on 3/29/14.
  */
 public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
+
+    class object : ElementFactory {
+        override fun create(node: ASTNode) = ModuleName(node)
+    }
 
     override fun getReference(): PsiReference? {
         return ModuleReference(this)
