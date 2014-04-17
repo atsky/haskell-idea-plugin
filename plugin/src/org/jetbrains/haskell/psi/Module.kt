@@ -16,7 +16,7 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
 
     class object : ElementFactory {
 
-        override fun create(node: ASTNode) = Constructor(node)
+        override fun create(node: ASTNode) = Module(node)
 
         fun findModule(element: PsiElement) : Module? {
             var topLevel = element
@@ -36,7 +36,7 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 
-    fun getFunctionDeclarationList() : List<FunctionDeclaration> {
+    fun getValueDeclarationList() : List<ValueDeclaration> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 

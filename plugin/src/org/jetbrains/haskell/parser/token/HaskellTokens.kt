@@ -21,7 +21,7 @@ val IMPORT_AS_PART          = HaskellCompositeElementType("Import as part")
 val SYMBOL_EXPORT           = HaskellCompositeElementType("Symbol export", SymbolExport)
 val INSTANCE_DECLARATION    = HaskellCompositeElementType("Instance declaration")
 val FUNCTION_BODY           = HaskellCompositeElementType("Function body")
-val FUNCTION_DECLARATION    = HaskellCompositeElementType("Function declaration", FunctionDeclaration)
+
 val MODULE_NAME             = HaskellCompositeElementType("Module name", ModuleName)
 val MODULE_EXPORTS          = HaskellCompositeElementType("Module exports", ModuleExports)
 val MODULE                  = HaskellCompositeElementType("Module", Module)

@@ -21,7 +21,7 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         for (import in importList) {
             val module = import.getModuleName()?.findModuleFile()?.getModule()
             if (module != null) {
-                val list = module.getFunctionDeclarationList()
+                val list = module.getValueDeclarationList()
                 for (function in list) {
                     if (function.getDeclarationName() == someId.getText()) {
                         return function

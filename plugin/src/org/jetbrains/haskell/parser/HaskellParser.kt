@@ -28,9 +28,12 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         }
 
         val aPrimitiveType : Rule = rule(TYPE) {
-            TYPE_OR_CONS or
-            (LEFT_BRACKET + aType + RIGHT_BRACKET) or
-            (LEFT_PAREN + RIGHT_PAREN)
+            val noBangType = ID or
+                             TYPE_OR_CONS or
+                             (LEFT_BRACKET + aType + RIGHT_BRACKET) or
+                             inParentheses(aType) or
+                             (LEFT_PAREN + RIGHT_PAREN)
+            maybe(EXCLAMATION) + noBangType
         }
 
         val aApplicationType : Rule = rule(APPLICATION_TYPE) {
@@ -69,8 +72,14 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
 
         val expressionList = aList(anAtomExpression, null)
 
+
+        val aGuard = lazy {
+            VERTICAL_BAR + anExpression + EQUALS + anExpression
+        }
+
         val aFunctionBody = rule(FUNCTION_BODY) {
-            ID + expressionList + EQUALS + anExpression
+            val rhs = (EQUALS + anExpression) or notEmptyList(aGuard)
+            ID + expressionList + rhs
         }
 
         val INSTANCE_BODY = lazy {
@@ -111,7 +120,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             AS_KW + FQ_NAME
         }
 
-        val aFunctionDeclaration = rule(FUNCTION_DECLARATION) {
+        val VALUE_DECLARATION = RuleBasedElementType("Function declaration", ValueDeclaration) {
             val name = rule(NAME, { ID })
             notEmptyList(name, COMMA) + DOUBLE_COLON + aType
         }
@@ -135,8 +144,10 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         }
 
         val aDataDeclaration = rule(DATA_DECLARATION) {
-            val derivingSection = DERIVING_KW + LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN
-            DATA_KW + rule(NAME, { TYPE_OR_CONS }) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
+            val derivingSection = DERIVING_KW + ((LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN) or TYPE_OR_CONS)
+            val data_or_newtype = DATA_KW or NEWTYPE_KW
+            val dataName = rule(NAME, { TYPE_OR_CONS })
+            data_or_newtype + dataName + aList(ID) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
         }
 
         val SOME_ID = RuleBasedElementType("Some id", SomeId) {
@@ -174,7 +185,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
                        anImport or
                        aDataDeclaration or
                        INSTANCE_DECLARATION or
-                       aFunctionDeclaration or
+            VALUE_DECLARATION or
                        aFunctionBody
 
             while (!builder.eof()) {

@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.scope
 
 import org.jetbrains.haskell.psi.Import
-import org.jetbrains.haskell.psi.FunctionDeclaration
+import org.jetbrains.haskell.psi.ValueDeclaration
 import org.jetbrains.haskell.psi.Declaration
 
 public class ImportScope(val import : Import) {
@@ -19,8 +19,8 @@ public class ImportScope(val import : Import) {
         return list
     }
 
-    fun getFunctions() : List<FunctionDeclaration> {
-        val list = import.findModule()?.getFunctionDeclarationList() ?: listOf()
+    fun getFunctions() : List<ValueDeclaration> {
+        val list = import.findModule()?.getValueDeclarationList() ?: listOf()
         return filterDeclarations(list)
     }
 

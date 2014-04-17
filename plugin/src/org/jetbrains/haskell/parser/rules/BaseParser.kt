@@ -15,9 +15,9 @@ inline fun atom(builder: PsiBuilder, body: () -> Boolean): Boolean {
 }
 
 
-public fun notEmptyList(element : Rule, separator : Rule) : Rule = ListRule(element, separator, false)
+public fun notEmptyList(element : Rule, separator : Rule? = null) : Rule = ListRule(element, separator, false)
 
-public fun aList(element : Rule, separator : Rule?) : Rule = ListRule(element, separator, true)
+public fun aList(element : Rule, separator : Rule? = null) : Rule = ListRule(element, separator, true)
 
 public fun maybe(rule : Rule) : Rule = object : Rule {
 

@@ -5,10 +5,10 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.haskell.parser.ElementFactory
 
 
-public class FunctionDeclaration(node : ASTNode) : Declaration(node) {
+public class ValueDeclaration(node : ASTNode) : Declaration(node) {
 
     class object : ElementFactory {
-        override fun create(node: ASTNode) = FunctionDeclaration(node)
+        override fun create(node: ASTNode) = ValueDeclaration(node)
     }
 
     override fun getDeclarationName(): String? =
