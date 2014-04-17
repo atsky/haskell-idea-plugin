@@ -13,32 +13,21 @@ public class ProcessRunner(workingDirectory: String?) {
 
 
     public fun execute(cmd: List<String>, input: String?): String {
-        try {
-            val process = getProcess(cmd.toList())
-            if (input != null) {
-                val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
-                streamWriter.write(input)
-                streamWriter.close()
-            }
-
-            var myInput: InputStream = process.getInputStream()!!
-            process.waitFor()
-            return readData(myInput)
-        }
-        catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        catch (e: IOException) {
-            e.printStackTrace()
+        val process = getProcess(cmd.toList())
+        if (input != null) {
+            val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
+            streamWriter.write(input)
+            streamWriter.close()
         }
 
-        return ""
+        var myInput: InputStream = process.getInputStream()!!
+        process.waitFor()
+        return readData(myInput)
     }
 
     public fun getProcess(cmd: List<String>): Process {
         val processBuilder: ProcessBuilder = ProcessBuilder(cmd)
-        if (myWorkingDirectory != null)
-        {
+        if (myWorkingDirectory != null) {
             processBuilder.directory(File(myWorkingDirectory))
         }
 
