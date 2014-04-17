@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.haskell.psi.Module
 import java.util.HashSet
-import org.jetbrains.haskell.external.GhcMod
+import org.jetbrains.haskell.external.GHC_MOD
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
@@ -37,7 +37,7 @@ public class HaskellCompletionContributor() : CompletionContributor() {
                     }
                 } else {
                     val moduleName = import.getModuleName()!!.getText()
-                    for (name in GhcMod().getModuleContent(moduleName!!)) {
+                    for (name in GHC_MOD.getModuleContent(moduleName!!)) {
                         names.add(name)
                     }
                 }
