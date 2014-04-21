@@ -23,7 +23,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
 
 
     public fun applyTo(s: CabalRunConfiguration): Unit {
-        s.setModule(moduleComboBox.getSelectedItem() as Module)
+        s.setModule(moduleComboBox.getSelectedItem() as Module?)
         s.setMyExecutableName(executableComponent.getText())
         s.setProgramParameters(programParametersComponent.getText())
         s.setWorkingDirectory(workingDirectoryComponent.getText())

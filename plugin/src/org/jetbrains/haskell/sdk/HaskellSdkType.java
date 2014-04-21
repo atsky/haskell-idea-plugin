@@ -86,10 +86,10 @@ public final class HaskellSdkType extends SdkType {
         }
         Collections.sort(ghcDirs, new Comparator<GHCDir>() {
             public int compare(GHCDir d1, GHCDir d2) {
-                return d1.version.compareTo(d2.version);
+                return d1.getVersion().compareTo(d2.getVersion());
             }
         });
-        return ghcDirs.get(ghcDirs.size() - 1).name;
+        return ghcDirs.get(ghcDirs.size() - 1).getName();
     }
 
     public static boolean checkForGhc(File path) {

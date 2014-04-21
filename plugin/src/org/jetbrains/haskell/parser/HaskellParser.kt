@@ -36,9 +36,15 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             maybe(EXCLAMATION) + noBangType
         }
 
-        val aApplicationType : Rule = rule(APPLICATION_TYPE) {
-            (aPrimitiveType + aApplicationType) or aPrimitiveType
+
+        val CONTEXT : Rule = lazy {
+            val aClass : Rule = TYPE_OR_CONS + aList(aType)
+            (inParentheses(notEmptyList(aClass, COMMA)) or aClass) + DOUBLE_ARROW
         }
+
+        val aApplicationType : Rule = rule(APPLICATION_TYPE) {
+            aPrimitiveType + aApplicationType
+        } or aPrimitiveType
 
         private val aArrowType : Rule = rule(ARROW_TYPE) {
             aApplicationType + RIGHT_ARROW + aType
@@ -57,16 +63,70 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
         }
 
-        val anAtomExpression: Rule = lazy {
+        val aCaseCase: Rule = RuleBasedElementType("Case clause", CaseClause) {
+            anExpression + RIGHT_ARROW + anExpression
+        }
+
+        val CASE_EXPRESSION = RuleBasedElementType("Case expression", CaseClause) {
+            val caseBody = VIRTUAL_LEFT_PAREN + aList(aCaseCase, VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
+            CASE_KW + anExpression + OF_KW + caseBody
+        }
+
+        val ANY : Rule = object : Rule {
+            override fun parse(builder: PsiBuilder): Boolean {
+                builder.advanceLexer()
+                return true
+            }
+
+        }
+
+        val untilSemicolon : Rule = object : Rule {
+            override fun parse(builder: PsiBuilder): Boolean {
+                while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
+                       builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
+                       !builder.eof()) {
+
+                    (SOME_ID or ANY).parse(builder)
+                }
+                return true
+            }
+        }
+
+        val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", DoStatement) {
+            (ID + LEFT_ARROW + anExpression) or
+            (LET_KW + ID + EQUALS + anExpression) or
+            anExpression or
+            untilSemicolon
+        }
+
+
+        val LET_EXPRESSION = RuleBasedElementType("Let expression", LetExpression) {
+            LET_KW + ID + EQUALS + anExpression + IN_KW + anExpression
+        }
+
+        val DO_EXPRESSION = RuleBasedElementType("Do expression", DoExpression) {
+            DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
+        }
+
+        val anLambdaLeftPart = lazy {
+            BACK_SLASH + notEmptyList(ID) + RIGHT_ARROW
+        }
+
+        val anAtomExpression = lazy {
             UNDERSCORE or
             COLON or
             STRING or
             NUMBER or
             ID or
+            DOT or
             OPERATOR or
             DOLLAR or
+            CASE_EXPRESSION or
+            LET_EXPRESSION or
+            DO_EXPRESSION or
+            anLambdaLeftPart or
             rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
-            inParentheses(anExpression) or
+            inParentheses(notEmptyList(anExpression, COMMA)) or
             listLiteral
         }
 
@@ -77,19 +137,19 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             VERTICAL_BAR + anExpression + EQUALS + anExpression
         }
 
-        val aFunctionBody = rule(FUNCTION_BODY) {
+        val aValueBody = rule(VALUE_BODY) {
             val rhs = (EQUALS + anExpression) or notEmptyList(aGuard)
             ID + expressionList + rhs
         }
 
         val INSTANCE_BODY = lazy {
-            aFunctionBody
+            aList(aValueBody, VIRTUAL_SEMICOLON)
         }
 
         val INSTANCE_DECLARATION = RuleBasedElementType("Instance declaration", InstanceDeclaration) {
             val body = VIRTUAL_LEFT_PAREN + INSTANCE_BODY + VIRTUAL_RIGHT_PAREN
 
-            INSTANCE_KW + TYPE_OR_CONS + aList(aType, null) + WHERE_KW + body
+            INSTANCE_KW + maybe(CONTEXT) + TYPE_OR_CONS + aList(aType, null) + WHERE_KW + body
         }
 
         private val aModuleName = rule(MODULE_NAME) {
@@ -120,15 +180,17 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             AS_KW + FQ_NAME
         }
 
-        val VALUE_DECLARATION = RuleBasedElementType("Function declaration", ValueDeclaration) {
+        val VALUE_DECLARATION = RuleBasedElementType("Value declaration", ValueDeclaration) {
             val name = rule(NAME, { ID })
             notEmptyList(name, COMMA) + DOUBLE_COLON + aType
         }
 
-        val anImport = rule(IMPORT) {
+        val IMPORT = RuleBasedElementType("Import", Import) {
             IMPORT_KW + maybe(QUALIFIED_KW) + aModuleName + maybe(aImportAsPart) +
             maybe(HIDING_KW) + maybe(aModuleExports)
         }
+
+        val IMPORTS_LIST = aList(IMPORT, VIRTUAL_SEMICOLON)
 
         val typedBinding = lazy {
             rule(NAME, { ID }) + DOUBLE_COLON + aType
@@ -177,16 +239,17 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
 
+
     fun parseModule() = start(MODULE) {
-        val result = aModuleHeader.parse(builder)
+        val result = (aModuleHeader).parse(builder)
 
         if (result) {
             val rule = VIRTUAL_SEMICOLON or
-                       anImport or
                        aDataDeclaration or
+                       IMPORT or
                        INSTANCE_DECLARATION or
-            VALUE_DECLARATION or
-                       aFunctionBody
+                       VALUE_DECLARATION or
+            aValueBody
 
             while (!builder.eof()) {
 

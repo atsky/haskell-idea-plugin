@@ -18,6 +18,7 @@ import org.jetbrains.haskell.parser.token.*
 public class HaskellFullLexer() : LexerBase() {
     val indentTokens = HashSet<IElementType>(Arrays.asList(
             DO_KW,
+            OF_KW,
             WHERE_KW))
 
     val lexer = HaskellLexer()
