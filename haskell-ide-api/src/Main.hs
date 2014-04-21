@@ -6,7 +6,7 @@ import Data.Maybe
 import Data.Typeable.Internal()
 import System.Environment
 import Control.Monad
-import CabalApi
+import IdeApi.CabalApi
 
 
 import DynFlags

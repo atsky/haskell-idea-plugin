@@ -2,6 +2,5 @@
 lib/kotlin-runtime.jar
 lib/kotlin-runtime-sources.jar
 lib/haskell-jps-plugin.jar
-haskell/out
-haskell/dist
-haskell/.idea/workspace.xml
+haskell-ide-api/dist
+haskell-ide-api/.idea/workspace.xml

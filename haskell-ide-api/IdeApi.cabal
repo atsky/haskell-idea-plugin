@@ -1,9 +1,9 @@
-name:              GhcApi
-version:           1.0
+name:              HaskellIdeApi
+version:           0.1
 Build-Type:        Simple
 cabal-version:     >= 1.2
 
-executable ghcApi
+executable haskell-ide-api
   main-is:         Main.hs
   hs-source-dirs:  src
   build-depends:   base,
