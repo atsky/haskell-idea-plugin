@@ -7,6 +7,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.haskell.icons.HaskellIcons;
 import org.jetbrains.haskell.util.ProcessRunner;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ import java.util.*;
 public final class HaskellSdkType extends SdkType {
 
     public static final HaskellSdkType INSTANCE = new HaskellSdkType();
-    private static final Icon GHC_ICON = IconLoader.findIcon("/org/jetbrains/haskell/icons/haskell_16.png");
+    private static final Icon GHC_ICON = HaskellIcons.HASKELL;
 
     public HaskellSdkType() {
         super("GHC");
