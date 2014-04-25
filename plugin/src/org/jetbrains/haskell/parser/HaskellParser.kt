@@ -31,9 +31,17 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             val noBangType = ID or
                              TYPE_OR_CONS or
                              (LEFT_BRACKET + aType + RIGHT_BRACKET) or
-                             inParentheses(aType) or
+                             inParentheses(aList(aType, COMMA)) or
                              (LEFT_PAREN + RIGHT_PAREN)
             maybe(EXCLAMATION) + noBangType
+        }
+
+        val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
+            rule(NAME) {TYPE_OR_CONS} + aList(ID)
+        }
+
+        val TYPE_DECLARATION : Rule = lazy {
+            TYPE_KW + SIMPLETYPE + EQUALS + aType;
         }
 
 
@@ -54,6 +62,14 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             aArrowType or aApplicationType
         }
 
+
+        val FIELD_BIND: Rule = lazy {
+            ID + EQUALS + anExpression
+        }
+
+        val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", FieldUpdate) {
+            LEFT_BRACE + notEmptyList(FIELD_BIND, COMMA) + RIGHT_BRACE
+        }
 
         val anExpression: Rule = lazy {
             aList(anAtomExpression, null)
@@ -121,6 +137,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
             DOT or
             OPERATOR or
             DOLLAR or
+            FIELD_UPDATE or
             CASE_EXPRESSION or
             LET_EXPRESSION or
             DO_EXPRESSION or
@@ -140,6 +157,16 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         val aValueBody = rule(VALUE_BODY) {
             val rhs = (EQUALS + anExpression) or notEmptyList(aGuard)
             ID + expressionList + rhs
+        }
+
+        val CLASS_BODY = lazy {
+            aList(VALUE_DECLARATION, VIRTUAL_SEMICOLON)
+        }
+
+        val CLASS_DECLARATION = RuleBasedElementType("Class declaration", ClassDeclaration) {
+            val body = VIRTUAL_LEFT_PAREN + CLASS_BODY + VIRTUAL_RIGHT_PAREN
+
+            CLASS_KW + maybe(CONTEXT) + TYPE_OR_CONS + aList(aType, null) + WHERE_KW + body
         }
 
         val INSTANCE_BODY = lazy {
@@ -208,8 +235,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         val aDataDeclaration = rule(DATA_DECLARATION) {
             val derivingSection = DERIVING_KW + ((LEFT_PAREN + notEmptyList(TYPE_OR_CONS, COMMA) + RIGHT_PAREN) or TYPE_OR_CONS)
             val data_or_newtype = DATA_KW or NEWTYPE_KW
-            val dataName = rule(NAME, { TYPE_OR_CONS })
-            data_or_newtype + dataName + aList(ID) + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
+            data_or_newtype + SIMPLETYPE + EQUALS + aList(aConstructor, VERTICAL_BAR) + maybe(derivingSection)
         }
 
         val SOME_ID = RuleBasedElementType("Some id", SomeId) {
@@ -249,7 +275,8 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
                        IMPORT or
                        INSTANCE_DECLARATION or
                        VALUE_DECLARATION or
-            aValueBody
+                       CLASS_DECLARATION or
+                       aValueBody
 
             while (!builder.eof()) {
 
