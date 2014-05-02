@@ -19,8 +19,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.haskell.icons.HaskellIcons;
 import org.jetbrains.haskell.sdk.HaskellSdkType;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,6 +34,11 @@ public final class HaskellModuleBuilder extends ModuleBuilder {
     @Override
     public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
         return StdModuleTypes.JAVA.modifySettingsStep(settingsStep, this);
+    }
+
+    @Override
+    public Icon getBigIcon() {
+        return HaskellIcons.HASKELL_BIG;
     }
 
     @Override

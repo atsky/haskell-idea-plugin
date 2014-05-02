@@ -8,6 +8,7 @@ import javax.swing.*;
  * @author Evgeny.Kurbatsky
  */
 public interface HaskellIcons {
+    public Icon HASKELL_BIG = IconLoader.findIcon("/org/jetbrains/haskell/icons/haskell24.png");
     public Icon HASKELL = IconLoader.findIcon("/org/jetbrains/haskell/icons/haskell16.png");
     public Icon DEFAULT = IconLoader.findIcon("/org/jetbrains/haskell/icons/haskell16.png");
     public Icon APPLICATION = IconLoader.findIcon("/org/jetbrains/haskell/icons/application.png");

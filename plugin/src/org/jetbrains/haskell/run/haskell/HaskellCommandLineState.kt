@@ -9,7 +9,6 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.module.Module
 import org.jetbrains.cabal.CabalFile
-import org.jetbrains.haskell.compiler.GHCInterface
 import java.io.File
 import org.jetbrains.cabal.findCabal
 import org.jetbrains.haskell.util.joinPath
