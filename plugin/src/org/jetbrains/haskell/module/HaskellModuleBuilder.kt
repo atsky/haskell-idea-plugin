@@ -61,14 +61,17 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
             if (sourceRoot != null) {
                 contentEntry.addSourceFolder(sourceRoot, false, "")
             }
-            val name = getName()
-            try {
-                makeCabal(getContentEntryPath() + File.separator + name + ".cabal", name!!)
-                makeMain(srcPath + File.separator + "Main.hs")
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
 
+            val hasCabal = File(getContentEntryPath()!!).list()!!.any { it.endsWith(".cabal") }
+            if (!hasCabal) {
+                val name = getName()
+                try {
+                    makeCabal(getContentEntryPath() + File.separator + name + ".cabal", name!!)
+                    makeMain(srcPath + File.separator + "Main.hs")
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
         }
 
     }
