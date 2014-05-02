@@ -1,11 +1,11 @@
 haskell-idea-plugin
 ===================
 
-Intellij Idea plugin for Haskell
+IntelliJ IDEA plugin for Haskell, based on [ideah https://code.google.com/p/ideah/].
 
-Based on ideah https://code.google.com/p/ideah/
+Features:
+* Haskell syntax highlight
+* Cabal syntax highlight
+* Simple completion based on [ghc-mod http://hackage.haskell.org/package/ghc-mod]
+* Build of Cabal projects
 
-Features
-* Haskell file highlight
-* Cabal file highlight
-* Cabal build
