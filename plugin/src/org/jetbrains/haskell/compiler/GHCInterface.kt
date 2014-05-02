@@ -26,7 +26,7 @@ public class GHCInterface() {
             if (isError(line)) {
                 var matcher = Pattern.compile("(.*):(\\d+):(\\d+):").matcher(line)
                 matcher.find()
-                val message = GHCMessage(matcher.group(1), matcher.group(2), matcher.group(3))
+
                 var msg: String? = ""
                 while (iterator.hasNext())
                 {
@@ -38,7 +38,7 @@ public class GHCInterface() {
                     }
 
                 }
-                message.setText(msg)
+                val message = GHCMessage(matcher.group(1)!!, matcher.group(2)!!, matcher.group(3)!!, msg!!)
                 messages.add(message)
             }
 
