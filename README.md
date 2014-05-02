@@ -5,7 +5,8 @@ IntelliJ IDEA plugin for Haskell, based on [ideah](https://code.google.com/p/ide
 
 Features:
 * Haskell syntax highlight
-* Cabal syntax highlight
 * Simple completion based on [ghc-mod](http://hackage.haskell.org/package/ghc-mod)
+* Cabal syntax highlight
 * Build of Cabal projects
+* Installation of cabal packages
 

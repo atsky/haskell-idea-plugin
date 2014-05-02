@@ -39,14 +39,14 @@
 
           <add-to-group group-id="ToolsMenu" anchor="last"/>
       </group>
--->
+
       <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
               class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
               text="Load/Reload Current File in REPL...">
           <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
           <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       </action>
-
+-->
       <action id="Haskell.Console.Execute"
               class="com.intellij.openapi.actionSystem.EmptyAction"
               text="Execute Current Haskell Statement">

@@ -9,19 +9,43 @@ import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentFactory
 import org.jetbrains.cabal.CabalInterface
 import javax.swing.*
-import java.awt.*
 import java.awt.event.ActionEvent
 import java.util.ArrayList
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.vcs.changes.RunnableBackgroundableWrapper
 import com.intellij.ui.TreeUIHelper
+import com.intellij.ui.SearchTextField
+import com.intellij.ui.components.JBScrollPane
+import javax.swing.tree.TreeNode
+import javax.swing.tree.MutableTreeNode
+import javax.swing.tree.DefaultMutableTreeNode
+import org.jetbrains.cabal.CabalPackageShort
+import java.awt.BorderLayout
+import javax.swing.tree.DefaultTreeModel
+import com.intellij.ui.DocumentAdapter
+import javax.swing.event.DocumentEvent
+import com.intellij.ui.treeStructure.Tree
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.ide.CommonActionsManager
+import com.intellij.ide.actions.ContextHelpAction
+import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.util.IconUtil
+import com.intellij.openapi.actionSystem.AnActionEvent
+import org.jetbrains.haskell.icons.HaskellIcons
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 
 
 public class CabalToolWindowFactory() : ToolWindowFactory {
     private var toolWindow: ToolWindow? = null
-    private var packages : JBList? = null
+    private var packages: JTree? = null
     private var project: Project? = null
+    private var treeModel: DefaultTreeModel? = null
 
     override fun createToolWindowContent(project: Project?, toolWindow: ToolWindow?) {
         this.project = project!!
@@ -34,42 +58,112 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
     private fun createToolWindowPanel(): JComponent {
         val panel = JPanel(BorderLayout())
         panel.add(getToolbar(), BorderLayout.PAGE_START)
-        val list = ArrayList<String>()
+
         val packagesList = CabalInterface(project!!).getPackagesList()
-        for (pkg in packagesList) {
-            list.add(pkg.name)
-        }
-        packages = JBList(list)
-        TreeUIHelper.getInstance()!!.installListSpeedSearch(packages)
-        panel.add(JScrollPane(packages), BorderLayout.CENTER)
+
+        treeModel = DefaultTreeModel(getTree(packagesList, ""))
+        val tree = Tree(treeModel)
+
+        tree.addMouseListener(object : MouseAdapter() {
+            override fun mousePressed(e: MouseEvent) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    val path = tree.getPathForLocation(e.getX(), e.getY())!!;
+                    val pathArray = path.getPath()
+
+                    val packageName = pathArray[1] as DefaultMutableTreeNode
+                    val packageVersion : DefaultMutableTreeNode? = if (pathArray.size == 3) {
+                        (pathArray[2] as DefaultMutableTreeNode)
+                    } else {
+                        null
+                    }
+
+                    val menu = JPopupMenu();
+                    menu.add(JMenuItem(object: AbstractAction("Install") {
+                        override fun actionPerformed(e: ActionEvent) {
+                            install(packageName.getUserObject() as String, packageVersion?.getUserObject() as String?)
+                        }
+
+                    }))
+                    menu.show(tree, e.getX(), e.getY());
+                }
+            }
+        })
+        tree.setRootVisible(false);
+        packages = tree
+
+        panel.add(JBScrollPane(packages), BorderLayout.CENTER)
         return panel
+    }
+
+    fun getTree(packagesList: List<CabalPackageShort>, text: String): TreeNode {
+        val root = DefaultMutableTreeNode()
+        for (pkg in packagesList) {
+            if (text != "" && !pkg.name.capitalize().contains(text.capitalize())) {
+                continue
+            }
+
+            val pkgNode = DefaultMutableTreeNode(pkg.name)
+            for (version in pkg.versions) {
+                pkgNode.add(DefaultMutableTreeNode(version))
+            }
+            root.add(pkgNode)
+
+        }
+
+        return root;
+    }
+
+    fun updateTree(text: String) {
+        val packagesList = CabalInterface(project!!).getPackagesList()
+        treeModel!!.setRoot(getTree(packagesList, text))
+    }
+
+    fun install(packageName : String, packageVersion : String?) {
+        ProgressManager.getInstance()!!.run(RunnableBackgroundableWrapper(
+                project, "cabal install", {
+            val cmd = if (packageVersion == null) {
+                packageName
+            } else {
+                packageName + "-" + packageVersion
+            }
+            CabalInterface(project!!).install(cmd)
+        }))
     }
 
     private fun getToolbar(): JComponent {
         val panel = JPanel()
+
         panel.setLayout(BoxLayout(panel, BoxLayout.X_AXIS))
-        panel.add(JButton(object : AbstractAction("Update") {
-            override fun actionPerformed(e: ActionEvent) {
-                CabalInterface(project!!).update();
+
+
+        val group = DefaultActionGroup()
+        group.add(UpdateAction())
+
+        val actionToolBar = ActionManager.getInstance()!!.createActionToolbar("CabalTool", group, true)!!
+
+        panel.add(actionToolBar.getComponent()!!)
+
+
+        val searchTextField = SearchTextField()
+        searchTextField.addDocumentListener(object : DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent?) {
+                updateTree(searchTextField.getText()!!)
             }
-        }))
 
-        panel.add(JButton(object : AbstractAction("Install") {
-            override fun actionPerformed(e: ActionEvent) {
-                val value = packages?.getSelectedValue()
-                if (value != null) {
-                    CabalInterface(project!!).install(value as String)
-                    ProgressManager.getInstance()!!.run(RunnableBackgroundableWrapper(
-                            project, "cabal install", {
+        })
 
-                    }
-                    ))
-                }
-            }
-        }))
 
+        panel.add(searchTextField)
         return panel
     }
 
+    inner final class UpdateAction : AnAction("Update",
+            "Update packages list",
+            HaskellIcons.UPDATE) {
 
+
+        override fun actionPerformed(e: AnActionEvent?) {
+            CabalInterface(project!!).update();
+        }
+    }
 }
