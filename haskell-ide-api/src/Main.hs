@@ -3,10 +3,13 @@ module Main where
 import GHC
 import Outputable
 import Data.Maybe
-import Data.Typeable.Internal()
+import Data.Typeable.Internal
 import System.Environment
 import Control.Monad
 import IdeApi.CabalApi
+import Type
+import Id
+import DataCon
 
 
 import DynFlags
@@ -37,7 +40,7 @@ main = do
 run :: Args -> IO ()
 run (ListImports name) = do
     names <- getNames name
-    forM_ names (\n -> putStrLn $ showSDoc tracingDynFlags (ppr n))
+    forM_ names (\n -> putStrLn $ showSDoc tracingDynFlags n)
 run (ParseFile name) = do
     mod <- parseFile name
     putStrLn $ showSDoc tracingDynFlags (ppr $ pm_parsed_source mod)
@@ -50,15 +53,25 @@ run (ParseCabalFile name) = do
 
 run (Error text) = putStrLn $ "Error: " ++ text
 
-getNames :: String -> IO [Name]
+getTyThingInfo :: TyThing -> SDoc
+getTyThingInfo (AnId c)     = ppr $ idType c
+getTyThingInfo (ADataCon c) = ppr $ dataConRepType c
+getTyThingInfo (ATyCon c)   = ppr c
+getTyThingInfo (ACoAxiom c) = ppr c
+
+getNames :: String -> IO [SDoc]
 getNames name = runGhc (Just libdir) $ do
     dflags <- getSessionDynFlags
     let dflags' = foldl xopt_set dflags
                                 [Opt_Cpp, Opt_ImplicitPrelude, Opt_MagicHash]
     setSessionDynFlags dflags'
     mod <- findModule (mkModuleName name) Nothing
+
     info <- getModuleInfo mod
-    return $ modInfoExports (fromJust info)
+    let names = (modInfoExports (fromJust info))
+    t <- sequence $ map (modInfoLookupName (fromJust info))  names
+    let t2 = map (getTyThingInfo . fromJust) t
+    return t2
 
 
 parseFile :: String -> IO ParsedModule
