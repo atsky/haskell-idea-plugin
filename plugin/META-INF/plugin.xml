@@ -22,7 +22,7 @@
   <actions>
       <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
               text="Haskell module" description="Create new Haskell module">
-          <add-to-group group-id="NewGroup" anchor="first"/>
+          <add-to-group group-id="NewGroup"/>
       </action>
 
 <!--

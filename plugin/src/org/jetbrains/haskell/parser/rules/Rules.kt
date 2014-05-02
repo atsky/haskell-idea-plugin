@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.parser.rules
 
 import com.intellij.lang.PsiBuilder
-import org.jetbrains.haskell.parser.token.CONSTRUCTOR_DECLARATION
+import org.jetbrains.haskell.parser.grammar.CONSTRUCTOR_DECLARATION
 import com.intellij.psi.tree.IElementType
 
 /**

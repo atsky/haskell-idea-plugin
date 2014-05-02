@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.parser.token
+package org.jetbrains.haskell.parser.grammar
 
 import org.jetbrains.haskell.parser.HaskellCompositeElementType
 import org.jetbrains.haskell.psi.Module
@@ -23,5 +23,5 @@ val MODULE_EXPORTS          = HaskellCompositeElementType("Module exports", Modu
 val MODULE                  = HaskellCompositeElementType("Module", Module)
 val MODULE_HEADER           = HaskellCompositeElementType("Module header")
 val NAME                    = HaskellCompositeElementType("Name", Name)
-val TYPE                    = HaskellCompositeElementType("Type")
+val TYPE_TOKEN              = HaskellCompositeElementType("Type")
 val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")

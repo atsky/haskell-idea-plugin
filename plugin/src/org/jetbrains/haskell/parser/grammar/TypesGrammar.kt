@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.parser
+package org.jetbrains.haskell.parser.grammar
 
 import org.jetbrains.haskell.parser.rules.Rule
 import org.jetbrains.haskell.parser.rules.lazy
@@ -8,6 +8,7 @@ import org.jetbrains.haskell.parser.rules.maybe
 import org.jetbrains.haskell.parser.rules.aList
 import org.jetbrains.haskell.parser.rules.RuleBasedElementType
 import org.jetbrains.haskell.psi.SimpleType
+import org.jetbrains.haskell.parser.inParentheses
 
 /**
  * Created by atsky on 25/04/14.
@@ -18,24 +19,24 @@ val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
 }
 
 val TYPE_DECLARATION : Rule = lazy {
-    TYPE_KW + SIMPLETYPE + EQUALS + org.jetbrains.haskell.parser.aType;
+    TYPE_KW + SIMPLETYPE + EQUALS + TYPE;
 }
 
-val aType : Rule = lazy {
-    org.jetbrains.haskell.parser.aArrowType or aApplicationType
+val TYPE: Rule = lazy {
+    aArrowType or aApplicationType
 }
 
 private val aArrowType : Rule = rule(ARROW_TYPE) {
-    aApplicationType + RIGHT_ARROW + aType
+    aApplicationType + RIGHT_ARROW + TYPE
 }
 
-private val aPrimitiveType : Rule = rule(TYPE) {
-    val noBangType = ID org.jetbrains.haskell.parser.HaskellToken.or
-    TYPE_OR_CONS or
-    (LEFT_BRACKET org.jetbrains.haskell.parser.HaskellToken.plus aType + RIGHT_BRACKET) or
-    inParentheses(aList(aType, COMMA)) or
-    (LEFT_PAREN + RIGHT_PAREN)
-    maybe(EXCLAMATION) + noBangType
+private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
+    val noBangType = ID or
+                     TYPE_OR_CONS or
+                     (LEFT_BRACKET plus TYPE + RIGHT_BRACKET) or
+                     inParentheses(aList(TYPE, COMMA)) or
+                     (LEFT_PAREN + RIGHT_PAREN)
+                     maybe(EXCLAMATION) + noBangType
 }
 
 private val aApplicationType : Rule = rule(APPLICATION_TYPE) {

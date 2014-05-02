@@ -18,6 +18,7 @@ import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.haskell.parser.lexer.HaskellFullLexer
+import com.intellij.extapi.psi.ASTWrapperPsiElement
 
 
 public class HaskellParserDefinition() : ParserDefinition {
@@ -49,7 +50,16 @@ public class HaskellParserDefinition() : ParserDefinition {
         ParserDefinition.SpaceRequirements.MAY
 
 
-    override fun createElement(node: ASTNode?): PsiElement =
-        createPsiElement(node!!)
+    override fun createElement(node: ASTNode?): PsiElement {
+        val elementType = node!!.getElementType()
+        if (elementType is HaskellCompositeElementType) {
+            val constructor = elementType.constructor
+            if (constructor != null) {
+                return constructor.create(node)
+            }
+        }
+
+        return ASTWrapperPsiElement(node)
+    }
 
 }
