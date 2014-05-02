@@ -16,8 +16,8 @@ public class HaskellViewProvider extends SingleRootFileViewProvider {
     super(manager, virtualFile, physical);
   }
 
-  public HaskellViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, final boolean physical, @NotNull Language language) {
-    super(manager, virtualFile, physical, language);
+  public HaskellViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, final boolean eventSystemEnabled, @NotNull Language language) {
+    super(manager, virtualFile, eventSystemEnabled, language);
   }
 
   public boolean supportsIncrementalReparse(final Language rootLanguage) {
