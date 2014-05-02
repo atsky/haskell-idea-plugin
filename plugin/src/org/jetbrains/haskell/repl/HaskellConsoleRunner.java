@@ -22,7 +22,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.haskell.sdk.HaskellSdkAdditionalData;
 import org.jetbrains.haskell.sdk.HaskellSdkType;
 import org.jetbrains.haskell.util.GHCUtil;
 
@@ -239,14 +238,7 @@ public final class HaskellConsoleRunner {
         GeneralCommandLine line = new GeneralCommandLine();
         line.setExePath(GHCUtil.getCommandPath(homePath, "ghci"));
         line.setWorkDirectory(workingDir);
-        SdkAdditionalData sdkAdditionalData = sdk.getSdkAdditionalData();
-        if (sdkAdditionalData instanceof HaskellSdkAdditionalData) {
-            HaskellSdkAdditionalData data = (HaskellSdkAdditionalData) sdkAdditionalData;
-            CommandLineTokenizer tokenizer = new CommandLineTokenizer(data.getGhcOptions());
-            while (tokenizer.hasMoreTokens()) {
-                line.addParameter(tokenizer.nextToken());
-            }
-        }
+
         return line;
     }
 

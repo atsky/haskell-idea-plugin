@@ -28,10 +28,11 @@ import java.util.TreeMap
 import org.jetbrains.haskell.util.*
 import java.io.File
 import java.util.LinkedList
+import com.intellij.openapi.util.SystemInfo
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
-public class CabalPackageShort(val name : String, val versions : List<String>) {
+public class CabalPackageShort(val name: String, val versions: List<String>) {
 
 }
 
@@ -76,7 +77,7 @@ public open class CabalInterface(val project: Project) {
     }
 
     private open fun findCabal(): String? {
-        for (file : VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
+        for (file: VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
             if ("cabal".equals(file?.getExtension())) {
                 val cachedDocument: Document? = FileDocumentManager.getInstance()?.getCachedDocument(file!!)
                 if (cachedDocument != null) {
@@ -96,48 +97,62 @@ public open class CabalInterface(val project: Project) {
         return null
     }
 
-    fun getPsiFile(cabalFile: VirtualFile) : CabalFile {
+    fun getPsiFile(cabalFile: VirtualFile): CabalFile {
         return PsiManager.getInstance(project).findFile(cabalFile) as CabalFile
     }
 
 
-    public fun getPackagesList() : List<CabalPackageShort> {
-        val path = joinPath(OS.getProgramDataFolder("cabal"),
-                "packages",
-                "hackage.haskell.org",
-                "00-index.cache")
-
-        val result = ArrayList<CabalPackageShort>()
-
-        val map = TreeMap<String, MutableList<String>>()
-
-        for (str in fileToIterable(File(path))) {
-            val strings = str.split(' ')
-            if (strings[0] == "pkg:") {
-                val key = strings[1]
-                val value = strings[2]
-                val list = map[key]
-
-                if (list == null) {
-                    map[key] = ArrayList<String>(listOf(value))
-                } else {
-                    list.add(value)
-                }
-
+    public fun getPackagesList(): List<CabalPackageShort> {
+        try {
+            val path = if (SystemInfo.isMac) {
+                joinPath(System.getProperty("user.home")!!,
+                        "Library",
+                        "Haskell",
+                        "repo-cache",
+                        "hackage.haskell.org",
+                        "00-index.cache")
+            } else {
+                joinPath(OS.getProgramDataFolder("cabal"),
+                        "packages",
+                        "hackage.haskell.org",
+                        "00-index.cache")
             }
-        }
-        for ((key, value) in map) {
-            result.add(CabalPackageShort(key, value))
-        }
 
-        return result
+            val result = ArrayList<CabalPackageShort>()
+
+            val map = TreeMap<String, MutableList<String>>()
+
+            for (str in fileToIterable(File(path))) {
+                val strings = str.split(' ')
+                if (strings[0] == "pkg:") {
+                    val key = strings[1]
+                    val value = strings[2]
+                    val list = map[key]
+
+                    if (list == null) {
+                        map[key] = ArrayList<String>(listOf(value))
+                    } else {
+                        list.add(value)
+                    }
+
+                }
+            }
+            for ((key, value) in map) {
+                result.add(CabalPackageShort(key, value))
+            }
+
+            return result
+        } catch (e : IOException) {
+            Notifications.Bus.notify(Notification("Cabal error", "cabal", "Can't read cabal package list.", NotificationType.ERROR))
+            return listOf()
+        }
     }
 
     public fun update() {
         runCommand(project.getBasePath().toString(), "update")
     }
 
-    public fun install(pkg : String): Process {
+    public fun install(pkg: String): Process {
         return runCommand(project.getBasePath().toString(), "install", pkg)
     }
 
