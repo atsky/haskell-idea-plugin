@@ -18,7 +18,7 @@ public class HaskellModuleType() : ModuleType<HaskellModuleBuilder>("HASKELL_MOD
     }
 
     override fun getDescription(): String {
-        return "Haskell module"
+        return "Haskell Module"
     }
 
     override fun getBigIcon(): Icon {
@@ -26,15 +26,10 @@ public class HaskellModuleType() : ModuleType<HaskellModuleBuilder>("HASKELL_MOD
     }
 
     override fun getNodeIcon(isOpened: Boolean): Icon {
-        return HaskellFileType.INSTANCE.getIcon()!!
+        return HaskellFileType.INSTANCE.getIcon()
     }
 
     class object {
-
         public val INSTANCE: HaskellModuleType = HaskellModuleType()
-
-        fun get(module: Module): ModuleType<out ModuleBuilder> {
-            return ModuleType.get(module) as ModuleType<out ModuleBuilder>
-        }
     }
 }
