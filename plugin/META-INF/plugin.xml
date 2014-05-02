@@ -76,6 +76,9 @@
       <runConfigurationProducer implementation="org.jetbrains.haskell.run.haskell.CabalRunConfigurationProducer"/>
       <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
       <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
+
+      <lang.documentationProvider language="Haskell" implementationClass="org.jetbrains.haskell.doc.HaskellQuickDocumentationProvider" order="first"/>
+
       <lang.syntaxHighlighterFactory key="Haskell"
                                      implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
       <lang.fileViewProviderFactory language="Haskell"

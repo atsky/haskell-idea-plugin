@@ -14,16 +14,25 @@ import java.io.File
 import org.jetbrains.cabal.findCabal
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.OS
+import com.intellij.notification.Notification
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
 
     protected override fun startProcess(): ProcessHandler {
-        return JavaCommandLineStateUtil.startProcess(createCommandLine())
+        val generalCommandLine = createCommandLine()
+
+        return JavaCommandLineStateUtil.startProcess(generalCommandLine)
     }
 
+
+
     private fun createCommandLine(): GeneralCommandLine {
-        val module = configuration.getModule()!!
+        val module = configuration.getModule()
+
+        if (module == null) {
+            throw ExecutionException("Module not specified")
+        }
 
         val name = configuration.getMyExecutableName()!!
         val commandLine = GeneralCommandLine()

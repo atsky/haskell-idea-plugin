@@ -7,8 +7,6 @@ import java.io.InputStreamReader
 import java.util.zip.Inflater
 import java.io.Writer
 import java.io.Reader
-import com.google.gson.Gson
-import com.google.gson.JsonParser
 
 /**
  * Created by atsky on 4/17/14.
