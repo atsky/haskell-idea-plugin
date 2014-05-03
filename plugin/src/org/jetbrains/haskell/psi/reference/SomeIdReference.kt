@@ -7,6 +7,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.fileType.HaskellFile
+import org.jetbrains.haskell.scope.ModuleScope
 
 /**
  * Created by atsky on 4/11/14.
@@ -16,19 +17,14 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         TextRange(0, someId.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        val importList = Module.findModule(someId)?.getImportList() ?: listOf()
+        val module = Module.findModule(someId)
+        if (module != null) {
 
-        for (import in importList) {
-            val module = import.getModuleName()?.findModuleFile()?.getModule()
-            if (module != null) {
-                val list = module.getValueDeclarationList()
-                for (function in list) {
-                    if (function.getDeclarationName() == someId.getText()) {
-                        return function
-                    }
+            for (function in ModuleScope(module).getVisibleValues()) {
+                if (function.getDeclarationName() == someId.getText()) {
+                    return function
                 }
             }
-
         }
         return null;
     }

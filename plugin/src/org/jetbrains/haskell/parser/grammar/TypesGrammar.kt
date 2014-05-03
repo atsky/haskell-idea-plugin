@@ -9,6 +9,7 @@ import org.jetbrains.haskell.parser.rules.aList
 import org.jetbrains.haskell.parser.rules.RuleBasedElementType
 import org.jetbrains.haskell.psi.SimpleType
 import org.jetbrains.haskell.parser.inParentheses
+import org.jetbrains.haskell.psi.TypeRef
 
 /**
  * Created by atsky on 25/04/14.
@@ -31,8 +32,9 @@ private val aArrowType : Rule = rule(ARROW_TYPE) {
 }
 
 private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
+    val typeRef = RuleBasedElementType("Simple type", TypeRef) { TYPE_OR_CONS }
     val noBangType = ID or
-                     TYPE_OR_CONS or
+                     typeRef or
                      (LEFT_BRACKET plus TYPE + RIGHT_BRACKET) or
                      inParentheses(aList(TYPE, COMMA)) or
                      (LEFT_PAREN + RIGHT_PAREN)

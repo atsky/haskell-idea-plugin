@@ -40,6 +40,13 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 
+    fun getInstanceDeclarationList() : List<InstanceDeclaration> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+    }
+
+    fun getClassDeclarationList() : List<ClassDeclaration> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+    }
 
     fun getDataDeclarationList() : List<DataDeclaration> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())

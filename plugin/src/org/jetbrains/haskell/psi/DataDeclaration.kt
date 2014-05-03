@@ -15,7 +15,8 @@ public class DataDeclaration(node : ASTNode) : Declaration(node) {
     }
 
     override fun getDeclarationName(): String? {
-        return findChildByClass(javaClass<Name>())?.getText()
+        val simpleType = findChildByClass(javaClass<SimpleType>())
+        return simpleType?.getNameElement()?.getText()
     }
 
     fun getConstructorDeclarationList() : List<ConstructorDeclaration> =

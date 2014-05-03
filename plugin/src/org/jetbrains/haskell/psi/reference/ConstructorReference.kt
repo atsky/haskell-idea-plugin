@@ -17,11 +17,24 @@ class ConstructorReference(val constructor: Constructor) : PsiReferenceBase<Cons
         TextRange(0, constructor.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        val constructorList = Module.findModule(constructor)?.getConstructorDeclarationList() ?: listOf()
+        val module = Module.findModule(constructor)
+        if (module != null) {
+            val declarations = module.getConstructorDeclarationList().filter {
+                it.getDeclarationName() == constructor.getText()
+            }
+            if (!declarations.empty) {
+                return declarations[0];
+            }
 
-        for (declaration in constructorList) {
-            if (declaration.getDeclarationName() == constructor.getText()) {
-                return declaration
+            for (import in module.getImportList()) {
+                val importedModule = import.findModule()
+                if (importedModule != null) {
+                    for (declaration in importedModule.getConstructorDeclarationList()) {
+                        if (declaration.getDeclarationName() == constructor.getText()) {
+                            return declaration
+                        }
+                    }
+                }
             }
         }
 
