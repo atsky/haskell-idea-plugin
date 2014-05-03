@@ -61,7 +61,7 @@ public class HaskellLexer() : LexerBase() {
                         merge(decimal, octalNumber))
 
                 add(STRING,
-                        str("\"") + merge(noneOf("\""), str("\\\"")).star() + str("\""))
+                        str("\"") + merge(noneOf("\""), str("\\\"")).star() + oneOf("\"\n"))
 
                 add(CHARACTER,
                         str("'") + merge(noneOf("'"), str("\\'")).star() + str("'"))

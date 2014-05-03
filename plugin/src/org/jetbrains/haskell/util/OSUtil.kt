@@ -14,6 +14,16 @@ public class OsUtil() {
 
     public val isMac : Boolean = (osName.indexOf("mac") >= 0) || (osName.indexOf("darwin") >= 0);
 
+    public fun getCabalBin() : String {
+        return if (isWindows) {
+            System.getenv("AppData") + File.separator + "Roaming" + File.separator + "cabal" + File.separator + "bin" ;
+        } else if (isMac) {
+            return System.getProperty("user.home") + "/Library/Haskell/bin";
+        } else {
+            return System.getProperty("user.home") + File.separator + ".cabal";
+        }
+    }
+
     fun getProgramDataFolder(name : String) : String {
         return if (isWindows) {
            System.getenv("AppData") + File.separator + name;

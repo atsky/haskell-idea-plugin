@@ -16,12 +16,10 @@ public class HaskellCompletionContributor() : CompletionContributor() {
 
     override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
-            val psiElement = parameters.getOriginalPosition()
-            if (psiElement != null) {
-                val values = findCompletion(psiElement)
-                for (value in values) {
-                    result!!.addElement(LookupElementBuilder.create(value)!!)
-                }
+            val psiElement = parameters.getPosition()
+
+            for (value in findCompletion(psiElement)) {
+                result!!.addElement(LookupElementBuilder.create(value)!!)
             }
         }
     }
@@ -45,6 +43,9 @@ public class HaskellCompletionContributor() : CompletionContributor() {
                     }
                 }
             }
+        }
+        for (name in GHC_MOD.getModuleContent("Prelude")) {
+            names.add(name)
         }
         return names
     }
