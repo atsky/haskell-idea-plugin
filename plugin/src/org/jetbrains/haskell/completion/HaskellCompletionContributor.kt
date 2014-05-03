@@ -16,9 +16,12 @@ public class HaskellCompletionContributor() : CompletionContributor() {
 
     override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
-            val values = findCompletion(parameters.getOriginalPosition()!!)
-            for (value in values) {
-                result!!.addElement(LookupElementBuilder.create(value)!!)
+            val psiElement = parameters.getOriginalPosition()
+            if (psiElement != null) {
+                val values = findCompletion(psiElement)
+                for (value in values) {
+                    result!!.addElement(LookupElementBuilder.create(value)!!)
+                }
             }
         }
     }

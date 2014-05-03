@@ -6,5 +6,4 @@ import org.jetbrains.haskell.util.GHCVersion
 
 class GHCDir(val name: String) {
     val version: GHCVersion = GHCUtil.getVersion(name)
-
 }
