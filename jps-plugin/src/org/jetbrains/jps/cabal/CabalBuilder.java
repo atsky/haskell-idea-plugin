@@ -109,18 +109,15 @@ public class CabalBuilder extends ModuleLevelBuilder {
         while (processOut.hasNext()) {
             String line = processOut.next();
             String warningPrefix = "Warning: ";
+            Matcher matcher = Pattern.compile("(.*):(\\d+):(\\d+):(.*)").matcher(line);
             if (line.startsWith(warningPrefix)) {
                 String text = line.substring(warningPrefix.length()) + "\n" + processOut.next();
                 context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.WARNING, text));
-            } else if (isError(line)) {
-                Matcher matcher = Pattern.compile("(.*):(\\d+):(\\d+):").matcher(line);
-                if (!matcher.find()) {
-                    throw new RuntimeException("Pattern not matched");
-                }
+            } else if (matcher.find()) {
                 String file = matcher.group(1);
                 long lineNum = Long.parseLong(matcher.group(2));
                 long colNum = Long.parseLong(matcher.group(3));
-                String msg = "";
+                String msg = matcher.group(4);
                 while (processOut.hasNext()) {
                     String msgLine = processOut.next();
                     msg += msgLine + "\n";
@@ -206,10 +203,6 @@ public class CabalBuilder extends ModuleLevelBuilder {
     @Override
     public List<String> getCompilableFileExtensions() {
         return Arrays.asList("hs");
-    }
-
-    private boolean isError(String line) {
-        return line.matches(".*:.*:.*:");
     }
 
 

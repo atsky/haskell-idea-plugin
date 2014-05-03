@@ -18,7 +18,7 @@ public class OsUtil() {
         return if (isWindows) {
             joinPath(System.getenv("AppData")!!, "Roaming", "cabal", "bin")
         } else if (isMac) {
-            joinPath(System.getProperty("user.home")!!, "Library" + "Haskell", "bin")
+            joinPath(System.getProperty("user.home")!!, "Library", "Haskell", "bin")
         } else {
             joinPath(System.getProperty("user.home")!!, ".cabal")
         }
