@@ -19,10 +19,23 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
     override fun resolve(): PsiElement? {
         val module = Module.findModule(someId)
         if (module != null) {
-
-            for (function in ModuleScope(module).getVisibleValues()) {
-                if (function.getDeclarationName() == someId.getText()) {
-                    return function
+            val text = someId.getText()!!
+            if (Character.isUpperCase(text.charAt(0))) {
+                for (function in ModuleScope(module).getVisibleTypes()) {
+                    if (function.getDeclarationName() == text) {
+                        return function
+                    }
+                }
+                for (function in ModuleScope(module).getVisibleConstructors()) {
+                    if (function.getDeclarationName() == text) {
+                        return function
+                    }
+                }
+            } else {
+                for (function in ModuleScope(module).getVisibleValues()) {
+                    if (function.getDeclarationName() == text) {
+                        return function
+                    }
                 }
             }
         }

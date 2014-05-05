@@ -4,6 +4,7 @@ import org.jetbrains.haskell.psi.ValueDeclaration
 import org.jetbrains.haskell.psi.Module
 import java.util.ArrayList
 import org.jetbrains.haskell.psi.DataDeclaration
+import org.jetbrains.haskell.psi.ConstructorDeclaration
 
 /**
  * Created by atsky on 03/05/14.
@@ -35,5 +36,9 @@ public class ModuleScope(val module : Module) {
 
         return list
 
+    }
+
+    fun getVisibleConstructors() : List<ConstructorDeclaration> {
+        return getVisibleTypes().flatMap { it.getConstructorDeclarationList() }
     }
 }
