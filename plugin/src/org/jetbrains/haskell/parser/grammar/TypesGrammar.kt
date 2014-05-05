@@ -31,10 +31,12 @@ private val aArrowType : Rule = rule(ARROW_TYPE) {
     aApplicationType + RIGHT_ARROW + TYPE
 }
 
+val TYPE_REF = RuleBasedElementType("Simple type", TypeRef) { TYPE_OR_CONS }
+
 private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
-    val typeRef = RuleBasedElementType("Simple type", TypeRef) { TYPE_OR_CONS }
+
     val noBangType = ID or
-                     typeRef or
+                     TYPE_REF or
                      (LEFT_BRACKET plus TYPE + RIGHT_BRACKET) or
                      inParentheses(aList(TYPE, COMMA)) or
                      (LEFT_PAREN + RIGHT_PAREN)
