@@ -120,10 +120,14 @@ public class CabalBuilder extends ModuleLevelBuilder {
                 String msg = matcher.group(4);
                 while (processOut.hasNext()) {
                     String msgLine = processOut.next();
-                    msg += msgLine + "\n";
+
+                    if (msgLine.endsWith("warning generated.")) {
+                        break;
+                    }
                     if (msgLine.trim().length() == 0) {
                         break;
                     }
+                    msg += msgLine + "\n";
                 }
 
                 String sourcePath = getContentRootPath(module) + "/" + file.replace('\\', '/');
