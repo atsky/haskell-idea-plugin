@@ -56,8 +56,12 @@ public open class CabalInterface(val project: Project) {
         val cabalMessageView = CabalMessageView(project, process)
         val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.getComponent(), "Cabal console", true)
         content.putUserData(KEY, cabalMessageView)
-        ijMessageView.getContentManager()!!.addContent(content)
-        ijMessageView.getContentManager()!!.setSelectedContent(content)
+        SwingUtilities.invokeLater(object : Runnable {
+            override fun run() {
+                ijMessageView.getContentManager()!!.addContent(content)
+                ijMessageView.getContentManager()!!.setSelectedContent(content)
+            }
+        })
 
         val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
         messageToolWindow?.activate(null)
