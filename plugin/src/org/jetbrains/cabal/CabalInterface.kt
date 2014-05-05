@@ -63,8 +63,12 @@ public open class CabalInterface(val project: Project) {
             }
         })
 
-        val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
-        messageToolWindow?.activate(null)
+        SwingUtilities.invokeLater(object : Runnable {
+            override fun run() {
+                val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
+                messageToolWindow?.activate(null)
+            }
+        })
         return process
     }
 
