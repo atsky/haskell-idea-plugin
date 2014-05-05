@@ -75,7 +75,7 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
     private boolean runBuild(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
         context.processMessage(new ProgressMessage("cabal build"));
-        context.processMessage(new CompilerMessage("ghc", BuildMessage.Kind.INFO, "Start build"));
+        context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start build"));
         Process buildProcess = cabal.build();
         processOut(context, buildProcess, module);
 
