@@ -132,7 +132,8 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
                 String sourcePath = getContentRootPath(module) + "/" + file.replace('\\', '/');
                 BuildMessage.Kind kind;
-                if (msg.trim().startsWith("warning")) {
+                final String trimmedMessage = msg.trim();
+                if (trimmedMessage.startsWith("warning") || trimmedMessage.startsWith("Warning")) {
                     kind = BuildMessage.Kind.WARNING;
                 } else {
                     kind = BuildMessage.Kind.ERROR;
@@ -141,7 +142,7 @@ public class CabalBuilder extends ModuleLevelBuilder {
                 context.processMessage(new CompilerMessage(
                         "ghc",
                         kind,
-                        msg.trim(),
+                        trimmedMessage,
                         sourcePath,
                         -1L, -1L, -1L,
                         lineNum, colNum));
