@@ -32,13 +32,31 @@ class GhcMod {
                 return listOf()
             }
         } catch(e : Exception) {
-            if (!errorReported) {
-                Notifications.Bus.notify(Notification("ghc-mod error", "ghc-mod", "Can't find ghc-mod executable.", NotificationType.ERROR))
-                errorReported = true
-            }
+            reportError()
             return listOf()
         }
 
+    }
+
+    fun reportError() {
+        if (!errorReported) {
+            Notifications.Bus.notify(Notification("ghc-mod error", "ghc-mod", "Can't find ghc-mod executable.", NotificationType.ERROR))
+            errorReported = true
+        }
+    }
+
+    fun getModulesList() : List<String> {
+        try {
+            val text = ProcessRunner(null).execute(listOf(PROGRAM, "list"))
+            if (!text.contains(":Error:")) {
+                return text.split('\n').toList()
+            } else {
+                return listOf()
+            }
+        } catch(e : Exception) {
+            reportError()
+            return listOf()
+        }
     }
 
 }

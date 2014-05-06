@@ -20,7 +20,7 @@ public class OsUtil() {
         } else if (isMac) {
             joinPath(System.getProperty("user.home")!!, "Library", "Haskell", "bin")
         } else {
-            joinPath(System.getProperty("user.home")!!, ".cabal")
+            joinPath(System.getProperty("user.home")!!, ".cabal", "bin")
         }
     }
 

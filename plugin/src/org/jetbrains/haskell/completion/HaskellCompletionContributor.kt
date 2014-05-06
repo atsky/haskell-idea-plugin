@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.haskell.psi.Module
 import java.util.HashSet
 import org.jetbrains.haskell.external.GHC_MOD
+import org.jetbrains.haskell.psi.ModuleName
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
@@ -18,8 +19,14 @@ public class HaskellCompletionContributor() : CompletionContributor() {
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
             val psiElement = parameters.getPosition()
 
-            for (value in findCompletion(psiElement)) {
-                result!!.addElement(LookupElementBuilder.create(value)!!)
+            if (psiElement.getParent() is ModuleName) {
+                for (value in GHC_MOD.getModulesList()) {
+                    result!!.addElement(LookupElementBuilder.create(value)!!)
+                }
+            } else {
+                for (value in findCompletion(psiElement)) {
+                    result!!.addElement(LookupElementBuilder.create(value)!!)
+                }
             }
         }
     }
