@@ -81,7 +81,7 @@ public class LexerTest : TestCase() {
             notAccepts("--test\n")
         }
     }
-
+/*
     Test
     public fun testComment2() {
         checkFsm(HaskellLexer.COMMENT_RULE) {
@@ -101,7 +101,7 @@ public class LexerTest : TestCase() {
             accepts("{-aaa-}")
         }
     }
-
+*/
     Test
     public fun testIndent() {
         checkFsm(str("\n") + oneOf(" \t\r").star()) {
