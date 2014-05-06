@@ -14,6 +14,11 @@ public class DataDeclaration(node : ASTNode) : Declaration(node) {
         override fun create(node: ASTNode) = DataDeclaration(node)
     }
 
+    fun getNameElement() : Name? {
+        val simpleType = findChildByClass(javaClass<SimpleType>())
+        return simpleType?.getNameElement()
+    }
+
     override fun getDeclarationName(): String? {
         val simpleType = findChildByClass(javaClass<SimpleType>())
         return simpleType?.getNameElement()?.getText()
