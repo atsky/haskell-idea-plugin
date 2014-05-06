@@ -206,7 +206,7 @@ private val aModuleName = rule(MODULE_NAME) {
 }
 
 private val aModuleExports = rule(MODULE_EXPORTS) {
-    LEFT_PAREN + aList(anExport, COMMA) + maybe(COMMA) + RIGHT_PAREN
+    LEFT_PAREN + aList(anExport, COMMA) + maybe(COMMA) + maybe(VIRTUAL_SEMICOLON) + RIGHT_PAREN
 }
 
 
@@ -221,8 +221,7 @@ val anExport = lazy {
 
     val exportSubspec = inParentheses(maybe((DOT_DOT) or qcnames))
 
-    (qcnameExt + maybe(exportSubspec)) or
-    (MODULE_KW + aModuleName)
+    (qcnameExt + maybe(exportSubspec)) or (MODULE_KW + aModuleName)
 }
 
 val aImportAsPart = rule(IMPORT_AS_PART) {
@@ -273,6 +272,6 @@ val ANY : Rule = RuleBasedElementType("Any", UnparsedToken) {
     }
 }
 
-val aModuleHeader = rule(MODULE_HEADER) {
+val MODULE_HEADER_RULE = rule(MODULE_HEADER) {
     (aList(VIRTUAL_SEMICOLON, null) + MODULE_KW + FQ_NAME + maybe(aModuleExports) + WHERE_KW)
 }

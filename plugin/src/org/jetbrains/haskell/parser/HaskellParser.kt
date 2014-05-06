@@ -38,7 +38,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
 
 
     fun parseModule() = start(MODULE) {
-        val result = (aModuleHeader).parse(builder)
+        val result = (MODULE_HEADER_RULE).parse(builder)
 
         if (result) {
             val rule = VIRTUAL_SEMICOLON or
