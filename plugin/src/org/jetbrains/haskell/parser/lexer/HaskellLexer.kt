@@ -76,7 +76,6 @@ public class HaskellLexer() : LexerBase() {
             fsm trace {
                 count++
             }
-            System.out.println(count)
 
             return fsm;
         }
