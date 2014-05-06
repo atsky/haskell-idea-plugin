@@ -116,6 +116,7 @@ public val TYPE_OR_CONS: HaskellToken         = HaskellToken("type_cons")
 public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN")
 public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
 public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
+public val COMMENT_START : HaskellToken     = HaskellToken("COMMENTS_START")
 
 
 val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)

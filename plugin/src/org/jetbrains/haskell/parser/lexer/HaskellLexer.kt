@@ -14,7 +14,6 @@ import org.jetbrains.haskell.parser.HaskellToken
 
 public class HaskellLexer() : LexerBase() {
     class object {
-        val COMMENT_RULE: State<Boolean> = str("{-") + merge(noneOf("-"), str("-") + noneOf("}")).star() + str("-}")
         val fsm: State<IElementType> = makeFsm();
 
         fun makeFsm(): State<IElementType> {
@@ -32,9 +31,7 @@ public class HaskellLexer() : LexerBase() {
                 add(PRAGMA,
                         str("#") + noneOf("\n").star())
 
-
-                add(COMMENT,
-                        COMMENT_RULE)
+                add(COMMENT_START, str("{-"))
 
                 for (keyword in KEYWORDS) {
                     add(keyword, str(keyword.myName))
@@ -147,6 +144,12 @@ public class HaskellLexer() : LexerBase() {
                } else {
                    assert(myTokenStart != myOffset)
                }
+
+               if (myTokenType == COMMENT_START) {
+                   parseComment()
+                   myTokenType = COMMENT;
+               }
+
                break
            } else {
                state = nextState;
@@ -155,6 +158,23 @@ public class HaskellLexer() : LexerBase() {
         }
 
         myTokenEnd = myOffset
+    }
+
+    fun parseComment() {
+        var depth = 1;
+        var c1 = currentChar()
+        nextChar()
+        while (depth > 0 && myOffset < myBufferEndOffset) {
+            var c2 = currentChar()
+            if (c1 == '-' && c2 == '}') {
+                depth--;
+            }
+            if (c1 == '{' && c2 == '-') {
+                depth++;
+            }
+            nextChar()
+            c1 = c2;
+        }
     }
 
     fun currentChar() : Char =
