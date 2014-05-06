@@ -58,13 +58,11 @@ public class HaskellLexer() : LexerBase() {
                         merge(decimal, octalNumber))
 
 
-                val strSymbols = "abfnrtvx\\\"'"
-
                 add(STRING,
-                        str("\"") + merge(noneOf("\"\\"), str("\\") + oneOf(strSymbols)).star() + oneOf("\"\n"))
+                        str("\"") + merge(noneOf("\"\\"), str("\\") + anySymbol()).star() + oneOf("\"\n"))
 
                 add(CHARACTER,
-                        str("'") + merge(noneOf("'\\"), str("\\") + oneOf(strSymbols)).star() + str("'"))
+                        str("'") + merge(noneOf("'\\"), str("\\") + anySymbol()).star() + str("'"))
 
             }
 

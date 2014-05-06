@@ -102,6 +102,15 @@ fun anything(): State<Boolean> {
     return fsm
 }
 
+fun anySymbol(): State<Boolean> {
+    val fsm = State<Boolean>(null);
+
+    val end = State<Boolean>(true);
+
+    fsm.other = end
+    return fsm
+}
+
 fun noneOfStar(str: String): State<Boolean> {
     val fsm = State<Boolean>(true);
 
