@@ -55,7 +55,11 @@ public class HaskellSdkType() : SdkType("GHC") {
         val versionDir = File(versionsRoot, latestVersion)
         val homeDir: File
 
-        homeDir = versionDir
+        homeDir = if (!SystemInfo.isMac) {
+            versionDir
+        } else {
+            File(versionDir, "usr")
+        }
 
         return homeDir.getAbsolutePath()
     }
@@ -126,12 +130,9 @@ public class HaskellSdkType() : SdkType("GHC") {
         public val INSTANCE: HaskellSdkType = HaskellSdkType()
         private val GHC_ICON: Icon = HaskellIcons.HASKELL
 
-        fun getBinDirectory(path: String) : File {
-            return if (SystemInfo.isMac) {
-                File(path, "usr/bin")
-            } else {
-                File(path, "bin")
-            }
+        fun getBinDirectory(path: String) :  File {
+            return File(path, "bin")
+
         }
 
         private fun getLatestVersion(names: Array<String>?): String? {
