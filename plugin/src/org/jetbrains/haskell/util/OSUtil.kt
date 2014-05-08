@@ -16,7 +16,7 @@ public class OsUtil() {
 
     public fun getCabalBin(): String {
         return if (isWindows) {
-            joinPath(System.getenv("AppData")!!, "Roaming", "cabal", "bin")
+            joinPath(System.getenv("AppData")!!, "cabal", "bin")
         } else if (isMac) {
             joinPath(System.getProperty("user.home")!!, "Library", "Haskell", "bin")
         } else {
