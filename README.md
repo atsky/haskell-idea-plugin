@@ -10,9 +10,16 @@ For now provides basic features:
 * Build of cabal projects
 * Installation of cabal packages
 
-
 ## Installation
 
 To normal work this plugin need:
 * [Haskell platform](http://www.haskell.org/platform/)
 * ghc-mod (install by `cabal install ghc-mod`)
+
+## Source compilation
+
+To normal compilation you will need:
+* IDEA 13
+* Kotlin plugin
+* JDK 6
+* IntelliJ IDEA Plugin SDK
