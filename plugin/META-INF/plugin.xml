@@ -25,6 +25,10 @@
           <add-to-group group-id="NewGroup"/>
       </action>
 
+      <action id="Haskell.Test" class="org.jetbrains.haskell.actions.CheckTarGz"
+              text="Check tar gz" description="Check tar gz">
+          <add-to-group group-id="ToolsMenu"/>
+      </action>
 <!--
       <group id="Haskell.REPL.Group"
              class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
