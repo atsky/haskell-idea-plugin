@@ -10,6 +10,11 @@ For now provides basic features:
 * Build of cabal projects
 * Installation of cabal packages
 
+### Plans
+
+* Integrate [buidwrapper](https://github.com/JPMoresmau/BuildWrapper) to have a lot of cool features for free.
+* Add ability jump to hackage libraries source code.
+
 ## Installation
 
 To normal work this plugin need:
