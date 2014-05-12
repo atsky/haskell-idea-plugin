@@ -22,7 +22,7 @@ public class ModuleScope(val module : Module) {
     fun getVisibleValues() : List<ValueDeclaration> {
         val list = ArrayList(getDeclaredValues())
 
-        module.getImportList().flatMap { ImportScope(it).getValues() }
+        list.addAll(module.getImportList().flatMap { ImportScope(it).getValues() })
 
         return list
 
