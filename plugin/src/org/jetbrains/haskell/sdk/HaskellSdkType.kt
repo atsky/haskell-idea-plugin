@@ -94,16 +94,19 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun createAdditionalDataConfigurable(sdkModel: SdkModel?,
                                                   sdkModificator: SdkModificator?): AdditionalDataConfigurable? {
-        return null;
+        return HaskellSdkConfigurable();
     }
 
 
     override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {
+        if (additionalData is HaskellSdkAdditionalData) {
+            ((additionalData as HaskellSdkAdditionalData)).save(additional)
+        }
     }
 
 
     override fun loadAdditionalData(additional: Element?): SdkAdditionalData? {
-        return null
+        return HaskellSdkAdditionalData.load(additional!!);
     }
     override fun getPresentableName(): String {
         return "GHC"
