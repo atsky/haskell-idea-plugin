@@ -24,13 +24,18 @@ data Args =
 
 parseCommandArgs :: [String] -> Args
 parseCommandArgs (command : args) = case command of
-    "list" -> ListImports (args !! 0)
-    "parse" -> ParseFile (args !! 0)
+    "list" -> ListImports $ parseFileName args
+    "parse" -> ParseFile $ parseFileName args
     "packages-list" -> CabalList
-    "cabal" -> ParseCabalFile (args !! 0)
+    "cabal" -> ParseCabalFile $ parseFileName args
     _ -> Error ("Unknown command: " ++ command)
 
 parseCommandArgs _ = Error "Arguments required"
+
+-- | This function is 'head' with a better error message.
+parseFileName :: [String] -> String
+parseFileName (arg : _) = arg
+parseFileName []        = error "Missing file name argument."
 
 main :: IO ()
 main = do
