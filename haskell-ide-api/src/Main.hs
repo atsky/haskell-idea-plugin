@@ -51,7 +51,7 @@ run (ParseCabalFile name) = do
     getCabalFile name
 
 
-run (Error text) = putStrLn $ "Error: " ++ text
+run (Error text) = putStrLn $ "Error: " ++ text ++ helpMessage
 
 getTyThingInfo :: TyThing -> SDoc
 getTyThingInfo (AnId c)     = ppr $ idType c
@@ -85,3 +85,12 @@ parseFile name = runGhc (Just libdir) $ do
     modSum <- getModSummary $ mkModuleName "Test"
     p <- parseModule modSum
     return p
+
+-- | The help message displayed when given unknown parameters.
+helpMessage :: String
+helpMessage = "\n\
+  \Usage:\n\
+  \\thaskell-ide-api list <file.hs>\t\tList imports for file.\n\
+  \\thaskell-ide-api parse <file.hs>\t\tPrint a parse tree for file.\n\
+  \\thaskell-ide-api packages-list\t\tList Cabal packages.\n\
+  \\thaskell-ide-api cabal <file.cabal>\tPrint a parse tree of the cabal file.\n"
