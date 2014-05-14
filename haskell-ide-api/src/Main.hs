@@ -23,11 +23,11 @@ data Args =
     Error String
 
 parseCommandArgs :: [String] -> Args
-parseCommandArgs (command : args) = case command of
-    "list" -> ListImports (args !! 0)
-    "parse" -> ParseFile (args !! 0)
-    "packages-list" -> CabalList
-    "cabal" -> ParseCabalFile (args !! 0)
+parseCommandArgs ["packages-list"] = CabalList
+parseCommandArgs (command : args)  = case (args, command) of
+    (arg : _, "list") -> ListImports arg
+    (arg : _, "parse") -> ParseFile arg
+    (arg : _, "cabal") -> ParseCabalFile arg
     _ -> Error ("Unknown command: " ++ command)
 
 parseCommandArgs _ = Error "Arguments required"
@@ -51,7 +51,7 @@ run (ParseCabalFile name) = do
     getCabalFile name
 
 
-run (Error text) = putStrLn $ "Error: " ++ text
+run (Error text) = putStrLn $ "Error: " ++ text ++ helpMessage
 
 getTyThingInfo :: TyThing -> SDoc
 getTyThingInfo (AnId c)     = ppr $ idType c
@@ -85,3 +85,14 @@ parseFile name = runGhc (Just libdir) $ do
     modSum <- getModSummary $ mkModuleName "Test"
     p <- parseModule modSum
     return p
+
+-- | The help message displayed when given unknown parameters.
+helpMessage :: String
+helpMessage = unlines
+  [""
+  , "Usage:"
+  , "\thaskell-ide-api list <file.hs>\t\tList imports for file."
+  , "\thaskell-ide-api parse <file.hs>\t\tPrint a parse tree for file."
+  , "\thaskell-ide-api packages-list\t\tList Cabal packages."
+  , "\thaskell-ide-api cabal <file.cabal>\tPrint a parse tree of the cabal file."
+  ]

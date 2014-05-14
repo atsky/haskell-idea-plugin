@@ -18,7 +18,10 @@ dependencyToName dep = ""
 getCabalFile :: FilePath -> IO ()
 getCabalFile path = do
     package <- readPackageDescription silent path
-    putStrLn $ show $ map dependencyToName $ condTreeConstraints (snd ((condExecutables package) !! 0))
+    case condExecutables package of
+     []      -> return () -- Libraries might not have executable sections in
+                          -- the cabal file.
+     (x : _) -> print $ map dependencyToName $ condTreeConstraints (snd x)
 
 getDefaultCabalDir :: IO FilePath
 getDefaultCabalDir = getAppUserDataDirectory "cabal"
