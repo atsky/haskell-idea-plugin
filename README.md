@@ -19,6 +19,7 @@ For now provides basic features:
 
 To normal work this plugin need:
 * [Haskell platform](http://www.haskell.org/platform/)
+* cabal must be in `PATH`
 * ghc-mod (install by `cabal install ghc-mod`)
 
 ## Source compilation
