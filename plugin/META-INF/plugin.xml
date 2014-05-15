@@ -67,6 +67,7 @@
       <completion.contributor language="Haskell"
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
       <!-- <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" /> -->
+      <applicationService serviceImplementation="org.jetbrains.haskell.config.HaskellSettings" />
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
       <lang.parserDefinition language="Haskell"
@@ -94,6 +95,8 @@
                               implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor" />
 
       <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right" factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory" />
+
+      <applicationConfigurable implementation="org.jetbrains.haskell.config.HaskellConfigurable"></applicationConfigurable>
 
   </extensions>
 </idea-plugin>

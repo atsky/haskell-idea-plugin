@@ -10,6 +10,7 @@ import com.intellij.notification.NotificationType
 import org.jetbrains.haskell.util.OsUtil
 import java.io.File
 import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.config.HaskellSettings
 
 
 /**
@@ -21,11 +22,14 @@ public val GHC_MOD : GhcMod = GhcMod()
 class GhcMod {
     var errorReported : Boolean = false
 
-    val PROGRAM = OS.getCabalBin() + File.separator + "ghc-mod";
+    fun getPath() : String {
+        return HaskellSettings.getInstance().getState()!!.ghcModPath!!
+    }
 
     fun getModuleContent(module : String) : List<String> {
         try {
-            val text = ProcessRunner(null).execute(listOf(PROGRAM, "browse", module))
+            val path = getPath()
+            val text = ProcessRunner(null).execute(listOf(path, "browse", module))
             if (!text.contains(":Error:")) {
                 return text.split('\n').toList()
             } else {
@@ -40,14 +44,15 @@ class GhcMod {
 
     fun reportError() {
         if (!errorReported) {
-            Notifications.Bus.notify(Notification("ghc-mod error", "ghc-mod", "Can't find ghc-mod executable.", NotificationType.ERROR))
+            Notifications.Bus.notify(Notification("ghc-mod error", "ghc-mod", "Can't find ghc-mod executable. "+
+            "Please correct ghc-mod path in settings.", NotificationType.ERROR))
             errorReported = true
         }
     }
 
     fun getModulesList() : List<String> {
         try {
-            val text = ProcessRunner(null).execute(listOf(PROGRAM, "list"))
+            val text = ProcessRunner(null).execute(listOf(getPath(), "list"))
             if (!text.contains(":Error:")) {
                 return text.split('\n').toList()
             } else {

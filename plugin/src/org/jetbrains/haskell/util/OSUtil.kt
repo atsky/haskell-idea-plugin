@@ -36,4 +36,12 @@ public class OsUtil() {
         }
     }
 
+    fun getExe() : String {
+        if (isWindows) {
+            return ".exe"
+        } else {
+            return ""
+        }
+    }
+
 }
