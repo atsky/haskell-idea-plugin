@@ -39,6 +39,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import org.jetbrains.haskell.icons.HaskellIcons
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import com.intellij.openapi.progress.ProgressIndicator
 
 
 public class CabalToolWindowFactory() : ToolWindowFactory {
@@ -71,7 +72,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
                     val pathArray = path.getPath()
 
                     val packageName = pathArray[1] as DefaultMutableTreeNode
-                    val packageVersion : DefaultMutableTreeNode? = if (pathArray.size == 3) {
+                    val packageVersion: DefaultMutableTreeNode? = if (pathArray.size == 3) {
                         (pathArray[2] as DefaultMutableTreeNode)
                     } else {
                         null
@@ -118,7 +119,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         treeModel!!.setRoot(getTree(packagesList, text))
     }
 
-    fun install(packageName : String, packageVersion : String?) {
+    fun install(packageName: String, packageVersion: String?) {
         ProgressManager.getInstance()!!.run(RunnableBackgroundableWrapper(
                 project, "cabal install", {
             val cmd = if (packageVersion == null) {
@@ -163,7 +164,13 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
 
         override fun actionPerformed(e: AnActionEvent?) {
-            CabalInterface(project!!).update();
+            ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
+                override fun run(indicator: ProgressIndicator) {
+                    val process = CabalInterface(project!!).update()
+                    process.waitFor()
+                }
+            });
+
         }
     }
 }

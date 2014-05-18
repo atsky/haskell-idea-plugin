@@ -46,29 +46,25 @@ public open class CabalInterface(val project: Project) {
             command.add(commands[i])
         }
         val process = ProcessRunner(canonicalPath).getProcess(command)
-        val ijMessageView = MessageView.SERVICE.getInstance(project)!!
-        for (content in ijMessageView.getContentManager()!!.getContents()) {
-            val cabalMessageView = content.getUserData(KEY)
-            if (cabalMessageView != null) {
-                ijMessageView.getContentManager()?.removeContent(content, true)
+        ApplicationManager.getApplication()!!.invokeLater({
+            val ijMessageView = MessageView.SERVICE.getInstance(project)!!
+            for (content in ijMessageView.getContentManager()!!.getContents()) {
+                val cabalMessageView = content.getUserData(KEY)
+                if (cabalMessageView != null) {
+                    ijMessageView.getContentManager()?.removeContent(content, true)
+                }
             }
-        }
-        val cabalMessageView = CabalMessageView(project, process)
-        val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.getComponent(), "Cabal console", true)
-        content.putUserData(KEY, cabalMessageView)
-        SwingUtilities.invokeLater(object : Runnable {
-            override fun run() {
-                ijMessageView.getContentManager()!!.addContent(content)
-                ijMessageView.getContentManager()!!.setSelectedContent(content)
-            }
+            val cabalMessageView = CabalMessageView(project, process)
+            val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.getComponent(), "Cabal console", true)
+            content.putUserData(KEY, cabalMessageView)
+
+            ijMessageView.getContentManager()!!.addContent(content)
+            ijMessageView.getContentManager()!!.setSelectedContent(content)
+
+            val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
+            messageToolWindow?.activate(null)
         })
 
-        SwingUtilities.invokeLater(object : Runnable {
-            override fun run() {
-                val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
-                messageToolWindow?.activate(null)
-            }
-        })
         return process
     }
 
@@ -156,8 +152,8 @@ public open class CabalInterface(val project: Project) {
         }
     }
 
-    public fun update() {
-        runCommand(project.getBasePath().toString(), "update")
+    public fun update(): Process {
+        return runCommand(project.getBasePath().toString(), "update")
     }
 
     public fun install(pkg: String): Process {
