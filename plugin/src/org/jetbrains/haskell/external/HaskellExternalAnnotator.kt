@@ -64,7 +64,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
             }
         }
         for (file in destinationFiles) {
-            File(destination, file).delete()
+            if (file.endsWith(".hs")) {
+                File(destination, file).delete()
+            }
         }
     }
 
