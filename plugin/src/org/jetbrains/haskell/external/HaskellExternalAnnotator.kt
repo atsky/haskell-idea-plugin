@@ -42,6 +42,8 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         if (!destination.exists()) {
             destination.mkdir()
         }
+        val localFileSystem = LocalFileSystem.getInstance()!!
+
         for (child in basePath.getChildren()!!) {
             if (child.getName().equals(".buildwrapper")) {
                 continue
@@ -51,8 +53,8 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                 copyContent(child, destinationFile)
             } else {
                 val childTime = child.getModificationStamp()
-                val destTime =  LocalFileSystem.getInstance()!!.findFileByIoFile(destinationFile)!!.getModificationStamp()
-                if (!destinationFile.exists() || childTime > destTime) {
+                val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.getModificationStamp()
+                if (destinationTime == null || childTime > destinationTime) {
                     copyFile(File(child.getPath()), destinationFile)
                 }
             }
