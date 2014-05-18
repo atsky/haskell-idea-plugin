@@ -25,8 +25,11 @@ public class ProcessRunner(workingDirectory: String?) {
         }
 
         var myInput: InputStream = process.getInputStream()!!
+        val data = readData(myInput)
+
         process.waitFor()
-        return readData(myInput)
+
+        return data
     }
 
     public fun getProcess(cmd: List<String>): Process {

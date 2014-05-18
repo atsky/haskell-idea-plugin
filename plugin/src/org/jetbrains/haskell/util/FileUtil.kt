@@ -6,6 +6,7 @@ import java.io.Reader
 import java.io.FileReader
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
 
 public fun joinPath(first : String, vararg more : String) : String {
     var result = first
@@ -15,8 +16,7 @@ public fun joinPath(first : String, vararg more : String) : String {
     return result
 }
 
-public fun copyFile(source : File, destination: File) {
-    val iStream = FileInputStream(source);
+public fun copyFile(iStream : InputStream, destination: File) {
     val oStream = FileOutputStream(destination);
     try {
         val buffer = ByteArray(1024 * 16);
