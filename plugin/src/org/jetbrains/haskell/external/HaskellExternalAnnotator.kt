@@ -20,6 +20,7 @@ import org.jetbrains.haskell.util.copyFile
 import org.json.simple.JSONObject
 import org.jetbrains.haskell.util.LineColPosition
 import com.intellij.openapi.vfs.LocalFileSystem
+import java.util.HashSet
 
 public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
@@ -44,7 +45,10 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
         val localFileSystem = LocalFileSystem.getInstance()!!
 
+        val destinationFiles = HashSet(destination.list()!!.toList())
+
         for (child in basePath.getChildren()!!) {
+            destinationFiles.remove(child.getName())
             if (child.getName().equals(".buildwrapper")) {
                 continue
             }
@@ -58,6 +62,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                     copyFile(File(child.getPath()), destinationFile)
                 }
             }
+        }
+        for (file in destinationFiles) {
+            File(destination, file).delete()
         }
     }
 
