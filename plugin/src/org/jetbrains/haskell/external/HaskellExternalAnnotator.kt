@@ -21,6 +21,8 @@ import org.json.simple.JSONObject
 import org.jetbrains.haskell.util.LineColPosition
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.util.HashSet
+import sun.nio.cs.StandardCharsets
+import java.io.ByteArrayInputStream
 
 public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
@@ -49,6 +51,12 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         for (child in basePath.getChildren()!!) {
             destinationFiles.remove(child.getName())
+            if (child.getName().equals(".idea")) {
+                continue
+            }
+            if (child.getName().equals("dist")) {
+                continue
+            }
             if (child.getName().equals(".buildwrapper")) {
                 continue
             }
@@ -57,9 +65,15 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                 copyContent(child, destinationFile)
             } else {
                 val childTime = child.getModificationStamp()
-                val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.getModificationStamp()
-                if (destinationTime == null || childTime > destinationTime) {
-                    copyFile(File(child.getPath()), destinationFile)
+                val document = FileDocumentManager.getInstance()!!.getCachedDocument(child)
+                if (document != null) {
+                    val stream = ByteArrayInputStream(document.getText().getBytes(child.getCharset()!!));
+                    copyFile(stream, destinationFile)
+                } else {
+                    val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.getModificationStamp()
+                    if (destinationTime == null || childTime > destinationTime) {
+                        copyFile(child.getInputStream()!!, destinationFile)
+                    }
                 }
             }
         }
@@ -70,7 +84,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
     }
 
-    fun getModuleContentDir(file : PsiFile) : VirtualFile {
+    fun getModuleContentDir(file: PsiFile): VirtualFile {
         val module = ModuleUtilCore.findModuleForPsiElement(file)
         return module!!.getModuleFile()!!.getParent()!!
     }
