@@ -6,6 +6,10 @@ import java.util.ArrayList
 public class ProcessRunner(workingDirectory: String?) {
     private val myWorkingDirectory: String? = workingDirectory
 
+    public fun execute(vararg cmd: String): String {
+        return execute(cmd.toList(), null)
+    }
+    
 
     public fun execute(cmd: List<String>): String {
         return execute(cmd, null)

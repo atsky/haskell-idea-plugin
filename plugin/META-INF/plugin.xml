@@ -70,6 +70,8 @@
       <applicationService serviceImplementation="org.jetbrains.haskell.config.HaskellSettings" />
       <lang.braceMatcher language="Haskell"
                          implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
+      <externalAnnotator implementationClass="org.jetbrains.haskell.external.HaskellExternalAnnotator" language="Haskell"/>
+
       <lang.parserDefinition language="Haskell"
                              implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
       <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>

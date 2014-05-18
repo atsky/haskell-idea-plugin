@@ -4,6 +4,8 @@ import java.io.File
 import java.io.BufferedReader
 import java.io.Reader
 import java.io.FileReader
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 public fun joinPath(first : String, vararg more : String) : String {
     var result = first
@@ -13,6 +15,35 @@ public fun joinPath(first : String, vararg more : String) : String {
     return result
 }
 
+public fun copyFile(source : File, destination: File) {
+    val iStream = FileInputStream(source);
+    val oStream = FileOutputStream(destination);
+    try {
+        val buffer = ByteArray(1024 * 16);
+        var length : Int;
+        while (true ) {
+            length = iStream.read(buffer)
+            if (length <= 0) {
+                break
+            }
+            oStream.write(buffer, 0, length);
+        }
+    } finally {
+        iStream.close();
+        oStream.close();
+    }
+}
+
+public fun getRelativePath(base: String, path: String): String {
+    val bpath = File(base).getCanonicalPath()
+    val fpath = File(path).getCanonicalPath()
+
+    if (fpath.startsWith(bpath)) {
+        return fpath.substring(bpath.length() + 1)
+    } else {
+        throw RuntimeException("Base path " + base + "is wrong to " + path);
+    }
+}
 
 fun fileToIterable(file : File) : Iterable<String> {
     return object : Iterable<String> {

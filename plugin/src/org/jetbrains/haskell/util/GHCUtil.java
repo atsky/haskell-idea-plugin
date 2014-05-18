@@ -19,6 +19,7 @@ public final class GHCUtil {
             : file;
     }
 
+
     public static String getGhcCommandPath(VirtualFile ghcHome) {
         return getCommandPath(ghcHome, "ghc");
     }
