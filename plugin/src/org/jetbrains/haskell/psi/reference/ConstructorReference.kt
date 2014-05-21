@@ -8,6 +8,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.fileType.HaskellFile
 import org.jetbrains.haskell.psi.Constructor
+import org.jetbrains.haskell.scope.ModuleScope
+import org.jetbrains.haskell.psi.ConstructorDeclaration
 
 /**
  * Created by atsky on 4/11/14.
@@ -17,32 +19,27 @@ class ConstructorReference(val constructor: Constructor) : PsiReferenceBase<Cons
         TextRange(0, constructor.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        val module = Module.findModule(constructor)
-        if (module != null) {
-            val declarations = module.getConstructorDeclarationList().filter {
-                it.getDeclarationName() == constructor.getText()
-            }
-            if (!declarations.empty) {
-                return declarations[0];
-            }
-
-            for (import in module.getImportList()) {
-                val importedModule = import.findModule()
-                if (importedModule != null) {
-                    for (declaration in importedModule.getConstructorDeclarationList()) {
-                        if (declaration.getDeclarationName() == constructor.getText()) {
-                            return declaration
-                        }
-                    }
-                }
+        for (declaration in getConstructorsList()) {
+            if (declaration.getDeclarationName() == constructor.getText()) {
+                return declaration
             }
         }
 
         return null;
     }
 
+    fun getConstructorsList() : List<ConstructorDeclaration> {
+        val module = Module.findModule(constructor)
+        if (module != null) {
+            return ModuleScope(module).getVisibleConstructors()
+        }
+        return listOf()
+    }
 
-    override fun getVariants(): Array<Any> = array()
+
+    override fun getVariants(): Array<Any> {
+        return (getConstructorsList() as List<Any>).copyToArray()
+    }
 
 
 }
