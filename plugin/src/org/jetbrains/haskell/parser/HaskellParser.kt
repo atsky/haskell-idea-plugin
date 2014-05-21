@@ -47,6 +47,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
                        INSTANCE_DECLARATION or
                        VALUE_DECLARATION or
                        CLASS_DECLARATION or
+                       TYPE_DECLARATION or
                        aValueBody
 
             while (!builder.eof()) {

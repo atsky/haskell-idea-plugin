@@ -89,31 +89,6 @@ val CONTEXT : Rule = lazy {
     (inParentheses(notEmptyList(aClass, COMMA)) or aClass) + DOUBLE_ARROW
 }
 
-val FIELD_BIND: Rule = lazy {
-    ID + EQUALS + anExpression
-}
-
-val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", FieldUpdate) {
-    LEFT_BRACE + notEmptyList(FIELD_BIND, COMMA) + RIGHT_BRACE
-}
-
-val anExpression: Rule = lazy {
-    aList(anAtomExpression, null)
-}
-
-val listLiteral = lazy{
-    (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
-}
-
-val aCaseCase: Rule = RuleBasedElementType("Case clause", CaseClause) {
-    anExpression + RIGHT_ARROW + anExpression
-}
-
-val CASE_EXPRESSION = RuleBasedElementType("Case expression", CaseClause) {
-    val caseBody = VIRTUAL_LEFT_PAREN + aList(aCaseCase, VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
-    CASE_KW + anExpression + OF_KW + caseBody
-}
-
 val untilSemicolon : Rule = object : Rule {
     override fun parse(builder: PsiBuilder): Boolean {
         while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
@@ -124,49 +99,6 @@ val untilSemicolon : Rule = object : Rule {
         }
         return true
     }
-}
-
-val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", DoStatement) {
-    (rule(NAME) { ID } + LEFT_ARROW + anExpression) or
-    (LET_KW + ID + EQUALS + anExpression) or
-    anExpression or
-    untilSemicolon
-}
-
-
-val LET_EXPRESSION = RuleBasedElementType("Let expression", LetExpression) {
-    LET_KW + ID + EQUALS + anExpression + IN_KW + anExpression
-}
-
-val DO_EXPRESSION = RuleBasedElementType("Do expression", DoExpression) {
-    DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
-}
-
-val anLambdaLeftPart = lazy {
-    BACK_SLASH + notEmptyList(ID) + RIGHT_ARROW
-}
-
-val REFERENCE_EXPRESSION = RuleBasedElementType("expression", ReferenceExpression) {
-    ID
-}
-
-val anAtomExpression = lazy {
-    UNDERSCORE or
-    COLON or
-    STRING or
-    NUMBER or
-    REFERENCE_EXPRESSION or
-    DOT or
-    OPERATOR or
-    DOLLAR or
-    FIELD_UPDATE or
-    CASE_EXPRESSION or
-    LET_EXPRESSION or
-    DO_EXPRESSION or
-    anLambdaLeftPart or
-    rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
-    inParentheses(notEmptyList(anExpression, COMMA)) or
-    listLiteral
 }
 
 val expressionList = aList(anAtomExpression, null)

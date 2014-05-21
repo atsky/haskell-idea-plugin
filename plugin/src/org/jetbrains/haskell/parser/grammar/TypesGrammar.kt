@@ -19,7 +19,7 @@ val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
     rule(NAME) {TYPE_OR_CONS} + aList(ID)
 }
 
-val TYPE_DECLARATION : Rule = lazy {
+val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", SimpleType) {
     TYPE_KW + SIMPLETYPE + EQUALS + TYPE;
 }
 
