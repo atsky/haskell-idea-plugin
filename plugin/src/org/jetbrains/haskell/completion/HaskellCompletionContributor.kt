@@ -11,6 +11,7 @@ import org.jetbrains.haskell.psi.Module
 import java.util.HashSet
 import org.jetbrains.haskell.external.GHC_MOD
 import org.jetbrains.haskell.psi.ModuleName
+import org.jetbrains.haskell.parser.token.KEYWORDS
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
@@ -18,6 +19,10 @@ public class HaskellCompletionContributor() : CompletionContributor() {
     override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
             val psiElement = parameters.getPosition()
+
+            for (value in KEYWORDS) {
+                result!!.addElement(LookupElementBuilder.create(value.myName)!!)
+            }
 
             if (psiElement.getParent() is ModuleName) {
                 for (value in GHC_MOD.getModulesList()) {
