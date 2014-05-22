@@ -15,8 +15,7 @@ class ExpressionReference(val referenceExpression: ReferenceExpression) : PsiRef
         TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        val values = getElement()!!.getVisibleValues()
-        for (value in values) {
+        for (value in getElement()!!.getVisibleValues()) {
             if (value.getText() == referenceExpression.getText()) {
                 return value
             }
@@ -25,7 +24,6 @@ class ExpressionReference(val referenceExpression: ReferenceExpression) : PsiRef
     }
 
 
-    override fun getVariants(): Array<Any> = array()
-
+    override fun getVariants(): Array<Any> = getElement()!!.getVisibleValues().copyToArray()
 
 }
