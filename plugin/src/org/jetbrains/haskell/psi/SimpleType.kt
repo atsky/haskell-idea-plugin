@@ -19,7 +19,7 @@ public class SimpleType(node : ASTNode) : ASTWrapperPsiElement(node) {
         override fun create(node: ASTNode) = SimpleType(node)
     }
 
-    fun getNameElement() : Name? = findChildByClass(javaClass<Name>())
+    fun getNameElement() : TypeName? = findChildByClass(javaClass<TypeName>())
 
 
 

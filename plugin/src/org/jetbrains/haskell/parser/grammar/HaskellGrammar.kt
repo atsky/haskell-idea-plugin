@@ -3,85 +3,48 @@ package org.jetbrains.haskell.parser.grammar
 import org.jetbrains.haskell.parser.rules.RuleBasedElementType
 import org.jetbrains.haskell.psi.FqName
 import org.jetbrains.haskell.parser.rules.notEmptyList
-import org.jetbrains.haskell.parser.token.TYPE_OR_CONS
-import org.jetbrains.haskell.parser.token.DOT
 import org.jetbrains.haskell.parser.rules.Rule
 import org.jetbrains.haskell.parser.rules.lazy
 import org.jetbrains.haskell.parser.rules.aList
 import org.jetbrains.haskell.parser.inParentheses
-import org.jetbrains.haskell.parser.token.COMMA
-import org.jetbrains.haskell.parser.token.DOUBLE_ARROW
-import org.jetbrains.haskell.parser.token.ID
-import org.jetbrains.haskell.parser.token.EQUALS
+import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.haskell.psi.FieldUpdate
-import org.jetbrains.haskell.parser.token.LEFT_BRACE
-import org.jetbrains.haskell.parser.token.RIGHT_BRACE
-import org.jetbrains.haskell.parser.token.LEFT_BRACKET
-import org.jetbrains.haskell.parser.token.RIGHT_BRACKET
 import org.jetbrains.haskell.psi.CaseClause
-import org.jetbrains.haskell.parser.token.RIGHT_ARROW
-import org.jetbrains.haskell.parser.token.VIRTUAL_LEFT_PAREN
-import org.jetbrains.haskell.parser.token.VIRTUAL_SEMICOLON
-import org.jetbrains.haskell.parser.token.VIRTUAL_RIGHT_PAREN
-import org.jetbrains.haskell.parser.token.CASE_KW
-import org.jetbrains.haskell.parser.token.OF_KW
 import com.intellij.lang.PsiBuilder
 import org.jetbrains.haskell.psi.DoStatement
 import org.jetbrains.haskell.parser.rules.rule
-import org.jetbrains.haskell.parser.grammar.NAME
-import org.jetbrains.haskell.parser.token.LEFT_ARROW
-import org.jetbrains.haskell.parser.token.LET_KW
 import org.jetbrains.haskell.psi.LetExpression
-import org.jetbrains.haskell.parser.token.IN_KW
 import org.jetbrains.haskell.psi.DoExpression
-import org.jetbrains.haskell.parser.token.DO_KW
-import org.jetbrains.haskell.parser.token.BACK_SLASH
 import org.jetbrains.haskell.psi.ReferenceExpression
-import org.jetbrains.haskell.parser.token.UNDERSCORE
-import org.jetbrains.haskell.parser.token.COLON
-import org.jetbrains.haskell.parser.token.STRING
-import org.jetbrains.haskell.parser.token.NUMBER
-import org.jetbrains.haskell.parser.token.OPERATOR
-import org.jetbrains.haskell.parser.token.DOLLAR
 import org.jetbrains.haskell.parser.grammar.CONSTRUCTOR
-import org.jetbrains.haskell.parser.token.VERTICAL_BAR
 import org.jetbrains.haskell.parser.grammar.VALUE_BODY
 import org.jetbrains.haskell.psi.ClassDeclaration
-import org.jetbrains.haskell.parser.token.CLASS_KW
 import org.jetbrains.haskell.parser.rules.maybe
-import org.jetbrains.haskell.parser.token.WHERE_KW
 import org.jetbrains.haskell.psi.InstanceDeclaration
-import org.jetbrains.haskell.parser.token.INSTANCE_KW
 import org.jetbrains.haskell.parser.grammar.MODULE_NAME
 import org.jetbrains.haskell.parser.grammar.MODULE_EXPORTS
-import org.jetbrains.haskell.parser.token.LEFT_PAREN
-import org.jetbrains.haskell.parser.token.RIGHT_PAREN
 import org.jetbrains.haskell.parser.grammar.SYMBOL_EXPORT
-import org.jetbrains.haskell.parser.token.TYPE_KW
-import org.jetbrains.haskell.parser.token.DOT_DOT
-import org.jetbrains.haskell.parser.token.MODULE_KW
 import org.jetbrains.haskell.parser.grammar.IMPORT_AS_PART
-import org.jetbrains.haskell.parser.token.AS_KW
 import org.jetbrains.haskell.psi.ValueDeclaration
-import org.jetbrains.haskell.parser.token.DOUBLE_COLON
 import org.jetbrains.haskell.psi.Import
-import org.jetbrains.haskell.parser.token.IMPORT_KW
-import org.jetbrains.haskell.parser.token.QUALIFIED_KW
-import org.jetbrains.haskell.parser.token.HIDING_KW
 import org.jetbrains.haskell.parser.grammar.CONSTRUCTOR_DECLARATION
 import org.jetbrains.haskell.parser.grammar.DATA_DECLARATION
-import org.jetbrains.haskell.parser.token.DERIVING_KW
-import org.jetbrains.haskell.parser.token.DATA_KW
-import org.jetbrains.haskell.parser.token.NEWTYPE_KW
 import org.jetbrains.haskell.psi.SomeId
 import org.jetbrains.haskell.psi.UnparsedToken
 import org.jetbrains.haskell.parser.grammar.MODULE_HEADER
+import org.jetbrains.haskell.psi.ConstructorName
+import org.jetbrains.haskell.psi.ValueName
 
 /**
  * Created by atsky on 5/2/14.
  */
 private val FQ_NAME = RuleBasedElementType("FQ name", FqName) {
     notEmptyList(TYPE_OR_CONS, DOT)
+}
+
+
+private val VALUE_NAME = RuleBasedElementType("Value name", ValueName) {
+    ID
 }
 
 val CONTEXT : Rule = lazy {
@@ -110,7 +73,7 @@ val aGuard = lazy {
 
 val aValueBody = rule(VALUE_BODY) {
     val rhs = (EQUALS + anExpression) or notEmptyList(aGuard)
-    rule(NAME) {ID} + expressionList + rhs
+    VALUE_NAME + expressionList + rhs
 }
 
 val CLASS_BODY = lazy {
@@ -161,8 +124,7 @@ val aImportAsPart = rule(IMPORT_AS_PART) {
 }
 
 val VALUE_DECLARATION = RuleBasedElementType("Value declaration", ValueDeclaration) {
-    val name = rule(NAME, { ID })
-    notEmptyList(name, COMMA) + DOUBLE_COLON + TYPE
+    notEmptyList(VALUE_NAME, COMMA) + DOUBLE_COLON + TYPE
 }
 
 val IMPORT = RuleBasedElementType("Import", Import) {
@@ -173,16 +135,20 @@ val IMPORT = RuleBasedElementType("Import", Import) {
 val IMPORTS_LIST = aList(IMPORT, VIRTUAL_SEMICOLON)
 
 val typedBinding = lazy {
-    rule(NAME, { ID }) + DOUBLE_COLON + TYPE
+    VALUE_NAME + DOUBLE_COLON + TYPE
 }
 
 val extendedConstructor = lazy {
     LEFT_BRACE + aList(typedBinding, COMMA) + RIGHT_BRACE
 }
 
+val aConstructorName = RuleBasedElementType("ConstructorName", ConstructorName) {
+    TYPE_OR_CONS
+}
+
+
 val aConstructor = rule(CONSTRUCTOR_DECLARATION) {
-    rule(NAME, { TYPE_OR_CONS }) +
-    (extendedConstructor or aList(TYPE, null))
+    aConstructorName + (extendedConstructor or aList(TYPE))
 }
 
 val aDataDeclaration = rule(DATA_DECLARATION) {

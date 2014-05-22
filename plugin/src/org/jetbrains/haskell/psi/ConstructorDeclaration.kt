@@ -22,7 +22,7 @@ public class ConstructorDeclaration(node : ASTNode) : Declaration(node), PsiName
     }
 
     override fun getDeclarationName(): String? {
-        return findChildByClass(javaClass<Name>())?.getText()
+        return findChildByClass(javaClass<ConstructorName>())?.getText()
     }
 
 }

@@ -9,10 +9,10 @@ import com.intellij.psi.PsiElement
 /**
  * Created by atsky on 4/11/14.
  */
-public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PsiNamedElement {
+public class ConstructorName(node: ASTNode) : ASTWrapperPsiElement(node), PsiNamedElement {
 
     class object : ElementFactory {
-        override fun create(node: ASTNode) = Name(node)
+        override fun create(node: ASTNode) = ConstructorName(node)
     }
 
     override fun getName(): String? {

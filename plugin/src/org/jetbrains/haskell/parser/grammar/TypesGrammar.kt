@@ -10,13 +10,19 @@ import org.jetbrains.haskell.parser.rules.RuleBasedElementType
 import org.jetbrains.haskell.psi.SimpleType
 import org.jetbrains.haskell.parser.inParentheses
 import org.jetbrains.haskell.psi.TypeRef
+import org.jetbrains.haskell.psi.TypeName
 
 /**
  * Created by atsky on 25/04/14.
  */
 
+val TYPE_NAME : Rule = RuleBasedElementType("Simple type", TypeName) {
+    TYPE_OR_CONS
+}
+
+
 val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
-    rule(NAME) {TYPE_OR_CONS} + aList(ID)
+    TYPE_NAME + aList(ID)
 }
 
 val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", SimpleType) {

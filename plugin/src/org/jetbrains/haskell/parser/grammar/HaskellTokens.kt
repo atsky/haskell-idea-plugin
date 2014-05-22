@@ -22,6 +22,5 @@ val MODULE_NAME             = HaskellCompositeElementType("Module name", ModuleN
 val MODULE_EXPORTS          = HaskellCompositeElementType("Module exports", ModuleExports)
 val MODULE                  = HaskellCompositeElementType("Module", Module)
 val MODULE_HEADER           = HaskellCompositeElementType("Module header")
-val NAME                    = HaskellCompositeElementType("Name", Name)
 val TYPE_TOKEN              = HaskellCompositeElementType("Type")
 val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")

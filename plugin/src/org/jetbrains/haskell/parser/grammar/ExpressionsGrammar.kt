@@ -85,7 +85,7 @@ val LET_EXPRESSION = RuleBasedElementType("Let expression", LetExpression) {
 }
 
 val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", DoStatement) {
-    (rule(NAME) { ID } + LEFT_ARROW + anExpression) or
+    (VALUE_NAME + LEFT_ARROW + anExpression) or
     (LET_KW + ID + EQUALS + anExpression) or
     anExpression or
     untilSemicolon

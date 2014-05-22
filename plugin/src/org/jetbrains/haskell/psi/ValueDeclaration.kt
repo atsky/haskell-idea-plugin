@@ -12,12 +12,12 @@ public class ValueDeclaration(node : ASTNode) : Declaration(node) {
         override fun create(node: ASTNode) = ValueDeclaration(node)
     }
 
-    fun getNames(): List<Name> =
+    fun getNames(): List<ValueName> =
         PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
 
 
 
     override fun getDeclarationName(): String? =
-            findChildByClass(javaClass<Name>())?.getText()
+            findChildByClass(javaClass<ValueName>())?.getText()
 
 }
