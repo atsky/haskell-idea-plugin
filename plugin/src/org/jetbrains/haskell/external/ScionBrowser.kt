@@ -1,19 +1,22 @@
-package org.jetbrains.haskell
+package org.jetbrains.haskell.external
 
-import org.jetbrains.haskell.util.ProcessRunner
 import java.io.OutputStreamWriter
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.zip.Inflater
 import java.io.Writer
 import java.io.Reader
+import java.util.zip.Inflater
 
 /**
- * Created by atsky on 4/17/14.
+ * Created by atsky on 5/23/14.
  */
+class ScionBrowser {
+
+}
+
+
 fun main(args : Array<String>) {
     val path = "/home/atsky/.cabal/bin/scion-browser"
-    //val path = "/bin/cat"
     val processBuilder: ProcessBuilder = ProcessBuilder(path)
     val process = processBuilder.start()
     val streamWriter = OutputStreamWriter(process.getOutputStream()!!)

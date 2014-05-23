@@ -30,6 +30,9 @@ import java.io.File
 import java.util.LinkedList
 import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.haskell.config.HaskellSettings
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.ProgressIndicator
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
@@ -47,8 +50,8 @@ public open class CabalInterface(val project: Project) {
     private open fun runCommand(canonicalPath: String, vararg commands: String): Process {
         val command = LinkedList<String>();
         command.add(getProbramPath())
-        for (i in commands.indices) {
-            command.add(commands[i])
+        for (c in commands) {
+            command.add(c)
         }
         val process = ProcessRunner(canonicalPath).getProcess(command)
         ApplicationManager.getApplication()!!.invokeLater({
@@ -71,6 +74,16 @@ public open class CabalInterface(val project: Project) {
         })
 
         return process
+    }
+
+    public fun checkVersion() : Boolean {
+        try {
+            val process = ProcessRunner(null).getProcess(listOf(getProbramPath(), "-V"))
+            process.waitFor()
+            return true;
+        } catch (e : IOException) {
+            return false;
+        }
     }
 
     public open fun configure(cabalFile: VirtualFile): Process {
@@ -157,12 +170,25 @@ public open class CabalInterface(val project: Project) {
         }
     }
 
-    public fun update(): Process {
-        return runCommand(project.getBasePath().toString(), "update")
+
+
+    public fun update(): Unit {
+        ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
+            override fun run(indicator: ProgressIndicator) {
+                val process = runCommand(project.getBasePath().toString(), "update")
+
+            }
+        });
     }
 
-    public fun install(pkg: String): Process {
-        return runCommand(project.getBasePath().toString(), "install", pkg)
+    public fun install(pkg: String) {
+        ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
+            override fun run(indicator: ProgressIndicator) {
+                val process = runCommand(project.getBasePath().toString(), "install", pkg)
+                process.waitFor()
+
+            }
+        });
     }
 
 

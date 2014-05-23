@@ -73,7 +73,11 @@ public class HaskellConfigurable() : Configurable {
 
         };
 
+        cabalPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
+        cabalDataPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
         ghcMod.getTextField()!!.getDocument()!!.addDocumentListener(listener)
+        buildWrapper.getTextField()!!.getDocument()!!.addDocumentListener(listener)
+        scionBrowser.getTextField()!!.getDocument()!!.addDocumentListener(listener)
 
         val base = gridBagConstraints {
             insets = Insets(2, 0, 2, 3)

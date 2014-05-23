@@ -50,6 +50,16 @@ class GhcMod {
         }
     }
 
+    fun сheck() : Boolean {
+        try {
+            ProcessBuilder(listOf(getPath(), "version")).start().waitFor()
+            return true;
+        } catch(e : IOException) {
+            return false;
+        }
+    }
+
+
     fun getModulesList() : List<String> {
         try {
             val text = ProcessRunner(null).execute(listOf(getPath(), "list"))

@@ -164,13 +164,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
 
         override fun actionPerformed(e: AnActionEvent?) {
-            ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
-                override fun run(indicator: ProgressIndicator) {
-                    val process = CabalInterface(project!!).update()
-                    process.waitFor()
-                }
-            });
-
+            val process = CabalInterface(project!!).update()
         }
     }
 }
