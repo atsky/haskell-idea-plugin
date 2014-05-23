@@ -23,22 +23,12 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import java.util.HashSet
 import sun.nio.cs.StandardCharsets
 import java.io.ByteArrayInputStream
+import org.jetbrains.haskell.util.getRelativePath
 
 public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
     override fun collectInformation(file: PsiFile): PsiFile {
         return file
-    }
-
-    public fun getRelativePath(base: String, path: String): String {
-        val bpath = File(base).getCanonicalPath()
-        val fpath = File(path).getCanonicalPath()
-
-        if (fpath.startsWith(bpath)) {
-            return fpath.substring(bpath.length() + 1)
-        } else {
-            throw RuntimeException("Base path " + base + "is wrong to " + path);
-        }
     }
 
     fun copyContent(basePath: VirtualFile, destination: File) {
@@ -84,25 +74,17 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
     }
 
-    fun getModuleContentDir(file: PsiFile): VirtualFile {
-        val module = ModuleUtilCore.findModuleForPsiElement(file)
-        return module!!.getModuleFile()!!.getParent()!!
-    }
-
     override fun doAnnotate(psiFile: PsiFile?): List<ErrorMessage> {
         val file = psiFile!!.getVirtualFile()
         if (file == null) {
             return listOf()
         }
 
-        val moduleContent = getModuleContentDir(psiFile)
+        val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
 
         copyContent(moduleContent, File(moduleContent.getCanonicalPath()!!, ".buildwrapper"))
 
-        val cabals = moduleContent.getChildren()!!.filter { it.getName().endsWith(".cabal") }
-        val cabal = cabals.head!!.getPath()
-
-        val buildWrapper = BuildWrapper(moduleContent.getPath(), cabal)
+        val buildWrapper = BuildWrapper.init(moduleContent)
 
         val path = getRelativePath(moduleContent.getPath(), file.getPath())
         val out = buildWrapper.build1(path)
@@ -118,7 +100,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
 
     override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>?, holder: AnnotationHolder) {
-        val moduleContent = getModuleContentDir(file)
+        val moduleContent = BuildWrapper.getModuleContentDir(file)
         val relativePath = getRelativePath(moduleContent.getPath(), file.getVirtualFile()!!.getPath())
 
         for (error in annotationResult!!) {

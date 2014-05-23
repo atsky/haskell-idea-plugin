@@ -12,6 +12,8 @@ import java.util.HashSet
 import org.jetbrains.haskell.external.GHC_MOD
 import org.jetbrains.haskell.psi.ModuleName
 import org.jetbrains.haskell.parser.token.KEYWORDS
+import org.jetbrains.haskell.external.BuildWrapper
+import org.jetbrains.haskell.util.getRelativePath
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
@@ -19,6 +21,20 @@ public class HaskellCompletionContributor() : CompletionContributor() {
     override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
             val psiElement = parameters.getPosition()
+
+            /*
+            val moduleContent = BuildWrapper.getModuleContentDir(psiElement)
+            val path = getRelativePath(moduleContent.getPath(),
+                    parameters.getOriginalFile().getVirtualFile()!!.getPath())
+            val names = BuildWrapper.init(moduleContent).namesinscope(path)
+            if (names != null) {
+                for (value in names) {
+                    val text = value as String
+                    val indexOf = text.lastIndexOf(".")
+                    result!!.addElement(LookupElementBuilder.create(text.substring(indexOf + 1))!!)
+                }
+            }
+            */
 
             for (value in KEYWORDS) {
                 result!!.addElement(LookupElementBuilder.create(value.myName)!!)
