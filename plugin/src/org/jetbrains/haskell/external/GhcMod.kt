@@ -23,7 +23,7 @@ class GhcMod {
     var errorReported : Boolean = false
 
     fun getPath() : String {
-        return HaskellSettings.getInstance().getState()!!.ghcModPath!!
+        return HaskellSettings.getInstance().getState().ghcModPath!!
     }
 
     fun getModuleContent(module : String) : List<String> {

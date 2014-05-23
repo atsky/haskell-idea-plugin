@@ -7,16 +7,19 @@ import java.io.IOException;
 
 
 public class CabalJspInterface{
+    private final String myCabalPath;
     @NotNull
     private File myCabalFile;
 
-    CabalJspInterface(@NotNull File cabalFile) {
+    CabalJspInterface(String cabalPath, @NotNull File cabalFile) {
+        myCabalPath = cabalPath;
         myCabalFile = cabalFile;
     }
 
     private Process runCommand(String command) throws IOException {
+        final String path = myCabalPath != null ? myCabalPath : "cabal";
         return new ProcessWrapper(myCabalFile.getParentFile().getCanonicalPath()).
-                            getProcess("cabal", command);
+                            getProcess(path, command);
     }
 
     public Process configure() throws IOException {

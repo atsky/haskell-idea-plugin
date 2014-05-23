@@ -106,7 +106,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
 
     override fun loadAdditionalData(additional: Element?): SdkAdditionalData? {
-        return HaskellSdkAdditionalData.load(additional!!);
+        return null;//HaskellSdkAdditionalData.load(additional!!);
     }
     override fun getPresentableName(): String {
         return "GHC"

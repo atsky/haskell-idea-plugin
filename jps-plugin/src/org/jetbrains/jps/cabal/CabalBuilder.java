@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 
 public class CabalBuilder extends ModuleLevelBuilder {
 
+    public static String cabalPath = null;
 
     public CabalBuilder() {
         super(BuilderCategory.TRANSLATOR);
@@ -57,7 +58,7 @@ public class CabalBuilder extends ModuleLevelBuilder {
                     //        "Can't find cabal file in " + getContentRootPath(module)));
                     continue;
                 }
-                CabalJspInterface cabal = new CabalJspInterface(cabalFile);
+                CabalJspInterface cabal = new CabalJspInterface(cabalPath, cabalFile);
 
                 if (runConfigure(context, module, cabal)) return ExitCode.ABORT;
                 if (runBuild(context, module, cabal)) return ExitCode.ABORT;

@@ -11,10 +11,18 @@ import java.awt.GridBagConstraints
 import org.jetbrains.haskell.util.gridBagConstraints
 import java.awt.Insets
 import java.awt.GridBagLayout
+import junit.framework.Test
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import com.intellij.openapi.fileTypes.FileType
 
 public class HaskellConfigurable() : Configurable {
     private var isModified = false
-    private val ghcMod: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
+    private val cabalPathField = TextFieldWithBrowseButton()
+    private val cabalDataPathField = TextFieldWithBrowseButton()
+    private val ghcMod = TextFieldWithBrowseButton()
+    private val buildWrapper = TextFieldWithBrowseButton()
+    private val scionBrowser = TextFieldWithBrowseButton()
+
 
 
     override fun getDisplayName(): String {
@@ -24,6 +32,37 @@ public class HaskellConfigurable() : Configurable {
     override fun isModified(): Boolean = isModified
 
     override fun createComponent(): JComponent {
+
+        cabalPathField.addBrowseFolderListener(
+                "Select cabal execurtable",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
+
+        cabalDataPathField.addBrowseFolderListener(
+                "Select data cabal directory",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleFolderDescriptor())
+
+        ghcMod.addBrowseFolderListener(
+                "Select ghc-mod execurtable",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
+
+        buildWrapper.addBrowseFolderListener(
+                "Select build-wrapper execurtable",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
+
+        scionBrowser.addBrowseFolderListener(
+                "Select scion-browser execurtable",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
+
         val result = JPanel(GridBagLayout())
 
         val listener : DocumentAdapter = object : DocumentAdapter() {
@@ -41,22 +80,37 @@ public class HaskellConfigurable() : Configurable {
         }
 
 
-        result.add(JLabel("ghc-mod executable"), base.setConstraints {
-            anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridy = 0;
-        })
+        fun addLabeledControl(row : Int, label : String, component : JComponent) {
+            result.add(JLabel(label), base.setConstraints {
+                anchor = GridBagConstraints.LINE_START
+                gridx = 0;
+                gridy = row;
+            })
 
-        result.add(ghcMod, base.setConstraints {
-            gridx = 1;
-            gridy = 0;
-            fill = GridBagConstraints.HORIZONTAL
-            weightx = 1.0
-        })
+            result.add(component, base.setConstraints {
+                gridx = 1;
+                gridy = row;
+                fill = GridBagConstraints.HORIZONTAL
+                weightx = 1.0
+            })
+
+            result.add(Box.createHorizontalStrut(1), base.setConstraints {
+                gridx = 2;
+                gridy = row;
+                weightx = 0.1
+            })
+        }
+
+        addLabeledControl(0, "cabal executable", cabalPathField)
+        addLabeledControl(1, "cabal data path", cabalDataPathField);
+        addLabeledControl(2, "ghc-mod executable", ghcMod)
+        addLabeledControl(3, "buildwrapper executable", buildWrapper)
+        addLabeledControl(4, "scion-browser executable", scionBrowser)
+
 
         result.add(JPanel(), gridBagConstraints {
             gridx = 0
-            gridy = 1
+            gridy = 5
             weighty = 10.0
 
         })
@@ -69,7 +123,13 @@ public class HaskellConfigurable() : Configurable {
     }
 
     override fun apply() {
-        HaskellSettings.getInstance().getState()!!.ghcModPath = ghcMod.getTextField()!!.getText()
+        val state = HaskellSettings.getInstance().getState()
+        state.cabalPath = cabalPathField.getTextField()!!.getText()
+        state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
+        state.ghcModPath = ghcMod.getTextField()!!.getText()
+        state.buildWrapperPath = buildWrapper.getTextField()!!.getText()
+        state.scionBrowserPath = scionBrowser.getTextField()!!.getText()
+
         isModified = false
     }
 
@@ -79,8 +139,13 @@ public class HaskellConfigurable() : Configurable {
     override fun getHelpTopic(): String? = null
 
     override fun reset() {
-        val modPath = HaskellSettings.getInstance().getState()?.ghcModPath ?: ""
-        ghcMod.getTextField()!!.setText(modPath)
+        val state = HaskellSettings.getInstance().getState()
+        cabalPathField.getTextField()!!.setText(state.cabalPath ?: "")
+        cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
+        ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
+        buildWrapper.getTextField()!!.setText(state.buildWrapperPath ?: "")
+        scionBrowser.getTextField()!!.setText(state.scionBrowserPath ?: "")
+
         isModified = false
     }
 

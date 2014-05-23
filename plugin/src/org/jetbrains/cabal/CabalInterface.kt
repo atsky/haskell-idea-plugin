@@ -29,6 +29,7 @@ import org.jetbrains.haskell.util.*
 import java.io.File
 import java.util.LinkedList
 import com.intellij.openapi.util.SystemInfo
+import org.jetbrains.haskell.config.HaskellSettings
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
@@ -39,9 +40,13 @@ public class CabalPackageShort(val name: String, val versions: List<String>) {
 
 public open class CabalInterface(val project: Project) {
 
+    fun getProbramPath() : String {
+        return HaskellSettings.getInstance().getState().cabalPath!!
+    }
+
     private open fun runCommand(canonicalPath: String, vararg commands: String): Process {
         val command = LinkedList<String>();
-        command.add("cabal")
+        command.add(getProbramPath())
         for (i in commands.indices) {
             command.add(commands[i])
         }

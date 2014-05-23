@@ -6,22 +6,26 @@ import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.ProcessRunner
 import org.json.simple.JSONValue
 import org.json.simple.JSONArray
+import org.jetbrains.haskell.config.HaskellSettings
 
 /**
  * Created by atsky on 12/05/14.
  */
 class BuildWrapper(val path : String,
                    val cabalFile : String) {
-    val PROGRAM = joinPath(OS.getCabalBin(), "buildwrapper")
+
+    fun getProbrammPath() : String {
+        return HaskellSettings.getInstance().getState().buildWrapperPath!!
+    }
 
     fun synchronize() {
         val out = ProcessRunner(path).execute(
-                PROGRAM, "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
+                getProbrammPath(), "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
     }
 
     fun build1(file : String) : JSONArray? {
         val out = ProcessRunner(path).execute(
-                PROGRAM, "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
+                getProbrammPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
         System.out.println(out)
         val prefix = "\nbuild-wrapper-json:"
         if (out.startsWith(prefix)) {

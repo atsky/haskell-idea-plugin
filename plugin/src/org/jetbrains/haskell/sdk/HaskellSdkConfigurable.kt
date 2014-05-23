@@ -17,7 +17,7 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
     }
 
     override fun createComponent(): JComponent {
-        return myForm.getContentPanel()
+        return JPanel(); //myForm.getContentPanel()
     }
 
     override fun isModified(): Boolean {
@@ -25,6 +25,7 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
     }
 
     override fun apply() {
+        /*
         val newData = HaskellSdkAdditionalData(myForm.getCabalPath(), myForm.getCabalLibPath())
 
         val modificator = mySdk!!.getSdkModificator()
@@ -34,11 +35,14 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
                 modificator.commitChanges()
             }
         })
+        */
         myForm.isModified = false
     }
 
     override fun reset() {
+        /*
         val data = mySdk!!.getSdkAdditionalData()
+
         val ghcData: HaskellSdkAdditionalData?
         if (data != null) {
             if (!(data is HaskellSdkAdditionalData)) {
@@ -46,14 +50,14 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
             }
             ghcData = (data as HaskellSdkAdditionalData)
             val cabalPath = ghcData?.getCabalPath() ?: ""
-            val cabalLibPath = ghcData?.getCabalDataPath() ?: ""
+            val cabalDataPath = ghcData?.getCabalDataPath() ?: ""
 
-            myForm.init(cabalPath, cabalLibPath)
+            myForm.init(cabalPath, cabalDataPath)
         } else {
             myForm.init(HaskellSdkAdditionalData.getDefaultCabalPath(),
                         HaskellSdkAdditionalData.getDefaultCabalDataPath())
         }
-
+        */
 
         myForm.isModified = false
     }

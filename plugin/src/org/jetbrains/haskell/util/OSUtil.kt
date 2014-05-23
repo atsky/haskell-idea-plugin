@@ -24,7 +24,7 @@ public class OsUtil() {
         }
     }
 
-    public fun getCabalBin(): String = joinPath(getCabalData(), "bin")
+    public fun getDefaultCabalBin(): String = joinPath(getCabalData(), "bin")
 
     fun getProgramDataFolder(name: String): String {
         return if (isWindows) {
