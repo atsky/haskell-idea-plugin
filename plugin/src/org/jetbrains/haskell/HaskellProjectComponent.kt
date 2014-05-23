@@ -31,13 +31,13 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
         invokeInUI {
             val result = Messages.showDialog(
                     project,
-                    pkg + " executable not found. ",
                     pkg + " not found. You can install it by cabal or set path in settings.",
+                    pkg + " executable not found",
                     array("Install", "Open settings", "Close"),
                     0,
                     null)
             if (result == 0) {
-                CabalInterface(project).install("ghc-mod")
+                CabalInterface(project).install(pkg)
             } else if (result == 1) {
                 ShowSettingsUtil.getInstance()!!.editConfigurable(project, HaskellConfigurable());
             }

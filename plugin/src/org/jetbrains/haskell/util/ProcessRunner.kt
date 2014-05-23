@@ -17,19 +17,23 @@ public class ProcessRunner(workingDirectory: String?) {
 
 
     public fun execute(cmd: List<String>, input: String?): String {
-        val process = getProcess(cmd.toList())
-        if (input != null) {
-            val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
-            streamWriter.write(input)
-            streamWriter.close()
+        try {
+            val process = getProcess(cmd.toList())
+            if (input != null) {
+                val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
+                streamWriter.write(input)
+                streamWriter.close()
+            }
+
+            var myInput: InputStream = process.getInputStream()!!
+            val data = readData(myInput)
+
+            process.waitFor()
+
+            return data
+        } catch (e : IOException) {
+            return ""
         }
-
-        var myInput: InputStream = process.getInputStream()!!
-        val data = readData(myInput)
-
-        process.waitFor()
-
-        return data
     }
 
     public fun getProcess(cmd: List<String>): Process {

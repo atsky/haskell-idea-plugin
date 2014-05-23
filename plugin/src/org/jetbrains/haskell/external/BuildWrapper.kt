@@ -38,7 +38,6 @@ class BuildWrapper(val path : String,
     fun build1(file : String) : JSONArray? {
         val out = ProcessRunner(path).execute(
                 getProbrammPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
-        System.out.println(out)
         val prefix = "\nbuild-wrapper-json:"
         if (out.startsWith(prefix)) {
             val jsonText = out.substring(prefix.size)

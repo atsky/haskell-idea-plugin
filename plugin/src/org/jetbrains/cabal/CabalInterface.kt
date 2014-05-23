@@ -40,8 +40,10 @@ public class CabalPackageShort(val name: String, val versions: List<String>) {
 
 }
 
+val cabalLock = Object()
 
 public open class CabalInterface(val project: Project) {
+
 
     fun getProbramPath() : String {
         return HaskellSettings.getInstance().getState().cabalPath!!
@@ -173,10 +175,13 @@ public open class CabalInterface(val project: Project) {
 
 
     public fun update(): Unit {
+
         ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
-                val process = runCommand(project.getBasePath().toString(), "update")
-
+                synchronized(cabalLock) {
+                    val process = runCommand(project.getBasePath().toString(), "update")
+                    process.waitFor();
+                }
             }
         });
     }
@@ -184,9 +189,10 @@ public open class CabalInterface(val project: Project) {
     public fun install(pkg: String) {
         ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
             override fun run(indicator: ProgressIndicator) {
-                val process = runCommand(project.getBasePath().toString(), "install", pkg)
-                process.waitFor()
-
+                synchronized(cabalLock) {
+                    val process = runCommand(project.getBasePath().toString(), "install", pkg)
+                    process.waitFor()
+                }
             }
         });
     }
