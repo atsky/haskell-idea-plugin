@@ -27,7 +27,7 @@ You can install plugin from idea by going to `Preferences` -> `Plugins` and pres
 To normal work this plugin need:
 * [Haskell platform](http://www.haskell.org/platform/)
 * cabal must be in `PATH`
-* ghc-mod (install by `cabal install ghc-mod`)
+* cabal packages `ghc-mod`, `buildwrapper`
 
 ## Source compilation
 
