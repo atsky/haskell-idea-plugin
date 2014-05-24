@@ -16,7 +16,7 @@ class ErrorMessage(
     val eColumn : Int) {
 
     // Reflects BuildWrapper/Base.hs: BWNoteStatus
-    enum class Severity { BWError ; BWWarning }
+    enum class Severity { Error ; Warning }
 
     override fun toString(): String {
         return "Error: " + text + "\n" +
@@ -32,7 +32,7 @@ class ErrorMessage(
             return ErrorMessage(
                 text,
                 location.get("f") as String,
-                if (severity == "Warning") Severity.BWWarning else Severity.BWError,
+                if (severity == "Warning") Severity.Warning else Severity.Error,
                 (location.get("l") as Long).toInt(),
                 (location.get("c") as Long).toInt(),
                 (location.get("el") as Long).toInt(),
