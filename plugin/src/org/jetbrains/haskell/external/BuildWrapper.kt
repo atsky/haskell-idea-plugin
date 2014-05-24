@@ -46,6 +46,29 @@ class BuildWrapper(val path : String,
         }
     }
 
+    fun thingatpoint(file : String, line : Int, column : Int): JSONArray? {
+        val out = ProcessRunner(path).execute(
+                getProbrammPath(), "thingatpoint",
+                "-t", ".buildwrapper",
+                "--cabalfile=" + cabalFile,
+                "-f", file,
+                "--line", line.toString(),
+                "--column", column.toString()
+        )
+        System.out.println(out);
+        /*
+        val prefix = "\nbuild-wrapper-json:"
+        if (out.startsWith(prefix)) {
+            val jsonText = out.substring(prefix.size)
+            val array = JSONValue.parse(jsonText) as JSONArray
+
+            return array[0] as JSONArray?
+        }
+        */
+        return null;
+    }
+
+
     fun namesinscope(file : String): JSONArray? {
         val out = ProcessRunner(path).execute(
                 getProbrammPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
