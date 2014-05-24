@@ -90,9 +90,9 @@ class BuildWrapper(val path : String,
     fun build1(file : String) : JSONArray? {
         val out = ProcessRunner(path).execute(
                 getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
-        val prefix = "\nbuild-wrapper-json:"
-        if (out.startsWith(prefix)) {
-            val jsonText = out.substring(prefix.size)
+        val prefix = "build-wrapper-json:"
+        if (out.contains(prefix)) {
+            val jsonText = out.substring(out.indexOf(prefix) + prefix.size)
             val array = JSONValue.parse(jsonText) as JSONArray
 
             return array
