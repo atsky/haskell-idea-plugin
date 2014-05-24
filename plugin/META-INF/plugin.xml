@@ -2,7 +2,7 @@
   <name>Haskell</name>
   <description>Haskell language support</description>
   <version>0.2.0 Beta</version>
-  <vendor url="https://github.com/Atsky/haskell-idea-plugin">JetBrains</vendor>
+  <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
 
   <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="135.480"/>
