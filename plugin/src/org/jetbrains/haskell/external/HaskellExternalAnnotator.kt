@@ -107,7 +107,10 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
             if (relativePath == error.file) {
                 val start = LineColPosition(error.line, error.column).getOffset(file)
                 val end = LineColPosition(error.eLine, error.eColumn).getOffset(file)
-                holder.createErrorAnnotation(TextRange(start, end), error.text);
+                when (error.severity) {
+                    ErrorMessage.Severity.BWError -> holder.createErrorAnnotation(TextRange(start, end), error.text);
+                    ErrorMessage.Severity.BWWarning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
+                }
             }
         }
     }
