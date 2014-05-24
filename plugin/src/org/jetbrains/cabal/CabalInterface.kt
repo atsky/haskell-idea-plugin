@@ -36,9 +36,11 @@ import com.intellij.openapi.progress.ProgressIndicator
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
-public class CabalPackageShort(val name: String, val versions: List<String>) {
-
-}
+public class CabalPackageShort(
+        val name: String,
+        val availableVersions: List<String>,
+        val isInstalled: Boolean
+){}
 
 val cabalLock = Object()
 
@@ -154,28 +156,46 @@ public open class CabalInterface(val project: Project) {
                 if (strings[0] == "pkg:") {
                     val key = strings[1]
                     val value = strings[2]
-                    val list = map[key]
 
-                    if (list == null) {
-                        map[key] = ArrayList<String>(listOf(value))
-                    } else {
-                        list.add(value)
-                    }
-
+                    map.getOrPut(key) { ArrayList<String>() }.add(value)
                 }
             }
+            // Checking for packages installation
+
             for ((key, value) in map) {
-                result.add(CabalPackageShort(key, value))
+                result.add(CabalPackageShort(key, value, false))
             }
 
             return result
-        } catch (e : IOException) {
+        } catch (e: IOException) {
             Notifications.Bus.notify(Notification("Cabal error", "cabal", "Can't read cabal package list.", NotificationType.ERROR))
             return listOf()
         }
     }
 
+    public fun getInstalledPackagesList(): List<CabalPackageShort> {
+        try {
+            val output = ProcessRunner().execute("ghc-pkg", "--simple-output", "list")
 
+            val map = TreeMap<String, MutableList<String>>()
+            output.split(' ').forEach { pkgVer ->
+                val pkg = pkgVer.substring(0, pkgVer.lastIndexOf('-'))
+                val ver = pkgVer.substring(pkgVer.lastIndexOf('-') + 1)
+
+                map.getOrPut(pkg) { ArrayList<String>() }.add(ver)
+            }
+
+            val result = ArrayList<CabalPackageShort>()
+            for ((key, value) in map) {
+                result.add(CabalPackageShort(key, value, true))
+            }
+            return result
+
+        } catch (e: IOException) {
+            Notifications.Bus.notify(Notification("Cabal error", "cabal", "Can't read installed package list using GHC-PKC.", NotificationType.ERROR))
+            return listOf()
+        }
+    }
 
     public fun update(): Unit {
         ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
