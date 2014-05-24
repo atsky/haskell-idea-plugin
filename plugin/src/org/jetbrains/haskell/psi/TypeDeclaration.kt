@@ -14,7 +14,7 @@ public class TypeDeclaration(node : ASTNode) : Declaration(node) {
         override fun create(node: ASTNode) = TypeDeclaration(node)
     }
 
-    fun getNameElement() : TypeName? {
+    fun getTypeName() : TypeName? {
         val simpleType = findChildByClass(javaClass<SimpleType>())
         return simpleType?.getNameElement()
     }

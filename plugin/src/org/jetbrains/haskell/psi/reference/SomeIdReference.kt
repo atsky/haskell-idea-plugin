@@ -22,7 +22,7 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
             val text = someId.getText()!!
             if (Character.isUpperCase(text.charAt(0))) {
                 for (function in ModuleScope(module).getVisibleTypes()) {
-                    if (function.getDeclarationName() == text) {
+                    if (function.getName() == text) {
                         return function
                     }
                 }

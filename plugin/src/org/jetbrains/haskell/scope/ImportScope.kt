@@ -5,6 +5,7 @@ import org.jetbrains.haskell.psi.ValueDeclaration
 import org.jetbrains.haskell.psi.Declaration
 import org.jetbrains.haskell.psi.DataDeclaration
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.haskell.psi.TypeDeclaration
 
 public class ImportScope(val import : Import) {
 
@@ -33,6 +34,14 @@ public class ImportScope(val import : Import) {
         val module = import.findModule()
         if (module != null) {
             return filterDeclarations(module.getDataDeclarationList())
+        }
+        return listOf()
+    }
+
+    fun getTypeDeclarations() : List<TypeDeclaration> {
+        val module = import.findModule()
+        if (module != null) {
+            return filterDeclarations(module.getTypeDeclarationList())
         }
         return listOf()
     }

@@ -1,16 +1,10 @@
 package org.jetbrains.haskell.parser.grammar
 
-import org.jetbrains.haskell.parser.rules.Rule
-import org.jetbrains.haskell.parser.rules.lazy
-import org.jetbrains.haskell.parser.rules.rule
+import org.jetbrains.haskell.parser.rules.*
 import org.jetbrains.haskell.parser.token.*
-import org.jetbrains.haskell.parser.rules.maybe
-import org.jetbrains.haskell.parser.rules.aList
-import org.jetbrains.haskell.parser.rules.RuleBasedElementType
-import org.jetbrains.haskell.psi.SimpleType
 import org.jetbrains.haskell.parser.inParentheses
-import org.jetbrains.haskell.psi.TypeRef
-import org.jetbrains.haskell.psi.TypeName
+import org.jetbrains.haskell.psi.*
+
 
 /**
  * Created by atsky on 25/04/14.
@@ -25,7 +19,7 @@ val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
     TYPE_NAME + aList(ID)
 }
 
-val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", SimpleType) {
+val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", TypeDeclaration) {
     TYPE_KW + SIMPLETYPE + EQUALS + TYPE;
 }
 

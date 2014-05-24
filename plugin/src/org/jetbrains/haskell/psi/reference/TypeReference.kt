@@ -20,8 +20,8 @@ class TypeReference(val typeRef: TypeRef) : PsiReferenceBase<TypeRef>(
         val module = Module.findModule(getElement()!!)
         if (module != null) {
             for (aType in  ModuleScope(module).getVisibleTypes()) {
-                if (aType.getDeclarationName() == typeRef.getText()) {
-                    return aType.getNameElement()
+                if (aType.getName() == typeRef.getText()) {
+                    return aType
                 }
             }
         }
