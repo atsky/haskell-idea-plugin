@@ -120,15 +120,12 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
     }
 
     fun install(packageName: String, packageVersion: String?) {
-        ProgressManager.getInstance()!!.run(RunnableBackgroundableWrapper(
-                project, "cabal install", {
-            val cmd = if (packageVersion == null) {
-                packageName
-            } else {
-                packageName + "-" + packageVersion
-            }
-            CabalInterface(project!!).install(cmd)
-        }))
+        val cmd = if (packageVersion == null) {
+            packageName
+        } else {
+            packageName + "-" + packageVersion
+        }
+        CabalInterface(project!!).install(cmd)
     }
 
     private fun getToolbar(): JComponent {

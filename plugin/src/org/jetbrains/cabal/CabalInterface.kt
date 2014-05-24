@@ -175,7 +175,6 @@ public open class CabalInterface(val project: Project) {
 
 
     public fun update(): Unit {
-
         ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
