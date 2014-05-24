@@ -26,13 +26,13 @@ class BuildWrapper(val path : String,
             return BuildWrapper(moduleContent.getPath(), cabal)
         }
 
-        fun getProbrammPath(): String {
+        fun getProgramPath(): String {
             return HaskellSettings.getInstance().getState().buildWrapperPath!!
         }
 
         public fun check() : Boolean {
             try {
-                ProcessBuilder(getProbrammPath(), "-V").start().waitFor();
+                ProcessBuilder(getProgramPath(), "-V").start().waitFor();
                 return true;
             } catch(e : IOException) {
                 return false;
@@ -48,7 +48,7 @@ class BuildWrapper(val path : String,
 
     fun thingatpoint(file : String, line : Int, column : Int): JSONArray? {
         val out = ProcessRunner(path).execute(
-                getProbrammPath(), "thingatpoint",
+                getProgramPath(), "thingatpoint",
                 "-t", ".buildwrapper",
                 "--cabalfile=" + cabalFile,
                 "-f", file,
@@ -71,7 +71,7 @@ class BuildWrapper(val path : String,
 
     fun namesinscope(file : String): JSONArray? {
         val out = ProcessRunner(path).execute(
-                getProbrammPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
+                getProgramPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
         val prefix = "\nbuild-wrapper-json:"
         if (out.startsWith(prefix)) {
             val jsonText = out.substring(prefix.size)
@@ -84,12 +84,12 @@ class BuildWrapper(val path : String,
 
     fun synchronize() {
         val out = ProcessRunner(path).execute(
-                getProbrammPath(), "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
+                getProgramPath(), "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
     }
 
     fun build1(file : String) : JSONArray? {
         val out = ProcessRunner(path).execute(
-                getProbrammPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
+                getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
         val prefix = "\nbuild-wrapper-json:"
         if (out.startsWith(prefix)) {
             val jsonText = out.substring(prefix.size)
