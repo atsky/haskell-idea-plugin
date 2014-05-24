@@ -10,7 +10,7 @@ import org.jetbrains.haskell.psi.ReferenceExpression
 /**
  * Created by atsky on 4/25/14.
  */
-class ExpressionReference(val referenceExpression: ReferenceExpression) : PsiReferenceBase<ReferenceExpression>(
+class ValueReference(val referenceExpression: ReferenceExpression) : PsiReferenceBase<ReferenceExpression>(
         referenceExpression,
         TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
 

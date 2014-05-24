@@ -32,8 +32,8 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
                     }
                 }
             } else {
-                for (function in ModuleScope(module).getVisibleValues()) {
-                    if (function.getDeclarationName() == text) {
+                for (function in ModuleScope(module).getVisibleValues().flatMap { it.getNames() }) {
+                    if (function.getText() == text) {
                         return function
                     }
                 }

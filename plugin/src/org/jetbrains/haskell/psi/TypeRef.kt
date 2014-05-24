@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.haskell.parser.ElementFactory
 import com.intellij.psi.PsiReference
-import org.jetbrains.haskell.psi.reference.ExpressionReference
+import org.jetbrains.haskell.psi.reference.ValueReference
 import org.jetbrains.haskell.psi.reference.TypeReference
 
 /**
