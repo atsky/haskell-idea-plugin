@@ -52,7 +52,7 @@ class GhcMod {
 
     fun сheck() : Boolean {
         try {
-            ProcessBuilder(listOf(getPath(), "version")).start().waitFor()
+            ProcessRunner(null).execute(listOf(getPath()))
             return true;
         } catch(e : IOException) {
             return false;

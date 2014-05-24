@@ -32,10 +32,10 @@ class BuildWrapper(val path : String,
 
         public fun check() : Boolean {
             try {
-                ProcessBuilder(getProgramPath(), "-V").start().waitFor();
-                return true;
+                ProcessRunner(null).execute(listOf(getProgramPath(), "-V"))
+                return true
             } catch(e : IOException) {
-                return false;
+                return false
             }
 
         }
