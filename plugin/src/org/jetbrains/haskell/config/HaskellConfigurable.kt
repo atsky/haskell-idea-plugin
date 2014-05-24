@@ -20,7 +20,6 @@ public class HaskellConfigurable() : Configurable {
     private val cabalDataPathField = TextFieldWithBrowseButton()
     private val ghcMod = TextFieldWithBrowseButton()
     private val buildWrapper = TextFieldWithBrowseButton()
-    private val scionBrowser = TextFieldWithBrowseButton()
 
 
 
@@ -56,11 +55,6 @@ public class HaskellConfigurable() : Configurable {
                 null,
                 FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
 
-        scionBrowser.addBrowseFolderListener(
-                "Select scion-browser execurtable",
-                null,
-                null,
-                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
 
         val result = JPanel(GridBagLayout())
 
@@ -76,7 +70,6 @@ public class HaskellConfigurable() : Configurable {
         cabalDataPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
         ghcMod.getTextField()!!.getDocument()!!.addDocumentListener(listener)
         buildWrapper.getTextField()!!.getDocument()!!.addDocumentListener(listener)
-        scionBrowser.getTextField()!!.getDocument()!!.addDocumentListener(listener)
 
         val base = gridBagConstraints {
             insets = Insets(2, 0, 2, 3)
@@ -108,7 +101,6 @@ public class HaskellConfigurable() : Configurable {
         addLabeledControl(1, "cabal data path", cabalDataPathField);
         addLabeledControl(2, "ghc-mod executable", ghcMod)
         addLabeledControl(3, "buildwrapper executable", buildWrapper)
-        addLabeledControl(4, "scion-browser executable", scionBrowser)
 
 
         result.add(JPanel(), gridBagConstraints {
@@ -131,7 +123,6 @@ public class HaskellConfigurable() : Configurable {
         state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
         state.ghcModPath = ghcMod.getTextField()!!.getText()
         state.buildWrapperPath = buildWrapper.getTextField()!!.getText()
-        state.scionBrowserPath = scionBrowser.getTextField()!!.getText()
 
         isModified = false
     }
@@ -147,7 +138,6 @@ public class HaskellConfigurable() : Configurable {
         cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
         buildWrapper.getTextField()!!.setText(state.buildWrapperPath ?: "")
-        scionBrowser.getTextField()!!.setText(state.scionBrowserPath ?: "")
 
         isModified = false
     }
