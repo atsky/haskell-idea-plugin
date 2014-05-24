@@ -11,7 +11,6 @@ import java.awt.GridBagConstraints
 import org.jetbrains.haskell.util.gridBagConstraints
 import java.awt.Insets
 import java.awt.GridBagLayout
-import junit.framework.Test
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileTypes.FileType
 
