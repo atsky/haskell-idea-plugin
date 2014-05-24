@@ -49,6 +49,11 @@ public open class CabalInterface(val project: Project) {
         return HaskellSettings.getInstance().getState().cabalPath!!
     }
 
+    fun getDataPath() : String {
+        return HaskellSettings.getInstance().getState().cabalDataPath!!
+    }
+
+
     private open fun runCommand(canonicalPath: String, vararg commands: String): Process {
         val command = LinkedList<String>();
         command.add(getProbramPath())
@@ -129,14 +134,12 @@ public open class CabalInterface(val project: Project) {
     public fun getPackagesList(): List<CabalPackageShort> {
         try {
             val path = if (SystemInfo.isMac) {
-                joinPath(System.getProperty("user.home")!!,
-                        "Library",
-                        "Haskell",
+                joinPath(getDataPath(),
                         "repo-cache",
                         "hackage.haskell.org",
                         "00-index.cache")
             } else {
-                joinPath(OS.getProgramDataFolder("cabal"),
+                joinPath(getDataPath(),
                         "packages",
                         "hackage.haskell.org",
                         "00-index.cache")
