@@ -104,7 +104,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
             }
 
             val pkgNode = DefaultMutableTreeNode(pkg.name)
-            for (version in pkg.versions) {
+            for (version in pkg.availableVersions) {
                 pkgNode.add(DefaultMutableTreeNode(version))
             }
             root.add(pkgNode)

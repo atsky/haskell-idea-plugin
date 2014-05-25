@@ -3,7 +3,7 @@ package org.jetbrains.haskell.util
 import java.io.*
 import java.util.ArrayList
 
-public class ProcessRunner(workingDirectory: String?) {
+public class ProcessRunner(workingDirectory: String? = null) {
     private val myWorkingDirectory: String? = workingDirectory
 
     public fun execute(vararg cmd: String): String {
