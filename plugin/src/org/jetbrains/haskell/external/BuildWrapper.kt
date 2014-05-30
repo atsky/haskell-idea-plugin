@@ -12,6 +12,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
+import org.jetbrains.haskell.util.LineColPosition
+import org.json.simple.JSONObject
 
 /**
  * Created by atsky on 12/05/14.
@@ -46,40 +48,39 @@ class BuildWrapper(val path : String,
         }
     }
 
-    fun thingatpoint(file : String, line : Int, column : Int): JSONArray? {
+    fun thingatpoint(file : String, pos : LineColPosition): JSONObject? {
         val out = ProcessRunner(path).execute(
                 getProgramPath(), "thingatpoint",
                 "-t", ".buildwrapper",
                 "--cabalfile=" + cabalFile,
                 "-f", file,
-                "--line", line.toString(),
-                "--column", column.toString()
+                "--line", pos.myLine.toString(),
+                "--column", pos.myColumn.toString()
         )
-        System.out.println(out);
-        /*
-        val prefix = "\nbuild-wrapper-json:"
-        if (out.startsWith(prefix)) {
-            val jsonText = out.substring(prefix.size)
-            val array = JSONValue.parse(jsonText) as JSONArray
 
-            return array[0] as JSONArray?
-        }
-        */
-        return null;
+        val array = extractJsonArray(out)
+        return if (array != null) array[0] as JSONObject? else null
     }
 
+
+    fun extractJsonArray(text : String) : JSONArray? {
+        val prefix = "\nbuild-wrapper-json:"
+        if (text.startsWith(prefix)) {
+            val jsonText = text.substring(prefix.size)
+            return JSONValue.parse(jsonText) as JSONArray
+
+
+        }
+
+        return null
+    }
 
     fun namesinscope(file : String): JSONArray? {
         val out = ProcessRunner(path).execute(
                 getProgramPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
-        val prefix = "\nbuild-wrapper-json:"
-        if (out.startsWith(prefix)) {
-            val jsonText = out.substring(prefix.size)
-            val array = JSONValue.parse(jsonText) as JSONArray
 
-            return array[0] as JSONArray?
-        }
-        return null;
+        val array = extractJsonArray(out)
+        return if (array != null) array[0] as JSONArray? else null
     }
 
     fun synchronize() {
@@ -90,13 +91,7 @@ class BuildWrapper(val path : String,
     fun build1(file : String) : JSONArray? {
         val out = ProcessRunner(path).execute(
                 getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
-        val prefix = "build-wrapper-json:"
-        if (out.contains(prefix)) {
-            val jsonText = out.substring(out.indexOf(prefix) + prefix.size)
-            val array = JSONValue.parse(jsonText) as JSONArray
 
-            return array
-        }
-        return null
+        return extractJsonArray(out)
     }
 }
