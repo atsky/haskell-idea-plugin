@@ -40,6 +40,10 @@ import org.jetbrains.haskell.icons.HaskellIcons
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import com.intellij.openapi.progress.ProgressIndicator
+import javax.swing.tree.TreeCellRenderer
+import java.awt.Component
+import org.jetbrains.cabal.tool.CabalToolWindowFactory.PackageData
+import java.awt.Color
 
 
 public class CabalToolWindowFactory() : ToolWindowFactory {
@@ -47,6 +51,8 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
     private var packages: JTree? = null
     private var project: Project? = null
     private var treeModel: DefaultTreeModel? = null
+
+    class PackageData(val text : String, val installed : Boolean)
 
     override fun createToolWindowContent(project: Project?, toolWindow: ToolWindow?) {
         this.project = project!!
@@ -61,9 +67,32 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         panel.add(getToolbar(), BorderLayout.PAGE_START)
 
         val packagesList = CabalInterface(project!!).getPackagesList()
+        val installedPackagesList = CabalInterface(project!!).getInstalledPackagesList()
 
-        treeModel = DefaultTreeModel(getTree(packagesList, ""))
+        treeModel = DefaultTreeModel(getTree(packagesList, installedPackagesList, ""))
         val tree = Tree(treeModel)
+        tree.setCellRenderer(object : TreeCellRenderer {
+            override fun getTreeCellRendererComponent(tree: JTree,
+                                                      value: Any?,
+                                                      selected: Boolean,
+                                                      expanded: Boolean,
+                                                      leaf: Boolean,
+                                                      row: Int,
+                                                      hasFocus: Boolean): Component {
+
+                val userObject = (value as DefaultMutableTreeNode).getUserObject()
+                if (userObject == null) {
+                    return JLabel()
+                }
+                val packageData = userObject as PackageData
+                val label = JLabel(packageData.text)
+                if (packageData.installed) {
+                    label.setForeground(Color(0, 140, 0))
+                }
+                return label
+            }
+
+        })
 
         tree.addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
@@ -96,16 +125,20 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         return panel
     }
 
-    fun getTree(packagesList: List<CabalPackageShort>, text: String): TreeNode {
+    fun getTree(packagesList: List<CabalPackageShort>,
+                installedPackagesList: List<CabalPackageShort>,
+                text: String): TreeNode {
         val root = DefaultMutableTreeNode()
         for (pkg in packagesList) {
             if (text != "" && !pkg.name.capitalize().contains(text.capitalize())) {
                 continue
             }
 
-            val pkgNode = DefaultMutableTreeNode(pkg.name)
+            val installed = installedPackagesList.firstOrNull { it.name == pkg.name }
+            val pkgNode = DefaultMutableTreeNode(PackageData(pkg.name, installed != null))
             for (version in pkg.availableVersions) {
-                pkgNode.add(DefaultMutableTreeNode(version))
+                val installedVersions = installed?.availableVersions ?: listOf()
+                pkgNode.add(DefaultMutableTreeNode(PackageData(version, installedVersions.contains(version))))
             }
             root.add(pkgNode)
 
@@ -116,7 +149,8 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
     fun updateTree(text: String) {
         val packagesList = CabalInterface(project!!).getPackagesList()
-        treeModel!!.setRoot(getTree(packagesList, text))
+        val installedPackagesList = CabalInterface(project!!).getInstalledPackagesList()
+        treeModel!!.setRoot(getTree(packagesList, installedPackagesList, text))
     }
 
     fun install(packageName: String, packageVersion: String?) {
