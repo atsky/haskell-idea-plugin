@@ -40,12 +40,13 @@ class ShowSymbolInfoAction : AnAction() {
         val lineColPosition = LineColPosition.fromOffset(psiFile, element.getTextOffset())!!
 
         val info = BuildWrapper.init(moduleContent).thingatpoint(relativePath, lineColPosition)
-        System.out.println(info)
+
         val name = info?.get("Name") as String?
         val aType = info?.get("QType") as String?
-        val text = name + " :: " + aType
-
-        HintManager.getInstance()!!.showInformationHint(editor, text)
+        if (name != null && aType != null) {
+            val text = name + " :: " + aType
+            HintManager.getInstance()!!.showInformationHint(editor, text)
+        }
     }
 
 
