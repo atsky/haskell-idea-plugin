@@ -21,14 +21,14 @@
 
   <actions>
       <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
-              text="Haskell module" description="Create new Haskell module">
+              text="Haskell Module" description="Create new Haskell module">
           <add-to-group group-id="NewGroup"/>
       </action>
 
       <action id="Haskell.ShowInfo" class="org.jetbrains.haskell.actions.ShowSymbolInfoAction"
               text="Show Symbol Info" description="Show Symbol Info">
           <keyboard-shortcut first-keystroke="control I" keymap="$default"/>
-          <add-to-group group-id="ViewMenu" anchor="after" relative-to-action="QuickJavaDoc"/>
+          <add-to-group group-id="CodeEditorViewGroup" anchor="after" relative-to-action="QuickJavaDoc"/>
       </action>
 
 <!--
