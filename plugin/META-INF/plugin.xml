@@ -92,6 +92,8 @@
                                      implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
       <lang.fileViewProviderFactory language="Haskell"
                                     implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
+      <lang.commenter language="Haskell"
+                      implementationClass="org.jetbrains.haskell.comment.HaskellCommenter"/>
 
       <!-- Cabal -->
       <lang.syntaxHighlighterFactory key="Cabal"
