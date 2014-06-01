@@ -8,7 +8,7 @@ http://plugins.jetbrains.com/plugin/7453?pr=idea
 For now provides basic features:
 * Haskell syntax highlight
 * Error checking with [buidwrapper](https://github.com/JPMoresmau/BuildWrapper).
-* Show type of symbol (Ctrl + I)
+* Show type of symbol (Ctrl + I, or ⌘ + I on mac)
 * Simple completion based on [ghc-mod](http://hackage.haskell.org/package/ghc-mod)
 * Cabal syntax highlight
 * Build of cabal projects
