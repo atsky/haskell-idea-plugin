@@ -38,7 +38,7 @@ To normal work this plugin need:
 ## Source compilation
 
 To normal compilation you will need:
-* IDEA 13
+* IDEA 13.1
 * Kotlin plugin
 * JDK 6
 * IntelliJ IDEA Plugin SDK
