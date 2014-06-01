@@ -195,7 +195,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
 
         override fun actionPerformed(e: AnActionEvent?) {
-            val process = CabalInterface(project!!).update()
+            CabalInterface(project!!).update()
         }
     }
 }

@@ -84,10 +84,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         copyContent(moduleContent, File(moduleContent.getCanonicalPath()!!, ".buildwrapper"))
 
-        val buildWrapper = BuildWrapper.init(moduleContent)
-
-        val path = getRelativePath(moduleContent.getPath(), file.getPath())
-        val out = buildWrapper.build1(path)
+        val out = BuildWrapper.init(psiFile).build1(file)
         if (out != null) {
             val errors = out.get(1) as JSONArray
 

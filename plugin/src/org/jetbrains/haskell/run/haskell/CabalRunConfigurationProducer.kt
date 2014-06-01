@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.cabal.CabalFile
 import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.haskell.fileType.HaskellFile
-import org.jetbrains.cabal.findCabal
 
 
 public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRunConfiguration>(HaskellRunConfigurationType.INSTANCE) {
@@ -35,7 +34,7 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
 
             val module = ProjectRootManager.getInstance(project)!!.getFileIndex().getModuleForFile(virtualFile)
 
-            val psiFile = CabalInterface(project).getPsiFile(findCabal(module!!)!!)
+            val psiFile = CabalInterface(project).getPsiFile(CabalInterface.findCabal(module!!)!!)
             val executables = psiFile.getExecutables()
 
             val name = if (executables.size > 0) {

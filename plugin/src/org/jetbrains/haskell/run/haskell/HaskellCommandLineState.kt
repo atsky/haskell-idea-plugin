@@ -10,7 +10,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.module.Module
 import org.jetbrains.cabal.CabalFile
 import java.io.File
-import org.jetbrains.cabal.findCabal
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.OS
 import com.intellij.notification.Notification

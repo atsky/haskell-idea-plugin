@@ -14,18 +14,21 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.util.LineColPosition
 import org.json.simple.JSONObject
+import org.jetbrains.haskell.util.getRelativePath
+import org.jetbrains.cabal.CabalInterface
 
 /**
  * Created by atsky on 12/05/14.
  */
-class BuildWrapper(val path : String,
+class BuildWrapper(val moduleRoot: String,
                    val cabalFile : String) {
     class object {
-        public fun init(moduleContent : VirtualFile) : BuildWrapper {
-            val cabals = moduleContent.getChildren()!!.filter { it.getName().endsWith(".cabal") }
-            val cabal = cabals.head!!.getPath()
 
-            return BuildWrapper(moduleContent.getPath(), cabal)
+        public fun init(element : PsiElement) : BuildWrapper {
+            val moduleRoot = BuildWrapper.getModuleContentDir(element)
+            val virtualFile = CabalInterface.findCabal(element.getContainingFile()!!)!!
+
+            return BuildWrapper(moduleRoot.getPath(), virtualFile.getPath())
         }
 
         fun getProgramPath(): String {
@@ -48,12 +51,15 @@ class BuildWrapper(val path : String,
         }
     }
 
-    fun thingatpoint(file : String, pos : LineColPosition): JSONObject? {
-        val out = ProcessRunner(path).execute(
+    fun thingatpoint(file : VirtualFile, pos : LineColPosition): JSONObject? {
+
+        val relativePath = getRelativePath(moduleRoot, file.getPath())
+
+        val out = ProcessRunner(moduleRoot).execute(
                 getProgramPath(), "thingatpoint",
                 "-t", ".buildwrapper",
                 "--cabalfile=" + cabalFile,
-                "-f", file,
+                "-f", relativePath,
                 "--line", pos.myLine.toString(),
                 "--column", pos.myColumn.toString()
         )
@@ -76,7 +82,7 @@ class BuildWrapper(val path : String,
     }
 
     fun namesinscope(file : String): JSONArray? {
-        val out = ProcessRunner(path).execute(
+        val out = ProcessRunner(moduleRoot).execute(
                 getProgramPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
 
         val array = extractJsonArray(out)
@@ -84,14 +90,23 @@ class BuildWrapper(val path : String,
     }
 
     fun synchronize() {
-        val out = ProcessRunner(path).execute(
+        ProcessRunner(moduleRoot).execute(
                 getProgramPath(), "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
     }
 
-    fun build1(file : String) : JSONArray? {
-        val out = ProcessRunner(path).execute(
-                getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
+    fun build1(file : VirtualFile) : JSONArray? {
+        val relativePath = getRelativePath(moduleRoot, file.getPath())
+
+        val out = ProcessRunner(moduleRoot).execute(
+                getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", relativePath)
 
         return extractJsonArray(out)
+    }
+
+    fun dependencies() : JSONArray? {
+        val out = ProcessRunner(moduleRoot).execute(
+                getProgramPath(), "dependencies", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
+
+        return extractJsonArray(out);
     }
 }

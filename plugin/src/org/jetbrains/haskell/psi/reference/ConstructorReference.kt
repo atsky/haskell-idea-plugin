@@ -38,7 +38,7 @@ class ConstructorReference(val constructor: Constructor) : PsiReferenceBase<Cons
 
 
     override fun getVariants(): Array<Any> {
-        return (getConstructorsList() as List<Any>).copyToArray()
+        return getConstructorsList().copyToArray()
     }
 
 

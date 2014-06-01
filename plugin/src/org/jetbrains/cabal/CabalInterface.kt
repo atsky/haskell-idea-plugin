@@ -44,8 +44,32 @@ public class CabalPackageShort(
 
 val cabalLock = Object()
 
-public open class CabalInterface(val project: Project) {
+public class CabalInterface(val project: Project) {
 
+    class object {
+        public fun findCabal(module: Module): VirtualFile? {
+            val children = module.getModuleFile()?.getParent()?.getChildren()
+            var cabalFile: VirtualFile? = null;
+
+            if (children != null) {
+                for (file in children) {
+                    if ("cabal".equals(file.getExtension())) {
+                        cabalFile = file;
+                        break;
+                    }
+                }
+            }
+            if (cabalFile != null) {
+                return cabalFile!!
+            }
+            return null;
+        }
+
+        public fun findCabal(file: PsiFile): VirtualFile? {
+            val projectFileIndex = ProjectRootManager.getInstance(file.getProject())!!.getFileIndex()
+            return findCabal(projectFileIndex.getModuleForFile(file.getVirtualFile()!!)!!)
+        }
+    }
 
     fun getProbramPath() : String {
         return HaskellSettings.getInstance().getState().cabalPath!!
@@ -56,7 +80,7 @@ public open class CabalInterface(val project: Project) {
     }
 
 
-    private open fun runCommand(canonicalPath: String, vararg commands: String): Process {
+    private fun runCommand(canonicalPath: String, vararg commands: String): Process {
         val command = LinkedList<String>();
         command.add(getProbramPath())
         for (c in commands) {
@@ -95,19 +119,19 @@ public open class CabalInterface(val project: Project) {
         }
     }
 
-    public open fun configure(cabalFile: VirtualFile): Process {
+    public fun configure(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "configure")
     }
 
-    public open fun build(cabalFile: VirtualFile): Process {
+    public fun build(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "build")
     }
 
-    public open fun clean(cabalFile: VirtualFile): Process {
+    public fun clean(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "clean")
     }
 
-    private open fun findCabal(): String? {
+    private fun findCabal(): String? {
         for (file: VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
             if ("cabal".equals(file?.getExtension())) {
                 val cachedDocument: Document? = FileDocumentManager.getInstance()?.getCachedDocument(file!!)
@@ -223,25 +247,3 @@ public open class CabalInterface(val project: Project) {
 }
 
 
-public fun findCabal(module: Module): VirtualFile? {
-    val children = module.getModuleFile()?.getParent()?.getChildren()
-    var cabalFile: VirtualFile? = null;
-
-    if (children != null) {
-        for (file in children) {
-            if ("cabal".equals(file.getExtension())) {
-                cabalFile = file;
-                break;
-            }
-        }
-    }
-    if (cabalFile != null) {
-        return cabalFile!!
-    }
-    return null;
-}
-
-public fun findCabal(file: PsiFile, project: Project): VirtualFile? {
-    val projectFileIndex = ProjectRootManager.getInstance(project)!!.getFileIndex()
-    return findCabal(projectFileIndex.getModuleForFile(file.getVirtualFile()!!)!!)
-}

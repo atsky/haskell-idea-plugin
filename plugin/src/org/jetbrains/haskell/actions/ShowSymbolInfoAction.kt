@@ -33,13 +33,9 @@ class ShowSymbolInfoAction : AnAction() {
             return
         }
 
-        val moduleContent = BuildWrapper.getModuleContentDir(element)
-        val relativePath = getRelativePath(moduleContent.getPath(),
-                psiFile.getVirtualFile()!!.getPath())
-
         val lineColPosition = LineColPosition.fromOffset(psiFile, element.getTextOffset())!!
 
-        val info = BuildWrapper.init(moduleContent).thingatpoint(relativePath, lineColPosition)
+        val info = BuildWrapper.init(element).thingatpoint(psiFile.getVirtualFile()!!, lineColPosition)
 
         val name = info?.get("Name") as String?
         val aType = info?.get("QType") as String?
