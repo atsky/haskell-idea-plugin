@@ -3,9 +3,12 @@ haskell-idea-plugin
 
 IntelliJ IDEA plugin for Haskell, based on [ideah](https://code.google.com/p/ideah/).
 
+http://plugins.jetbrains.com/plugin/7453?pr=idea
+
 For now provides basic features:
 * Haskell syntax highlight
-* Error checking with [buidwrapper](https://github.com/JPMoresmau/BuildWrapper) to have a lot of cool features for free.
+* Error checking with [buidwrapper](https://github.com/JPMoresmau/BuildWrapper).
+* Show type of symbol (Ctrl + I)
 * Simple completion based on [ghc-mod](http://hackage.haskell.org/package/ghc-mod)
 * Cabal syntax highlight
 * Build of cabal projects
@@ -18,7 +21,10 @@ then buildwrapper fails ([issue](https://github.com/JPMoresmau/BuildWrapper/issu
 
 ### Plans
 
-* Add ability jump to hackage libraries source code.
+* add ability jump to hackage libraries source code.
+* support of another products based on IntelliJ platform.
+* GHCi support
+
 
 ## Installation
 
