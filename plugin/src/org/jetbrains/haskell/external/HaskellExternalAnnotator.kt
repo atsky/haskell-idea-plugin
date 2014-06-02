@@ -82,6 +82,10 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
 
+        if (moduleContent == null) {
+            return listOf()
+        }
+
         copyContent(moduleContent, File(moduleContent.getCanonicalPath()!!, ".buildwrapper"))
 
         val out = BuildWrapper.init(psiFile).build1(file)
@@ -98,6 +102,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
     override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>?, holder: AnnotationHolder) {
         val moduleContent = BuildWrapper.getModuleContentDir(file)
+        if (moduleContent == null) {
+            return
+        }
         val relativePath = getRelativePath(moduleContent.getPath(), file.getVirtualFile()!!.getPath())
 
         for (error in annotationResult!!) {

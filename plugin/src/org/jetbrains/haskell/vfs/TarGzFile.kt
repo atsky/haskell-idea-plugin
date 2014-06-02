@@ -13,6 +13,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.io.ByteArrayInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import java.io.ByteArrayOutputStream
+import java.util.ArrayList
 
 /**
  * Created by atsky on 09/05/14.
@@ -25,6 +26,7 @@ public class TarGzFile(archiveFile: VirtualFile,
     var isInit = false;
     var myEntry: TarArchiveEntry? = null
     var myData: ByteArray? = null
+    val myChildren = ArrayList<String>()
 
     fun doInit(): Boolean {
         if (isInit) {
@@ -42,15 +44,19 @@ public class TarGzFile(archiveFile: VirtualFile,
             if (entry == null) {
                 break
             }
-            if (myPath == entry.getName()) {
+            val entryName = entry.getName() ?: ""
+            if (myPath == entryName) {
                 myEntry = entry
                 myData = readToArray(tarArchiveInputStream)
-                gzIn.close()
-                return true
+            } else if (entryName.startsWith(myPath)) {
+                val name = entryName.substring(myPath.size)
+                if (!name.substring(0, name.size - 1).contains("/")) {
+                    myChildren.add(name)
+                }
             }
         }
         gzIn.close()
-        return false
+        return (myData != null)
     }
 
     fun readToArray(ins: InputStream): ByteArray {
@@ -109,7 +115,9 @@ public class TarGzFile(archiveFile: VirtualFile,
     }
 
     override fun getChildren(): Array<VirtualFile>? {
-        throw UnsupportedOperationException()
+        doInit()
+        val files : List<VirtualFile> = myChildren.map { TarGzFile(myArchiveFile, myPath + it) }
+        return files.copyToArray()
     }
 
     override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream {

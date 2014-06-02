@@ -17,6 +17,23 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.haskell.fileType.HaskellFile
 import org.jetbrains.haskell.parser.ElementFactory
+import org.jetbrains.haskell.external.BuildWrapper
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+import org.jetbrains.cabal.CabalInterface
+import org.jetbrains.cabal.CabalFileType
+import org.jetbrains.cabal.CabalFile
+import org.jetbrains.haskell.util.joinPath
+import java.io.File
+import org.jetbrains.haskell.vfs.TarGzFile
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.application.PathManager
+import java.net.URL
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.Arrays
+import javax.xml.bind.JAXBElement.GlobalScope
+import org.jetbrains.haskell.scope.HackageScope
 
 /**
  * Created by atsky on 3/29/14.
@@ -32,8 +49,13 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
     }
 
     public fun findModuleFile(): HaskellFile? {
-        val nameToFind = getText()
-        val module = ModuleUtilCore.findModuleForPsiElement(this)!!;
+        val nameToFind = getText()!!
+        val module = ModuleUtilCore.findModuleForPsiElement(this);
+
+        if (module == null) {
+            return null
+        }
+
         val sourceRoots = ModuleRootManager.getInstance(module)!!.getSourceRoots(true)
 
         var result: VirtualFile? = null
@@ -53,6 +75,12 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
             val psiFile = PsiManager.getInstance(getProject()).findFile(result!!)
             return psiFile as HaskellFile
         }
+
+        //val haskellFile = HackageScope.INSTANCE.getModule(this, nameToFind)
+        //if (haskellFile != null) {
+        //    return haskellFile
+        //}
+
         return null
     }
 

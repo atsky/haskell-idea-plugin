@@ -25,7 +25,7 @@ class BuildWrapper(val moduleRoot: String,
     class object {
 
         public fun init(element : PsiElement) : BuildWrapper {
-            val moduleRoot = BuildWrapper.getModuleContentDir(element)
+            val moduleRoot = BuildWrapper.getModuleContentDir(element)!!
             val virtualFile = CabalInterface.findCabal(element.getContainingFile()!!)!!
 
             return BuildWrapper(moduleRoot.getPath(), virtualFile.getPath())
@@ -45,9 +45,9 @@ class BuildWrapper(val moduleRoot: String,
 
         }
 
-        fun getModuleContentDir(file: PsiElement): VirtualFile {
+        fun getModuleContentDir(file: PsiElement): VirtualFile? {
             val module = ModuleUtilCore.findModuleForPsiElement(file)
-            return module!!.getModuleFile()!!.getParent()!!
+            return module?.getModuleFile()?.getParent()
         }
     }
 
