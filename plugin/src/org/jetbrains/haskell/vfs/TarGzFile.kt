@@ -4,7 +4,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import java.io.OutputStream
 import java.io.InputStream
-import org.jetbrains.haskell.parser.lexer.str
 import org.apache.commons.compress.archivers.ArchiveEntry
 import java.io.FileInputStream
 import java.io.BufferedInputStream
