@@ -33,6 +33,8 @@ import org.jetbrains.haskell.config.HaskellSettings
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.psi.PsiElement
 
 private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 
@@ -65,9 +67,9 @@ public class CabalInterface(val project: Project) {
             return null;
         }
 
-        public fun findCabal(file: PsiFile): VirtualFile? {
-            val projectFileIndex = ProjectRootManager.getInstance(file.getProject())!!.getFileIndex()
-            return findCabal(projectFileIndex.getModuleForFile(file.getVirtualFile()!!)!!)
+        public fun findCabal(file: PsiElement): VirtualFile? {
+            val module = ModuleUtilCore.findModuleForPsiElement(file)
+            return findCabal(module!!)
         }
     }
 
