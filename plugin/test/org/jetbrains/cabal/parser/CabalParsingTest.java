@@ -1,25 +1,23 @@
-package org.jetbrains.haskell.parser;
+package org.jetbrains.cabal.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.cabal.parser.CaballParserDefinition;
-
+import org.junit.Test;
 
 public class CabalParsingTest extends ParsingTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
 
-
     public CabalParsingTest() {
-        super("parserTests", "cabal", new CaballParserDefinition());
+        super("cabalParserTests", "cabal", new CaballParserDefinition());
     }
 
     @Override
     protected String getTestDataPath() {
-        return ".";
+        return "data";
     }
 
+    @Test
     public void testSimple() throws Exception { doTest(true); }
-
 
 }
