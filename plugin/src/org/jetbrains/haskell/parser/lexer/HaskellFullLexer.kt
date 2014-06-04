@@ -30,7 +30,7 @@ public class HaskellFullLexer() : LexerBase() {
 
     public override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
         lexer.start(buffer, startOffset, endOffset, initialState)
-        val indentStack = LinkedList<Int>(Collections.singleton(0))
+        val indentStack = LinkedList<Int>()
         var recordIndent : Boolean = false
         var tokenType = lexer.getTokenType()
         while (tokenType != null) {
@@ -43,14 +43,14 @@ public class HaskellFullLexer() : LexerBase() {
             if (tokenType == TokenType.NEW_LINE_INDENT) {
                 val nextToken = lexer.getTokenType()
                 if (nextToken != null && !WHITESPACES.contains(nextToken) && !COMMENTS.contains(nextToken)) {
-                    if (tokenSize == indentStack.last!!) {
+                    if (indentStack.isNotEmpty() && tokenSize == indentStack.last!!) {
                         addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
                     } else {
-                        if (recordIndent && (tokenSize > indentStack.last!!)) {
+                        if (recordIndent && (indentStack.isEmpty() || tokenSize > indentStack.last!!)) {
                             indentStack.addLast(tokenSize);
                             addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_LEFT_PAREN)
                         }
-                        if (tokenSize < indentStack.last!!) {
+                        if (indentStack.isNotEmpty() && tokenSize < indentStack.last!!) {
                             while (tokenSize < indentStack.last!!) {
                                 indentStack.removeLast();
                                 addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_RIGHT_PAREN)
@@ -71,7 +71,7 @@ public class HaskellFullLexer() : LexerBase() {
 
             tokenType = lexer.getTokenType()
         }
-        while (indentStack.size > 1) {
+        while (indentStack.size > 0) {
             addToken(tokenEnds[tokenEnds.size - 1], tokenEnds[tokenEnds.size - 1], 0, VIRTUAL_RIGHT_PAREN)
             indentStack.removeLast()
         }

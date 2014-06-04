@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 %xstate BLOCK_COMMENT, TEX
 
 unispace    = \x05
-white_no_nl = [\ \n\r\f]|{unispace}
+white_no_nl = [\ \r\f]|{unispace}
 whitechar   = {white_no_nl}|[\n]
 tab         = \t
 
