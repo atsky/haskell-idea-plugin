@@ -37,6 +37,21 @@ public class HaskellLexerTest extends LexerTestCase {
     }
 
     @Test
+    public void testDigits() throws Exception {
+        doTest("0x10FFFF",
+                "");
+    }
+
+    @Test
+    public void testStrings() throws Exception {
+        doTest("\"\\\\\" ",
+                "Haskell Token:string ('\"\\\\\"')\n" +
+                        "WHITE_SPACE (' ')");
+        doTest("'\\x2919'",
+               "Haskell Token:character (''\\x2919'')");
+    }
+
+    @Test
     public void testIndentsComments() throws Exception {
         doTest("module Main where\n" +
                "\n" +

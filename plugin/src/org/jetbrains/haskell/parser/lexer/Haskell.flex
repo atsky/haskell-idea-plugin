@@ -59,6 +59,9 @@ docsym      = [\| \^ \* \$]
 INDENT = [\n] {white_no_nl}*
 EOL_COMMENT = "--"[^\n]*
 
+CHARACTER  = (\'([^']|\\.)\')
+UCHARACTER = (\'\\x[0-9]*\')
+
 %%
 
 <TEX> {
@@ -164,8 +167,9 @@ EOL_COMMENT = "--"[^\n]*
 "where"               { return TokenPackage.getWHERE_KW(); }
 "{-#".*"#-}"          { return TokenPackage.getPRAGMA(); }
 {digit}+              { return TokenPackage.getNUMBER(); }
-\'([^']|\\.)\'        { return TokenPackage.getCHARACTER(); }
-\"([^\"]|\\\")*\"     { return TokenPackage.getSTRING();}
+{CHARACTER} | {UCHARACTER}
+                      { return TokenPackage.getCHARACTER(); }
+\"([^\"\\]|\\.)*\"    { return TokenPackage.getSTRING();}
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
 {large}{idchar}*      { return TokenPackage.getTYPE_OR_CONS();}
