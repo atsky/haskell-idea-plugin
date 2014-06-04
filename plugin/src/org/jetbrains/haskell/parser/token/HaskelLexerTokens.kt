@@ -105,7 +105,7 @@ public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
         UNDERSCORE)
 
 public val CHARACTER: HaskellToken            = HaskellToken("character")
-public val COMMENT : HaskellToken             = HaskellToken("COMMENT")
+public val BLOCK_COMMENT: HaskellToken        = HaskellToken("COMMENT")
 public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")
 public val ID : HaskellToken                  = HaskellToken("id")
 public val NUMBER : HaskellToken              = HaskellToken("number")
@@ -118,5 +118,5 @@ public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PARE
 public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
 
 
-val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
+val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT)
 val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, TokenType.NEW_LINE_INDENT)

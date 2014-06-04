@@ -13,7 +13,8 @@ import com.intellij.psi.tree.IElementType;
 %implements FlexLexer
 
 %{
-
+    private int commentStart;
+    private int commentDepth;
 %}
 
 
@@ -26,55 +27,83 @@ import com.intellij.psi.tree.IElementType;
 unispace    = \x05
 white_no_nl = [\ \n\r\f]|{unispace}
 whitechar   = {white_no_nl}|[\n]
-//tab         = \t
+tab         = \t
 
 ascdigit  = [0-9]
 unidigit  = \x03
 decdigit  = {ascdigit}
 digit     = {ascdigit}|{unidigit}
 
-//special   = [\(\)\,\;\[\]\`\{\}]
+special   = [\(\)\,\;\[\]\`\{\}]
 ascsymbol = [\!\#\$\%\&\*\+\.\/\<\=\>\?\@\\\^\|\-\~]
 symbol    = {ascsymbol}|{unisymbol}
 
-large     = [A-Z]
+large     = [:uppercase:]
 
-ascsmall  = [a-z]
+ascsmall  = [:lowercase:]
 small     = {ascsmall}|"_"
 
 graphic   = {small}|{large}|{symbol}|{digit}|{special}|[\:\"\']
 
-//octit     = [0-7]
-//hexit     = [$decdigit A-F a-f]
-//symchar   = [$symbol \:]
-//nl        = [\n\r]
+octit     = [0-7]
+hexit     = [$decdigit A-F a-f]
+symchar   = [$symbol \:]
+nl        = [\n\r]
 idchar      = {small}|{large}|{digit}|[\']
 
-//pragmachar = [$small $large $digit]
+pragmachar = [$small $large $digit]
 
 docsym      = [\| \^ \* \$]
 
 
-DIGIT =[0-9]
-WHITE_SPACE_CHAR = [\ \t\f]
-INDENT = [\n] {WHITE_SPACE_CHAR}*
+INDENT = [\n] {white_no_nl}*
 EOL_COMMENT = "--"[^\n]*
 
 %%
 
 <TEX> {
-    [^\\]+            { return TokenPackage.getCOMMENT(); }
-    "\\begin{code}"   { yybegin(YYINITIAL); return TokenPackage.getCOMMENT(); }
-    \\+*              { return TokenPackage.getCOMMENT(); }
+    [^\\]+            { return TokenPackage.getBLOCK_COMMENT(); }
+    "\\begin{code}"   { yybegin(YYINITIAL); return TokenPackage.getBLOCK_COMMENT(); }
+    \\+*              { return TokenPackage.getBLOCK_COMMENT(); }
 
 }
 
 
-<BLOCK_COMMENT>([^-]|"-"[^}])+ {return TokenPackage.getCOMMENT();}
-<BLOCK_COMMENT>("-}") {  yybegin(YYINITIAL); return TokenPackage.getCOMMENT(); }
+<BLOCK_COMMENT> {
+    "{-" {
+         commentDepth++;
+    }
+
+    <<EOF>> {
+        int state = yystate();
+        yybegin(YYINITIAL);
+        zzStartRead = commentStart;
+        return TokenPackage.getBLOCK_COMMENT();
+    }
+
+    "-}" {
+        if (commentDepth > 0) {
+            commentDepth--;
+        }
+        else {
+             int state = yystate();
+             yybegin(YYINITIAL);
+             zzStartRead = commentStart;
+             return TokenPackage.getBLOCK_COMMENT();
+        }
+    }
+
+    .|{whitechar} {}
+}
+
+"{-" {
+    yybegin(BLOCK_COMMENT);
+    commentDepth = 0;
+    commentStart = getTokenStart();
+}
 
 
-({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
+{white_no_nl}+        { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return TokenPackage.getEND_OF_LINE_COMMENT(); }
 "{"                   { return TokenPackage.getLEFT_BRACE(); }
@@ -121,7 +150,7 @@ EOL_COMMENT = "--"[^\n]*
 "infixl"              { return TokenPackage.getINFIXL_KW(); }
 "infixr"              { return TokenPackage.getINFIXR_KW(); }
 "instance"            { return TokenPackage.getINSTANCE_KW(); }
-(forall)|(\u2200)     { return TokenPackage.getFORALL_KW(); }
+("forall")|(\u2200)   { return TokenPackage.getFORALL_KW(); }
 "foreign"             { return TokenPackage.getFOREIGN_KW(); }
 "let"                 { return TokenPackage.getLET_KW(); }
 "module"              { return TokenPackage.getMODULE_KW(); }
@@ -134,11 +163,10 @@ EOL_COMMENT = "--"[^\n]*
 "unsafe"              { return TokenPackage.getUNSAFE(); }
 "where"               { return TokenPackage.getWHERE_KW(); }
 "{-#".*"#-}"          { return TokenPackage.getPRAGMA(); }
-"{-"[^#]              { yybegin(BLOCK_COMMENT); return TokenPackage.getCOMMENT(); }
-({DIGIT})+            { return TokenPackage.getNUMBER(); }
+{digit}+              { return TokenPackage.getNUMBER(); }
 \'([^']|\\.)\'        { return TokenPackage.getCHARACTER(); }
 \"([^\"]|\\\")*\"     { return TokenPackage.getSTRING();}
-"\\end{code}"         { yybegin(TEX); return TokenPackage.getCOMMENT(); }
+"\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
 {large}{idchar}*      { return TokenPackage.getTYPE_OR_CONS();}
 {small}{idchar}*      { return TokenPackage.getID(); }

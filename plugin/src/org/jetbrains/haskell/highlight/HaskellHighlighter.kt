@@ -43,7 +43,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
     {
         keys1 = THashMap<IElementType, TextAttributesKey>()
         keys1.put(END_OF_LINE_COMMENT, COMMENT_STYLE)
-        keys1.put(COMMENT, COMMENT_STYLE)
+        keys1.put(BLOCK_COMMENT, COMMENT_STYLE)
 
         for (keyword in org.jetbrains.haskell.parser.token.KEYWORDS)
         {
