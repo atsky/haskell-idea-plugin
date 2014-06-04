@@ -39,7 +39,7 @@ public class HaskellLexerTest extends LexerTestCase {
     @Test
     public void testDigits() throws Exception {
         doTest("0x10FFFF",
-                "");
+               "Haskell Token:number ('0x10FFFF')");
     }
 
     @Test

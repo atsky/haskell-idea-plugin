@@ -46,8 +46,8 @@ small     = {ascsmall}|"_"
 graphic   = {small}|{large}|{symbol}|{digit}|{special}|[\:\"\']
 
 octit     = [0-7]
-hexit     = [$decdigit A-F a-f]
-symchar   = [$symbol \:]
+hexit     = {decdigit}|[A-Fa-f]
+symchar   = {symbol}|[\:]
 nl        = [\n\r]
 idchar      = {small}|{large}|{digit}|[\']
 
@@ -166,7 +166,9 @@ UCHARACTER = (\'\\x[0-9]*\')
 "unsafe"              { return TokenPackage.getUNSAFE(); }
 "where"               { return TokenPackage.getWHERE_KW(); }
 "{-#".*"#-}"          { return TokenPackage.getPRAGMA(); }
-{digit}+              { return TokenPackage.getNUMBER(); }
+(0(o|O){octit}*) |
+(0(x|X){hexit}*) |
+({digit}+)            { return TokenPackage.getNUMBER(); }
 {CHARACTER} | {UCHARACTER}
                       { return TokenPackage.getCHARACTER(); }
 \"([^\"\\]|\\.)*\"    { return TokenPackage.getSTRING();}
