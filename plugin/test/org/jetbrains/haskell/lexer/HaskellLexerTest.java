@@ -62,6 +62,12 @@ public class HaskellLexerTest extends LexerTestCase {
     }
 
     @Test
+    public void testOperators() throws Exception {
+        doTest("\u222F",
+                "Haskell Token:opertor ('\u222F')");
+    }
+
+    @Test
     public void testIndentsComments() throws Exception {
         doTest("module Main where\n" +
                "\n" +

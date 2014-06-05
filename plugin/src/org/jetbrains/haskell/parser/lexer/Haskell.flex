@@ -36,6 +36,7 @@ digit     = {ascdigit}|{unidigit}
 
 special   = [\(\)\,\;\[\]\`\{\}]
 ascsymbol = [\!\#\$\%\&\*\+\.\/\<\=\>\?\@\\\^\|\-\~]
+unisymbol = [[\p{P}\p{S}]&&[^(),;\[\]`{}_\"\']]
 symbol    = {ascsymbol}|{unisymbol}
 
 large     = [:uppercase:]
@@ -133,6 +134,8 @@ UCHARACTER = (\'\\x[0-9]*\')
 "=>"                  { return TokenPackage.getDOUBLE_ARROW(); }
 "!"                   { return TokenPackage.getEXCLAMATION(); }
 "_"                   { return TokenPackage.getUNDERSCORE(); }
+":"{symbol}+          { return TokenPackage.getOPERATOR_CONS(); }
+{symbol}+             { return TokenPackage.getOPERATOR_ID(); }
 
 // - Keywords
 

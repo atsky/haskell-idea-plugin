@@ -28,7 +28,7 @@
 
   /** this buffer contains the current text to be matched and is
       the source of the yytext() string */
-  private CharSequence zzBuffer = "";
+  private char[] zzBuffer = new char[0];
 
   /** this buffer may contains the current text array to be matched when it is cheap to acquire it */
   private char[] zzBufferArray;
@@ -70,7 +70,7 @@
   }
 
   public void reset(CharSequence buffer, int start, int end,int initialState){
-    zzBuffer = buffer;
+    zzBuffer = buffer.toString().toCharArray();
     zzBufferArray = com.intellij.util.text.CharArrayUtil.fromSequenceWithoutCopying(buffer);
     zzCurrentPos = zzMarkedPos = zzStartRead = start;
     zzPushbackPos = 0;
@@ -114,7 +114,7 @@
    * Returns the text matched by the current regular expression.
    */
   public final CharSequence yytext() {
-    return zzBuffer.subSequence(zzStartRead, zzMarkedPos);
+    return new String(zzBuffer, zzStartRead, zzMarkedPos);
   }
 
 
@@ -130,7 +130,7 @@
    * @return the character at position pos
    */
   public final char yycharat(int pos) {
-    return zzBufferArray != null ? zzBufferArray[zzStartRead+pos]:zzBuffer.charAt(zzStartRead+pos);
+    return zzBufferArray != null ? zzBufferArray[zzStartRead+pos]:zzBuffer[zzStartRead+pos];
   }
 
 
@@ -201,7 +201,7 @@
     int zzCurrentPosL;
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
-    CharSequence zzBufferL = zzBuffer;
+    char[] zzBufferL = zzBuffer;
     char[] zzBufferArrayL = zzBufferArray;
     char [] zzCMapL = ZZ_CMAP;
 

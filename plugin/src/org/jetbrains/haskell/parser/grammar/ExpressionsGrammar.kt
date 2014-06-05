@@ -6,7 +6,7 @@ import org.jetbrains.haskell.parser.token.COLON
 import org.jetbrains.haskell.parser.token.STRING
 import org.jetbrains.haskell.parser.token.NUMBER
 import org.jetbrains.haskell.parser.token.DOT
-import org.jetbrains.haskell.parser.token.OPERATOR
+import org.jetbrains.haskell.parser.token.OPERATOR_ID
 import org.jetbrains.haskell.parser.token.DOLLAR
 import org.jetbrains.haskell.parser.rules.rule
 import org.jetbrains.haskell.parser.token.TYPE_OR_CONS
@@ -50,7 +50,7 @@ val anAtomExpression = lazy {
     NUMBER or
     REFERENCE_EXPRESSION or
     DOT or
-    OPERATOR or
+    OPERATOR_ID or
     DOLLAR or
     FIELD_UPDATE or
     CASE_EXPRESSION or

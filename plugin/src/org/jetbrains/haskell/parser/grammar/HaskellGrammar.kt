@@ -107,7 +107,7 @@ private val aModuleExports = rule(MODULE_EXPORTS) {
 
 val anExport = lazy {
     val symbolExport = rule(SYMBOL_EXPORT) {
-        ID or TYPE_OR_CONS or inParentheses(OPERATOR)
+        ID or TYPE_OR_CONS or inParentheses(OPERATOR_ID)
     }
 
     val qcnameExt = maybe(TYPE_KW) + symbolExport
@@ -158,7 +158,7 @@ val aDataDeclaration = rule(DATA_DECLARATION) {
 }
 
 val SOME_ID = RuleBasedElementType("Some id", ::SomeId) {
-    ID or TYPE_OR_CONS or OPERATOR
+    ID or TYPE_OR_CONS or OPERATOR_ID
 }
 
 val ANY : Rule = RuleBasedElementType("Any", ::UnparsedToken) {

@@ -3,6 +3,9 @@
         Tasks for Haskell plugin
     </description>
 
+    <taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="lib/jflex-1.5.1.jar"/>
+
+
     <property name="result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
 
@@ -10,17 +13,10 @@
     <target name="run flex">
         <sequential>
             <delete file="${result.file}"/>
-            <java classname="JFlex.Main"
-                  jvmargs="-Xmx512M"
-                  failonerror="true">
-                <arg value="--charat"/>
-                <arg value="-skel"/>
-                <arg value="tools/idea-flex.skeleton"/>
-                <arg value="${flex.file}"/>
-                <classpath>
-                    <pathelement location="lib/JFlex.jar"/>
-                </classpath>
-            </java>
+            <jflex  file="${flex.file}"
+                    skeleton="tools/idea-flex.skeleton"
+
+                    />
         </sequential>
     </target>
 
