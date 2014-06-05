@@ -15,7 +15,7 @@ import org.jetbrains.haskell.run.ModuleComboBoxRenderer
 import java.awt.BorderLayout
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
-    private var executableComponent: TextFieldWithBrowseButton
+    private var executableComponent: JTextField
     private var moduleComboBox: JComboBox
     private var programParametersComponent : RawCommandLineEditor
     private var workingDirectoryComponent : TextFieldWithBrowseButton
@@ -39,8 +39,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
 
     {
         this.setLayout(GridBagLayout())
-        executableComponent = TextFieldWithBrowseButton();
-        executableComponent.addBrowseFolderListener("Main file", "Main File", null, FileChooserDescriptor(true, false, false, false, true, false))
+        executableComponent = JTextField();
         moduleComboBox = JComboBox(DefaultComboBoxModel(modules))
         moduleComboBox.setRenderer(ModuleComboBoxRenderer())
 
@@ -57,7 +56,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
             result
         }
 
-        val moduleLabel = JLabel("Main module")
+        val moduleLabel = JLabel("Executable Name")
         add(moduleLabel, base().setConstraints {
             gridx = 0
             gridy = 0
