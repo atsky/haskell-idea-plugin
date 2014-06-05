@@ -52,6 +52,16 @@ public class HaskellLexerTest extends LexerTestCase {
     }
 
     @Test
+    public void testQuotation() throws Exception {
+        doTest("'name",
+                "Haskell Token:' (''')\n" +
+                "Haskell Token:id ('name')");
+        doTest("''name",
+                "Haskell Token:'' ('''')\n" +
+                "Haskell Token:id ('name')");
+    }
+
+    @Test
     public void testIndentsComments() throws Exception {
         doTest("module Main where\n" +
                "\n" +

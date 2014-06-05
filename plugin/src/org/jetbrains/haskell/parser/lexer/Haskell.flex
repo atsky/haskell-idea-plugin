@@ -171,6 +171,9 @@ UCHARACTER = (\'\\x[0-9]*\')
 ({digit}+)            { return TokenPackage.getNUMBER(); }
 {CHARACTER} | {UCHARACTER}
                       { return TokenPackage.getCHARACTER(); }
+"''"                  { return TokenPackage.getTH_TY_QUOTE(); }
+"'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
+
 \"([^\"\\]|\\.)*\"    { return TokenPackage.getSTRING();}
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 

@@ -117,6 +117,9 @@ public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN
 public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
 public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
 
+public val TH_VAR_QUOTE : HaskellToken        = HaskellToken("'")
+public val TH_TY_QUOTE : HaskellToken         = HaskellToken("''")
+
 
 val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT)
 val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, TokenType.NEW_LINE_INDENT)
