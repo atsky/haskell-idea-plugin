@@ -9,12 +9,11 @@ import org.jetbrains.haskell.parser.rules.Rule
 import com.intellij.lang.PsiBuilder
 import org.jetbrains.haskell.parser.rules.lazy
 import org.jetbrains.haskell.parser.rules.rule
-import org.jetbrains.haskell.parser.ElementFactory
 import org.jetbrains.haskell.parser.HaskellCompositeElementType
 
 public class RuleBasedElementType(
         debugName: String,
-        creator: ElementFactory,
+        creator: (ASTNode)->PsiElement,
         ruleCreator : () -> Rule) : HaskellCompositeElementType(debugName, creator), Rule {
 
     val ruleInternal : Rule = rule(this, ruleCreator);

@@ -66,7 +66,7 @@ val FIELD_BIND: Rule = lazy {
     ID + EQUALS + anExpression
 }
 
-val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", FieldUpdate) {
+val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", ::FieldUpdate) {
     LEFT_BRACE + notEmptyList(FIELD_BIND, COMMA) + RIGHT_BRACE
 }
 
@@ -80,11 +80,11 @@ val anExpression: Rule = lazy {
     aList(anAtomExpression, null)
 }
 
-val LET_EXPRESSION = RuleBasedElementType("Let expression", LetExpression) {
+val LET_EXPRESSION = RuleBasedElementType("Let expression", ::LetExpression) {
     LET_KW + ID + EQUALS + anExpression + IN_KW + anExpression
 }
 
-val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", DoStatement) {
+val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", ::DoStatement) {
     (VALUE_NAME + LEFT_ARROW + anExpression) or
     (LET_KW + ID + EQUALS + anExpression) or
     anExpression or
@@ -92,7 +92,7 @@ val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", DoStatement) {
 }
 
 
-private val DO_EXPRESSION = RuleBasedElementType("Do expression", DoExpression) {
+private val DO_EXPRESSION = RuleBasedElementType("Do expression", ::DoExpression) {
     DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
 }
 
@@ -100,15 +100,15 @@ private val anLambdaLeftPart = lazy {
     BACK_SLASH + notEmptyList(ID) + RIGHT_ARROW
 }
 
-private val REFERENCE_EXPRESSION = RuleBasedElementType("expression", ReferenceExpression) {
+private val REFERENCE_EXPRESSION = RuleBasedElementType("expression", ::ReferenceExpression) {
     ID
 }
 
-private val aCaseCase: Rule = RuleBasedElementType("Case clause", CaseClause) {
+private val aCaseCase: Rule = RuleBasedElementType("Case clause", ::CaseClause) {
     anExpression + RIGHT_ARROW + anExpression
 }
 
-private val CASE_EXPRESSION = RuleBasedElementType("Case expression", CaseClause) {
+private val CASE_EXPRESSION = RuleBasedElementType("Case expression", ::CaseClause) {
     val caseBody = VIRTUAL_LEFT_PAREN + aList(aCaseCase, VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
     CASE_KW + anExpression + OF_KW + caseBody
 }

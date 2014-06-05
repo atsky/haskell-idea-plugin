@@ -7,13 +7,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.lang.ASTNode
 
 
-public trait ElementFactory {
-    fun create(node : ASTNode) : PsiElement
-}
-
 public open class HaskellCompositeElementType(
         debugName: String,
-        public val constructor : ElementFactory? = null) :
+        public val constructor : ((ASTNode)->PsiElement)? = null) :
                                 IElementType(debugName, HaskellLanguage.INSTANCE) {
 
     private val myDebugName: String = debugName

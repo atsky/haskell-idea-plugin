@@ -7,16 +7,13 @@ import com.intellij.psi.PsiElement
 import java.util.HashSet
 import com.intellij.psi.PsiFile
 import java.util.ArrayList
-import org.jetbrains.haskell.parser.ElementFactory
 
 /**
  * @author Evgeny.Kurbatsky
  */
 public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    class object : ElementFactory {
-
-        override fun create(node: ASTNode) = Module(node)
+    class object {
 
         fun findModule(element: PsiElement) : Module? {
             var topLevel = element

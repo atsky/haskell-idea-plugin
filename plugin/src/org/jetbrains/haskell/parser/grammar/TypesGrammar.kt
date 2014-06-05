@@ -10,16 +10,16 @@ import org.jetbrains.haskell.psi.*
  * Created by atsky on 25/04/14.
  */
 
-val TYPE_NAME : Rule = RuleBasedElementType("Simple type", TypeName) {
+val TYPE_NAME : Rule = RuleBasedElementType("Simple type", ::TypeName) {
     TYPE_OR_CONS
 }
 
 
-val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", SimpleType) {
+val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", ::SimpleType) {
     TYPE_NAME + aList(ID)
 }
 
-val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", TypeDeclaration) {
+val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", ::TypeDeclaration) {
     TYPE_KW + SIMPLETYPE + EQUALS + TYPE;
 }
 
@@ -31,7 +31,7 @@ private val aArrowType : Rule = rule(ARROW_TYPE) {
     aApplicationType + RIGHT_ARROW + TYPE
 }
 
-val TYPE_REF = RuleBasedElementType("Simple type", TypeRef) { TYPE_OR_CONS }
+val TYPE_REF = RuleBasedElementType("Simple type", ::TypeRef) { TYPE_OR_CONS }
 
 private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
 

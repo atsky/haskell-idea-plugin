@@ -55,7 +55,7 @@ public class HaskellParserDefinition() : ParserDefinition {
         if (elementType is HaskellCompositeElementType) {
             val constructor = elementType.constructor
             if (constructor != null) {
-                return constructor.create(node)
+                return constructor(node)
             }
         }
 

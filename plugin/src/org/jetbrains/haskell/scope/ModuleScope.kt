@@ -36,7 +36,7 @@ public class ModuleScope(val module : Module) {
 
         val result = ArrayList<TypeName>();
         result.addAll(list.map { it.getTypeName() }.filterNotNull())
-        result.addAll(getVisibleDataDeclarations().map { it.getTyepName() }.filterNotNull())
+        result.addAll(getVisibleDataDeclarations().map { it.getTypeName() }.filterNotNull())
         return result
 
     }
