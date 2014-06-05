@@ -129,8 +129,11 @@ UCHARACTER = (\'\\x[0-9]*\')
 "<-"                  { return TokenPackage.getLEFT_ARROW(); }
 (->)|(\u2192)         { return TokenPackage.getRIGHT_ARROW(); }
 
+"?"                   { return TokenPackage.getQUESTION(); }
+"#"                   { return TokenPackage.getHASH(); }
 "@"                   { return TokenPackage.getAT(); }
 "~"                   { return TokenPackage.getTILDE(); }
+"`"                   { return TokenPackage.getBACKQUOTE(); }
 "=>"                  { return TokenPackage.getDOUBLE_ARROW(); }
 "!"                   { return TokenPackage.getEXCLAMATION(); }
 "_"                   { return TokenPackage.getUNDERSCORE(); }

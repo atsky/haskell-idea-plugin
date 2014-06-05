@@ -63,10 +63,15 @@ public val BACK_SLASH: HaskellToken           = HaskellToken("\\")
 public val VERTICAL_BAR : HaskellToken        = HaskellToken("|")
 public val SEMICOLON : HaskellToken           = HaskellToken(";")
 public val AT : HaskellToken                  = HaskellToken("@")
+public val QUESTION : HaskellToken            = HaskellToken("?")
+public val HASH : HaskellToken                = HaskellToken("#")
 public val TILDE : HaskellToken               = HaskellToken("~")
 public val DOUBLE_ARROW : HaskellToken        = HaskellToken("=>")
 public val EXCLAMATION : HaskellToken         = HaskellToken("!")
 public val UNDERSCORE : HaskellToken          = HaskellToken("_")
+public val BACKQUOTE : HaskellToken           = HaskellToken("`")
+
+
 
 
 // Braces
