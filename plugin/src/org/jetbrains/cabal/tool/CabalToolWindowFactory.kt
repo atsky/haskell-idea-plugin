@@ -110,7 +110,8 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
                     val menu = JPopupMenu();
                     menu.add(JMenuItem(object: AbstractAction("Install") {
                         override fun actionPerformed(e: ActionEvent) {
-                            install(packageName.getUserObject() as String, packageVersion?.getUserObject() as String?)
+                            install((packageName.getUserObject() as PackageData).text,
+                                    (packageVersion?.getUserObject() as PackageData?)?.text)
                         }
 
                     }))
