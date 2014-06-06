@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 %xstate BLOCK_COMMENT, TEX
 
 unispace    = \x05
-white_no_nl = [\ \r\f]|{unispace}
+white_no_nl = [\ \r\t\f]|{unispace}
 whitechar   = {white_no_nl}|[\n]
 tab         = \t
 
@@ -40,8 +40,8 @@ unisymbol = [[\p{P}\p{S}]&&[^(),;\[\]`{}_\"\']]
 symbol    = {ascsymbol}|{unisymbol}
 
 large     = [:uppercase:]
-
 ascsmall  = [:lowercase:]
+ascLarge  =	[A-Z]
 small     = {ascsmall}|"_"
 
 graphic   = {small}|{large}|{symbol}|{digit}|{special}|[\:\"\']
@@ -57,11 +57,24 @@ pragmachar = [$small $large $digit]
 docsym      = [\| \^ \* \$]
 
 
+
+//----- Strings --------
+
+gap        = \\{whitechar}*\\
+cntrl      = {ascLarge} | [@\[\\\]\^_]
+charesc    = [abfnrtv\\\"\'&]
+ascii      = ("^"{cntrl})|(NUL)|(SOH)|(STX)|(ETX)|(EOT)|(ENQ)|(ACK)|(BEL)|(BS)|(HT)|(LF)|(VT)|(FF)|(CR)|(SO)|(SI)|(DLE)|(DC1)|(DC2)|(DC3)|(DC4)|(NAK)|(SYN)|(ETB)|(CAN)|(EM)|(SUB)|(ESC)|(FS)|(GS)|(RS)|(US)|(SP)|(DEL)
+escape     = \\({charesc}|{ascii}|({decdigit}+)|(o({octit}+))|(x({hexit}+)))
+
+character  = (\'([^\'\\]|{escape})\')
+string     = \"([^\"\\]|{escape}|{gap})*\"
+
+//----- Indent -------
+
 INDENT = [\n] {white_no_nl}*
 EOL_COMMENT = "--"[^\n]*
 
-CHARACTER  = (\'([^']|\\.)\')
-UCHARACTER = (\'\\x[0-9]*\')
+
 
 %%
 
@@ -175,14 +188,14 @@ UCHARACTER = (\'\\x[0-9]*\')
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
 ({digit}+)            { return TokenPackage.getNUMBER(); }
-{CHARACTER} | {UCHARACTER}
-                      { return TokenPackage.getCHARACTER(); }
-"''"                  { return TokenPackage.getTH_TY_QUOTE(); }
-"'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
 
-\"([^\"\\]|\\.)*\"    { return TokenPackage.getSTRING();}
+{character}           { return TokenPackage.getCHARACTER(); }
+{string}              { return TokenPackage.getSTRING();}
+
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
+"''"                  { return TokenPackage.getTH_TY_QUOTE(); }
+"'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
 {large}{idchar}*      { return TokenPackage.getTYPE_OR_CONS();}
 {small}{idchar}*      { return TokenPackage.getID(); }
 .                     { return TokenType.BAD_CHARACTER; }

@@ -49,6 +49,8 @@ public class HaskellLexerTest extends LexerTestCase {
                         "WHITE_SPACE (' ')");
         doTest("'\\x2919'",
                "Haskell Token:character (''\\x2919'')");
+        doTest("\"\\ \n\t \\\"",
+                "Haskell Token:string ('\"\\ \\n\t \\\"')");
     }
 
     @Test
