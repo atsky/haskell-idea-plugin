@@ -205,10 +205,13 @@ public class CabalInterface(val project: Project) {
 
             val map = TreeMap<String, MutableList<String>>()
             output.split(' ').forEach { pkgVer ->
-                val pkg = pkgVer.substring(0, pkgVer.lastIndexOf('-'))
-                val ver = pkgVer.substring(pkgVer.lastIndexOf('-') + 1)
+                val lastIndexOf = pkgVer.lastIndexOf('-')
+                if (lastIndexOf != -1) {
+                    val pkg = pkgVer.substring(0, lastIndexOf)
+                    val ver = pkgVer.substring(lastIndexOf + 1)
 
-                map.getOrPut(pkg) { ArrayList<String>() }.add(ver)
+                    map.getOrPut(pkg) { ArrayList<String>() }.add(ver)
+                }
             }
 
             val result = ArrayList<CabalPackageShort>()
