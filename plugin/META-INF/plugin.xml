@@ -72,6 +72,7 @@
       <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
       <completion.contributor language="Haskell"
                               implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
+      <annotator implementationClass="org.jetbrains.haskell.highlight.HaskellAnnotator" language="Haskell" />
       <!-- <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" /> -->
       <applicationService serviceImplementation="org.jetbrains.haskell.config.HaskellSettings" />
       <lang.braceMatcher language="Haskell"

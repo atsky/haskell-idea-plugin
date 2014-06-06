@@ -19,6 +19,8 @@ public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
     public fun getModuleExports() : ModuleExports? =
         findChildByClass(javaClass<ModuleExports>())
 
+    public fun getImportAsPart() : ImportAsPart? =
+            findChildByClass(javaClass<ImportAsPart>())
 
     public fun findModule() : Module? = getModuleName()?.findModuleFile()?.getModule()
 }

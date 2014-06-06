@@ -19,6 +19,16 @@ import org.jetbrains.haskell.parser.token.*
 
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
+    class object {
+        public val STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
+        public val KEYWORD_VALUE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("KEYWORD.VALUE", DefaultLanguageHighlighterColors.KEYWORD)
+        public val COMMENT_STYLE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val TYPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TYPE", TextAttributes(Color(30, 150, 0), null, null, null, Font.BOLD))
+        public val CONSTRUCTOR: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CONSTRUCTOR", TextAttributes(Color(0, 110, 110), null, null, null, Font.ITALIC))
+        public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes())
+        public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes());
+    }
+
     public override fun getHighlightingLexer(): Lexer {
         return HaskellLexer()
     }
@@ -30,13 +40,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     private val keys1: MutableMap<IElementType, TextAttributesKey>
 
-    public val STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
-    public val KEYWORD_VALUE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("KEYWORD.VALUE", DefaultLanguageHighlighterColors.KEYWORD)
-    public val COMMENT_STYLE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-    public val TYPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TYPE", TextAttributes(Color(30, 150, 0), null, null, null, Font.BOLD))
-    public val CONSTRUCTOR: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CONSTRUCTOR", TextAttributes(Color(0, 110, 110), null, null, null, Font.ITALIC))
-    public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes())
-    public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes());
+
 
     public val DISPLAY_NAMES: MutableMap<TextAttributesKey, Pair<String, HighlightSeverity>> = THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(4);
 
