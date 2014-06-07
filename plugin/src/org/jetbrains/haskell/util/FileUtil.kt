@@ -8,7 +8,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 
-public fun joinPath(first : String, vararg more : String) : String {
+public fun joinPath(first: String, vararg more: String): String {
     var result = first
     for (str in more) {
         result += File.separator + str
@@ -17,11 +17,26 @@ public fun joinPath(first : String, vararg more : String) : String {
 }
 
 
-public fun copyFile(iStream : InputStream, destination: File) {
+public fun deleteRecursive(path: File) {
+    val files = path.listFiles();
+    if (files != null) {
+        for (file in files) {
+            if (file.isDirectory()) {
+                deleteRecursive(file);
+                file.delete();
+            } else {
+                file.delete();
+            }
+        }
+    }
+    path.delete();
+}
+
+public fun copyFile(iStream: InputStream, destination: File) {
     val oStream = FileOutputStream(destination);
     try {
         val buffer = ByteArray(1024 * 16);
-        var length : Int;
+        var length: Int;
         while (true ) {
             length = iStream.read(buffer)
             if (length <= 0) {
@@ -46,14 +61,14 @@ public fun getRelativePath(base: String, path: String): String {
     }
 }
 
-fun fileToIterable(file : File) : Iterable<String> {
+fun fileToIterable(file: File): Iterable<String> {
     return object : Iterable<String> {
         override fun iterator(): Iterator<String> {
             val br = BufferedReader(FileReader(file));
 
             return object : Iterator<String> {
-                var reader : BufferedReader? = br
-                var line : String? = null;
+                var reader: BufferedReader? = br
+                var line: String? = null;
 
                 fun fetch(): String? {
                     if (line == null) {

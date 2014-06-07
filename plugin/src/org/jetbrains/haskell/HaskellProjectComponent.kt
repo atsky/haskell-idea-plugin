@@ -14,6 +14,9 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import org.jetbrains.haskell.config.HaskellConfigurable
 import org.jetbrains.haskell.external.GHC_MOD
 import org.jetbrains.haskell.external.BuildWrapper
+import com.intellij.openapi.module.Module
+import java.io.File
+import org.jetbrains.haskell.util.deleteRecursive
 
 
 public class HaskellProjectComponent(val project: Project, manager: CompilerManager) : ProjectComponent {
@@ -44,10 +47,14 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
         }
     }
 
-    override fun projectOpened() {
+    fun getHaskellModules() : List<Module> {
         val moduleManager = ModuleManager.getInstance(project)!!
-        val hasHaskellModules = moduleManager.getModules().any { ModuleType.get(it) == HaskellModuleType.INSTANCE }
-        if (hasHaskellModules) {
+        return moduleManager.getModules().filter { ModuleType.get(it) == HaskellModuleType.INSTANCE }
+    }
+
+    override fun projectOpened() {
+        if (!getHaskellModules().empty) {
+            removeTempDir()
             val cabalFound = CabalInterface(project).checkVersion()
             if (!cabalFound) {
                 invokeInUI {
@@ -75,6 +82,7 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
 
 
     override fun projectClosed() {
+        removeTempDir()
     }
 
     override fun getComponentName(): String {
@@ -85,6 +93,18 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
     }
 
     override fun disposeComponent() {
+    }
+
+    private fun removeTempDir() {
+        for (module in getHaskellModules()) {
+            val path = module.getModuleFile()?.getParent()?.getPath()
+            if (path != null) {
+                val buildWrapperPath = File(path, ".buildwrapper")
+                if (buildWrapperPath.exists()) {
+                    deleteRecursive(buildWrapperPath)
+                }
+            }
+        }
     }
 
     {
