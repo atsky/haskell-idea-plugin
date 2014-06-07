@@ -201,7 +201,16 @@ public class CabalInterface(val project: Project) {
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
-            val output = ProcessRunner().execute("ghc-pkg", "--simple-output", "list")
+            var output = ProcessRunner().execute("ghc-pkg", "--simple-output", "list")
+
+            if (output.startsWith("WARNING:")) {
+                val indexOf = output.indexOf(".\n")
+                if (indexOf != -1) {
+                    val warning = output.substring(0, indexOf + 2)
+                    Notifications.Bus.notify(Notification("Gghc.Pkg", "Warning", warning, NotificationType.INFORMATION))
+                    output = output.substring(indexOf + 2)
+                }
+            }
 
             val map = TreeMap<String, MutableList<String>>()
             output.split(' ').forEach { pkgVer ->
@@ -211,6 +220,8 @@ public class CabalInterface(val project: Project) {
                     val ver = pkgVer.substring(lastIndexOf + 1)
 
                     map.getOrPut(pkg) { ArrayList<String>() }.add(ver)
+                } else {
+                    System.out.println(pkgVer)
                 }
             }
 
