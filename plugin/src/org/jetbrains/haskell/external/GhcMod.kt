@@ -29,7 +29,7 @@ class GhcMod {
     fun getModuleContent(module : String) : List<String> {
         try {
             val path = getPath()
-            val text = ProcessRunner(null).execute(listOf(path, "browse", module))
+            val text = ProcessRunner(null).executeOrFail(path, "browse", module)
             if (!text.contains(":Error:")) {
                 return text.split('\n').toList()
             } else {
@@ -52,7 +52,7 @@ class GhcMod {
 
     fun сheck() : Boolean {
         try {
-            ProcessRunner(null).execute(listOf(getPath()))
+            ProcessRunner(null).executeOrFail(getPath())
             return true;
         } catch(e : IOException) {
             return false;
@@ -62,7 +62,7 @@ class GhcMod {
 
     fun getModulesList() : List<String> {
         try {
-            val text = ProcessRunner(null).execute(listOf(getPath(), "list"))
+            val text = ProcessRunner(null).executeOrFail(getPath(), "list")
             if (!text.contains(":Error:")) {
                 return text.split('\n').toList()
             } else {

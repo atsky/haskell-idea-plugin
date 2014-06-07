@@ -113,8 +113,7 @@ public class CabalInterface(val project: Project) {
 
     public fun checkVersion() : Boolean {
         try {
-            val process = ProcessRunner(null).getProcess(listOf(getProbramPath(), "-V"))
-            process.waitFor()
+            ProcessRunner(null).executeOrFail(getProbramPath(), "-V")
             return true;
         } catch (e : IOException) {
             return false;
@@ -201,7 +200,7 @@ public class CabalInterface(val project: Project) {
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
-            var output = ProcessRunner().execute("ghc-pkg", "--simple-output", "list")
+            var output = ProcessRunner().executeOrFail("ghc-pkg", "--simple-output", "list")
 
             if (output.startsWith("WARNING:")) {
                 val indexOf = output.indexOf(".\n")
@@ -232,7 +231,10 @@ public class CabalInterface(val project: Project) {
             return result
 
         } catch (e: IOException) {
-            Notifications.Bus.notify(Notification("Cabal error", "cabal", "Can't read installed package list using GHC-PKC.", NotificationType.ERROR))
+            Notifications.Bus.notify(Notification("Cabal error",
+                                                  "cabal",
+                                                  "Can't read installed package list using ghc-pkg.",
+                                                  NotificationType.ERROR))
             return listOf()
         }
     }

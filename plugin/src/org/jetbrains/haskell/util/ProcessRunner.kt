@@ -6,34 +6,37 @@ import java.util.ArrayList
 public class ProcessRunner(workingDirectory: String? = null) {
     private val myWorkingDirectory: String? = workingDirectory
 
-    public fun execute(vararg cmd: String): String {
-        return execute(cmd.toList(), null)
-    }
-    
-
-    public fun execute(cmd: List<String>): String {
-        return execute(cmd, null)
+    public fun executeNoFail(vararg cmd: String): String {
+        return executeNoFail(cmd.toList(), null)
     }
 
-
-    public fun execute(cmd: List<String>, input: String?): String {
+    public fun executeNoFail(cmd: List<String>, input: String?): String {
         try {
-            val process = getProcess(cmd.toList())
-            if (input != null) {
-                val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
-                streamWriter.write(input)
-                streamWriter.close()
-            }
-
-            var myInput: InputStream = process.getInputStream()!!
-            val data = readData(myInput)
-
-            process.waitFor()
-
-            return data
-        } catch (e : IOException) {
-            return ""
+            return executeOrFail(cmd, input)
+        } catch (e: IOException) {
+            return "";
         }
+    }
+
+    public fun executeOrFail(vararg cmd: String): String {
+        return executeOrFail(cmd.toList(), null)
+    }
+
+
+    public fun executeOrFail(cmd: List<String>, input: String?): String {
+        val process = getProcess(cmd.toList())
+        if (input != null) {
+            val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
+            streamWriter.write(input)
+            streamWriter.close()
+        }
+
+        var myInput: InputStream = process.getInputStream()!!
+        val data = readData(myInput)
+
+        process.waitFor()
+
+        return data
     }
 
     public fun getProcess(cmd: List<String>): Process {

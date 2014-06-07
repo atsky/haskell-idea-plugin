@@ -16,6 +16,10 @@ import org.jetbrains.haskell.util.LineColPosition
 import org.json.simple.JSONObject
 import org.jetbrains.haskell.util.getRelativePath
 import org.jetbrains.cabal.CabalInterface
+import com.intellij.notification.Notifications.Bus
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationType
 
 /**
  * Created by atsky on 12/05/14.
@@ -37,7 +41,7 @@ class BuildWrapper(val moduleRoot: String,
 
         public fun check() : Boolean {
             try {
-                ProcessRunner(null).execute(listOf(getProgramPath(), "-V"))
+                ProcessRunner(null).executeOrFail(getProgramPath(), "-V")
                 return true
             } catch(e : IOException) {
                 return false
@@ -55,17 +59,21 @@ class BuildWrapper(val moduleRoot: String,
 
         val relativePath = getRelativePath(moduleRoot, file.getPath())
 
-        val out = ProcessRunner(moduleRoot).execute(
-                getProgramPath(), "thingatpoint",
-                "-t", ".buildwrapper",
-                "--cabalfile=" + cabalFile,
-                "-f", relativePath,
-                "--line", pos.myLine.toString(),
-                "--column", pos.myColumn.toString()
-        )
+        try {
+            val out = ProcessRunner(moduleRoot).executeOrFail(
+                    getProgramPath(), "thingatpoint",
+                    "-t", ".buildwrapper",
+                    "--cabalfile=" + cabalFile,
+                    "-f", relativePath,
+                    "--line", pos.myLine.toString(),
+                    "--column", pos.myColumn.toString())
 
-        val array = extractJsonArray(out)
-        return if (array != null) array[0] as JSONObject? else null
+            val array = extractJsonArray(out)
+            return if (array != null) array[0] as JSONObject? else null
+        } catch (e : IOException) {
+            Notifications.Bus.notify(Notification("BuildWrapper.Error", "BuildWrapper error", e.getMessage()!!, NotificationType.ERROR))
+            return null
+        }
     }
 
 
@@ -80,7 +88,7 @@ class BuildWrapper(val moduleRoot: String,
     }
 
     fun namesinscope(file : String): JSONArray? {
-        val out = ProcessRunner(moduleRoot).execute(
+        val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "namesinscope", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", file)
 
         val array = extractJsonArray(out)
@@ -88,21 +96,21 @@ class BuildWrapper(val moduleRoot: String,
     }
 
     fun synchronize() {
-        ProcessRunner(moduleRoot).execute(
+        ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "synchronize", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
     }
 
     fun build1(file : VirtualFile) : JSONArray? {
         val relativePath = getRelativePath(moduleRoot, file.getPath())
 
-        val out = ProcessRunner(moduleRoot).execute(
+        val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", relativePath)
 
         return extractJsonArray(out)
     }
 
     fun dependencies() : JSONArray? {
-        val out = ProcessRunner(moduleRoot).execute(
+        val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "dependencies", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
 
         return extractJsonArray(out);

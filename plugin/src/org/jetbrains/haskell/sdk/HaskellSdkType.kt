@@ -188,8 +188,8 @@ public class HaskellSdkType() : SdkType("GHC") {
                 return null
             }
             try {
-                val cmd = Arrays.asList(getBinDirectory(homePath).getAbsolutePath() + File.separator + "ghc", "--numeric-version")
-                return ProcessRunner(null).execute(cmd).trim()
+                val cmd = getBinDirectory(homePath).getAbsolutePath() + File.separator + "ghc"
+                return ProcessRunner(null).executeOrFail(cmd, "--numeric-version").trim()
             } catch (ex: Exception) {
                 // ignore
             }
