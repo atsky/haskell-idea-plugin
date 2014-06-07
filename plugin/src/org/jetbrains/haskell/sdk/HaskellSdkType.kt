@@ -14,22 +14,37 @@ import java.io.File
 import java.io.FileFilter
 import java.io.FilenameFilter
 import java.util.*
+import org.jetbrains.haskell.util.GHCVersion
+import org.jetbrains.haskell.util.GHCUtil
+import org.jetbrains.haskell.sdk.HaskellSdkType.SDKInfo
 
 public class HaskellSdkType() : SdkType("GHC") {
 
+    class SDKInfo(val sdkPath : File) {
+        val ghcHome: File
+        val version: GHCVersion = GHCUtil.getVersion(sdkPath.getName());
+
+        {
+            ghcHome = if (SystemInfo.isMac && sdkPath.getAbsolutePath().contains("GHC.framework")) {
+                File(sdkPath, "usr")
+            } else {
+                sdkPath
+            }
+        }
+    }
+
     override fun suggestHomePath(): String? {
-        val versionsRoot: File
-        val versions: Array<String>
+        val versions: List<File>
         if (SystemInfo.isLinux) {
-            versionsRoot = File("/usr/lib")
+            val versionsRoot = File("/usr/lib")
             if (!versionsRoot.isDirectory()) {
                 return null
             }
-            versions = versionsRoot.list(object : FilenameFilter {
+            versions = (versionsRoot.listFiles(object : FilenameFilter {
                 override fun accept(dir: File, name: String): Boolean {
                     return name.toLowerCase().startsWith("ghc") && File(dir, name).isDirectory()
                 }
-            })!!
+            })?.toList() ?: listOf())
         } else if (SystemInfo.isWindows) {
             var progFiles = System.getenv("ProgramFiles(x86)")
             if (progFiles == null) {
@@ -37,31 +52,29 @@ public class HaskellSdkType() : SdkType("GHC") {
             }
             if (progFiles == null)
                 return null
-            versionsRoot = File(progFiles, "Haskell Platform")
+            val versionsRoot = File(progFiles, "Haskell Platform")
             if (!versionsRoot.isDirectory())
                 return progFiles
-            versions = versionsRoot.list()!!
+            versions = versionsRoot.listFiles()?.toList() ?: listOf()
         } else if (SystemInfo.isMac) {
-            versionsRoot = File("/Library/Frameworks/GHC.framework/Versions/")
-            if (!versionsRoot.isDirectory())
-                return null
-            versions = versionsRoot.list()!!
+            val macVersions = ArrayList<File>()
+            val versionsRoot = File("/Library/Frameworks/GHC.framework/Versions/")
+            if (versionsRoot.isDirectory()) {
+                macVersions.addAll(versionsRoot.listFiles()?.toList() ?: listOf())
+            }
+            val brewVersionsRoot = File("/usr/local/Cellar/ghc")
+            if (brewVersionsRoot.isDirectory()) {
+                macVersions.addAll(brewVersionsRoot.listFiles()?.toList() ?: listOf())
+            }
+            versions = macVersions
         } else {
             return null
         }
         val latestVersion = getLatestVersion(versions)
         if (latestVersion == null)
             return null
-        val versionDir = File(versionsRoot, latestVersion)
-        val homeDir: File
 
-        homeDir = if (!SystemInfo.isMac) {
-            versionDir
-        } else {
-            File(versionDir, "usr")
-        }
-
-        return homeDir.getAbsolutePath()
+        return latestVersion.ghcHome.getAbsolutePath()
     }
 
     override fun isValidSdkHome(path: String?): Boolean {
@@ -138,24 +151,22 @@ public class HaskellSdkType() : SdkType("GHC") {
 
         }
 
-        private fun getLatestVersion(names: Array<String>?): String? {
-            if (names == null)
-                return null
-            val length = names.size
+        private fun getLatestVersion(sdkPaths: List<File>): SDKInfo? {
+            val length = sdkPaths.size
             if (length == 0)
                 return null
             if (length == 1)
-                return names[0]
-            val ghcDirs = ArrayList<GHCDir>()
-            for (name in names) {
-                ghcDirs.add(GHCDir(name))
+                return SDKInfo(sdkPaths[0])
+            val ghcDirs = ArrayList<SDKInfo>()
+            for (name in sdkPaths) {
+                ghcDirs.add(SDKInfo(name))
             }
-            Collections.sort(ghcDirs, object : Comparator<GHCDir> {
-                override fun compare(d1: GHCDir, d2: GHCDir): Int {
+            Collections.sort(ghcDirs, object : Comparator<SDKInfo> {
+                override fun compare(d1: SDKInfo, d2: SDKInfo): Int {
                     return d1.version.compareTo(d2.version)
                 }
             })
-            return ghcDirs.get(ghcDirs.size() - 1).name
+            return ghcDirs.get(ghcDirs.size() - 1)
         }
 
         public fun checkForGhc(path: String): Boolean {
