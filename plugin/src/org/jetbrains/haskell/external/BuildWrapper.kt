@@ -114,8 +114,6 @@ class BuildWrapper(val moduleRoot: String,
                                                   "Packages missing",
                                                   errorText.substring(0, errorText.indexOf("\n\n")),
                                                   NotificationType.WARNING))
-
-            System.out.println(out)
         }
 
         return extractJsonArray(out)
