@@ -80,7 +80,7 @@ class BuildWrapper(val moduleRoot: String,
     fun extractJsonArray(text : String) : JSONArray? {
         val prefix = "build-wrapper-json:"
         if (text.contains(prefix)) {
-            val jsonText = text.substring(text.indexOf(text) + prefix.size)
+            val jsonText = text.substring(text.indexOf(text) + prefix.size + 1)
             return JSONValue.parse(jsonText) as? JSONArray
         }
 
