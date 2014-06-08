@@ -106,7 +106,7 @@ class BuildWrapper(val moduleRoot: String,
         val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", relativePath)
 
-        val errorPrefix = "cabal: At least the following dependencies are missing:"
+        val errorPrefix = "At least the following dependencies are missing:"
         if (out.contains(errorPrefix)) {
             val errorText = out.substring(out.indexOf(errorPrefix) + errorPrefix.size + 1)
             errorText.substring(0, errorText.indexOf("\n\n"))
