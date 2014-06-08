@@ -97,7 +97,10 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         tree.addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    val path = tree.getPathForLocation(e.getX(), e.getY())!!;
+                    val path = tree.getPathForLocation(e.getX(), e.getY());
+                    if (path == null) {
+                        return
+                    }
                     val pathArray = path.getPath()
 
                     val packageName = pathArray[1] as DefaultMutableTreeNode
