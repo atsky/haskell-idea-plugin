@@ -9,10 +9,6 @@ import org.jetbrains.haskell.parser.rules.Rule
 public class HaskellToken(debugName: String) : IElementType(debugName, HaskellLanguage.INSTANCE), Rule {
     public val myName: String = debugName
 
-    override fun toString(): String {
-        return "Haskell Token:" + super<IElementType>.toString()
-    }
-
     override fun parse(builder: PsiBuilder): Boolean {
         val elementType = builder.getTokenType()
         if (elementType == this) {

@@ -32,41 +32,41 @@ public class HaskellLexerTest extends LexerTestCase {
     public void testNestedComments() throws Exception {
         doTest(" {- {- -} -} ",
                "WHITE_SPACE (' ')\n" +
-               "Haskell Token:COMMENT ('{- {- -} -}')\n" +
+               "COMMENT ('{- {- -} -}')\n" +
                "WHITE_SPACE (' ')");
     }
 
     @Test
     public void testDigits() throws Exception {
         doTest("0x10FFFF",
-               "Haskell Token:number ('0x10FFFF')");
+               "number ('0x10FFFF')");
     }
 
     @Test
     public void testStrings() throws Exception {
         doTest("\"\\\\\" ",
-                "Haskell Token:string ('\"\\\\\"')\n" +
+                "string ('\"\\\\\"')\n" +
                         "WHITE_SPACE (' ')");
         doTest("'\\x2919'",
-               "Haskell Token:character (''\\x2919'')");
+               "character (''\\x2919'')");
         doTest("\"\\ \n\t \\\"",
-                "Haskell Token:string ('\"\\ \\n\t \\\"')");
+                "string ('\"\\ \\n\t \\\"')");
     }
 
     @Test
     public void testQuotation() throws Exception {
         doTest("'name",
-                "Haskell Token:' (''')\n" +
-                "Haskell Token:id ('name')");
+                "' (''')\n" +
+                "id ('name')");
         doTest("''name",
-                "Haskell Token:'' ('''')\n" +
-                "Haskell Token:id ('name')");
+                "'' ('''')\n" +
+                "id ('name')");
     }
 
     @Test
     public void testOperators() throws Exception {
         doTest("\u222F",
-                "Haskell Token:opertor ('\u222F')");
+                "opertor ('\u222F')");
     }
 
 
@@ -75,28 +75,28 @@ public class HaskellLexerTest extends LexerTestCase {
         doTest("module Main where\n" +
                         "\n" +
                         "main\n",
-                "Haskell Token:module ('module')\n" +
+                "module ('module')\n" +
                         "WHITE_SPACE (' ')\n" +
-                        "Haskell Token:type_cons ('Main')\n" +
+                        "type_cons ('Main')\n" +
                         "WHITE_SPACE (' ')\n" +
-                        "Haskell Token:where ('where')\n" +
-                        "Haskell Token:NL ('\\n')\n" +
-                        "Haskell Token:NL ('\\n')\n" +
-                        "Haskell Token:VIRTUAL_LEFT_PAREN ('')\n" +
-                        "Haskell Token:id ('main')\n" +
-                        "Haskell Token:NL ('\\n')\n" +
-                        "Haskell Token:VIRTUAL_RIGHT_PAREN ('')");
+                        "where ('where')\n" +
+                        "NL ('\\n')\n" +
+                        "NL ('\\n')\n" +
+                        "VIRTUAL_LEFT_PAREN ('')\n" +
+                        "id ('main')\n" +
+                        "NL ('\\n')\n" +
+                        "VIRTUAL_RIGHT_PAREN ('')");
 
         doTest("where\n" +
                " { t }",
-               "Haskell Token:where ('where')\n" +
-               "Haskell Token:NL ('\\n')\n" +
+               "where ('where')\n" +
+               "NL ('\\n')\n" +
                "WHITE_SPACE (' ')\n" +
-               "Haskell Token:{ ('{')\n" +
+               "{ ('{')\n" +
                "WHITE_SPACE (' ')\n" +
-               "Haskell Token:id ('t')\n" +
+               "id ('t')\n" +
                "WHITE_SPACE (' ')\n" +
-               "Haskell Token:} ('}')");
+               "} ('}')");
     }
 
 
