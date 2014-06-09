@@ -17,6 +17,8 @@ import org.jetbrains.haskell.external.BuildWrapper
 import com.intellij.openapi.module.Module
 import java.io.File
 import org.jetbrains.haskell.util.deleteRecursive
+import org.jetbrains.haskell.util.ProcessRunner
+import java.io.IOException
 
 
 public class HaskellProjectComponent(val project: Project, manager: CompilerManager) : ProjectComponent {
@@ -55,6 +57,19 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
     override fun projectOpened() {
         if (!getHaskellModules().empty) {
             removeTempDir()
+
+            try {
+                ProcessRunner(null).executeOrFail("ghc", "--version")
+            } catch (e : IOException) {
+                Messages.showDialog(
+                        project,
+                        "ghc not found in PATH. It can cause serious issues.",
+                        "ghc not found",
+                        array("Close"),
+                        0,
+                        null)
+            }
+
             val cabalFound = CabalInterface(project).checkVersion()
             if (!cabalFound) {
                 invokeInUI {
