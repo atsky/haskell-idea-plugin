@@ -200,7 +200,12 @@ public class CabalInterface(val project: Project) {
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
-            var output = ProcessRunner().executeOrFail("ghc-pkg", "--simple-output", "list")
+            val ghcPkg = if (OS.isMac && File("/usr/local/bin/ghc-pkg").exists()) {
+                "/usr/local/bin/ghc-pkg"
+            } else {
+                "ghc-pkg"
+            }
+            var output = ProcessRunner().executeOrFail(ghcPkg, "--simple-output", "list")
 
             if (output.startsWith("WARNING:")) {
                 val indexOf = output.indexOf(".\n")
