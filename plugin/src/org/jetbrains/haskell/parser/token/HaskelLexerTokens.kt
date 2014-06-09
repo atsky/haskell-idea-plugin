@@ -125,7 +125,7 @@ public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON"
 
 public val TH_VAR_QUOTE : HaskellToken        = HaskellToken("'")
 public val TH_TY_QUOTE : HaskellToken         = HaskellToken("''")
-
+public val NEW_LINE : HaskellToken            = HaskellToken("NL")
 
 val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT)
-val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, TokenType.NEW_LINE_INDENT)
+val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, NEW_LINE)

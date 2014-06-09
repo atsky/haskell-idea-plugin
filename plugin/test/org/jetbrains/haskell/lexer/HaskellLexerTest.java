@@ -69,22 +69,34 @@ public class HaskellLexerTest extends LexerTestCase {
                 "Haskell Token:opertor ('\u222F')");
     }
 
+
     @Test
-    public void testIndentsComments() throws Exception {
+    public void testIndent() throws Exception {
         doTest("module Main where\n" +
-               "\n" +
-               "main\n",
-               "Haskell Token:module ('module')\n" +
-               "WHITE_SPACE (' ')\n" +
-               "Haskell Token:type_cons ('Main')\n" +
-               "WHITE_SPACE (' ')\n" +
+                        "\n" +
+                        "main\n",
+                "Haskell Token:module ('module')\n" +
+                        "WHITE_SPACE (' ')\n" +
+                        "Haskell Token:type_cons ('Main')\n" +
+                        "WHITE_SPACE (' ')\n" +
+                        "Haskell Token:where ('where')\n" +
+                        "Haskell Token:NL ('\\n')\n" +
+                        "Haskell Token:NL ('\\n')\n" +
+                        "Haskell Token:VIRTUAL_LEFT_PAREN ('')\n" +
+                        "Haskell Token:id ('main')\n" +
+                        "Haskell Token:NL ('\\n')\n" +
+                        "Haskell Token:VIRTUAL_RIGHT_PAREN ('')");
+
+        doTest("where\n" +
+               " { t }",
                "Haskell Token:where ('where')\n" +
-               "NEW_LINE_INDENT ('\\n')\n" +
-               "NEW_LINE_INDENT ('\\n')\n" +
-               "Haskell Token:VIRTUAL_LEFT_PAREN ('')\n" +
-               "Haskell Token:id ('main')\n" +
-               "NEW_LINE_INDENT ('\\n')\n" +
-               "Haskell Token:VIRTUAL_RIGHT_PAREN ('')");
+               "Haskell Token:NL ('\\n')\n" +
+               "WHITE_SPACE (' ')\n" +
+               "Haskell Token:{ ('{')\n" +
+               "WHITE_SPACE (' ')\n" +
+               "Haskell Token:id ('t')\n" +
+               "WHITE_SPACE (' ')\n" +
+               "Haskell Token:} ('}')");
     }
 
 

@@ -19,6 +19,7 @@ public class HaskellFullLexer() : LexerBase() {
     val indentTokens = HashSet<IElementType>(Arrays.asList(
             DO_KW,
             OF_KW,
+            LET_KW,
             WHERE_KW))
 
     val lexer = HaskellLexer()
@@ -31,45 +32,52 @@ public class HaskellFullLexer() : LexerBase() {
     public override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) {
         lexer.start(buffer, startOffset, endOffset, initialState)
         val indentStack = LinkedList<Int>()
-        var recordIndent : Boolean = false
-        var tokenType = lexer.getTokenType()
-        while (tokenType != null) {
+        var lineStart: Int = 0
+        var lineStarted: Boolean = false
+        var recordIndent: Boolean = false
 
-            addToken(lexer.getTokenStart(), lexer.getTokenEnd(), lexer.getState(), tokenType!!)
-            val tokenSize : Int = lexer.getTokenEnd() - lexer.getTokenStart() - 1
-
-            lexer.advance();
-
-            if (tokenType == TokenType.NEW_LINE_INDENT) {
-                val nextToken = lexer.getTokenType()
-                if (nextToken != null && !WHITESPACES.contains(nextToken) && !COMMENTS.contains(nextToken)) {
-                    if (indentStack.isNotEmpty() && tokenSize == indentStack.last!!) {
-                        addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
-                    } else {
-                        if (recordIndent && (indentStack.isEmpty() || tokenSize > indentStack.last!!)) {
-                            indentStack.addLast(tokenSize);
-                            addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_LEFT_PAREN)
-                        }
-                        if (indentStack.isNotEmpty() && tokenSize < indentStack.last!!) {
-                            while (tokenSize < indentStack.last!!) {
-                                indentStack.removeLast();
-                                addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_RIGHT_PAREN)
-                            }
-                            addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
-                        }
-                    }
-                }
+        while (true) {
+            val tokenType = lexer.getTokenType()
+            if (tokenType == null) {
+                break
             }
 
-            if (!COMMENTS.contains(tokenType) && !WHITESPACES.contains(tokenType)) {
-                recordIndent = false;
+            if (tokenType == NEW_LINE) {
+                lineStart = lexer.getTokenStart() + 1
+                lineStarted = true;
+            }
+
+            if (!WHITESPACES.contains(tokenType) && !COMMENTS.contains(tokenType)) {
+                val indentSize: Int = lexer.getTokenStart() - lineStart
+
+                if (recordIndent) {
+                    if (tokenType != LEFT_BRACE && (indentStack.isEmpty() || indentSize > indentStack.last!!)) {
+                        indentStack.addLast(indentSize);
+                        addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_LEFT_PAREN)
+                    }
+                    recordIndent = false
+                } else if (lineStarted) {
+                    if (indentStack.isNotEmpty() && indentSize == indentStack.last!!) {
+                        addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
+                    }
+
+                    if (indentStack.isNotEmpty() && indentSize < indentStack.last!!) {
+                        while (indentSize < indentStack.last!!) {
+                            indentStack.removeLast();
+                            addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_RIGHT_PAREN)
+                        }
+                        addToken(lexer.getTokenStart(), lexer.getTokenStart(), 0, VIRTUAL_SEMICOLON)
+                    }
+                }
+                lineStarted = false
             }
 
             if (indentTokens.contains(tokenType)) {
                 recordIndent = true;
             }
 
-            tokenType = lexer.getTokenType()
+            addToken(lexer.getTokenStart(), lexer.getTokenEnd(), lexer.getState(), tokenType)
+            lexer.advance()
         }
         while (indentStack.size > 0) {
             addToken(tokenEnds[tokenEnds.size - 1], tokenEnds[tokenEnds.size - 1], 0, VIRTUAL_RIGHT_PAREN)
@@ -77,7 +85,7 @@ public class HaskellFullLexer() : LexerBase() {
         }
     }
 
-    fun addToken(start : Int, end : Int, state : Int, aType : IElementType) {
+    fun addToken(start: Int, end: Int, state: Int, aType: IElementType) {
         tokenStarts.add(start)
         tokenEnds.add(end)
         lexerStates.add(state)

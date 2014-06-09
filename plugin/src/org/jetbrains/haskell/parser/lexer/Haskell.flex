@@ -71,7 +71,6 @@ string     = \"([^\"\\\n]|{escape}|{gap})*(\"|\n)
 
 //----- Indent -------
 
-INDENT = [\n] {white_no_nl}*
 EOL_COMMENT = "--"[^\n]*
 
 
@@ -121,7 +120,7 @@ EOL_COMMENT = "--"[^\n]*
 
 
 {white_no_nl}+        { return TokenType.WHITE_SPACE; }
-{INDENT}              { return TokenType.NEW_LINE_INDENT; }
+"\n"                  { return TokenPackage.getNEW_LINE(); }
 {EOL_COMMENT}         { return TokenPackage.getEND_OF_LINE_COMMENT(); }
 "{"                   { return TokenPackage.getLEFT_BRACE(); }
 "}"                   { return TokenPackage.getRIGHT_BRACE(); }

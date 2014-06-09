@@ -2,9 +2,6 @@ package org.jetbrains.haskell.util
 
 import java.io.File
 
-/**
- * Created by Евгений on 04.01.14.
- */
 public val OS: OsUtil = OsUtil()
 
 public class OsUtil() {
