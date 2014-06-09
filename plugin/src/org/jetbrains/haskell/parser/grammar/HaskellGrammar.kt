@@ -1,39 +1,17 @@
 package org.jetbrains.haskell.parser.grammar
 
 import org.jetbrains.haskell.parser.rules.RuleBasedElementType
-import org.jetbrains.haskell.psi.FqName
 import org.jetbrains.haskell.parser.rules.notEmptyList
 import org.jetbrains.haskell.parser.rules.Rule
 import org.jetbrains.haskell.parser.rules.lazy
 import org.jetbrains.haskell.parser.rules.aList
 import org.jetbrains.haskell.parser.inParentheses
 import org.jetbrains.haskell.parser.token.*
-import org.jetbrains.haskell.psi.FieldUpdate
-import org.jetbrains.haskell.psi.CaseClause
 import com.intellij.lang.PsiBuilder
-import org.jetbrains.haskell.psi.DoStatement
 import org.jetbrains.haskell.parser.rules.rule
-import org.jetbrains.haskell.psi.LetExpression
-import org.jetbrains.haskell.psi.DoExpression
-import org.jetbrains.haskell.psi.ReferenceExpression
-import org.jetbrains.haskell.parser.grammar.CONSTRUCTOR
-import org.jetbrains.haskell.parser.grammar.VALUE_BODY
-import org.jetbrains.haskell.psi.ClassDeclaration
 import org.jetbrains.haskell.parser.rules.maybe
-import org.jetbrains.haskell.psi.InstanceDeclaration
-import org.jetbrains.haskell.parser.grammar.MODULE_NAME
-import org.jetbrains.haskell.parser.grammar.MODULE_EXPORTS
-import org.jetbrains.haskell.parser.grammar.SYMBOL_EXPORT
-import org.jetbrains.haskell.parser.grammar.IMPORT_AS_PART
-import org.jetbrains.haskell.psi.ValueDeclaration
-import org.jetbrains.haskell.psi.Import
-import org.jetbrains.haskell.parser.grammar.CONSTRUCTOR_DECLARATION
-import org.jetbrains.haskell.parser.grammar.DATA_DECLARATION
-import org.jetbrains.haskell.psi.SomeId
-import org.jetbrains.haskell.psi.UnparsedToken
-import org.jetbrains.haskell.parser.grammar.MODULE_HEADER
-import org.jetbrains.haskell.psi.ConstructorName
-import org.jetbrains.haskell.psi.ValueName
+import org.jetbrains.haskell.psi.*
+import org.jetbrains.haskell.parser.grammar.*
 
 /**
  * Created by atsky on 5/2/14.
@@ -104,13 +82,17 @@ private val aModuleExports = rule(MODULE_EXPORTS) {
     LEFT_PAREN + aList(anExport, COMMA) + maybe(COMMA) + maybe(VIRTUAL_SEMICOLON) + RIGHT_PAREN
 }
 
+val modulePrefix = RuleBasedElementType("ModulePrefix", ::ModulePrefix) {
+    notEmptyList(TYPE_OR_CONS + DOT)
+}
 
 val anExport = lazy {
+
     val symbolExport = rule(SYMBOL_EXPORT) {
         simpleId or TYPE_OR_CONS or inParentheses(OPERATOR_ID)
     }
 
-    val qcnameExt = maybe(TYPE_KW) + symbolExport
+    val qcnameExt = maybe(TYPE_KW) + maybe(modulePrefix) + symbolExport
 
     val qcnames = notEmptyList(qcnameExt, COMMA)
 

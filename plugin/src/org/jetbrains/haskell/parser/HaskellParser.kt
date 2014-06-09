@@ -16,7 +16,7 @@ import org.jetbrains.haskell.parser.rules.*
 import org.jetbrains.haskell.psi.*
 
 
-public fun inParentheses(rule : Rule) : Rule {
+public fun inParentheses(rule: Rule): Rule {
     return LEFT_PAREN + rule + RIGHT_PAREN
 }
 
@@ -36,36 +36,35 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
     }
 
 
-
     fun parseModule() = start(MODULE) {
         val result = (MODULE_HEADER_RULE).parse(builder)
 
-        if (result) {
-            val rule = VIRTUAL_SEMICOLON or
-                       aDataDeclaration or
-                       IMPORT or
-                       INSTANCE_DECLARATION or
-                       VALUE_DECLARATION or
-                       CLASS_DECLARATION or
-                       TYPE_DECLARATION or
-                       aValueBody
 
-            while (!builder.eof()) {
+        val rule = VIRTUAL_SEMICOLON or
+        aDataDeclaration or
+        IMPORT or
+        INSTANCE_DECLARATION or
+        VALUE_DECLARATION or
+        CLASS_DECLARATION or
+        TYPE_DECLARATION or
+        aValueBody
 
-                if (!rule.parse(builder)) {
-                    while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
-                           builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
-                           !builder.eof()) {
+        while (!builder.eof()) {
 
-                        SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
-                            builder.advanceLexer()
-                            true
-                        }
+            if (!rule.parse(builder)) {
+                while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
+                builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
+                !builder.eof()) {
+
+                    SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
+                        builder.advanceLexer()
+                        true
                     }
-                    builder.advanceLexer()
                 }
+                builder.advanceLexer()
             }
         }
+
         while (!builder.eof()) {
             SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
                 builder.advanceLexer()
