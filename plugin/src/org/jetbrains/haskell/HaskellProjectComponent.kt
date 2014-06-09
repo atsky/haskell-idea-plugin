@@ -19,6 +19,7 @@ import java.io.File
 import org.jetbrains.haskell.util.deleteRecursive
 import org.jetbrains.haskell.util.ProcessRunner
 import java.io.IOException
+import org.jetbrains.haskell.util.OS
 
 
 public class HaskellProjectComponent(val project: Project, manager: CompilerManager) : ProjectComponent {
@@ -32,7 +33,7 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
         });
     }
 
-    fun packageNotFound(pkg : String) {
+    fun packageNotFound(pkg: String) {
         invokeInUI {
             val result = Messages.showDialog(
                     project,
@@ -49,7 +50,7 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
         }
     }
 
-    fun getHaskellModules() : List<Module> {
+    fun getHaskellModules(): List<Module> {
         val moduleManager = ModuleManager.getInstance(project)!!
         return moduleManager.getModules().filter { ModuleType.get(it) == HaskellModuleType.INSTANCE }
     }
@@ -58,17 +59,25 @@ public class HaskellProjectComponent(val project: Project, manager: CompilerMana
         if (!getHaskellModules().empty) {
             removeTempDir()
 
-            try {
-                ProcessRunner(null).executeOrFail("ghc", "--version")
-            } catch (e : IOException) {
+
+            val paths = System.getenv("PATH")!!.split(File.pathSeparator).toArrayList()
+            if (OS.isMac) {
+                paths.add("/usr/local/bin")
+            }
+            val ghcFound = paths.any {
+                File(it, "ghc" + OS.getExe()).exists()
+            }
+            if (!ghcFound) {
                 Messages.showDialog(
                         project,
-                        "ghc not found in PATH. It can cause serious issues.",
+                        "ghc not found in PATH. It can cause issues.",
                         "ghc not found",
                         array("Close"),
                         0,
                         null)
             }
+
+
 
             val cabalFound = CabalInterface(project).checkVersion()
             if (!cabalFound) {
