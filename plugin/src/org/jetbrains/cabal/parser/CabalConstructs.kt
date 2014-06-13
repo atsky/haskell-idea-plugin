@@ -2,7 +2,7 @@ package org.jetbrains.cabal.parser
 
 // https://github.com/ghc/packages-Cabal/blob/master/Cabal/Distribution/PackageDescription/Parse.hs
 
-public val buildInfo : List<String> = listOf(
+public val BUILD_INFO: List<String> = listOf(
                             "buildable",
                             "build-tools",
                             "cpp-options",
@@ -32,7 +32,7 @@ public val buildInfo : List<String> = listOf(
 
 
 
-public val pkgDescrFieldDescrs : List<String> = listOf(
+public val PKG_DESCR_FIELD_DESCRS: List<String> = listOf(
                             "name",
                             "version",
                             "disp",

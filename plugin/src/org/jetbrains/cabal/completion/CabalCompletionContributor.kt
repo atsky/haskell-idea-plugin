@@ -14,8 +14,8 @@ public open class CabalCompletionContributor() : CompletionContributor() {
     public override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?): Unit {
         if (parameters?.getCompletionType() == CompletionType.BASIC) {
             val values = ArrayList<String>()
-            values.addAll(pkgDescrFieldDescrs)
-            values.addAll(buildInfo)
+            values.addAll(PKG_DESCR_FIELD_DESCRS)
+            values.addAll(BUILD_INFO)
             for (value in values) {
                 result?.addElement(LookupElementBuilder.create(value + ": ")!!)
             }
