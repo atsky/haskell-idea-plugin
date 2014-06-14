@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class CabalJspInterface{
@@ -16,14 +19,22 @@ public class CabalJspInterface{
         myCabalFile = cabalFile;
     }
 
-    private Process runCommand(String command) throws IOException {
+    private Process runCommand(String ... command) throws IOException {
         final String path = myCabalPath != null ? myCabalPath : "cabal";
+        ArrayList<String> arguments = new ArrayList<String>();
+        arguments.add(path);
+        arguments.addAll(Arrays.asList(command));
         return new ProcessWrapper(myCabalFile.getParentFile().getCanonicalPath()).
-                            getProcess(path, command);
+                            getProcess(arguments);
     }
 
-    public Process configure() throws IOException {
-        return runCommand("configure");
+    public Process configure(String ghcPath) throws IOException {
+        if (ghcPath != null) {
+            return runCommand("configure", "-w", ghcPath + File.separator + "bin" + File.separator + "ghc");
+        } else {
+            return runCommand("configure");
+
+        }
     }
 
     public Process build() throws IOException {

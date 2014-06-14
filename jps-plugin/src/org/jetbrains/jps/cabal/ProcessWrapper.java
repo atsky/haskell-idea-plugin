@@ -3,6 +3,7 @@ package org.jetbrains.jps.cabal;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public class ProcessWrapper {
     private String myWorkingDirectory;
@@ -12,8 +13,8 @@ public class ProcessWrapper {
     }
 
 
-    public Process getProcess(String ... cmd) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder(Arrays.asList(cmd));
+    public Process getProcess(List<String> cmd) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder(cmd);
         if (myWorkingDirectory != null) {
             processBuilder.directory(new File(myWorkingDirectory));
         }

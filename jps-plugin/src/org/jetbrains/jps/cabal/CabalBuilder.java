@@ -20,10 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
+import org.jetbrains.jps.cabal.model.HaskellSdkType;
+import org.jetbrains.jps.cabal.model.JpsHaskellSdkProperties;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
+import org.jetbrains.jps.model.JpsSimpleElement;
+import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.BufferedReader;
@@ -90,7 +94,10 @@ public class CabalBuilder extends ModuleLevelBuilder {
     private boolean runConfigure(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
         context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
 
-        Process configureProcess = cabal.configure();
+        JpsSdk<JpsSimpleElement<JpsHaskellSdkProperties>> sdk = module.getSdk(HaskellSdkType.INSTANCE);
+        String ghcPath = sdk.getSdkProperties().getData().getGhcPath();
+
+        Process configureProcess = cabal.configure(ghcPath);
 
         processOut(context, configureProcess, module);
 
