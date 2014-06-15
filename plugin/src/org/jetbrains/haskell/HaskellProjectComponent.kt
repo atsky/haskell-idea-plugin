@@ -131,7 +131,4 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
         }
     }
 
-    {
-        manager.addCompilableFileType(HaskellFileType.INSTANCE)
-    }
 }
