@@ -1,116 +1,127 @@
 <idea-plugin version="2">
-  <name>Haskell</name>
-  <description>Haskell language support</description>
-  <version>0.2.2 Beta</version>
-  <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
+    <name>Haskell</name>
+    <description>Haskell language support</description>
+    <version>0.2.2 Beta</version>
+    <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
 
-  <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="135.480"/>
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="135.480"/>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.xdebugger</depends>
 
-  <project-components>
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
 
-      <component>
-          <implementation-class>org.jetbrains.haskell.HaskellProjectComponent</implementation-class>
-      </component>
-      <component>
-          <implementation-class>org.jetbrains.haskell.external.GhcModi</implementation-class>
-      </component>
+    <project-components>
 
-  </project-components>
+        <component>
+            <implementation-class>org.jetbrains.haskell.HaskellProjectComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>org.jetbrains.haskell.external.GhcModi</implementation-class>
+        </component>
 
-  <actions>
-      <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
-              text="Haskell Module" description="Create new Haskell module">
-          <add-to-group group-id="NewGroup"/>
-      </action>
+    </project-components>
 
-      <action id="Haskell.ShowType" class="org.jetbrains.haskell.actions.ShowTypeAction"
-              text="Show Type" description="Show Type">
-          <keyboard-shortcut first-keystroke="ctrl shift T" keymap="$default"/>
-          <add-to-group group-id="CodeEditorViewGroup" anchor="after" relative-to-action="QuickJavaDoc"/>
-      </action>
+    <actions>
+        <action id="Haskell.HaskellFile" class="org.jetbrains.haskell.actions.NewHaskellFileAction"
+                text="Haskell Module" description="Create new Haskell module">
+            <add-to-group group-id="NewGroup"/>
+        </action>
 
-<!--
-      <group id="Haskell.REPL.Group"
-             class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
-             text="Haskell REPL" description="Haskell" popup="true">
+        <action id="Haskell.ShowType" class="org.jetbrains.haskell.actions.ShowTypeAction"
+                text="Show Type" description="Show Type">
+                     
+            <keyboard-shortcut first-keystroke="ctrl shift T" keymap="$default"/>
+            <add-to-group group-id="CodeEditorViewGroup" anchor="after" relative-to-action="QuickJavaDoc"/>
+        </action>
 
-          <action id="ideah.repl.actions.RunHaskellConsoleAction"
-                  class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
-                  text="Start Haskell REPL" description="Runs Haskell REPL">
-              <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F10"/>
-          </action>
+        <!--
+              <group id="Haskell.REPL.Group"
+                     class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
+                     text="Haskell REPL" description="Haskell" popup="true">
+
+                  <action id="ideah.repl.actions.RunHaskellConsoleAction"
+                          class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
+                          text="Start Haskell REPL" description="Runs Haskell REPL">
+                      <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F10"/>
+                  </action>
 
 
-          <add-to-group group-id="ToolsMenu" anchor="last"/>
-      </group>
+                  <add-to-group group-id="ToolsMenu" anchor="last"/>
+              </group>
 
-      <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
-              class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
-              text="Load/Reload Current File in REPL...">
-          <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
-          <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-      </action>
--->
-      <action id="Haskell.Console.Execute"
-              class="com.intellij.openapi.actionSystem.EmptyAction"
-              text="Execute Current Haskell Statement">
-          <keyboard-shortcut keymap="$default" first-keystroke="ENTER"/>
-      </action>
+              <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
+                      class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"
+                      text="Load/Reload Current File in REPL...">
+                  <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift L"/>
+                  <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+              </action>
+        -->
+        <action id="Haskell.Console.Execute"
+                class="com.intellij.openapi.actionSystem.EmptyAction"
+                text="Execute Current Haskell Statement">
+            <keyboard-shortcut keymap="$default" first-keystroke="ENTER"/>
+        </action>
 
-      <action id="Haskell.Console.Execute.Immediately"
-              class="com.intellij.openapi.actionSystem.EmptyAction"
-              text="Execute Current Haskell Statement">
-          <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
-      </action>
-  </actions>
+        <action id="Haskell.Console.Execute.Immediately"
+                class="com.intellij.openapi.actionSystem.EmptyAction"
+                text="Execute Current Haskell Statement">
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
+        </action>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
-      <compileServer.plugin classpath="haskell-jps-plugin.jar"/>
-      <fileTypeFactory implementation="org.jetbrains.haskell.fileType.HaskellFileTypeFactory"/>
-      <moduleType id="HASKELL_MODULE" classpathProvider="false" implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
-      <completion.contributor language="Haskell"
-                              implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor" />
-      <annotator implementationClass="org.jetbrains.haskell.highlight.HaskellAnnotator" language="Haskell" />
-      <!-- <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" /> -->
-      <applicationService serviceImplementation="org.jetbrains.haskell.config.HaskellSettings" />
-      <lang.braceMatcher language="Haskell"
-                         implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
-      <externalAnnotator implementationClass="org.jetbrains.haskell.external.HaskellExternalAnnotator" language="Haskell"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <compileServer.plugin classpath="haskell-jps-plugin.jar"/>
+        <fileTypeFactory implementation="org.jetbrains.haskell.fileType.HaskellFileTypeFactory"/>
+        <moduleType id="HASKELL_MODULE" classpathProvider="false"
+                    implementationClass="org.jetbrains.haskell.module.HaskellModuleType"/>
+        <completion.contributor language="Haskell"
+                                implementationClass="org.jetbrains.haskell.completion.HaskellCompletionContributor"/>
+        <annotator implementationClass="org.jetbrains.haskell.highlight.HaskellAnnotator" language="Haskell"/>
+        <!-- <projectService serviceImplementation="org.jetbrains.haskell.module.CabalPackagesContainer" /> -->
+        <applicationService serviceImplementation="org.jetbrains.haskell.config.HaskellSettings"/>
+        <lang.braceMatcher language="Haskell"
+                           implementationClass="org.jetbrains.haskell.highlight.HaskellBraceMatcher"/>
+        <externalAnnotator implementationClass="org.jetbrains.haskell.external.HaskellExternalAnnotator"
+                           language="Haskell"/>
 
-      <lang.parserDefinition language="Haskell"
-                             implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
-      <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>
-      <!-- <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/> -->
-      <runConfigurationProducer implementation="org.jetbrains.haskell.run.haskell.CabalRunConfigurationProducer"/>
-      <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
-      <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
+        <lang.parserDefinition language="Haskell"
+                               implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
+        <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>
+        <!-- <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/> -->
+        <runConfigurationProducer implementation="org.jetbrains.haskell.run.haskell.CabalRunConfigurationProducer"/>
+        <moduleConfigurationEditorProvider implementation="org.jetbrains.haskell.module.HaskellModuleConfigEditor"/>
+        <sdkType id="GHC" implementation="org.jetbrains.haskell.sdk.HaskellSdkType"/>
 
-      <lang.documentationProvider language="Haskell" implementationClass="org.jetbrains.haskell.doc.HaskellQuickDocumentationProvider" order="first"/>
+        <lang.documentationProvider language="Haskell"
+                                    implementationClass="org.jetbrains.haskell.doc.HaskellQuickDocumentationProvider"
+                                    order="first"/>
 
-      <lang.syntaxHighlighterFactory key="Haskell"
-                                     implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
-      <lang.fileViewProviderFactory language="Haskell"
-                                    implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
-      <lang.commenter language="Haskell"
-                      implementationClass="org.jetbrains.haskell.comment.HaskellCommenter"/>
+        <lang.syntaxHighlighterFactory key="Haskell"
+                                       implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
+        <lang.fileViewProviderFactory language="Haskell"
+                                      implementationClass="org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory"/>
+        <lang.commenter language="Haskell"
+                        implementationClass="org.jetbrains.haskell.comment.HaskellCommenter"/>
 
-      <!-- Cabal -->
-      <lang.syntaxHighlighterFactory key="Cabal"
-                                     implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
-      <lang.parserDefinition language="Cabal"
-                             implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
-      <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator" />
-      <completion.contributor language="Cabal"
-                              implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor" />
+        <!-- Cabal -->
+        <lang.syntaxHighlighterFactory key="Cabal"
+                                       implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
+        <lang.parserDefinition language="Cabal"
+                               implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
+        <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator"/>
+        <completion.contributor language="Cabal"
+                                implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor"/>
 
-      <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right" factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory" />
+        <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
+                    factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
-      <applicationConfigurable implementation="org.jetbrains.haskell.config.HaskellConfigurable"></applicationConfigurable>
+        <applicationConfigurable
+                implementation="org.jetbrains.haskell.config.HaskellConfigurable"></applicationConfigurable>
 
-  </extensions>
+    </extensions>
 </idea-plugin>
