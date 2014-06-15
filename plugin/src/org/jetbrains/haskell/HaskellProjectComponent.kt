@@ -22,7 +22,7 @@ import java.io.IOException
 import org.jetbrains.haskell.util.OS
 
 
-public class HaskellProjectComponent(val project: Project, manager: CompilerManager) : ProjectComponent {
+public class HaskellProjectComponent(val project: Project) : ProjectComponent {
 
 
     fun invokeInUI(block: () -> Unit) {
