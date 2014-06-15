@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter
 import com.intellij.openapi.module.ModuleManager
 import java.io.File
 import java.util.regex.Pattern
+import java.util.ArrayList
 
 /**
  * Created by atsky on 15/06/14.
@@ -34,10 +35,12 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
     override fun projectClosed() {
         val process = process
         if (process != null) {
-            val output = OutputStreamWriter(process.getOutputStream()!!)
-            output.write("\n")
-            output.flush()
-            process.waitFor()
+            synchronized(process) {
+                val output = OutputStreamWriter(process.getOutputStream()!!)
+                output.write("\n")
+                output.flush()
+                process.waitFor()
+            }
             this.process = null
         }
     }
@@ -58,21 +61,32 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
         if (process == null) {
             return listOf()
         }
-        val input = InputStreamReader(process.getInputStream()!!)
-        val output = OutputStreamWriter(process.getOutputStream()!!)
-        output.write(command + "\n")
-        output.flush()
+        return synchronized(process) {
+            val input = InputStreamReader(process.getInputStream()!!)
+            val output = OutputStreamWriter(process.getOutputStream()!!)
+            output.write(command + "\n")
+            output.flush()
 
-        val buffer = StringBuffer()
+            val lines = ArrayList<String>()
 
-        while (!(buffer.toString().contains("\nOK") || buffer.toString().contains("\nNG"))) {
-            val char = CharArray(16 * 1024)
-            val size = input.read(char)
-            buffer.append(char, 0, size)
+            while (lines.size < 2 ||
+                  (!lines[lines.size - 2].startsWith("OK") &&
+                   !lines[lines.size - 2].startsWith("NG"))) {
+                val char = CharArray(16 * 1024)
+                val size = input.read(char)
+                val result = java.lang.String(char, 0, size)
+                val split = result.split("\n", -1)
+                if (lines.isEmpty()) {
+                    lines.add(split[0])
+                } else {
+                    val last = lines.size - 1
+                    lines[last] = lines[last] + split[0]
+                }
+                lines.addAll(split.toList().subList(1, split.size))
+            }
+
+            lines
         }
-        val strings = buffer.toString().split("\n")
-
-        return strings.toList()
     }
 
 }

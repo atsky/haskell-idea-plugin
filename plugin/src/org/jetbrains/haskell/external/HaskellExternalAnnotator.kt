@@ -159,9 +159,6 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         if (moduleContent == null) {
             return
         }
-        val relativePath = getRelativePath(moduleContent.getPath(), file.getVirtualFile()!!.getPath())
-
-        val path = file.getVirtualFile()!!.getPath()
 
         for (error in annotationResult!!) {
 

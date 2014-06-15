@@ -28,9 +28,9 @@
           <add-to-group group-id="NewGroup"/>
       </action>
 
-      <action id="Haskell.ShowInfo" class="org.jetbrains.haskell.actions.ShowSymbolInfoAction"
-              text="Show Symbol Info" description="Show Symbol Info">
-          <keyboard-shortcut first-keystroke="control I" keymap="$default"/>
+      <action id="Haskell.ShowType" class="org.jetbrains.haskell.actions.ShowTypeAction"
+              text="Show Type" description="Show Type">
+          <keyboard-shortcut first-keystroke="ctrl shift T" keymap="$default"/>
           <add-to-group group-id="CodeEditorViewGroup" anchor="after" relative-to-action="QuickJavaDoc"/>
       </action>
 
