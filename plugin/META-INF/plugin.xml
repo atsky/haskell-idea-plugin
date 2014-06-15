@@ -6,11 +6,11 @@
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
     <idea-version since-build="135.480"/>
-
+<!--
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.xdebugger</depends>
-
+-->
     <application-components>
         <!-- Add your application components here -->
     </application-components>
