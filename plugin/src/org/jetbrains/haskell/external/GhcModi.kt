@@ -27,11 +27,11 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
     }
 
     fun getPath() : String {
-        return settings.getState().ghcModPath!! + "i"
+        return settings.getState().ghcModiPath!!
     }
 
     override fun projectClosed() {
-        val process = process!!
+        val process = process
         if (process != null) {
             val output = OutputStreamWriter(process.getOutputStream()!!)
             output.write("\n")

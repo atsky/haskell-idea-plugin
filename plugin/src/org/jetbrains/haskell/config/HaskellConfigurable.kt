@@ -19,6 +19,7 @@ public class HaskellConfigurable() : Configurable {
     private val cabalPathField = TextFieldWithBrowseButton()
     private val cabalDataPathField = TextFieldWithBrowseButton()
     private val ghcMod = TextFieldWithBrowseButton()
+    private val ghcModi = TextFieldWithBrowseButton()
     private val buildWrapper = TextFieldWithBrowseButton()
 
 
@@ -100,7 +101,8 @@ public class HaskellConfigurable() : Configurable {
         addLabeledControl(0, "cabal executable", cabalPathField)
         addLabeledControl(1, "cabal data path", cabalDataPathField);
         addLabeledControl(2, "ghc-mod executable", ghcMod)
-        addLabeledControl(3, "buildwrapper executable", buildWrapper)
+        addLabeledControl(3, "ghc-modi executable", ghcModi)
+        addLabeledControl(4, "buildwrapper executable", buildWrapper)
 
 
         result.add(JPanel(), gridBagConstraints {
@@ -122,6 +124,8 @@ public class HaskellConfigurable() : Configurable {
         state.cabalPath = cabalPathField.getTextField()!!.getText()
         state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
         state.ghcModPath = ghcMod.getTextField()!!.getText()
+        state.ghcModiPath = ghcModi.getTextField()!!.getText()
+
         state.buildWrapperPath = buildWrapper.getTextField()!!.getText()
 
         isModified = false
@@ -137,6 +141,8 @@ public class HaskellConfigurable() : Configurable {
         cabalPathField.getTextField()!!.setText(state.cabalPath ?: "")
         cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
+        ghcModi.getTextField()!!.setText(state.ghcModiPath ?: "")
+
         buildWrapper.getTextField()!!.setText(state.buildWrapperPath ?: "")
 
         isModified = false

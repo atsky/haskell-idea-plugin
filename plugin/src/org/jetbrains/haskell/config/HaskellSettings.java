@@ -36,6 +36,11 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
             persisted.getState().ghcModPath = os.getDefaultCabalBin() + File.separator + "ghc-mod" + os.getExe();
         }
 
+        if (persisted.getState().ghcModiPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            persisted.getState().ghcModiPath = os.getDefaultCabalBin() + File.separator + "ghc-modi" + os.getExe();
+        }
+
         if (persisted.getState().buildWrapperPath == null) {
             OsUtil os = UtilPackage.getOS();
             persisted.getState().buildWrapperPath = os.getDefaultCabalBin() + File.separator + "buildwrapper" + os.getExe();
@@ -52,6 +57,7 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
 
     public static class State {
         public String ghcModPath;
+        public String ghcModiPath;
         public String buildWrapperPath;
         public String scionBrowserPath;
         public String cabalPath;
