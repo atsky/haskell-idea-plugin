@@ -77,9 +77,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
     }
 
-    fun getResultFromGhci(psiFile : PsiFile,
-                          moduleContent : VirtualFile,
-                          file : VirtualFile) : List<ErrorMessage> {
+    fun getResultFromGhci(psiFile: PsiFile,
+                          moduleContent: VirtualFile,
+                          file: VirtualFile): List<ErrorMessage> {
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
                 FileDocumentManager.getInstance()!!.saveAllDocuments()
@@ -95,20 +95,20 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         val errors = ArrayList<ErrorMessage>()
 
-        for (msg in result) {
-            val matcher = Pattern.compile("(.*):(\\d*):(\\d*):(.*)").matcher(msg)
+        for (resultLine in result) {
+            val matcher = Pattern.compile("(.*):(\\d*):(\\d*):(.*)").matcher(resultLine)
             if (matcher.find()) {
-                val file = matcher.group(1)!!
+                val path = matcher.group(1)!!
                 val line = Integer.parseInt(matcher.group(2)!!)
                 val col = Integer.parseInt(matcher.group(3)!!)
-                val msg  = matcher.group(4)!!
+                val msg = matcher.group(4)!!.replace("\u0000", "\n")
                 val severity = if (msg.startsWith("Warning")) {
                     ErrorMessage.Severity.Warning
                 } else {
                     ErrorMessage.Severity.Error
                 }
-                if (relativePath == file) {
-                    errors.add(ErrorMessage(msg, file, severity, line, col, line, col))
+                if (relativePath == path) {
+                    errors.add(ErrorMessage(msg, path, severity, line, col, line, col))
                 }
             }
         }
@@ -116,9 +116,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         return errors
     }
 
-    fun getResultFromBuidWrapper(psiFile : PsiFile,
-                          moduleContent : VirtualFile,
-                          file : VirtualFile) : List<ErrorMessage> {
+    fun getResultFromBuidWrapper(psiFile: PsiFile,
+                                 moduleContent: VirtualFile,
+                                 file: VirtualFile): List<ErrorMessage> {
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
                 FileDocumentManager.getInstance()!!.saveAllDocuments()
@@ -164,22 +164,20 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         val path = file.getVirtualFile()!!.getPath()
 
         for (error in annotationResult!!) {
-            if (path == error.file || relativePath == error.file) {
-                val start = LineColPosition(error.line, error.column).getOffset(file)
-                val end = LineColPosition(error.eLine, error.eColumn).getOffset(file)
 
+            val start = LineColPosition(error.line, error.column).getOffset(file)
+            val end = LineColPosition(error.eLine, error.eColumn).getOffset(file)
 
-                val element = file.findElementAt(start)
-                if (element != null) {
-                    when (error.severity) {
-                        ErrorMessage.Severity.Error -> holder.createErrorAnnotation(element, error.text);
-                        ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(element, error.text);
-                    }
-                } else {
-                    when (error.severity) {
-                        ErrorMessage.Severity.Error -> holder.createErrorAnnotation(TextRange(start, end), error.text);
-                        ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
-                    }
+            val element = file.findElementAt(start)
+            if (element != null) {
+                when (error.severity) {
+                    ErrorMessage.Severity.Error -> holder.createErrorAnnotation(element, error.text);
+                    ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(element, error.text);
+                }
+            } else {
+                when (error.severity) {
+                    ErrorMessage.Severity.Error -> holder.createErrorAnnotation(TextRange(start, end), error.text);
+                    ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
                 }
             }
         }

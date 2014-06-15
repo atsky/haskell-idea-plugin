@@ -11,6 +11,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import com.intellij.openapi.module.ModuleManager
 import java.io.File
+import java.util.regex.Pattern
 
 /**
  * Created by atsky on 15/06/14.
@@ -64,14 +65,14 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
 
         val buffer = StringBuffer()
 
-        while (!buffer.toString().contains("OK") || buffer.toString().contains("NG")) {
-            val char = CharArray(1024)
+        while (!(buffer.toString().contains("\nOK") || buffer.toString().contains("\nNG"))) {
+            val char = CharArray(16 * 1024)
             val size = input.read(char)
             buffer.append(char, 0, size)
         }
         val strings = buffer.toString().split("\n")
 
-        return strings.toList().subList(0, strings.size - 1)
+        return strings.toList()
     }
 
 }
