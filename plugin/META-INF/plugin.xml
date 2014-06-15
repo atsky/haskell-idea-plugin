@@ -16,6 +16,9 @@
       <component>
           <implementation-class>org.jetbrains.haskell.HaskellProjectComponent</implementation-class>
       </component>
+      <component>
+          <implementation-class>org.jetbrains.haskell.external.GhcModi</implementation-class>
+      </component>
 
   </project-components>
 

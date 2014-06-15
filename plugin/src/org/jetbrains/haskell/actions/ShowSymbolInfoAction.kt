@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 /**
  * Created by atsky on 5/30/14.
  */
-class ShowSymbolInfoAction : AnAction() {
+public class ShowSymbolInfoAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent?) {
         if (e == null) {

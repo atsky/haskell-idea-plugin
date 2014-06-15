@@ -42,6 +42,22 @@ class GhcMod {
 
     }
 
+    fun check(basePath : String, file: String) : List<String> {
+        try {
+            val path = getPath()
+            val text = ProcessRunner(basePath).executeOrFail(path, "check", file)
+            if (!text.contains(":Error:")) {
+                return text.split('\n').toList()
+            } else {
+                return listOf()
+            }
+        } catch(e : Exception) {
+            reportError()
+            return listOf()
+        }
+
+    }
+
     fun reportError() {
         if (!errorReported) {
             Notifications.Bus.notify(Notification("ghc-mod error", "ghc-mod", "Can't find ghc-mod executable. "+

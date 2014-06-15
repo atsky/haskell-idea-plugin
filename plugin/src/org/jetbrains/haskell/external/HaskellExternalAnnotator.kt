@@ -24,6 +24,9 @@ import java.util.HashSet
 import sun.nio.cs.StandardCharsets
 import java.io.ByteArrayInputStream
 import org.jetbrains.haskell.util.getRelativePath
+import com.intellij.openapi.application.ModalityState
+import java.util.regex.Pattern
+import java.util.ArrayList
 
 public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
@@ -74,17 +77,53 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
     }
 
-    override fun doAnnotate(psiFile: PsiFile?): List<ErrorMessage> {
-        val file = psiFile!!.getVirtualFile()
-        if (file == null) {
-            return listOf()
+    fun getResultFromGhci(psiFile : PsiFile,
+                          moduleContent : VirtualFile,
+                          file : VirtualFile) : List<ErrorMessage> {
+        ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
+            override fun run() {
+                FileDocumentManager.getInstance()!!.saveAllDocuments()
+            }
+        }, ModalityState.any())
+
+
+        val ghcModi = psiFile.getProject().getComponent(javaClass<GhcModi>())!!
+
+        val relativePath = getRelativePath(moduleContent.getPath(), file.getPath())
+
+        val result = ghcModi.runCommand("check $relativePath")
+
+        val errors = ArrayList<ErrorMessage>()
+
+        for (msg in result) {
+            val matcher = Pattern.compile("(.*):(\\d*):(\\d*):(.*)").matcher(msg)
+            if (matcher.find()) {
+                val file = matcher.group(1)!!
+                val line = Integer.parseInt(matcher.group(2)!!)
+                val col = Integer.parseInt(matcher.group(3)!!)
+                val msg  = matcher.group(4)!!
+                val severity = if (msg.startsWith("Warning")) {
+                    ErrorMessage.Severity.Warning
+                } else {
+                    ErrorMessage.Severity.Error
+                }
+                if (relativePath == file) {
+                    errors.add(ErrorMessage(msg, file, severity, line, col, line, col))
+                }
+            }
         }
 
-        val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
+        return errors
+    }
 
-        if (moduleContent == null) {
-            return listOf()
-        }
+    fun getResultFromBuidWrapper(psiFile : PsiFile,
+                          moduleContent : VirtualFile,
+                          file : VirtualFile) : List<ErrorMessage> {
+        ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
+            override fun run() {
+                FileDocumentManager.getInstance()!!.saveAllDocuments()
+            }
+        }, ModalityState.any())
 
         copyContent(moduleContent, File(moduleContent.getCanonicalPath()!!, ".buildwrapper"))
 
@@ -99,6 +138,21 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         return listOf()
     }
 
+    override fun doAnnotate(psiFile: PsiFile?): List<ErrorMessage> {
+        val file = psiFile!!.getVirtualFile()
+        if (file == null) {
+            return listOf()
+        }
+
+        val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
+
+        if (moduleContent == null) {
+            return listOf()
+        }
+
+        return getResultFromGhci(psiFile, moduleContent, file)
+    }
+
 
     override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>?, holder: AnnotationHolder) {
         val moduleContent = BuildWrapper.getModuleContentDir(file)
@@ -107,14 +161,25 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
         val relativePath = getRelativePath(moduleContent.getPath(), file.getVirtualFile()!!.getPath())
 
+        val path = file.getVirtualFile()!!.getPath()
+
         for (error in annotationResult!!) {
-            if (relativePath == error.file) {
-                var start = LineColPosition(error.line, error.column).getOffset(file)
+            if (path == error.file || relativePath == error.file) {
+                val start = LineColPosition(error.line, error.column).getOffset(file)
                 val end = LineColPosition(error.eLine, error.eColumn).getOffset(file)
 
-                when (error.severity) {
-                    ErrorMessage.Severity.Error -> holder.createErrorAnnotation(TextRange(start, end), error.text);
-                    ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
+
+                val element = file.findElementAt(start)
+                if (element != null) {
+                    when (error.severity) {
+                        ErrorMessage.Severity.Error -> holder.createErrorAnnotation(element, error.text);
+                        ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(element, error.text);
+                    }
+                } else {
+                    when (error.severity) {
+                        ErrorMessage.Severity.Error -> holder.createErrorAnnotation(TextRange(start, end), error.text);
+                        ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
+                    }
                 }
             }
         }
