@@ -2,7 +2,6 @@ package org.jetbrains.haskell.external
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ProjectComponent
-import org.jetbrains.jps.cabal.ProcessWrapper
 import org.jetbrains.haskell.config.HaskellSettings
 import java.io.InputStream
 import java.io.OutputStream

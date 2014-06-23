@@ -1,7 +1,6 @@
 <project name="Haskell" basedir=".">
     <description>Haskell plugin</description>
 
-
     <taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="lib/jflex-1.5.1.jar"/>
 
     <property name="build.dir" value="${basedir}/build"/>
@@ -39,7 +38,7 @@
     </target>
 
     <!-- Unpack idea-*.zip file -->
-    <target name="unzip-idea" depends="download.idea" description="Unzip downloaded artifacts and set up idea.home">
+    <target name="idea" depends="download.idea" description="Unzip downloaded artifacts and set up idea.home">
         <delete dir="${idea}"/>
         <mkdir dir="${idea}"/>
         <basename property="idea.filename" file="${idea.download.url}"/>
@@ -71,7 +70,18 @@
         </unzip>
     </target>
 
-    <target name="build" depends="kotlinc, unzip-idea">
+    <target name="get.dependencies" depends="kotlinc, idea">
+
+    </target>
+
+    <target name="compile.jps">
+        <mkdir dir="${build.dir}/jps-plugin"/>
+        <javac classpathref="build.classpath"
+               srcdir="${basedir}/jps-plugin/src"
+               destdir="${build.dir}/jps-plugin/"/>
+    </target>
+
+    <target name="compile.plugin">
         <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml"
                  classpath="${build.dir}/kotlinc/lib/kotlin-ant.jar"/>
 
@@ -89,5 +99,12 @@
             <withKotlin externalannotations="${external.annotations.path}"/>
         </javac2>
     </target>
-
+    <target name="build" depends="compile.plugin, compile.jps">
+        <jar destfile="${build.dir}/jps-plugin.jar">
+            <fileset dir="${build.dir}/jps-plugin/"/>
+        </jar>
+        <jar destfile="${build.dir}/haskell-plugin.jar">
+            <fileset dir="${build.dir}/plugin/"/>
+        </jar>
+    </target>
 </project>
