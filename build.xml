@@ -1,24 +1,93 @@
-<project name="Haskell" default="run flex" basedir=".">
-    <description>
-        Tasks for Haskell plugin
-    </description>
+<project name="Haskell" basedir=".">
+    <description>Haskell plugin</description>
+
 
     <taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="lib/jflex-1.5.1.jar"/>
 
-
+    <property name="build.dir" value="${basedir}/build"/>
     <property name="result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
+    <property name="idea" value="${build.dir}/idea"/>
+    <property name="idea.download.url" value="http://download.jetbrains.com/idea/ideaIU-13.zip"/>
+    <property name="external.annotations.path" value="${basedir}/annotations"/>
 
 
-    <target name="run flex">
+    <path id="kotlinc-jar">
+        <fileset file="${build.dir}/kotlinc/lib/*.jar"/>
+        <fileset file="${basedir}/lib/asm-all.jar"/>
+    </path>
+
+    <path id="build.classpath">
+        <fileset dir="${idea}/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${basedir}/lib">
+            <include name="*.jar"/>
+        </fileset>
+
+    </path>
+
+
+    <target name="compile.haskell.lexer">
         <sequential>
             <delete file="${result.file}"/>
-            <jflex  file="${flex.file}"
-                    skeleton="tools/idea-flex.skeleton"
+            <jflex file="${flex.file}"
+                   skeleton="tools/idea-flex.skeleton"
 
                     />
         </sequential>
     </target>
 
+    <!-- Unpack idea-*.zip file -->
+    <target name="unzip-idea" depends="download.idea" description="Unzip downloaded artifacts and set up idea.home">
+        <delete dir="${idea}"/>
+        <mkdir dir="${idea}"/>
+        <basename property="idea.filename" file="${idea.download.url}"/>
+        <unzip dest="${idea}">
+            <fileset dir="${build.dir}" includes="${idea.filename}"/>
+        </unzip>
+    </target>
+
+    <!-- Download IntelliJ IDEA distribution -->
+    <target name="download.idea"
+            depends="mk.buid"
+            description="Downloads IntelliJ IDEA artifacts">
+        <get src="${idea.download.url}"
+             dest="${build.dir}" skipexisting="true"/>
+    </target>
+
+    <target name="download.kotlinc" depends="mk.buid">
+        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.7.270/kotlin-compiler-0.7.270.zip"
+             dest="${build.dir}" skipexisting="true"/>
+    </target>
+
+    <target name="mk.buid">
+        <mkdir dir="${build.dir}"/>
+    </target>
+    <!-- Download IntelliJ IDEA distribution -->
+    <target name="kotlinc" depends="download.kotlinc">
+        <unzip dest="${build.dir}">
+            <fileset dir="${build.dir}" includes="kotlin-compiler-*.zip"/>
+        </unzip>
+    </target>
+
+    <target name="build" depends="kotlinc, unzip-idea">
+        <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml"
+                 classpath="${build.dir}/kotlinc/lib/kotlin-ant.jar"/>
+
+
+        <path id="javac2.classpath">
+            <pathelement location="${idea}/lib/javac2.jar"/>
+            <pathelement location="${idea}/lib/asm4-all.jar"/>
+        </path>
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+
+        <mkdir dir="${build.dir}/plugin"/>
+        <javac2 destdir="${build.dir}/plugin"
+                classpathref="build.classpath"
+                srcdir="${basedir}/plugin/src">
+            <withKotlin externalannotations="${external.annotations.path}"/>
+        </javac2>
+    </target>
 
 </project>

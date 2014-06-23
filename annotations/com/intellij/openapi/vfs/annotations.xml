@@ -1,0 +1,7 @@
+<root>
+    <item name='com.intellij.openapi.vfs.VirtualFile java.lang.String getPath()'>
+        <annotation name='kotlin.jvm.KotlinSignature'>
+            <val name="value" val="&quot;fun getPath(): String&quot;"/>
+        </annotation>
+    </item>
+</root>
