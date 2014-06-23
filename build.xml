@@ -9,7 +9,7 @@
     <property name="idea" value="${build.dir}/idea"/>
     <property name="idea.download.url" value="http://download.jetbrains.com/idea/ideaIU-13.zip"/>
     <property name="external.annotations.path" value="${basedir}/annotations"/>
-
+    <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
 
     <path id="kotlinc-jar">
         <fileset file="${build.dir}/kotlinc/lib/*.jar"/>
@@ -23,17 +23,13 @@
         <fileset dir="${basedir}/lib">
             <include name="*.jar"/>
         </fileset>
-
     </path>
-
 
     <target name="compile.haskell.lexer">
         <sequential>
             <delete file="${result.file}"/>
             <jflex file="${flex.file}"
-                   skeleton="tools/idea-flex.skeleton"
-
-                    />
+                   skeleton="tools/idea-flex.skeleton"/>
         </sequential>
     </target>
 
@@ -85,11 +81,11 @@
         <typedef resource="org/jetbrains/jet/buildtools/ant/antlib.xml"
                  classpath="${build.dir}/kotlinc/lib/kotlin-ant.jar"/>
 
-
         <path id="javac2.classpath">
             <pathelement location="${idea}/lib/javac2.jar"/>
             <pathelement location="${idea}/lib/asm4-all.jar"/>
         </path>
+
         <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
 
         <mkdir dir="${build.dir}/plugin"/>
@@ -100,11 +96,23 @@
         </javac2>
     </target>
     <target name="build" depends="compile.plugin, compile.jps">
-        <jar destfile="${build.dir}/jps-plugin.jar">
+        <mkdir dir="${plugin.destination}"/>
+
+        <copydir src="${basedir}/plugin/resources/" dest="${build.dir}/plugin/"/>
+        <copy file="${basedir}/plugin/META-INF/plugin.xml" todir="${build.dir}/plugin/META-INF"/>
+        <jar destfile="${plugin.destination}/haskell-jps-plugin.jar">
             <fileset dir="${build.dir}/jps-plugin/"/>
         </jar>
-        <jar destfile="${build.dir}/haskell-plugin.jar">
+        <jar destfile="${plugin.destination}/haskell-plugin.jar">
             <fileset dir="${build.dir}/plugin/"/>
         </jar>
+        <copy file="${basedir}/lib/kotlin-runtime.jar" todir="${plugin.destination}"/>
+        <copy file="${basedir}/lib/json-simple-1.1.1.jar" todir="${plugin.destination}"/>
+        <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
+
+        <zip destfile="${build.dir}/haskell-plugin.zip"
+             basedir="${build.dir}"
+             includes="haskell-plugin/**"
+             update="true"/>
     </target>
 </project>
