@@ -22,35 +22,7 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
             persisted = new HaskellSettings();
         }
 
-        if (persisted.getState().cabalPath == null) {
-            persisted.getState().cabalPath = "cabal";
-        }
-
-        if (persisted.getState().cabalDataPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            persisted.getState().cabalDataPath = os.getCabalData();
-        }
-
-        if (persisted.getState().ghcModPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            persisted.getState().ghcModPath = os.getDefaultCabalBin() + File.separator + "ghc-mod" + os.getExe();
-        }
-
-        if (persisted.getState().ghcModiPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            persisted.getState().ghcModiPath = os.getDefaultCabalBin() + File.separator + "ghc-modi" + os.getExe();
-        }
-
-        if (persisted.getState().buildWrapperPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            persisted.getState().buildWrapperPath = os.getDefaultCabalBin() + File.separator + "buildwrapper" + os.getExe();
-        }
-
-        if (persisted.getState().scionBrowserPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            persisted.getState().scionBrowserPath = os.getDefaultCabalBin() + File.separator + "scion-browser" + os.getExe();
-        }
-
+        persisted.update();
 
         return persisted;
     }
@@ -66,6 +38,38 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
 
     State myState = new State();
 
+    void update() {
+        if (myState.cabalPath == null) {
+            myState.cabalPath = "cabal";
+        }
+
+        if (myState.cabalDataPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            myState.cabalDataPath = os.getCabalData();
+        }
+
+        if (myState.ghcModPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            myState.ghcModPath = os.getDefaultCabalBin() + File.separator + "ghc-mod" + os.getExe();
+        }
+
+        if (myState.ghcModiPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            myState.ghcModiPath = os.getDefaultCabalBin() + File.separator + "ghc-modi" + os.getExe();
+        }
+
+        if (myState.buildWrapperPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            myState.buildWrapperPath = os.getDefaultCabalBin() + File.separator + "buildwrapper" + os.getExe();
+        }
+
+        if (myState.scionBrowserPath == null) {
+            OsUtil os = UtilPackage.getOS();
+            myState.scionBrowserPath = os.getDefaultCabalBin() + File.separator + "scion-browser" + os.getExe();
+        }
+
+    }
+
     @NotNull
     public State getState() {
         return myState;
@@ -73,7 +77,7 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
 
     public void loadState(State state) {
         myState = state;
+        update();
     }
-
 
 }
