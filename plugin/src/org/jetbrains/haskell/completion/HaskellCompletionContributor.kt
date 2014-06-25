@@ -14,13 +14,18 @@ import org.jetbrains.haskell.psi.ModuleName
 import org.jetbrains.haskell.parser.token.KEYWORDS
 import org.jetbrains.haskell.external.BuildWrapper
 import org.jetbrains.haskell.util.getRelativePath
+import com.intellij.openapi.roots.ProjectRootManager
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
 
     override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
+        if (result == null) {
+            return
+        }
         if (parameters!!.getCompletionType() == CompletionType.BASIC) {
             val psiElement = parameters.getPosition()
+            val psiFile = parameters.getOriginalPosition()?.getContainingFile()
 
             /*
             val moduleContent = BuildWrapper.getModuleContentDir(psiElement)
@@ -37,23 +42,25 @@ public class HaskellCompletionContributor() : CompletionContributor() {
             */
 
             for (value in KEYWORDS) {
-                result!!.addElement(LookupElementBuilder.create(value.myName)!!)
+                result.addElement(LookupElementBuilder.create(value.myName)!!)
             }
 
             if (psiElement.getParent() is ModuleName) {
                 for (value in GHC_MOD.getModulesList()) {
-                    result!!.addElement(LookupElementBuilder.create(value)!!)
+                    result.addElement(LookupElementBuilder.create(value)!!)
                 }
             } else {
-                for (value in findCompletion(psiElement)) {
-                    result!!.addElement(LookupElementBuilder.create(value)!!)
+                for (value in findCompletion(psiElement, psiFile)) {
+                    result.addElement(LookupElementBuilder.create(value.first)!!
+                                                          .withTypeText(value.second)!!)
                 }
             }
         }
     }
 
-    private fun findCompletion(element: PsiElement) : Set<String> {
-        val names = HashSet<String>()
+    private fun findCompletion(element: PsiElement,
+                               psiFile: PsiFile?): Set<Pair<String, String?>> {
+        val names = HashSet<Pair<String, String?>>()
         val module = Module.findModule(element)
 
         if (module != null) {
@@ -62,7 +69,7 @@ public class HaskellCompletionContributor() : CompletionContributor() {
                 val moduleExports = import.getModuleExports()
                 if (moduleExports != null) {
                     for (export in moduleExports.getSymbolExportList()) {
-                        names.add(export.getText()!!)
+                        names.add(Pair(export.getText()!!, null))
                     }
                 } else {
                     val moduleName = import.getModuleName()!!.getText()

@@ -26,12 +26,20 @@ class GhcMod {
         return HaskellSettings.getInstance().getState().ghcModPath!!
     }
 
-    fun getModuleContent(module : String) : List<String> {
+    fun getModuleContent(module : String) : List<Pair<String, String?>> {
         try {
             val path = getPath()
-            val text = ProcessRunner(null).executeOrFail(path, "browse", module)
+            val text = ProcessRunner(null).executeOrFail(path, "browse", "-d", module)
             if (!text.contains(":Error:")) {
-                return text.split('\n').toList()
+                val f: (String) -> Pair<String, String?> = {
+                    if (it.contains("::")) {
+                        val t = it.split("::")
+                        Pair(t[0].trim(), t[1].trim())
+                    } else {
+                        Pair(it, null)
+                    }
+                }
+                return text.split('\n').map(f).toList()
             } else {
                 return listOf()
             }
