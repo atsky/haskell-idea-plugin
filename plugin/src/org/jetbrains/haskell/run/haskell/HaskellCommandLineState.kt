@@ -37,8 +37,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
 
-        val executableName = if (OS.isWindows) name + ".exe" else name
-        val exePath = joinPath(baseDir!!, "dist", "build", name, executableName)
+        val exePath = joinPath(baseDir!!, "dist", "build", name, OS.getExe(name))
 
         if (!File(exePath).exists()) {
             throw CantRunException("Cannot run: " + exePath)
