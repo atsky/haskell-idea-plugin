@@ -17,7 +17,7 @@ public class AddPackageAction(val packages: DefaultListModel) :
 
         val project = PlatformDataKeys.PROJECT_CONTEXT.getData(dataContext)!!
 
-        val packageName = Messages.showInputDialog(project, "Enter package name", "New packge", Messages.getQuestionIcon())
+        val packageName = Messages.showInputDialog(project, "Enter package name", "New package", Messages.getQuestionIcon())
         if (packageName != null) {
             packages.addElement(packageName);
         }
