@@ -89,7 +89,7 @@ public class TarGzVirtualFileSystem() : NewVirtualFileSystem() {
     override fun copyFile(requestor: Any?,
                           file: VirtualFile,
                           newParent: VirtualFile,
-                          copyName: String): VirtualFile? {
+                          copyName: String): VirtualFile {
         throw UnsupportedOperationException()
     }
 
@@ -97,7 +97,7 @@ public class TarGzVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    override fun createChildFile(requestor: Any?, parent: VirtualFile, file: String): VirtualFile? {
+    override fun createChildFile(requestor: Any?, parent: VirtualFile, file: String): VirtualFile {
         throw UnsupportedOperationException()
     }
 

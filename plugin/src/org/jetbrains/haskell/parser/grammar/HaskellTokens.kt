@@ -12,8 +12,8 @@ import org.jetbrains.haskell.psi.*
  */
 val ARROW_TYPE              = HaskellCompositeElementType("Arrow type", ::ArrowType)
 val APPLICATION_TYPE        = HaskellCompositeElementType("Applycation type")
-val CONSTRUCTOR             = HaskellCompositeElementType("Cunstructor", ::Constructor)
-val CONSTRUCTOR_DECLARATION = HaskellCompositeElementType("Cunstructor declaration", ::ConstructorDeclaration)
+val CONSTRUCTOR             = HaskellCompositeElementType("Constructor", ::Constructor)
+val CONSTRUCTOR_DECLARATION = HaskellCompositeElementType("Constructor declaration", ::ConstructorDeclaration)
 val DATA_DECLARATION        = HaskellCompositeElementType("Data declaration", ::DataDeclaration)
 val IMPORT_AS_PART          = HaskellCompositeElementType("Import as part", ::ImportAsPart)
 val SYMBOL_EXPORT           = HaskellCompositeElementType("Symbol export", ::SymbolExport)

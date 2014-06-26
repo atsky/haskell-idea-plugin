@@ -68,10 +68,10 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
 
     {
-        DISPLAY_NAMES.put(KEYWORD_VALUE, Pair<String, HighlightSeverity>(OptionsBundle.message("options.properties.attribute.descriptor.property.value"), null))
-        DISPLAY_NAMES.put(COMMENT_STYLE, Pair<String, HighlightSeverity>(OptionsBundle.message("options.properties.attribute.descriptor.comment"), null))
-        DISPLAY_NAMES.put(PROPERTIES_VALID_STRING_ESCAPE, Pair<String, HighlightSeverity>(OptionsBundle.message("options.properties.attribute.descriptor.valid.string.escape"), null))
-        DISPLAY_NAMES.put(PROPERTIES_INVALID_STRING_ESCAPE, Pair<String, HighlightSeverity>(OptionsBundle.message("options.properties.attribute.descriptor.invalid.string.escape"), HighlightSeverity.WARNING))
+        DISPLAY_NAMES.put(KEYWORD_VALUE, Pair("Property value", null))
+        DISPLAY_NAMES.put(COMMENT_STYLE, Pair("Comment", null))
+        DISPLAY_NAMES.put(PROPERTIES_VALID_STRING_ESCAPE, Pair("Valid string escape", null))
+        DISPLAY_NAMES.put(PROPERTIES_INVALID_STRING_ESCAPE, Pair("Invalid string escape", HighlightSeverity.WARNING))
     }
 
 }
