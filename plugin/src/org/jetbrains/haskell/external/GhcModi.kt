@@ -12,34 +12,41 @@ import com.intellij.openapi.module.ModuleManager
 import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
+import com.intellij.notification.Notifications
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.openapi.progress.Task
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.ProgressIndicator
 
 /**
  * Created by atsky on 15/06/14.
  */
-public class GhcModi(val project: Project, val settings : HaskellSettings) : ProjectComponent {
-    var process : Process? = null;
+public class GhcModi(val project: Project, val settings: HaskellSettings) : ProjectComponent {
+    var process: Process? = null;
 
     override fun projectOpened() {
-        val module = ModuleManager.getInstance(project)!!.getModules().get(0)
-        val file = module.getModuleFile()?.getParent()
         val builder = ProcessBuilder(getPath())
-        builder.directory(File(file!!.getPath()))
+        builder.directory(File(project.getBaseDir()!!.getPath()))
         process = builder.start()
     }
 
-    fun getPath() : String {
+    fun getPath(): String {
         return settings.getState().ghcModiPath!!
     }
 
     override fun projectClosed() {
         val process = process
         if (process != null) {
-            synchronized(process) {
-                val output = OutputStreamWriter(process.getOutputStream()!!)
-                output.write("\n")
-                output.flush()
-                process.waitFor()
-            }
+            ProgressManager.getInstance()!!.runProcessWithProgressSynchronously({
+                synchronized(process) {
+                    val output = OutputStreamWriter(process.getOutputStream()!!)
+                    output.write("\n")
+                    output.flush()
+                    process.waitFor()
+                }
+            }, "stopping ghc-modi", false, project)
+
             this.process = null
         }
     }
@@ -52,10 +59,10 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
 
     }
 
-    override fun getComponentName(): String ="ghc-modi"
+    override fun getComponentName(): String = "ghc-modi"
 
 
-    fun runCommand(command : String): List<String> {
+    fun runCommand(command: String): List<String> {
         val process = process
         if (process == null) {
             return listOf()
@@ -69,8 +76,8 @@ public class GhcModi(val project: Project, val settings : HaskellSettings) : Pro
             val lines = ArrayList<String>()
 
             while (lines.size < 2 ||
-                  (!lines[lines.size - 2].startsWith("OK") &&
-                   !lines[lines.size - 2].startsWith("NG"))) {
+            (!lines[lines.size - 2].startsWith("OK") &&
+             !lines[lines.size - 2].startsWith("NG"))) {
                 val char = CharArray(16 * 1024)
                 val size = input.read(char)
                 val result = java.lang.String(char, 0, size)
