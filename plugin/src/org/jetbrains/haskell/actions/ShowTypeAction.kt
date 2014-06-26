@@ -26,9 +26,7 @@ public class ShowTypeAction : AnAction() {
         val endLine: Int,
         val endCol : Int,
         val aType : String
-    ) {
-
-    }
+    )
 
     fun typeInfoFromString(str : String) : TypeInfo? {
         val matcher = Pattern.compile("(\\d+) (\\d+) (\\d+) (\\d+) \"(.*)\"").matcher(str)
@@ -81,8 +79,8 @@ public class ShowTypeAction : AnAction() {
         val lineColPosition = LineColPosition.fromOffset(psiFile, range.first)!!
 
         val ghcModi = psiFile.getProject().getComponent(javaClass<GhcModi>())!!
-        val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
-        val relativePath = getRelativePath(moduleContent!!.getPath(), psiFile.getVirtualFile()!!.getPath())
+        val basePath = psiFile.getProject().getBasePath()!!
+        val relativePath = getRelativePath(basePath, psiFile.getVirtualFile()!!.getPath())
 
         val line = lineColPosition.myLine
         val column = lineColPosition.myColumn
