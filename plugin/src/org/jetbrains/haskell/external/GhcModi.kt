@@ -18,6 +18,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.ProgressIndicator
+import org.jetbrains.haskell.util.ProcessRunner
 
 /**
  * Created by atsky on 15/06/14.
@@ -26,9 +27,12 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
     var process: Process? = null;
 
     override fun projectOpened() {
-        val builder = ProcessBuilder(getPath())
-        builder.directory(File(project.getBaseDir()!!.getPath()))
-        process = builder.start()
+        startProcess()
+    }
+
+    fun startProcess() {
+        assert(process == null)
+        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()))
     }
 
     fun getPath(): String {
@@ -61,37 +65,52 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
 
     override fun getComponentName(): String = "ghc-modi"
 
+    fun isStopped(): Boolean {
+        try {
+            process!!.exitValue()
+            return true
+        } catch(e: IllegalThreadStateException) {
+            return false
+        }
+    }
 
     fun runCommand(command: String): List<String> {
-        val process = process
-        if (process == null) {
-            return listOf()
-        }
-        return synchronized(process) {
-            val input = InputStreamReader(process.getInputStream()!!)
-            val output = OutputStreamWriter(process.getOutputStream()!!)
-            output.write(command + "\n")
-            output.flush()
-
-            val lines = ArrayList<String>()
-
-            while (lines.size < 2 ||
-            (!lines[lines.size - 2].startsWith("OK") &&
-             !lines[lines.size - 2].startsWith("NG"))) {
-                val char = CharArray(16 * 1024)
-                val size = input.read(char)
-                val result = java.lang.String(char, 0, size)
-                val split = result.split("\n", -1)
-                if (lines.isEmpty()) {
-                    lines.add(split[0])
-                } else {
-                    val last = lines.size - 1
-                    lines[last] = lines[last] + split[0]
-                }
-                lines.addAll(split.toList().subList(1, split.size))
+        return synchronized(process!!) {
+            if (isStopped()) {
+                val inStream = process!!.getInputStream()!!
+                val string = inStream.readBytes(inStream.available()).toString("UTF-8")
+                Notifications.Bus.notify(Notification("ghc.modi", "ghc-modi failed", string, NotificationType.ERROR))
+                process = null
+                startProcess();
             }
+            val process = process
+            if (process == null) {
+                listOf<String>()
+            } else {
+                val input = InputStreamReader(process.getInputStream()!!)
+                val output = OutputStreamWriter(process.getOutputStream()!!)
+                output.write(command + "\n")
+                output.flush()
 
-            lines
+                val lines = ArrayList<String>()
+
+                while (lines.size < 2 ||
+                (!lines[lines.size - 2].startsWith("OK") &&
+                !lines[lines.size - 2].startsWith("NG"))) {
+                    val char = CharArray(16 * 1024)
+                    val size = input.read(char)
+                    val result = java.lang.String(char, 0, size)
+                    val split = result.split("\n", -1)
+                    if (lines.isEmpty()) {
+                        lines.add(split[0])
+                    } else {
+                        val last = lines.size - 1
+                        lines[last] = lines[last] + split[0]
+                    }
+                    lines.addAll(split.toList().subList(1, split.size))
+                }
+                lines
+            }
         }
     }
 

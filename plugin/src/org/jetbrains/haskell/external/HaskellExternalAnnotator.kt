@@ -77,9 +77,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }
     }
 
-    fun getResultFromGhci(psiFile: PsiFile,
-                          moduleContent: VirtualFile,
-                          file: VirtualFile): List<ErrorMessage> {
+    fun getResultFromGhcModi(psiFile: PsiFile,
+                             baseDir: VirtualFile,
+                             file: VirtualFile): List<ErrorMessage> {
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
                 FileDocumentManager.getInstance()!!.saveAllDocuments()
@@ -89,7 +89,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         val ghcModi = psiFile.getProject().getComponent(javaClass<GhcModi>())!!
 
-        val relativePath = getRelativePath(moduleContent.getPath(), file.getPath())
+        val relativePath = getRelativePath(baseDir.getPath(), file.getPath())
 
         val result = ghcModi.runCommand("check $relativePath")
 
@@ -138,28 +138,27 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         return listOf()
     }
 
+    fun getProjectBaseDir(psiFile: PsiFile): VirtualFile? {
+        return psiFile.getProject().getBaseDir()
+    }
+
     override fun doAnnotate(psiFile: PsiFile?): List<ErrorMessage> {
         val file = psiFile!!.getVirtualFile()
         if (file == null) {
             return listOf()
         }
 
-        val moduleContent = BuildWrapper.getModuleContentDir(psiFile)
+        val baseDir = getProjectBaseDir(psiFile)
 
-        if (moduleContent == null) {
+        if (baseDir == null) {
             return listOf()
         }
 
-        return getResultFromGhci(psiFile, moduleContent, file)
+        return getResultFromGhcModi(psiFile, baseDir, file)
     }
 
 
     override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>?, holder: AnnotationHolder) {
-        val moduleContent = BuildWrapper.getModuleContentDir(file)
-        if (moduleContent == null) {
-            return
-        }
-
         for (error in annotationResult!!) {
 
             val start = LineColPosition(error.line, error.column).getOffset(file)
