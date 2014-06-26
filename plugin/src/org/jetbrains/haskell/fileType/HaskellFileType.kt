@@ -23,7 +23,7 @@ public class HaskellFileType() : LanguageFileType(HaskellLanguage.INSTANCE) {
     override fun getIcon(): Icon =
             myIcon
 
-    override fun getCharset(file: VirtualFile, content: ByteArray): String =
+    fun getCharset(file: VirtualFile, content: ByteArray): String =
             "UTF-8"
 
     class object {

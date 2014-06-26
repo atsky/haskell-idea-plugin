@@ -31,7 +31,7 @@ public class HiFileType() : FileType {
         return true
     }
 
-    override fun getCharset(file: VirtualFile, content: ByteArray): String? {
+    override fun getCharset(file: VirtualFile, content: ByteArray?): String? {
         return null
     }
 
