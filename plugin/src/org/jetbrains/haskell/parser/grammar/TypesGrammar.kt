@@ -31,7 +31,7 @@ private val aArrowType : Rule = rule(ARROW_TYPE) {
     aApplicationType + RIGHT_ARROW + TYPE
 }
 
-val TYPE_REF = RuleBasedElementType("Simple type", ::TypeRef) { TYPE_OR_CONS }
+val TYPE_REF = RuleBasedElementType("Type ref", ::TypeRef) { TYPE_OR_CONS }
 
 private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
 

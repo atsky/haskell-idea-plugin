@@ -17,14 +17,13 @@ import org.jetbrains.haskell.HaskellLanguage
 import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 import org.jetbrains.haskell.parser.token.*
-import org.jetbrains.haskell.parser.lexer.HaskellFullLexer
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 
 
 public class HaskellParserDefinition() : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
-    override fun createLexer(project: Project?): Lexer = HaskellFullLexer()
+    override fun createLexer(project: Project?): Lexer = HaskellLexer()
 
     override fun getFileNodeType(): IFileElementType = HASKELL_FILE
 

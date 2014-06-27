@@ -14,6 +14,7 @@ import org.jetbrains.haskell.psi.DoExpression
 import org.jetbrains.haskell.psi.ReferenceExpression
 import org.jetbrains.haskell.psi.CaseClause
 import org.jetbrains.haskell.psi.DoStatement
+import org.jetbrains.haskell.psi.CaseExpression
 
 /**
  * Created by atsky on 21/05/14.
@@ -73,7 +74,7 @@ val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", ::DoStatement) {
 
 
 private val DO_EXPRESSION = RuleBasedElementType("Do expression", ::DoExpression) {
-    DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
+    DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN_RULE
 }
 
 private val anLambdaLeftPart = lazy {
@@ -88,7 +89,7 @@ private val aCaseCase: Rule = RuleBasedElementType("Case clause", ::CaseClause) 
     anExpression + RIGHT_ARROW + anExpression
 }
 
-private val CASE_EXPRESSION = RuleBasedElementType("Case expression", ::CaseClause) {
+private val CASE_EXPRESSION = RuleBasedElementType("Case expression", ::CaseExpression) {
     val caseBody = VIRTUAL_LEFT_PAREN + aList(aCaseCase, VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
     CASE_KW + anExpression + OF_KW + caseBody
 }

@@ -8,8 +8,10 @@ import com.intellij.psi.tree.IElementType
  * Created by atsky on 4/5/14.
  */
 
+
+
 public trait Rule {
-    public fun parse(builder: PsiBuilder): Boolean
+    public fun parse(state: ParserState): Boolean
 
     public fun and(rule: Rule): Rule = AndRule(this, rule)
 
@@ -21,29 +23,29 @@ public trait Rule {
 
 private class AndRule(val first: Rule, val second: Rule) : Rule {
 
-    override fun parse(builder: PsiBuilder): Boolean =
-            atom(builder) {
-                first.parse(builder) && second.parse(builder)
+    override fun parse(state: ParserState): Boolean =
+            atom(state) {
+                first.parse(state) && second.parse(state)
             }
 
 }
 
 private class OrRule(val first: Rule, val second: Rule) : Rule {
 
-    override fun parse(builder: PsiBuilder): Boolean =
-            first.parse(builder) || second.parse(builder)
+    override fun parse(state: ParserState): Boolean =
+            first.parse(state) || second.parse(state)
 
 
 }
 
 private class ListRule(val element: Rule, val separator: Rule?, val canBeEmpty: Boolean) : Rule {
 
-    override fun parse(builder: PsiBuilder): Boolean =
-            atom(builder) {
-                val result = element.parse(builder)
+    override fun parse(state: ParserState): Boolean =
+            atom(state) {
+                val result = element.parse(state)
 
-                while (atom(builder) {
-                    (separator?.parse(builder) ?: true) && element.parse(builder)
+                while (atom(state) {
+                    (separator?.parse(state) ?: true) && element.parse(state)
                 }) {
                 }
 
@@ -56,20 +58,20 @@ private class LazyRule(val body : () -> Rule) : Rule {
 
     var rule : Rule? = null
 
-    override fun parse(builder: PsiBuilder): Boolean {
+    override fun parse(state: ParserState): Boolean {
         if (rule == null) {
             rule = body()
         }
-        return rule!!.parse(builder)
+        return rule!!.parse(state)
     }
 
 }
 
 public fun rule(elementType: IElementType, ruleConstructor: () -> Rule): Rule {
     return object : Rule {
-        override fun parse(builder: PsiBuilder): Boolean {
-            val marker = builder.mark()!!
-            val result = ruleConstructor().parse(builder)
+        override fun parse(state: ParserState): Boolean {
+            val marker = state.mark()
+            val result = ruleConstructor().parse(state)
 
             if (result) {
                 marker.done(elementType);

@@ -12,6 +12,7 @@ import org.jetbrains.haskell.parser.rules.rule
 import org.jetbrains.haskell.parser.rules.maybe
 import org.jetbrains.haskell.psi.*
 import org.jetbrains.haskell.parser.grammar.*
+import org.jetbrains.haskell.parser.rules.ParserState
 
 /**
  * Created by atsky on 5/2/14.
@@ -31,15 +32,24 @@ val CONTEXT : Rule = lazy {
 }
 
 val untilSemicolon : Rule = object : Rule {
-    override fun parse(builder: PsiBuilder): Boolean {
-        while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
-        builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
-        !builder.eof()) {
+    override fun parse(state: ParserState): Boolean {
+        while (state.getTokenType() != VIRTUAL_SEMICOLON &&
+               state.getTokenType() != VIRTUAL_RIGHT_PAREN &&
+               !state.eof()) {
 
-            (SOME_ID or ANY).parse(builder)
+            (SOME_ID or ANY).parse(state)
         }
         return true
     }
+}
+
+val VIRTUAL_RIGHT_PAREN_RULE = object : Rule {
+
+    override fun parse(state: ParserState): Boolean {
+        state.popIndent()
+        return true;
+    }
+
 }
 
 val expressionList = aList(anAtomExpression, null)
@@ -145,8 +155,8 @@ val SOME_ID = RuleBasedElementType("Some id", ::SomeId) {
 
 val ANY : Rule = RuleBasedElementType("Any", ::UnparsedToken) {
     object : Rule {
-        override fun parse(builder: PsiBuilder): Boolean {
-            builder.advanceLexer()
+        override fun parse(state: ParserState): Boolean {
+            state.advanceLexer()
             return true
         }
     }

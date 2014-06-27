@@ -2,9 +2,7 @@ package org.jetbrains.haskell.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
-import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.cabal.parser.CaballParserDefinition;
-import org.jetbrains.haskell.parser.lexer.HaskellFullLexer;
+import org.jetbrains.haskell.parser.lexer.HaskellLexer;
 import org.junit.Test;
 
 
@@ -20,7 +18,7 @@ public class HaskellLexerTest extends LexerTestCase {
 
     @Override
     protected Lexer createLexer() {
-        return new HaskellFullLexer();
+        return new HaskellLexer();
     }
 
     @Override
@@ -68,36 +66,5 @@ public class HaskellLexerTest extends LexerTestCase {
         doTest("\u222F",
                 "opertor ('\u222F')");
     }
-
-
-    @Test
-    public void testIndent() throws Exception {
-        doTest("module Main where\n" +
-                        "\n" +
-                        "main\n",
-                "module ('module')\n" +
-                        "WHITE_SPACE (' ')\n" +
-                        "type_cons ('Main')\n" +
-                        "WHITE_SPACE (' ')\n" +
-                        "where ('where')\n" +
-                        "NL ('\\n')\n" +
-                        "NL ('\\n')\n" +
-                        "VIRTUAL_LEFT_PAREN ('')\n" +
-                        "id ('main')\n" +
-                        "NL ('\\n')\n" +
-                        "VIRTUAL_RIGHT_PAREN ('')");
-
-        doTest("where\n" +
-               " { t }",
-               "where ('where')\n" +
-               "NL ('\\n')\n" +
-               "WHITE_SPACE (' ')\n" +
-               "{ ('{')\n" +
-               "WHITE_SPACE (' ')\n" +
-               "id ('t')\n" +
-               "WHITE_SPACE (' ')\n" +
-               "} ('}')");
-    }
-
 
 }

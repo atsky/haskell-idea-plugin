@@ -23,6 +23,8 @@ public fun inParentheses(rule: Rule): Rule {
 
 public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
+    val state = ParserState(builder)
+
     public fun parse(): ASTNode {
         return parseInternal(root)
     }
@@ -37,7 +39,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
 
 
     fun parseModule() = start(MODULE) {
-        val result = (MODULE_HEADER_RULE).parse(builder)
+        (MODULE_HEADER_RULE).parse(state)
 
 
         val rule = VIRTUAL_SEMICOLON or
@@ -49,25 +51,25 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         TYPE_DECLARATION or
         aValueBody
 
-        while (!builder.eof()) {
+        while (!state.eof()) {
 
-            if (!rule.parse(builder)) {
-                while (builder.getTokenType() != VIRTUAL_SEMICOLON &&
-                builder.getTokenType() != VIRTUAL_RIGHT_PAREN &&
-                !builder.eof()) {
+            if (!rule.parse(state)) {
+                while (state.getTokenType() != VIRTUAL_SEMICOLON &&
+                state.getTokenType() != VIRTUAL_RIGHT_PAREN &&
+                !state.eof()) {
 
-                    SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
-                        builder.advanceLexer()
+                    SOME_ID.parse(state) || start(HASKELL_TOKEN) {
+                        state.advanceLexer()
                         true
                     }
                 }
-                builder.advanceLexer()
+                state.advanceLexer()
             }
         }
 
-        while (!builder.eof()) {
-            SOME_ID.parse(builder) || start(HASKELL_TOKEN) {
-                builder.advanceLexer()
+        while (!state.eof()) {
+            SOME_ID.parse(state) || start(HASKELL_TOKEN) {
+                state.advanceLexer()
                 true
             }
         }

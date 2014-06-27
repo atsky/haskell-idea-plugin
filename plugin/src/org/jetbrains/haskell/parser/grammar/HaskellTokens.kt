@@ -6,6 +6,7 @@ import org.jetbrains.haskell.psi.Import
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.psi.*
+import org.jetbrains.haskell.parser.rules.RuleBasedElementType
 
 /**
  * Created by atsky on 3/14/14.

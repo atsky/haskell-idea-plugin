@@ -18,5 +18,5 @@ public class RuleBasedElementType(
 
     val ruleInternal : Rule = rule(this, ruleCreator);
 
-    override fun parse(builder: PsiBuilder) = ruleInternal.parse(builder)
+    override fun parse(state: ParserState) = ruleInternal.parse(state)
 }

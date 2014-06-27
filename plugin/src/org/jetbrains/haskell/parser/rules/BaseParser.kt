@@ -3,8 +3,8 @@ package org.jetbrains.haskell.parser.rules
 import com.intellij.lang.PsiBuilder
 import com.intellij.psi.tree.IElementType
 
-inline fun atom(builder: PsiBuilder, body: () -> Boolean): Boolean {
-    val marker = builder.mark()!!
+inline fun atom(state: ParserState, body: () -> Boolean): Boolean {
+    val marker = state.mark()
     val result = body()
     if (result) {
         marker.drop();
@@ -21,8 +21,8 @@ public fun aList(element : Rule, separator : Rule? = null) : Rule = ListRule(ele
 
 public fun maybe(rule : Rule) : Rule = object : Rule {
 
-    override fun parse(builder: PsiBuilder): Boolean {
-        rule.parse(builder)
+    override fun parse(state: ParserState): Boolean {
+        rule.parse(state)
         return true
     }
 }
