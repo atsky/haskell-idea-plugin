@@ -27,4 +27,7 @@ public class IndentTest extends ParsingTestCase {
     @Test
     public void testClosingBrace() throws Exception { doTest(true); }
 
+    @Test
+    public void testHelloWorld() throws Exception { doTest(true); }
+
 }

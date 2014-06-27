@@ -9,7 +9,6 @@ import java.util.HashSet
 import java.util.Arrays
 import org.jetbrains.haskell.parser.HaskellToken
 import java.util.ArrayList
-import org.jetbrains.haskell.parser.rules.ParserState.IntStack
 
 /**
  * Created by atsky on 26/06/14.
@@ -26,7 +25,7 @@ public class ParserState(val build: PsiBuilder) {
             WHERE_KW))
 
     var lineStart: Int = 0
-    var tokenStack: HaskellToken? = null
+    var tokens: List<HaskellToken> = listOf();
     var isOnNewLine: Boolean = false
     var indentStack: IntStack? = null;
 
@@ -47,8 +46,8 @@ public class ParserState(val build: PsiBuilder) {
     }
 
     fun getTokenType(): IElementType? {
-        if (tokenStack != null) {
-            return tokenStack
+        if (tokens.isNotEmpty()) {
+            return tokens.head
         } else {
             return build.getTokenType()
         }
@@ -56,40 +55,35 @@ public class ParserState(val build: PsiBuilder) {
     }
 
     fun advanceLexer() {
-        if (tokenStack != null) {
-            tokenStack = null
+        if (tokens.isNotEmpty()) {
+            tokens = tokens.tail
             return
         }
         if (indentTokens.contains(build.getTokenType())) {
             build.advanceLexer()
             if (build.getTokenType() != LEFT_BRACE) {
-                tokenStack = VIRTUAL_LEFT_PAREN
+                tokens = listOf(VIRTUAL_LEFT_PAREN)
                 indentStack = IntStack(build.getCurrentOffset() - lineStart, indentStack)
             }
         } else {
             if (build.getTokenType() == null) {
                 return
             }
-            val mark = build.mark()!!
             build.advanceLexer()
             build.getTokenType()
             if (isOnNewLine) {
                 isOnNewLine = false
                 val offset = build.getCurrentOffset() - lineStart
-                val stack = indentStack
-                if (stack != null && stack.head > offset) {
-                    tokenStack = VIRTUAL_RIGHT_PAREN
+                val tokensList = ArrayList<HaskellToken>()
+                while (indentStack != null && indentStack!!.head > offset) {
+                    tokensList.add(VIRTUAL_RIGHT_PAREN)
                     indentStack = indentStack?.tail
-                    isOnNewLine = true
-                    mark.rollbackTo()
-                    return
                 }
-                if (stack?.head == offset) {
-                    tokenStack = VIRTUAL_SEMICOLON
+                if (indentStack?.head == offset) {
+                    tokensList.add(VIRTUAL_SEMICOLON)
                 }
-
+                tokens = tokensList
             }
-            mark.drop()
         }
 
     }
@@ -104,7 +98,7 @@ public class ParserState(val build: PsiBuilder) {
 
     inner class ParserMarker(val marker: PsiBuilder.Marker) {
         val lineStart_: Int = lineStart
-        val tokenStack_: HaskellToken? = tokenStack
+        val tokens_: List<HaskellToken> = tokens
         val isOnNewLine_: Boolean = isOnNewLine
         val indentStack_: IntStack? = indentStack
 
@@ -119,7 +113,7 @@ public class ParserState(val build: PsiBuilder) {
 
         fun rollbackTo() {
             lineStart = lineStart_
-            tokenStack = tokenStack_
+            tokens = tokens_
             isOnNewLine = isOnNewLine_
             indentStack = indentStack_
             marker.rollbackTo()
