@@ -43,14 +43,26 @@ val untilSemicolon : Rule = object : Rule {
     }
 }
 
-val VIRTUAL_RIGHT_PAREN_RULE = object : Rule {
+val SEMICOLON_RULE = (SEMICOLON or VIRTUAL_SEMICOLON)
+
+val RIGHT_BRACE_RULE = object : Rule {
 
     override fun parse(state: ParserState): Boolean {
-        state.popIndent()
+        val tokenType = state.getTokenType()
+        if (tokenType == VIRTUAL_RIGHT_PAREN) {
+            state.advanceLexer()
+        } else {
+            state.popIndent()
+        }
+
         return true;
     }
 
 }
+
+fun inBraces(rule : Rule) : Rule =
+    (LEFT_BRACE + rule + RIGHT_BRACE) or (VIRTUAL_LEFT_PAREN + rule + RIGHT_BRACE_RULE)
+
 
 val expressionList = aList(anAtomExpression, null)
 

@@ -74,7 +74,7 @@ val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", ::DoStatement) {
 
 
 private val DO_EXPRESSION = RuleBasedElementType("Do expression", ::DoExpression) {
-    DO_KW + VIRTUAL_LEFT_PAREN + aList(DO_STATEMENT, untilSemicolon + VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN_RULE
+    DO_KW + inBraces(aList(DO_STATEMENT, SEMICOLON_RULE))
 }
 
 private val anLambdaLeftPart = lazy {
@@ -90,6 +90,6 @@ private val aCaseCase: Rule = RuleBasedElementType("Case clause", ::CaseClause) 
 }
 
 private val CASE_EXPRESSION = RuleBasedElementType("Case expression", ::CaseExpression) {
-    val caseBody = VIRTUAL_LEFT_PAREN + aList(aCaseCase, VIRTUAL_SEMICOLON) + VIRTUAL_RIGHT_PAREN
+    val caseBody = inBraces(aList(aCaseCase, SEMICOLON_RULE))
     CASE_KW + anExpression + OF_KW + caseBody
 }

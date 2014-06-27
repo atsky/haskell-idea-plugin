@@ -25,10 +25,10 @@ public class ParserState(val build: PsiBuilder) {
             LET_KW,
             WHERE_KW))
 
-    var lineStart : Int = 0
-    var tokenStack : HaskellToken? = null
-    var isOnNewLine : Boolean = true
-    var indentStack : IntStack? = null;
+    var lineStart: Int = 0
+    var tokenStack: HaskellToken? = null
+    var isOnNewLine: Boolean = false
+    var indentStack: IntStack? = null;
 
     {
         build.setWhitespaceSkippedCallback(object : WhitespaceSkippedCallback {
@@ -50,7 +50,6 @@ public class ParserState(val build: PsiBuilder) {
         if (tokenStack != null) {
             return tokenStack
         } else {
-            isOnNewLine = false
             return build.getTokenType()
         }
 
@@ -63,21 +62,34 @@ public class ParserState(val build: PsiBuilder) {
         }
         if (indentTokens.contains(build.getTokenType())) {
             build.advanceLexer()
-            build.getTokenType()
-            tokenStack = VIRTUAL_LEFT_PAREN
-            indentStack = IntStack(build.getCurrentOffset() - lineStart, indentStack)
+            if (build.getTokenType() != LEFT_BRACE) {
+                tokenStack = VIRTUAL_LEFT_PAREN
+                indentStack = IntStack(build.getCurrentOffset() - lineStart, indentStack)
+            }
         } else {
-            build.advanceLexer()
             if (build.getTokenType() == null) {
                 return
             }
+            val mark = build.mark()!!
+            build.advanceLexer()
+            build.getTokenType()
             if (isOnNewLine) {
+                isOnNewLine = false
                 val offset = build.getCurrentOffset() - lineStart
-                if (indentStack != null && indentStack!!.head == offset) {
+                val stack = indentStack
+                if (stack != null && stack.head > offset) {
+                    tokenStack = VIRTUAL_RIGHT_PAREN
+                    indentStack = indentStack?.tail
+                    isOnNewLine = true
+                    mark.rollbackTo()
+                    return
+                }
+                if (stack?.head == offset) {
                     tokenStack = VIRTUAL_SEMICOLON
                 }
-                System.out.println(offset)
+
             }
+            mark.drop()
         }
 
     }
@@ -91,13 +103,13 @@ public class ParserState(val build: PsiBuilder) {
     }
 
     inner class ParserMarker(val marker: PsiBuilder.Marker) {
-        val lineStart_ : Int = lineStart
-        val tokenStack_ : HaskellToken? = tokenStack
-        val isOnNewLine_ : Boolean = isOnNewLine
-        val indentStack_ : IntStack? = indentStack
+        val lineStart_: Int = lineStart
+        val tokenStack_: HaskellToken? = tokenStack
+        val isOnNewLine_: Boolean = isOnNewLine
+        val indentStack_: IntStack? = indentStack
 
 
-        fun done(elementType : IElementType) {
+        fun done(elementType: IElementType) {
             marker.done(elementType)
         }
 
@@ -114,7 +126,7 @@ public class ParserState(val build: PsiBuilder) {
         }
     }
 
-    class IntStack(val head : Int,
-                   val tail : IntStack?)
+    class IntStack(val head: Int,
+                   val tail: IntStack?)
 }
 

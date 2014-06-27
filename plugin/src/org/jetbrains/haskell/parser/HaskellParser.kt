@@ -42,7 +42,7 @@ public class HaskellParser(root: IElementType, builder: PsiBuilder) : BaseParser
         (MODULE_HEADER_RULE).parse(state)
 
 
-        val rule = VIRTUAL_SEMICOLON or
+        val rule = SEMICOLON_RULE or
         aDataDeclaration or
         IMPORT or
         INSTANCE_DECLARATION or
