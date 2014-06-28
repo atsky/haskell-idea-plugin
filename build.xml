@@ -119,10 +119,10 @@
     </target>
 
     <target name="generateUpdateXml">
-        <echoxml file="build/updatePlugins.xml">
+        <echoxml file="build/updatePlugin.xml">
             <plugins>
                 <plugin id="org.jetbrains.haskell"
-                        url="http://teamcity.jetbrains.com/repository/download/Haskell_Build/.lastSuccessful/haskell-plugin.zip"
+                        url="http://teamcity.jetbrains.com/guestAuth/repository/download/Haskell_Build/.lastSuccessful/haskell-plugin.zip"
                         version="0.3.${build.number}" />
             </plugins>
         </echoxml>
