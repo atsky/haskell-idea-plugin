@@ -5,6 +5,9 @@ IntelliJ IDEA plugin for Haskell, based on [ideah](https://code.google.com/p/ide
 
 http://plugins.jetbrains.com/plugin/7453?pr=idea
 
+You can download latest build manually from BuildServer:
+(http://teamcity.jetbrains.com/viewType.html?buildTypeId=Haskell_Build&guest=1)
+
 For now provides basic features:
 * Haskell syntax highlight
 * Error checking with [buidwrapper](https://github.com/JPMoresmau/BuildWrapper).
