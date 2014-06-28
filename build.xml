@@ -113,7 +113,7 @@
         <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
 
         <zip destfile="${build.dir}/haskell-plugin.zip"
-             basedir="v"
+             basedir="${build.dir}"
              includes="haskell-plugin/**"
              update="true"/>
     </target>
