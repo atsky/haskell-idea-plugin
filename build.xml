@@ -117,4 +117,16 @@
              includes="haskell-plugin/**"
              update="true"/>
     </target>
+
+    <target name="generateUpdateXml">
+        <echoxml file="build/updatePlugins.xml">
+            <plugins>
+                <plugin id="org.jetbrains.haskell"
+                        url="http://teamcity.jetbrains.com/repository/download/Haskell_Build/.lastSuccessful/haskell-plugin.zip"
+                        version="0.3.${build.number}" />
+            </plugins>
+        </echoxml>
+
+        <echo message="##teamcity[publishArtifacts 'updatePlugins.xml']" />
+    </target>
 </project>
