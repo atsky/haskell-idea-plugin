@@ -120,7 +120,7 @@
                     factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
         <applicationConfigurable
-                instanceClass="org.jetbrains.haskell.config.HaskellConfigurable"/>
+                implementation="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
     </extensions>
 </idea-plugin>
