@@ -119,8 +119,7 @@
         <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
                     factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
-        <applicationConfigurable
-                implementation="org.jetbrains.haskell.config.HaskellConfigurable"/>
+        <applicationConfigurable instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
     </extensions>
 </idea-plugin>
