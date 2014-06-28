@@ -16,7 +16,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.haskell.fileType.HaskellFile
-import org.jetbrains.haskell.external.BuildWrapper
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.jetbrains.cabal.CabalInterface
@@ -32,7 +31,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Arrays
 import javax.xml.bind.JAXBElement.GlobalScope
-import org.jetbrains.haskell.scope.HackageScope
 
 /**
  * Created by atsky on 3/29/14.

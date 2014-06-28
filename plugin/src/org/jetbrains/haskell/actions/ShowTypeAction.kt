@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.haskell.external.BuildWrapper
 import org.jetbrains.haskell.util.getRelativePath
 import org.jetbrains.haskell.util.LineColPosition
 import com.intellij.psi.PsiElement

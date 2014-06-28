@@ -9,12 +9,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.haskell.psi.Module
 import java.util.HashSet
-import org.jetbrains.haskell.external.GHC_MOD
 import org.jetbrains.haskell.psi.ModuleName
 import org.jetbrains.haskell.parser.token.KEYWORDS
-import org.jetbrains.haskell.external.BuildWrapper
 import org.jetbrains.haskell.util.getRelativePath
 import com.intellij.openapi.roots.ProjectRootManager
+import org.jetbrains.haskell.external.GhcMod
 
 
 public class HaskellCompletionContributor() : CompletionContributor() {
@@ -46,7 +45,7 @@ public class HaskellCompletionContributor() : CompletionContributor() {
             }
 
             if (psiElement.getParent() is ModuleName) {
-                for (value in GHC_MOD.getModulesList()) {
+                for (value in GhcMod.getModulesList()) {
                     result.addElement(LookupElementBuilder.create(value)!!)
                 }
             } else {
@@ -73,13 +72,13 @@ public class HaskellCompletionContributor() : CompletionContributor() {
                     }
                 } else {
                     val moduleName = import.getModuleName()!!.getText()
-                    for (name in GHC_MOD.getModuleContent(moduleName!!)) {
+                    for (name in GhcMod.getModuleContent(moduleName!!)) {
                         names.add(name)
                     }
                 }
             }
         }
-        for (name in GHC_MOD.getModuleContent("Prelude")) {
+        for (name in GhcMod.getModuleContent("Prelude")) {
             names.add(name)
         }
         return names

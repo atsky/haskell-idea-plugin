@@ -12,14 +12,13 @@ import com.intellij.util.ui.UIUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.options.ShowSettingsUtil
 import org.jetbrains.haskell.config.HaskellConfigurable
-import org.jetbrains.haskell.external.GHC_MOD
-import org.jetbrains.haskell.external.BuildWrapper
 import com.intellij.openapi.module.Module
 import java.io.File
 import org.jetbrains.haskell.util.deleteRecursive
 import org.jetbrains.haskell.util.ProcessRunner
 import java.io.IOException
 import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.external.GhcMod
 
 
 public class HaskellProjectComponent(val project: Project) : ProjectComponent {
@@ -57,9 +56,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
         if (!getHaskellModules().empty) {
-            removeTempDir()
-
-
             val paths = System.getenv("PATH")!!.split(File.pathSeparator).toArrayList()
             if (OS.isMac) {
                 paths.add("/usr/local/bin")
@@ -94,11 +90,8 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                     }
                 }
             } else {
-                if (!GHC_MOD.сheck()) {
+                if (!GhcMod.сheck()) {
                     packageNotFound("ghc-mod")
-                }
-                if (!BuildWrapper.check()) {
-                    packageNotFound("buildwrapper")
                 }
             }
         }
@@ -106,7 +99,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
 
 
     override fun projectClosed() {
-        removeTempDir()
     }
 
     override fun getComponentName(): String {
@@ -119,6 +111,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
     override fun disposeComponent() {
     }
 
+    Deprecated
     private fun removeTempDir() {
         for (module in getHaskellModules()) {
             val path = module.getModuleFile()?.getParent()?.getPath()

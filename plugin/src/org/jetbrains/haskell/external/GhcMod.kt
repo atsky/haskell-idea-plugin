@@ -11,15 +11,15 @@ import org.jetbrains.haskell.util.OsUtil
 import java.io.File
 import org.jetbrains.haskell.util.OS
 import org.jetbrains.haskell.config.HaskellSettings
+import java.util.Collections
+import java.util.HashMap
 
 
 /**
  * Created by atsky on 3/29/14.
  */
 
-public val GHC_MOD : GhcMod = GhcMod()
-
-class GhcMod {
+object GhcMod {
     var errorReported : Boolean = false
 
     fun getPath() : String {
@@ -48,6 +48,26 @@ class GhcMod {
             return listOf()
         }
 
+    }
+
+    fun debug(basePath : String, file: String) : Map<String, String> {
+        try {
+            val path = getPath()
+            val text = ProcessRunner(basePath).executeOrFail(path, "debug", file)
+            if (!text.contains(":Error:")) {
+                val map = HashMap<String, String>()
+                for (line in text.split('\n')) {
+                    val index = line.indexOf(":")
+                    map.put(line.substring(0, index), line.substring(index).trim())
+                }
+                return map
+            } else {
+                return Collections.emptyMap()
+            }
+        } catch(e : Exception) {
+            reportError()
+            return Collections.emptyMap()
+        }
     }
 
     fun check(basePath : String, file: String) : List<String> {
