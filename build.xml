@@ -10,6 +10,7 @@
     <property name="idea.download.url" value="http://download.jetbrains.com/idea/ideaIU-13.zip"/>
     <property name="external.annotations.path" value="${basedir}/annotations"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
+    <property name="build.number" value="snapshot"/>
 
     <path id="kotlinc-jar">
         <fileset file="${build.dir}/kotlinc/lib/*.jar"/>
@@ -100,6 +101,7 @@
 
         <copydir src="${basedir}/plugin/resources/" dest="${build.dir}/plugin/"/>
         <copy file="${basedir}/plugin/META-INF/plugin.xml" todir="${build.dir}/plugin/META-INF"/>
+        <replace file="${build.dir}/plugin/META-INF/plugin.xml" token="@snapshot@" value="${build.number}"/>
         <jar destfile="${plugin.destination}/haskell-jps-plugin.jar">
             <fileset dir="${build.dir}/jps-plugin/"/>
         </jar>
