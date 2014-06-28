@@ -113,9 +113,18 @@
         <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
 
         <zip destfile="${build.dir}/haskell-plugin.zip"
-             basedir="${build.dir}"
+             basedir="v"
              includes="haskell-plugin/**"
              update="true"/>
+    </target>
+
+    <target name="clean">
+        <delete includeEmptyDirs="true">
+            <fileset dir="${build.dir}" includes="**/*">
+                <exclude name="ideaIU-13.zip"/>
+                <exclude name="kotlin-compiler-*.zip"/>
+            </fileset>
+        </delete>
     </target>
 
     <target name="generateUpdateXml">
