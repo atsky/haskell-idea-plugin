@@ -76,6 +76,11 @@
         <javac classpathref="build.classpath"
                srcdir="${basedir}/jps-plugin/src"
                destdir="${build.dir}/jps-plugin/"/>
+        <copy todir="${build.dir}/jps-plugin/">
+            <fileset dir="${basedir}/jps-plugin/src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="compile.plugin">
