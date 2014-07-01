@@ -64,8 +64,12 @@ public class CabalBuilder extends ModuleLevelBuilder {
                 }
                 CabalJspInterface cabal = new CabalJspInterface(cabalPath, cabalFile);
 
-                if (runConfigure(context, module, cabal)) return ExitCode.ABORT;
-                if (runBuild(context, module, cabal)) return ExitCode.ABORT;
+                if (!runConfigure(context, module, cabal)) {
+                    return ExitCode.ABORT;
+                }
+                if (!runBuild(context, module, cabal)) {
+                    return ExitCode.ABORT;
+                }
             }
             return ExitCode.OK;
         } catch (InterruptedException e) {
@@ -86,9 +90,9 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
         if (buildProcess.waitFor() != 0) {
             context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR, "build errors."));
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     private boolean runConfigure(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
@@ -106,9 +110,9 @@ public class CabalBuilder extends ModuleLevelBuilder {
                     "cabal",
                     BuildMessage.Kind.ERROR,
                     "configure failed."));
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     private void processOut(CompileContext context, Process process, JpsModule module) throws IOException {
