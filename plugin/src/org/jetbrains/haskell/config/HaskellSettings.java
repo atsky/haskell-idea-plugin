@@ -15,15 +15,16 @@ import java.io.File;
 )
 public class HaskellSettings implements PersistentStateComponent<HaskellSettings.State> {
 
+    public HaskellSettings() {
+        update();
+    }
+
     @NotNull
     public static HaskellSettings getInstance() {
         HaskellSettings persisted = ServiceManager.getService(HaskellSettings.class);
         if (persisted == null) {
-            persisted = new HaskellSettings();
+            return new HaskellSettings();
         }
-
-        persisted.update();
-
         return persisted;
     }
 
@@ -67,7 +68,6 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
             OsUtil os = UtilPackage.getOS();
             myState.scionBrowserPath = os.getDefaultCabalBin() + File.separator + "scion-browser" + os.getExe();
         }
-
     }
 
     @NotNull
