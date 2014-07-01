@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.fileType.HaskellFile
 import org.jetbrains.haskell.scope.ModuleScope
+import java.util.ArrayList
 
 /**
  * Created by atsky on 4/11/14.
@@ -43,7 +44,16 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
     }
 
 
-    override fun getVariants(): Array<Any> = array()
+    override fun getVariants(): Array<Any> {
+        val module = Module.findModule(someId)
+        var result = ArrayList<Any>()
+        if (module != null) {
+            result.addAll(ModuleScope(module).getVisibleTypes())
+            result.addAll(ModuleScope(module).getVisibleConstructors())
+            result.addAll(ModuleScope(module).getVisibleValues().flatMap { it.getNames() })
+        }
+        return result.toArray().requireNoNulls()
+    }
 
 
 }
