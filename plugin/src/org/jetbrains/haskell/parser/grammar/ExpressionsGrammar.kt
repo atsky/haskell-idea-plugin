@@ -28,6 +28,7 @@ val anAtomExpression = lazy {
     UNDERSCORE or
     COLON or
     STRING or
+    CHARACTER or
     NUMBER or
     REFERENCE_EXPRESSION or
     DOT or
