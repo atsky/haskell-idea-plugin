@@ -4,3 +4,8 @@ lib/haskell-jps-plugin.jar
 haskell-ide-api/dist
 haskell-ide-api/.idea/workspace.xml
 build/*
+.idea/misc.xml
+.idea/artifacts/haskell_jps_plugin_jar.xml
+haskell-idea.iml
+jps-plugin/jps-plugin.iml
+plugin/haskell-plugin.iml

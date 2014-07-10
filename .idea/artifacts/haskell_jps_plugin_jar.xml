@@ -1,5 +1,5 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="haskell-jps-plugin:jar">
+  <artifact type="jar" build-on-make="true" name="haskell-jps-plugin:jar">
     <output-path>$PROJECT_DIR$/lib/</output-path>
     <root id="archive" name="haskell-jps-plugin.jar">
       <element id="module-output" name="jps-plugin" />
