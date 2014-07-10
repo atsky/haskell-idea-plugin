@@ -25,7 +25,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
 //        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
 //        haskellCmdLineState.getConsoleBuilder()?.getConsole()?.attachToProcess(executionResult.getProcessHandler())
         println("Debugger started")
-        
+
         return null
     }
     override fun getRunnerId(): String = HS_PROGRAM_RUNNER_ID
