@@ -20,25 +20,16 @@ public class GHCiDebugProcess(session: XDebugSession,
                               executionConsole: ExecutionConsole,
                               processHandler: ProcessHandler) : XDebugProcess(session) {
 
-//    private val editorsProvider: XDebuggerEditorsProvider
+    private val debuggerEditorsProvider: XDebuggerEditorsProvider
     private val debugger: ProcessDebugger
 
     {
-//        editorsProvider = object : XDebuggerEditorsProvider() {
-//            override fun getFileType(): FileType {
-//                throw UnsupportedOperationException()
-//            }
-//            override fun createDocument(project: Project, text: String, sourcePosition: XSourcePosition?, mode: EvaluationMode): Document {
-//                throw UnsupportedOperationException()
-//            }
-//
-//        }
+        debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this, ghciProcess)
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
-        throw UnsupportedOperationException()
-//        return editorsProvider
+        return debuggerEditorsProvider
     }
 
     override fun startStepOver() {
