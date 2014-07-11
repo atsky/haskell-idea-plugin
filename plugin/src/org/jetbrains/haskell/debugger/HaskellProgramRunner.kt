@@ -9,6 +9,10 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.configurations.RunProfile
 import org.jetbrains.haskell.run.haskell.HaskellCommandLineState
 import com.intellij.execution.ExecutionResult
+import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.XDebugProcessStarter
+import com.intellij.xdebugger.XDebugSession
+import com.intellij.xdebugger.XDebugProcess
 import com.intellij.execution.executors.DefaultDebugExecutor
 
 /**
@@ -38,9 +42,26 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
-        //        var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
-        //        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
         println("Debugger started")
-        return null
+
+        var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
+        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
+//        haskellCmdLineState.getConsoleBuilder()?.getConsole()?.attachToProcess(executionResult.getProcessHandler())
+
+        //temporary
+        val process = Runtime.getRuntime().exec("ghci") // ???
+
+        val session = XDebuggerManager.getInstance(project)!!.
+                startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
+                    override fun start(session: XDebugSession): XDebugProcess {
+                        var debugProcess = GHCiDebugProcess(session, process,
+                                executionResult.getExecutionConsole()!!, executionResult.getProcessHandler()!!)
+                        return debugProcess
+                    }
+
+                })
+
+
+        return session.getRunContentDescriptor()
     }
 }

@@ -16,7 +16,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess,
     private val lockObject = Any()
 
     override fun run() {
-        execute(RunCommand())
+        println("RUN executed")
+//        execute(RunCommand())
     }
 
     override fun addBreakPoint(file: String, line: String) {
