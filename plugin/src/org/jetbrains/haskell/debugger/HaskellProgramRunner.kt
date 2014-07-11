@@ -21,6 +21,9 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
         public val HS_PROGRAM_RUNNER_ID: String = "HaskellProgramRunner"
     }
 
+    /**
+     * Getter for this runner ID
+     */
     override fun getRunnerId(): String = HS_PROGRAM_RUNNER_ID
 
     /**
