@@ -9,7 +9,6 @@ import Distribution.Text ( display )
 import System.Directory
 import System.FilePath
 import Data.List
-import IdeApi.SExpr
 
 
 dependencyToName :: Dependency -> String
