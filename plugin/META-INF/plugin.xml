@@ -123,7 +123,7 @@
 
         <!--Haskell debugger-->
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
-        <!--<xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.HaskellLineBreakpointType"/>-->
+        <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.HaskellLineBreakpointType"/>
 
     </extensions>
 </idea-plugin>
