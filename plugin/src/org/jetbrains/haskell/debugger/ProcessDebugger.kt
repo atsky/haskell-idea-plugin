@@ -8,8 +8,6 @@ import org.jetbrains.haskell.debugger.commands.AbstractCommand
 
 public trait ProcessDebugger {
 
-    public fun waitForConnect()
-
     public fun run()
 
     public fun addBreakPoint(file: String, line: String)

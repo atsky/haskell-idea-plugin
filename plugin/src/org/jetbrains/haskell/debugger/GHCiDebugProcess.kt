@@ -13,10 +13,9 @@ import com.intellij.xdebugger.XSourcePosition
  */
 
 public class GHCiDebugProcess(session: XDebugSession,
-                              serverSocket: ServerSocket,
+                              ghciProcess: Process,
                               executionConsole: ExecutionConsole,
-                              processHandler: ProcessHandler,
-                              multiProcess: Boolean) : XDebugProcess(session) {
+                              processHandler: ProcessHandler) : XDebugProcess(session) {
 
     class object {
         private val CONNECTION_TIMEOUT = 60000
@@ -25,27 +24,33 @@ public class GHCiDebugProcess(session: XDebugSession,
     private val debugger: ProcessDebugger
 
     {
-        debugger = RemoteDebugger(this, serverSocket, CONNECTION_TIMEOUT)
+        debugger = GHCiDebugger(this, ghciProcess)
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
         throw UnsupportedOperationException()
     }
+
     override fun startStepOver() {
         throw UnsupportedOperationException()
     }
+
     override fun startStepInto() {
         throw UnsupportedOperationException()
     }
+
     override fun startStepOut() {
         throw UnsupportedOperationException()
     }
+
     override fun stop() {
         throw UnsupportedOperationException()
     }
+
     override fun resume() {
         throw UnsupportedOperationException()
     }
+
     override fun runToPosition(position: XSourcePosition) {
         throw UnsupportedOperationException()
     }

@@ -9,21 +9,11 @@ import org.jetbrains.haskell.debugger.commands.RunCommand
  * Created by vlad on 7/11/14.
  */
 
-public class RemoteDebugger(val debugProcess: GHCiDebugProcess,
-                            val serverSocket: ServerSocket,
-                            val timeout: Int) : ProcessDebugger {
+public class GHCiDebugger(val debugProcess: GHCiDebugProcess,
+                            val ghciProcess: Process) : ProcessDebugger {
 
-    private var socket: Socket? = null
-    private var connected = false
+
     private val lockObject = Any()
-
-    override fun waitForConnect() {
-        synchronized(lockObject) {
-            serverSocket.setSoTimeout(timeout)
-            socket = serverSocket.accept()
-            connected = true
-        }
-    }
 
     override fun run() {
         execute(RunCommand())
@@ -40,7 +30,7 @@ public class RemoteDebugger(val debugProcess: GHCiDebugProcess,
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
         synchronized(lockObject) {
-            val os = socket!!.getOutputStream()!!
+            val os = ghciProcess.getOutputStream()!!
             os.write(bytes)
             os.flush()
         }
