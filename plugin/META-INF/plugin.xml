@@ -121,8 +121,9 @@
 
         <applicationConfigurable instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
-        <!--Haskell debugger runner-->
+        <!--Haskell debugger-->
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
+        <!--<xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.HaskellLineBreakpointType"/>-->
 
     </extensions>
 </idea-plugin>
