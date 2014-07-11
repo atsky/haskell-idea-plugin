@@ -9,29 +9,35 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.configurations.RunProfile
 import org.jetbrains.haskell.run.haskell.HaskellCommandLineState
 import com.intellij.execution.ExecutionResult
+import com.intellij.execution.executors.DefaultDebugExecutor
 
 /**
- * Created by marat-x on 7/10/14.
+ * Class for starting debug session.
+ *
+ * @author Habibullin Marat
  */
 public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunnerSettings>() {
     class object {
         public val HS_PROGRAM_RUNNER_ID: String = "HaskellProgramRunner"
     }
 
+    override fun getRunnerId(): String = HS_PROGRAM_RUNNER_ID
+
+    /**
+     * Checks if this debugger can be used with specified executor and RunProfile
+     */
+    override fun canRun(executorId: String, profile: RunProfile): Boolean =
+            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)
+
+    /**
+     * This method is executed when debug session is started (when you press "Debug" button)
+     */
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
-//        var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
-//        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
-//        haskellCmdLineState.getConsoleBuilder()?.getConsole()?.attachToProcess(executionResult.getProcessHandler())
+        //        var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
+        //        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
         println("Debugger started")
-
         return null
     }
-    override fun getRunnerId(): String = HS_PROGRAM_RUNNER_ID
-
-    override fun canRun(executorId: String, profile: RunProfile): Boolean {
-        return true
-    }
-
 }
