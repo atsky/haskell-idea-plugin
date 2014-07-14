@@ -8,7 +8,7 @@ import org.jetbrains.haskell.debugger.commands.AbstractCommand
 
 public trait ProcessDebugger {
 
-    public fun run()
+    public fun trace()
 
     public fun addBreakPoint(file: String, line: String)
 

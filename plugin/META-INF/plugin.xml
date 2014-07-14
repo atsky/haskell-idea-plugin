@@ -126,4 +126,8 @@
         <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.HaskellLineBreakpointType"/>
 
     </extensions>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="Haskell.breakpointHandler" interface="org.jetbrains.haskell.debugger.HaskellBreakpointHandlerFactory"/>
+    </extensionPoints>
 </idea-plugin>
