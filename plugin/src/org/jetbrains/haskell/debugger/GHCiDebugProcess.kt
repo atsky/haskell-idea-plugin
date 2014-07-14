@@ -6,6 +6,9 @@ import com.intellij.execution.ui.ExecutionConsole
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import com.intellij.xdebugger.breakpoints.XBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 
 /**
  * Created by vlad on 7/10/14.
@@ -21,6 +24,11 @@ public class GHCiDebugProcess(session: XDebugSession,
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
+    }
+
+    private var _breakpointHandlers: Array<XBreakpointHandler<*>>
+    {
+        _breakpointHandlers = array(HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this))
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
@@ -58,5 +66,7 @@ public class GHCiDebugProcess(session: XDebugSession,
         throw UnsupportedOperationException()
     }
 
-
+    override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
+        return _breakpointHandlers
+    }
 }

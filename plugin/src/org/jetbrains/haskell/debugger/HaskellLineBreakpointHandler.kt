@@ -11,11 +11,9 @@ public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreak
 {
     override fun registerBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         // unimplemented yet
-        throw UnsupportedOperationException()
     }
 
     override fun unregisterBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, isTemporary: Boolean) {
         // unimplemented yet
-        throw UnsupportedOperationException()
     }
 }
