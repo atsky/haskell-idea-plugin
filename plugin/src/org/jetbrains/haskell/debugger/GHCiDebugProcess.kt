@@ -6,10 +6,6 @@ import com.intellij.execution.ui.ExecutionConsole
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.execution.process.ProcessHandler
-import com.intellij.openapi.fileTypes.FileType
-import com.intellij.openapi.project.Project
-import com.intellij.xdebugger.evaluation.EvaluationMode
-import com.intellij.openapi.editor.Document
 
 /**
  * Created by vlad on 7/10/14.
@@ -17,8 +13,8 @@ import com.intellij.openapi.editor.Document
 
 public class GHCiDebugProcess(session: XDebugSession,
                               ghciProcess: Process,
-                              executionConsole: ExecutionConsole,
-                              processHandler: ProcessHandler) : XDebugProcess(session) {
+                              val executionConsole: ExecutionConsole,
+                              val myProcessHandler: ProcessHandler) : XDebugProcess(session) {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
     private val debugger: ProcessDebugger
@@ -30,6 +26,10 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
         return debuggerEditorsProvider
+    }
+
+    override fun doGetProcessHandler(): ProcessHandler? {
+        return myProcessHandler
     }
 
     override fun startStepOver() {
@@ -45,7 +45,6 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
-        throw UnsupportedOperationException()
     }
 
     override fun resume() {
