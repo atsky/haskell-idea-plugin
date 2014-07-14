@@ -10,9 +10,9 @@ public trait ProcessDebugger {
 
     public fun trace()
 
-    public fun addBreakPoint(file: String, line: String)
-
-    public fun removeBreakPoint(file: String, line: String)
-
     public fun execute(command: AbstractCommand)
+
+    public fun setBreakpoint(line: Int)
+
+    public fun removeBreakpoint(line: Int)
 }

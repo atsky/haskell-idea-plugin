@@ -6,6 +6,9 @@ import java.net.Socket
 import org.jetbrains.haskell.debugger.commands.TraceCommand
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.haskell.debugger.commands.RunCommand
+import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.commands.RemoveBreakpointCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -25,14 +28,6 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         queue.addCommand(TraceCommand())
     }
 
-    override fun addBreakPoint(file: String, line: String) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun removeBreakPoint(file: String, line: String) {
-        throw UnsupportedOperationException()
-    }
-
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
 
@@ -48,4 +43,19 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         }
     }
 
+//    override fun setBreakpoint(typeId: String, fileName: String?, line: Int, condition: String?, logExpression: String?) =
+//            execute(SetBreakpointCommand(line))
+//
+//    override fun removeBreakpoint(typeId: String, fileName: String?, line: Int) =
+//        execute(RemoveBreakpointCommand(line))
+
+    override fun setBreakpoint(line: Int) {
+        println("bp set at line $line")
+        execute(SetBreakpointCommand(line))
+    }
+
+    override fun removeBreakpoint(line: Int) {
+        println("bp removed from line $line")
+        execute(RemoveBreakpointCommand(line))
+    }
 }

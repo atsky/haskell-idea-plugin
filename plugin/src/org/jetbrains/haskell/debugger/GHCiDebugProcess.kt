@@ -18,6 +18,9 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
+import java.util.concurrent.ConcurrentMap
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by vlad on 7/10/14.
@@ -39,12 +42,13 @@ public class GHCiDebugProcess(session: XDebugSession,
         myProcessHandler.addProcessListener(this)
     }
 
-    private var _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
+    private val _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
     {
         _breakpointHandlers = ArrayList<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>()
         _breakpointHandlers.add(HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this))
         tryAddBreakpointHandlersFromExtensions()
     }
+    private val registeredBreakpoints: MutableMap<Int, XLineBreakpoint<*>> = ConcurrentHashMap()
 
     private fun tryAddBreakpointHandlersFromExtensions() {
         val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
@@ -94,6 +98,23 @@ public class GHCiDebugProcess(session: XDebugSession,
         // bad decision but for now I don't know how to convert ArrayList to Array better
         return _breakpointHandlers.toArray(Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>(
                 _breakpointHandlers.size, {i -> HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)}))
+    }
+
+    public fun addBreakpoint(position: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+        registeredBreakpoints.put(position, breakpoint)
+        // isConnected check is omitted
+//        debugger.setBreakpoint(breakpoint.getType().getId(), position.fileName, position.line, breakpoint.getCondition(), breakpoint.getLogExpression())
+        debugger.setBreakpoint(position)
+    }
+
+    public fun removeBreakpoint(position: Int) {
+        val breakpoint = registeredBreakpoints.get(position)
+        if (breakpoint != null) {
+            registeredBreakpoints.remove(position)
+            // isConnected check is omitted
+//            debugger.removeBreakpoint(breakpoint.getType().getId(), position.fileName, position.line)
+            debugger.removeBreakpoint(position)
+        }
     }
 
     override fun sessionInitialized() {
