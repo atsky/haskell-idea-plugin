@@ -29,7 +29,6 @@ public class HaskellLineBreakpointType():
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
      */
     override fun canPutAt(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
-        println("canPutAt function entered")
         var canStopAtLine: Boolean = false
         if(file.getFileType() == HaskellFileType.INSTANCE) {
             val currentDoc: Document? = FileDocumentManager.getInstance()?.getDocument(file)

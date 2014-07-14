@@ -42,8 +42,6 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
-        println("Debugger started")
-
         var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
         var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
 //        haskellCmdLineState.getConsoleBuilder()?.getConsole()?.attachToProcess(executionResult.getProcessHandler())
