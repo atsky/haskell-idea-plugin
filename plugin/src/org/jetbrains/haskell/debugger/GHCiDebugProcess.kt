@@ -19,14 +19,15 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 public class GHCiDebugProcess(session: XDebugSession,
                               val executionConsole: ExecutionConsole,
-                              val myProcessHandler: ProcessHandler) : XDebugProcess(session) {
+                              val myProcessHandler: ProcessHandler,
+                              listener: HaskellDebugProcessListener) : XDebugProcess(session) {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    private val debugger: ProcessDebugger
+    private val debugger: GHCiDebugger
 
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-        debugger = GHCiDebugger(this)
+        debugger = GHCiDebugger(this, listener)
     }
 
     private var _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
@@ -88,7 +89,13 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     override fun sessionInitialized() {
         super<XDebugProcess>.sessionInitialized()
-        debugger.trace()
+        // will be changed when I find the correct place, where to invoke method trace()
+        object: Thread() {
+            override fun run() {
+                debugger.trace()
+            }
+        }.start()
     }
+
 
 }

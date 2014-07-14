@@ -4,15 +4,17 @@ import java.net.ServerSocket
 import org.jetbrains.haskell.debugger.commands.AbstractCommand
 import java.net.Socket
 import org.jetbrains.haskell.debugger.commands.TraceCommand
+import java.util.concurrent.Semaphore
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
-
+public class GHCiDebugger(val debugProcess: GHCiDebugProcess, listener: HaskellDebugProcessListener) : ProcessDebugger {
 
     private val lockObject = Any()
+    private val readyForInput = listener.ready
 
     override fun trace() {
         execute(TraceCommand())
@@ -28,7 +30,18 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
+
+        // Wait for the line "*Main> " to appear (if this line is an output of program, may be misunderstood),
+        // needed for correct displaying of input/output of the process in console.
+        // Another variant could be: execute command immediately, but display in console later.
+        while (readyForInput.compareAndSet(false, false)) {
+            Thread.sleep(100)
+        }
+
         synchronized(lockObject) {
+            System.out.write(bytes)
+            System.out.flush()
+
             val os = debugProcess.getProcessHandler().getProcessInput()!!
             os.write(bytes)
             os.flush()
