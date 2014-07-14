@@ -12,7 +12,6 @@ import com.intellij.execution.process.ProcessHandler
  */
 
 public class GHCiDebugProcess(session: XDebugSession,
-                              ghciProcess: Process,
                               val executionConsole: ExecutionConsole,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session) {
 
@@ -21,7 +20,7 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-        debugger = GHCiDebugger(this, ghciProcess)
+        debugger = GHCiDebugger(this)
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
@@ -30,6 +29,10 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     override fun doGetProcessHandler(): ProcessHandler? {
         return myProcessHandler
+    }
+
+    override fun createConsole(): ExecutionConsole {
+        return executionConsole
     }
 
     override fun startStepOver() {

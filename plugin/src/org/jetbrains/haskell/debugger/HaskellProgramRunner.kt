@@ -45,18 +45,16 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
-        var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
-        var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
+        val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
+        val processHandler = executionResult.getProcessHandler()!!
 
-        //temporary
-        val process = Runtime.getRuntime().exec("ghci")
-        executionResult.getProcessHandler()!!.addProcessListener(HaskellDebugProcessListener())
+        processHandler.addProcessListener(HaskellDebugProcessListener())
 
         val session = XDebuggerManager.getInstance(project)!!.
                 startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
                     override fun start(session: XDebugSession): XDebugProcess {
-                        var debugProcess = GHCiDebugProcess(session, process,
-                                executionResult.getExecutionConsole()!!, executionResult.getProcessHandler()!!)
+                        var debugProcess = GHCiDebugProcess(session, executionResult.getExecutionConsole()!!,
+                                processHandler)
                         return debugProcess
                     }
 

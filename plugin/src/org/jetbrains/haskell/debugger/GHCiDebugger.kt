@@ -9,8 +9,7 @@ import org.jetbrains.haskell.debugger.commands.RunCommand
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(val debugProcess: GHCiDebugProcess,
-                            val ghciProcess: Process) : ProcessDebugger {
+public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
 
 
     private val lockObject = Any()
@@ -31,7 +30,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess,
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
         synchronized(lockObject) {
-            val os = ghciProcess.getOutputStream()!!
+            val os = debugProcess.getProcessHandler().getProcessInput()!!
             os.write(bytes)
             os.flush()
         }
