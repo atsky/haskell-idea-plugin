@@ -65,6 +65,10 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
+    fun parseFileName() = start(CabalTokelTypes.FILE_NAME) {
+        token(CabalTokelTypes.ID)
+    }
+
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
         token(CabalTokelTypes.COMPARATOR)
                 && token(CabalTokelTypes.ID)
@@ -144,7 +148,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    fun parseMainFile(level: Int) = start(CabalTokelTypes.MAIN_FILE) {
+        parsePropertyKey("main-is")
+                && token(CabalTokelTypes.COLON)
+                && parseFileName()
+    }
+
+    /////////////////////////////////////////////   build information parsing  //////////////////////////////////////////
 
     fun parseBuildDepends(level: Int) = start(CabalTokelTypes.BUILD_DEPENDS) {
         parsePropertyKey("build-depends")
@@ -153,37 +165,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
 
-
-
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
-        if (result) {
-            while (!builder.eof()) {
-                if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                    break
-                }
-                builder.advanceLexer()
-            }
-            parseProperties(level)
-        } else {
-            false
-        }
-    }
-
-    fun parseElse(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        var r = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
-        r = r && parseProperties(level);
-        r
-    }
-
-    fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
-        token(CabalTokelTypes.ID);
-    }
-
-    fun parseProperties(prevLevel: Int): Boolean {
+    fun parseProperties(prevLevel: Int, isExecutable : Boolean): Boolean {
         var currentLevel : Int? = null;
         while (!builder.eof()) {
             val level = findLevel(currentLevel)
@@ -198,10 +180,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 }
             }
 
-            var result = parseBuildDepends(currentLevel!!)
-                      || parseProperty(currentLevel!!)
-                      || parseIf(currentLevel!!)
-                      || parseElse(currentLevel!!)
+            var result = false
+            if (isExecutable) {
+                result = parseMainFile(prevLevel)
+            }
+            result = result
+                  || parseBuildDepends(currentLevel!!)
+                  || parseProperty(currentLevel!!)
+                  || parseIf(currentLevel!!, isExecutable)
+                  || parseElse(currentLevel!!, isExecutable)
 
             if (!result) {
                 builder.advanceLexer()
@@ -210,10 +197,38 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return true;
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    fun parseIf(level: Int, isExecutable : Boolean) = start(CabalTokelTypes.PROPERTY) {
+        val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
+        if (result) {
+            while (!builder.eof()) {
+                if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                    break
+                }
+                builder.advanceLexer()
+            }
+            parseProperties(level, isExecutable)
+        } else {
+            false
+        }
+    }
+
+    fun parseElse(level: Int, isExecutable : Boolean) = start(CabalTokelTypes.PROPERTY) {
+        var r = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
+        r = r && parseProperties(level, isExecutable);
+        r
+    }
+
+    fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
+        token(CabalTokelTypes.ID);
+    }
+
+
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
-            parseName() && parseProperties(level)
+            parseName() && parseProperties(level, true)
         } else {
             false
         }
@@ -221,7 +236,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseTestSuite(level: Int) = start(CabalTokelTypes.TEST_SUITE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "test-suite")) {
-            token(CabalTokelTypes.ID) && parseProperties(level);
+            token(CabalTokelTypes.ID) && parseProperties(level, false);
         } else {
             false
         }
@@ -241,7 +256,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                     false
                 }
                 if (result) {
-                    parseProperties(level);
+                    parseProperties(level, false);
                 }
                 result
             }

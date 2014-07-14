@@ -31,6 +31,7 @@ public trait CabalTokelTypes {
 
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val NAME: IElementType = CabalCompositeElementType("NAME", { Name(it) })
+        val FILE_NAME: IElementType = CabalCompositeElementType("FILE_NAME", { FileName(it) })
         val PROPERTY_KEY: IElementType = CabalCompositeElementType("PROPERTY_KEY", { PropertyKey(it) })
         val PROPERTY_VALUE: IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
         val EXECUTABLE: IElementType = CabalCompositeElementType("EXECUTABLE", { Executable(it) })
@@ -38,7 +39,7 @@ public trait CabalTokelTypes {
         val SECTION: IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
 
-        val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
+        val COMMENTS   : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
         val VERSION           : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , { VersionProperty(it) }         )
@@ -46,6 +47,7 @@ public trait CabalTokelTypes {
         val HOMEPAGE          : IElementType = CabalCompositeElementType("HOMEPAGE"                 , { HomepageField(it) }           )
         val PACKAGE_URL       : IElementType = CabalCompositeElementType("PACKAGE_URL"              , { PackageURLField(it) }         )
         val NAME_FIELD        : IElementType = CabalCompositeElementType("NAME_FIELD"               , { NameField(it) }               )
+        val MAIN_FILE         : IElementType = CabalCompositeElementType("MAIN_FILE"                , { MainFile(it) }                )
 
         val BUILD_DEPENDS     : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , { BuildDependsField(it) }       )
 
@@ -54,7 +56,5 @@ public trait CabalTokelTypes {
         val FULL_CONSTRAINT   : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , { FullVersionConstraint(it) }   )
         val DEPENDENCY_LIST   : IElementType = CabalCompositeElementType("DEPENDENCY_LIST"          , { DependencyList(it) }          )
         val URL               : IElementType = CabalCompositeElementType("URL"                      , { URL(it) }                     )
-
-
     }
 }
