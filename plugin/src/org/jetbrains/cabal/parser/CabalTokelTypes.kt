@@ -27,7 +27,6 @@ public trait CabalTokelTypes {
         val STRING: IElementType = HaskellToken("string")
         val NUMBER: IElementType = HaskellToken("number")
         val ID: IElementType = HaskellToken("id")
-        val COMPARATOR   : IElementType = HaskellToken("COMPARATOR")
 
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val NAME: IElementType = CabalCompositeElementType("NAME", { Name(it) })

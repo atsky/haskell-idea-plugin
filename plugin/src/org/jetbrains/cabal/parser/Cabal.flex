@@ -26,7 +26,6 @@ DIGIT = [0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
 INDENT = [\n] ({WHITE_SPACE_CHAR}|"\n")*
 EOL_COMMENT = "--"[^\n]*
-COMPARATOR = == | <= | >= | > | <
 LETTER = [^0-9\"(),\ \n\t\f:\\]
 IDENTIFIER_PART = ({DIGIT}|{LETTER})
 IDENTIFIER = {IDENTIFIER_PART} +
@@ -40,7 +39,6 @@ IDENTIFIER = {IDENTIFIER_PART} +
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
-{COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
 "("                   { return CabalTokelTypes.LEFT_PAREN;}
 ")"                   { return CabalTokelTypes.RIGHT_PAREN;}
 ":"                   { return CabalTokelTypes.COLON;}
