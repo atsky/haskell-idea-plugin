@@ -9,6 +9,9 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
+import com.intellij.openapi.extensions.Extensions
+import java.util.ArrayList
+import com.intellij.openapi.extensions.ExtensionPointName
 
 /**
  * Created by vlad on 7/10/14.
@@ -26,9 +29,20 @@ public class GHCiDebugProcess(session: XDebugSession,
         debugger = GHCiDebugger(this)
     }
 
-    private var _breakpointHandlers: Array<XBreakpointHandler<*>>
+    private var _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
     {
-        _breakpointHandlers = array(HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this))
+        _breakpointHandlers = ArrayList<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>()
+        _breakpointHandlers.add(HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this))
+        tryAddBreakpointHandlersFromExtensions()
+    }
+
+    private fun tryAddBreakpointHandlersFromExtensions() {
+        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
+        if(extPointName != null) {
+            for (factory in Extensions.getExtensions(extPointName)) {
+                _breakpointHandlers.add(factory.createBreakpointHandler(this))
+            }
+        }
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
@@ -67,6 +81,8 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
-        return _breakpointHandlers
+        // bad decision but for now I don't know how to convert ArrayList to Array better
+        return _breakpointHandlers.toArray(Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>(
+                _breakpointHandlers.size, {i -> HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)}))
     }
 }
