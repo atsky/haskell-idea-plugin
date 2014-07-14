@@ -61,12 +61,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res
     }
 
-    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
+    fun parseName() = start(CabalTokelTypes.NAME) {
         token(CabalTokelTypes.ID)
+    }
+
+    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
+        token(CabalTokelTypes.COMPARATOR)
                 && token(CabalTokelTypes.ID)
     }
 
-    fun parseComplexVersionConstraint(prevLevel : Int) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
+    fun parseComplexVersionConstraint(prevLevel : Int = 0) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
         parseSimpleVersionConstraint()
     }
 
@@ -80,7 +84,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res
     }
 
-    fun parseDependensList(prevLevel: Int) = start(CabalTokelTypes.DEPENDENCES) {
+    fun parseDependensList(prevLevel: Int) = start(CabalTokelTypes.DEPENDENCY_LIST) {
         var res = parseFullVersionConstraint(prevLevel)
         var isLast = false
         while ((!builder.eof()) && res && (!isLast)) {
@@ -105,38 +109,54 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res
     }
 
-    fun parseBuildDepends(level: Int) = start(CabalTokelTypes.BUILD_DEPENDS) {
-        parsePropertyKey("build-depends")
+    ///////////////////////////////////////////  global properties parsing  /////////////////////////////////////////////////
+
+    fun parseNameField() = start(CabalTokelTypes.NAME_FIELD) {
+        parsePropertyKey("name")
                 && token(CabalTokelTypes.COLON)
-                && parseDependensList(level)
+                && parseName()
     }
 
-    fun parseHomepage(level: Int) = start(CabalTokelTypes.HOMEPAGE) {
+    fun parseHomepage() = start(CabalTokelTypes.HOMEPAGE) {
         parsePropertyKey("homepage")
                 && token(CabalTokelTypes.COLON)
                 && parseURL()
     }
 
-    fun parsePackageURL(level: Int) = start(CabalTokelTypes.PACKAGE_URL) {
+    fun parsePackageURL() = start(CabalTokelTypes.PACKAGE_URL) {
         var res = parsePropertyKey("package-url")
         res = res && token(CabalTokelTypes.COLON)
         res = res && parseURL()
         res
     }
 
-    fun parseCabalVersionField(level: Int) = start(CabalTokelTypes.CABAL_VERSION) {
+    fun parseCabalVersionField() = start(CabalTokelTypes.CABAL_VERSION) {
         var res = parsePropertyKey("cabal-version")
         res = res && token(CabalTokelTypes.COLON)
-        res = res && parseComplexVersionConstraint(level)
+        res = res && parseComplexVersionConstraint()
         res
     }
 
-    fun parseVersionProperty(level: Int) = start(CabalTokelTypes.VERSION) {
+    fun parseVersionProperty() = start(CabalTokelTypes.VERSION) {
         var res = parsePropertyKey("version")
         res = res && token(CabalTokelTypes.COLON)
         res = res && token(CabalTokelTypes.ID)
         res
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    fun parseBuildDepends(level: Int) = start(CabalTokelTypes.BUILD_DEPENDS) {
+        parsePropertyKey("build-depends")
+                && token(CabalTokelTypes.COLON)
+                && parseDependensList(level)
+    }
+
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
         val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
@@ -190,9 +210,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return true;
     }
 
-    fun parseName() = start(CabalTokelTypes.NAME) {
-        token(CabalTokelTypes.ID)
-    }
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
@@ -233,7 +250,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseVersionProperty(0) || parseCabalVersionField(0) || parsePackageURL(0) || parseHomepage(0) || parseProperty(0) || parseSection(0))) {
+            if (!(parseVersionProperty() || parseCabalVersionField() || parseNameField() || parsePackageURL() || parseHomepage() || parseProperty(0) || parseSection(0))) {
                 builder.advanceLexer()
             }
         }

@@ -27,6 +27,7 @@ public trait CabalTokelTypes {
         val STRING: IElementType = HaskellToken("string")
         val NUMBER: IElementType = HaskellToken("number")
         val ID: IElementType = HaskellToken("id")
+        val COMPARATOR   : IElementType = HaskellToken("COMPARATOR")
 
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val NAME: IElementType = CabalCompositeElementType("NAME", { Name(it) })
@@ -44,12 +45,14 @@ public trait CabalTokelTypes {
         val CABAL_VERSION     : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , { CabalVersionField(it) }       )
         val HOMEPAGE          : IElementType = CabalCompositeElementType("HOMEPAGE"                 , { HomepageField(it) }           )
         val PACKAGE_URL       : IElementType = CabalCompositeElementType("PACKAGE_URL"              , { PackageURLField(it) }         )
+        val NAME_FIELD        : IElementType = CabalCompositeElementType("NAME_FIELD"               , { NameField(it) }               )
+
         val BUILD_DEPENDS     : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , { BuildDependsField(it) }       )
 
         val SIMPLE_CONSTRAINT : IElementType = CabalCompositeElementType("SIMPLE_VERSION_CONSTRAINT", { SimpleVersionConstraint(it) } )
         val COMPLEX_CONSTRAINT: IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , { ComplexVersionConstraint(it) })
         val FULL_CONSTRAINT   : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , { FullVersionConstraint(it) }   )
-        val DEPENDENCES       : IElementType = CabalCompositeElementType("DEPENDENCES"              , { Dependences(it) }             )
+        val DEPENDENCY_LIST   : IElementType = CabalCompositeElementType("DEPENDENCY_LIST"          , { DependencyList(it) }          )
         val URL               : IElementType = CabalCompositeElementType("URL"                      , { URL(it) }                     )
 
 

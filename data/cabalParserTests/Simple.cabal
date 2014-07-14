@@ -2,9 +2,12 @@ name:              Simple
 version:           1.0
 Build-Type:        Simple
 cabal-version:     >= 1.2
+package-url:       http://some_url.com/folder/
+homepage:          https://www.vk.com
 
 executable ghcApi
   main-is:         Main.hs
   hs-source-dirs:  src
   build-depends:   base
+
 
