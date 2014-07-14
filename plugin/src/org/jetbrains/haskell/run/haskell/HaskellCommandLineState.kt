@@ -7,18 +7,13 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.JavaCommandLineStateUtil
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.openapi.module.Module
-import org.jetbrains.cabal.CabalFile
 import java.io.File
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.OS
-import com.intellij.notification.Notification
-import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.Executor
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ExecutionResult
-import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.DefaultExecutionResult
 import com.intellij.execution.configurations.RunnerSettings
 
@@ -32,7 +27,14 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     protected fun startDebugProcess(): ProcessHandler {
-        val filePath = "/home/vlad/coding/haskell-idea-plugin/haskell-ide-api/src/Main.hs"
+        val module = configuration.getModule()
+        if (module == null) {
+            throw ExecutionException("Module not specified")
+        }
+
+        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
+        val filePath = joinPath(baseDir!!, "src", "SimpleMain.hs")
+
         val process = Runtime.getRuntime().exec("ghci " + filePath)
         return OSProcessHandler(process)
     }
