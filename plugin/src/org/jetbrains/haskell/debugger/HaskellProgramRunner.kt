@@ -14,6 +14,9 @@ import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.execution.executors.DefaultDebugExecutor
+import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.openapi.util.Key
 
 /**
  * Class for starting debug session.
@@ -44,10 +47,10 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     {
         var haskellCmdLineState : HaskellCommandLineState = state as HaskellCommandLineState
         var executionResult : ExecutionResult = haskellCmdLineState.execute(environment.getExecutor(), this)
-//        haskellCmdLineState.getConsoleBuilder()?.getConsole()?.attachToProcess(executionResult.getProcessHandler())
 
         //temporary
-        val process = Runtime.getRuntime().exec("ghci") // ???
+        val process = Runtime.getRuntime().exec("ghci")
+        executionResult.getProcessHandler()!!.addProcessListener(HaskellDebugProcessListener())
 
         val session = XDebuggerManager.getInstance(project)!!.
                 startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
