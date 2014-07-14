@@ -47,10 +47,6 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val console = createConsole(executor)
         console?.attachToProcess(processHandler)
 
-        val output = processHandler.getProcessInput()!!
-        output.write("main\n".toByteArray())
-        output.flush()
-
         return DefaultExecutionResult(console, processHandler)
     }
 

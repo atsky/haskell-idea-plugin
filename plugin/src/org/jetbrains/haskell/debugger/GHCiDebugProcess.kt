@@ -85,4 +85,10 @@ public class GHCiDebugProcess(session: XDebugSession,
         return _breakpointHandlers.toArray(Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>(
                 _breakpointHandlers.size, {i -> HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)}))
     }
+
+    override fun sessionInitialized() {
+        super<XDebugProcess>.sessionInitialized()
+        debugger.trace()
+    }
+
 }
