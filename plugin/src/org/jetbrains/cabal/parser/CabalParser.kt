@@ -108,7 +108,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res
     }
 
-    fun parseDependensList(prevLevel: Int) = start(CabalTokelTypes.DEPENDENCY_LIST) {
+    fun parseDependensList(prevLevel: Int) : Boolean {
         var res = parseFullVersionConstraint(prevLevel)
         var isLast = false
         while ((!builder.eof()) && res && (!isLast)) {
@@ -130,7 +130,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 marker.drop()
             }
         }
-        res
+        return res
     }
 
     ///////////////////////////////////////////  global properties parsing  /////////////////////////////////////////////////

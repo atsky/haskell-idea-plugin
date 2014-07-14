@@ -59,7 +59,6 @@ public trait CabalTokelTypes {
         val SIMPLE_CONSTRAINT : IElementType = CabalCompositeElementType("SIMPLE_VERSION_CONSTRAINT", { SimpleVersionConstraint(it) } )
         val COMPLEX_CONSTRAINT: IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , { ComplexVersionConstraint(it) })
         val FULL_CONSTRAINT   : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , { FullVersionConstraint(it) }   )
-        val DEPENDENCY_LIST   : IElementType = CabalCompositeElementType("DEPENDENCY_LIST"          , { DependencyList(it) }          )
         val URL               : IElementType = CabalCompositeElementType("URL"                      , { URL(it) }                     )
     }
 }
