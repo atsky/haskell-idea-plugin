@@ -16,6 +16,8 @@ import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ExecutionResult
 import com.intellij.execution.DefaultExecutionResult
 import com.intellij.execution.configurations.RunnerSettings
+import org.jetbrains.haskell.util.GHCUtil
+import com.intellij.openapi.roots.ModuleRootManager
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -34,8 +36,9 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
         val filePath = joinPath(baseDir!!, "src", "SimpleMain.hs")
+        val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
-        val process = Runtime.getRuntime().exec("ghci " + filePath)
+        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath)
         return OSProcessHandler(process)
     }
 
