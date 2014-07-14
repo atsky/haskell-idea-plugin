@@ -35,7 +35,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         }
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
-        val filePath = joinPath(baseDir!!, "src", "SimpleMain.hs")
+        val filePath = joinPath(baseDir!!, "src", "Main.hs")
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
         val process = Runtime.getRuntime().exec(ghciPath + " " + filePath)
@@ -48,7 +48,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         console?.attachToProcess(processHandler)
 
         val output = processHandler.getProcessInput()!!
-        output.write("main".toByteArray())
+        output.write("main\n".toByteArray())
         output.flush()
 
         return DefaultExecutionResult(console, processHandler)
@@ -64,10 +64,6 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val commandLine = GeneralCommandLine()
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
-
-        println(baseDir)
-        println(File("./").getCanonicalPath())
-        println(name)
 
         val exePath = joinPath(baseDir!!, "dist", "build", name, OS.getExe(name))
 
