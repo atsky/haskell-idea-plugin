@@ -62,6 +62,19 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         r
     }
 
+    fun parseSimpleVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
+        var res = token(CabalTokelTypes.ID)
+        res = res && token(CabalTokelTypes.ID)
+        res
+    }
+
+    fun parseCabalVersionField(level: Int) = start(CabalTokelTypes.CABAL_VERSION) {
+        var res = parsePropertyKey("cabal-version")
+        res = res && token(CabalTokelTypes.COLON)
+        res = res && parseSimpleVersionConstraint(level)
+        res
+    }
+
     fun parseVersionProperty(level: Int) = start(CabalTokelTypes.VERSION) {
         var r = parsePropertyKey("version")
         r = r && token(CabalTokelTypes.COLON)
@@ -109,7 +122,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 }
             }
 
-            var result = parseVersionProperty(currentLevel!!)
+            var result = parseVersionProperty(currentLevel!!) || parseCabalVersionField(currentLevel!!)
             result = result || parseProperty(currentLevel!!)
             result = result || parseIf(currentLevel!!)
             result = result || parseElse(currentLevel!!)
@@ -163,7 +176,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseVersionProperty(0) || parseProperty(0) || parseSection(0))) {
+            if (!(parseVersionProperty(0) || parseCabalVersionField(0) || parseProperty(0) || parseSection(0))) {
                 builder.advanceLexer()
             }
         }

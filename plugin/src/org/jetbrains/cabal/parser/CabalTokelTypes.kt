@@ -41,5 +41,7 @@ public trait CabalTokelTypes {
 
         val VERSION: IElementType = CabalCompositeElementType("VERSION_PROPERTY", { VersionProperty(it) })
         val CABAL_VERSION: IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY", { CabalVersionField(it) })
+
+        val SIMPLE_CONSTRAINT: IElementType = CabalCompositeElementType("SIMPLE_VERSION_CONSTRAINT", { SimpleVersionConstraint(it) })
     }
 }
