@@ -36,12 +36,22 @@ public trait CabalTokelTypes {
         val TEST_SUITE: IElementType = CabalCompositeElementType("TEST_SUITE", { TestSuite(it) })
         val SECTION: IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
+
         val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
-        val VERSION: IElementType = CabalCompositeElementType("VERSION_PROPERTY", { VersionProperty(it) })
-        val CABAL_VERSION: IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY", { CabalVersionField(it) })
+        val VERSION           : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , { VersionProperty(it) }         )
+        val CABAL_VERSION     : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , { CabalVersionField(it) }       )
+        val HOMEPAGE          : IElementType = CabalCompositeElementType("HOMEPAGE"                 , { HomepageField(it) }           )
+        val PACKAGE_URL       : IElementType = CabalCompositeElementType("PACKAGE_URL"              , { PackageURLField(it) }         )
+        val BUILD_DEPENDS     : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , { BuildDependsField(it) }       )
 
-        val SIMPLE_CONSTRAINT: IElementType = CabalCompositeElementType("SIMPLE_VERSION_CONSTRAINT", { SimpleVersionConstraint(it) })
+        val SIMPLE_CONSTRAINT : IElementType = CabalCompositeElementType("SIMPLE_VERSION_CONSTRAINT", { SimpleVersionConstraint(it) } )
+        val COMPLEX_CONSTRAINT: IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , { ComplexVersionConstraint(it) })
+        val FULL_CONSTRAINT   : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , { FullVersionConstraint(it) }   )
+        val DEPENDENCES       : IElementType = CabalCompositeElementType("DEPENDENCES"              , { Dependences(it) }             )
+        val URL               : IElementType = CabalCompositeElementType("URL"                      , { URL(it) }                     )
+
+
     }
 }

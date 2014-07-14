@@ -4,7 +4,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.CabalTokelTypes
-import org.jetbrains.cabal.psi.VersionProperty
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.rules.BaseParser
 
@@ -56,30 +55,79 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseProperty(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        var r = parsePropertyKey()
-        r = r && token(CabalTokelTypes.COLON)
-        r = r && parsePropertyValue(level)
-        r
+        var res = parsePropertyKey()
+        res = res && token(CabalTokelTypes.COLON)
+        res = res && parsePropertyValue(level)
+        res
     }
 
-    fun parseSimpleVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
+    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
         var res = token(CabalTokelTypes.ID)
         res = res && token(CabalTokelTypes.ID)
+        res
+    }
+
+    fun parseComplexVersionConstraint(prevLevel : Int) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
+        parseSimpleVersionConstraint()
+    }
+
+    fun parseURL() = start(CabalTokelTypes.URL) {
+        token(CabalTokelTypes.ID)
+    }
+
+    fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
+        (token(CabalTokelTypes.ID) && parseComplexVersionConstraint(prevLevel))
+                || token(CabalTokelTypes.ID)
+    }
+
+    fun parseDependensList(prevLevel: Int) = start(CabalTokelTypes.DEPENDENCES) {
+        var res = parseFullVersionConstraint(prevLevel)
+        while ((!builder.eof()) && res) {
+            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                if (indentSize(builder.getTokenText()!!) <= prevLevel) {
+                    break;
+                }
+                builder.advanceLexer()
+            }
+            else
+            {
+                res = token(CabalTokelTypes.COMMA) && parseFullVersionConstraint(prevLevel)
+            }
+        }
+        res
+    }
+
+    fun parseBuildDepends(level: Int) = start(CabalTokelTypes.BUILD_DEPENDS) {
+        parsePropertyKey("build-depends")
+                && token(CabalTokelTypes.COLON)
+                && parseDependensList(level)
+    }
+
+    fun parseHomepage(level: Int) = start(CabalTokelTypes.HOMEPAGE) {
+        parsePropertyKey("homepage")
+                && token(CabalTokelTypes.COLON)
+                && parseURL()
+    }
+
+    fun parsePackageURL(level: Int) = start(CabalTokelTypes.PACKAGE_URL) {
+        var res = parsePropertyKey("package-url")
+        res = res && token(CabalTokelTypes.COLON)
+        res = res && parseURL()
         res
     }
 
     fun parseCabalVersionField(level: Int) = start(CabalTokelTypes.CABAL_VERSION) {
         var res = parsePropertyKey("cabal-version")
         res = res && token(CabalTokelTypes.COLON)
-        res = res && parseSimpleVersionConstraint(level)
+        res = res && parseComplexVersionConstraint(level)
         res
     }
 
     fun parseVersionProperty(level: Int) = start(CabalTokelTypes.VERSION) {
-        var r = parsePropertyKey("version")
-        r = r && token(CabalTokelTypes.COLON)
-        r = r && parsePropertyValue(level)
-        r
+        var res = parsePropertyKey("version")
+        res = res && token(CabalTokelTypes.COLON)
+        res = res && token(CabalTokelTypes.ID)
+        res
     }
 
     fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
