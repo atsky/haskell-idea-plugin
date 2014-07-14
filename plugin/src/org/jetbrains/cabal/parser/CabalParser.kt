@@ -62,9 +62,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
-        var res = token(CabalTokelTypes.ID)
-        res = res && token(CabalTokelTypes.ID)
-        res
+        token(CabalTokelTypes.ID)
+                && token(CabalTokelTypes.ID)
     }
 
     fun parseComplexVersionConstraint(prevLevel : Int) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
@@ -76,22 +75,31 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
-        (token(CabalTokelTypes.ID) && parseComplexVersionConstraint(prevLevel))
-                || token(CabalTokelTypes.ID)
+        var res = token(CabalTokelTypes.ID)
+        parseComplexVersionConstraint(prevLevel)
+        res
     }
 
     fun parseDependensList(prevLevel: Int) = start(CabalTokelTypes.DEPENDENCES) {
         var res = parseFullVersionConstraint(prevLevel)
-        while ((!builder.eof()) && res) {
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+        var isLast = false
+        while ((!builder.eof()) && res && (!isLast)) {
+            val marker = builder.mark()!!
+            var wantNext = token(CabalTokelTypes.COMMA)
+
+            while (wantNext && (!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
                 if (indentSize(builder.getTokenText()!!) <= prevLevel) {
+                    isLast = true
                     break;
                 }
-                builder.advanceLexer()
+                builder.advanceLexer();
             }
-            else
-            {
-                res = token(CabalTokelTypes.COMMA) && parseFullVersionConstraint(prevLevel)
+            if ((!wantNext) || isLast) {
+                marker.rollbackTo()
+                break
+            } else {
+                res = parseFullVersionConstraint(prevLevel)
+                marker.drop()
             }
         }
         res
@@ -170,10 +178,11 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 }
             }
 
-            var result = parseVersionProperty(currentLevel!!) || parseCabalVersionField(currentLevel!!)
-            result = result || parseProperty(currentLevel!!)
-            result = result || parseIf(currentLevel!!)
-            result = result || parseElse(currentLevel!!)
+            var result = parseBuildDepends(currentLevel!!)
+                      || parseProperty(currentLevel!!)
+                      || parseIf(currentLevel!!)
+                      || parseElse(currentLevel!!)
+
             if (!result) {
                 builder.advanceLexer()
             }
@@ -224,7 +233,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseVersionProperty(0) || parseCabalVersionField(0) || parseProperty(0) || parseSection(0))) {
+            if (!(parseVersionProperty(0) || parseCabalVersionField(0) || parsePackageURL(0) || parseHomepage(0) || parseProperty(0) || parseSection(0))) {
                 builder.advanceLexer()
             }
         }
