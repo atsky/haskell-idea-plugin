@@ -40,5 +40,6 @@ public trait CabalTokelTypes {
         val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
         val VERSION: IElementType = CabalCompositeElementType("VERSION_PROPERTY", { VersionProperty(it) })
+        val CABAL_VERSION: IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY", { CabalVersionField(it) })
     }
 }
