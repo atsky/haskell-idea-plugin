@@ -4,6 +4,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.CabalTokelTypes
+import org.jetbrains.cabal.psi.VersionProperty
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.rules.BaseParser
 
@@ -16,6 +17,10 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parsePropertyKey() = start(CabalTokelTypes.PROPERTY_KEY) {
         token(CabalTokelTypes.ID)
+    }
+
+    fun parsePropertyKey(propName : String) = start(CabalTokelTypes.PROPERTY_KEY) {
+        matchesIgnoreCase(CabalTokelTypes.ID, propName)
     }
 
     fun indentSize(str: String): Int {
@@ -57,6 +62,13 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         r
     }
 
+    fun parseVersionProperty(level: Int) = start(CabalTokelTypes.VERSION) {
+        var r = parsePropertyKey("version")
+        r = r && token(CabalTokelTypes.COLON)
+        r = r && parsePropertyValue(level)
+        r
+    }
+
     fun parseIf(level: Int) = start(CabalTokelTypes.PROPERTY) {
         val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
         if (result) {
@@ -78,7 +90,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         r
     }
 
-
     fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
         token(CabalTokelTypes.ID);
     }
@@ -98,7 +109,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 }
             }
 
-            var result = parseProperty(currentLevel!!)
+            var result = parseVersionProperty(currentLevel!!)
+            result = result || parseProperty(currentLevel!!)
             result = result || parseIf(currentLevel!!)
             result = result || parseElse(currentLevel!!)
             if (!result) {
@@ -151,7 +163,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseProperty(0) || parseSection(0))) {
+            if (!(parseVersionProperty(0) || parseProperty(0) || parseSection(0))) {
                 builder.advanceLexer()
             }
         }

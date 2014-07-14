@@ -38,5 +38,7 @@ public trait CabalTokelTypes {
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
         val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
+
+        val VERSION: IElementType = CabalCompositeElementType("VERSION_PROPERTY", { VersionProperty(it) })
     }
 }

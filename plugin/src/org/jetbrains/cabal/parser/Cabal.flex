@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 
 %xstate STRING, BLOCK_COMMENT
 
-DIGIT =[0-9]
+DIGIT = [0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
 INDENT = [\n] ({WHITE_SPACE_CHAR}|"\n")*
 EOL_COMMENT = "--"[^\n]*
