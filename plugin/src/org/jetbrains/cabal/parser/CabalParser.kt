@@ -69,6 +69,26 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
+    fun parseFileRef() = start(CabalTokelTypes.FILE_REF) {
+        token(CabalTokelTypes.ID)
+    }
+
+    fun parseFileRefList() : Boolean {
+        var res = parseFileRef()
+        while ((!builder.eof()) && res) {
+            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+                if (indentSize(builder.getTokenText()!!) == 0) {
+                    break;
+                }
+                builder.advanceLexer()
+            }
+            else {
+                res = parseFileRef()
+            }
+        }
+        return res
+    }
+
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
         token(CabalTokelTypes.COMPARATOR)
                 && token(CabalTokelTypes.ID)
@@ -146,6 +166,30 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res = res && token(CabalTokelTypes.COLON)
         res = res && token(CabalTokelTypes.ID)
         res
+    }
+
+    fun parseDataFiles() = start(CabalTokelTypes.DATA_FILES) {
+        parsePropertyKey("data-files")
+                && token(CabalTokelTypes.COLON)
+                && parseFileRefList()
+    }
+
+    fun parseExtraSource() = start(CabalTokelTypes.EXTRA_SOURCE) {
+        parsePropertyKey("extra-source-files")
+                && token(CabalTokelTypes.COLON)
+                && parseFileRefList()
+    }
+
+    fun parseExtraTmp() = start(CabalTokelTypes.EXTRA_TMP) {
+        parsePropertyKey("extra-tmp-files")
+                && token(CabalTokelTypes.COLON)
+                && parseFileRefList()
+    }
+
+    fun parseExtraDoc() = start(CabalTokelTypes.EXTRA_DOC) {
+        parsePropertyKey("extra-doc-files")
+                && token(CabalTokelTypes.COLON)
+                && parseFileRefList()
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +309,12 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseVersionProperty() || parseCabalVersionField() || parseNameField() || parsePackageURL() || parseHomepage() || parseProperty(0) || parseSection(0))) {
+            if (!(parseExtraDoc() || parseExtraDoc()          || parseExtraTmp()
+                                  || parseDataFiles()
+                                  || parseExtraSource()       ||parseVersionProperty()
+                                  || parseCabalVersionField() || parseNameField()
+                                  || parsePackageURL()        || parseHomepage()
+                                  || parseProperty(0)         || parseSection(0))) {
                 builder.advanceLexer()
             }
         }
