@@ -4,8 +4,10 @@
     <taskdef classname="jflex.anttask.JFlexTask" name="jflex" classpath="lib/jflex-1.5.1.jar"/>
 
     <property name="build.dir" value="${basedir}/build"/>
-    <property name="result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
-    <property name="flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
+    <property name="cabal.lexer.result.file" value="plugin/src/org/jetbrains/cabal/parser/_CabalLexer.java"/>
+    <property name="cabal.lexer.flex.file" value="plugin/src/org/jetbrains/cabal/parser/Cabal.flex"/>
+    <property name="haskell.lexer.result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
+    <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
     <property name="idea" value="${build.dir}/idea"/>
     <property name="idea.download.url" value="http://download.jetbrains.com/idea/ideaIU-13.zip"/>
     <property name="external.annotations.path" value="${basedir}/annotations"/>
@@ -28,8 +30,16 @@
 
     <target name="compile.haskell.lexer">
         <sequential>
-            <delete file="${result.file}"/>
-            <jflex file="${flex.file}"
+            <delete file="${haskell.lexer.result.file}"/>
+            <jflex file="${haskell.lexer.flex.file}"
+                   skeleton="tools/idea-flex.skeleton"/>
+        </sequential>
+    </target>
+
+    <target name="compile.cabal.lexer">
+        <sequential>
+            <delete file="${cabal.lexer.result.file}"/>
+            <jflex file="${cabal.lexer.flex.file}"
                    skeleton="tools/idea-flex.skeleton"/>
         </sequential>
     </target>

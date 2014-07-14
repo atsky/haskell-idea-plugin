@@ -19,9 +19,6 @@ import com.intellij.psi.tree.IElementType;
 
 %function advance
 %type IElementType
-%eof{
-  return;
-%eof}
 
 %xstate STRING, BLOCK_COMMENT
 
