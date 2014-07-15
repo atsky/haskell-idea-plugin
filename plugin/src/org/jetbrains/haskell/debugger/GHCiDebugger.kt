@@ -6,7 +6,6 @@ import java.net.Socket
 import org.jetbrains.haskell.debugger.commands.TraceCommand
 import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
-import org.jetbrains.haskell.debugger.commands.RunCommand
 import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.commands.RemoveBreakpointCommand
 
