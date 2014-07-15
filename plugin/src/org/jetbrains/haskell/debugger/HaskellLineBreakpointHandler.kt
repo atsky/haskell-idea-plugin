@@ -10,23 +10,22 @@ public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreak
                                           val debugProcess: GHCiDebugProcess)
                                         : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass)
 {
-    private val breakpointPositions : MutableMap<XLineBreakpoint<XBreakpointProperties<*>>, XSourcePosition> = hashMapOf()
+//    private val breakpointPositions : MutableMap<XLineBreakpoint<XBreakpointProperties<*>>, XSourcePosition> = hashMapOf()
 
     override fun registerBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
-        val breakpointPos : XSourcePosition? = breakpoint.getSourcePosition()
-        if(breakpointPos != null) {
-            breakpointPositions.put(breakpoint, breakpointPos)
-            //todo: implement position converting
-            debugProcess.addBreakpoint(breakpointPos.getLine() + 1, breakpoint)
+        val breakpointLineNumber : Int? = getHaskellBreakpointLineNumber(breakpoint)
+        if(breakpointLineNumber != null) {
+            debugProcess.addBreakpoint(breakpointLineNumber, breakpoint)
         }
     }
 
     override fun unregisterBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, isTemporary: Boolean) {
-        val breakpointPos : XSourcePosition? = breakpointPositions.get(breakpoint)
-        if (breakpointPos != null) {
-            breakpointPositions.remove(breakpoint)
-            //todo: implement position converting
-            debugProcess.removeBreakpoint(breakpointPos.getLine() + 1)
+        val breakpointLineNumber : Int? = getHaskellBreakpointLineNumber(breakpoint)
+        if(breakpointLineNumber != null) {
+            debugProcess.removeBreakpoint(breakpointLineNumber)
         }
     }
+
+    private fun getHaskellBreakpointLineNumber(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>): Int? =
+            breakpoint.getSourcePosition()?.getLine()?.plus(1)
 }
