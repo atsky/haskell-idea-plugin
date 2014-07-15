@@ -48,13 +48,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 //    override fun removeBreakpoint(typeId: String, fileName: String?, line: Int) =
 //        execute(RemoveBreakpointCommand(line))
 
-    override fun setBreakpoint(line: Int) {
-        println("bp set at line $line")
-        execute(SetBreakpointCommand(line))
-    }
+    override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line))
 
-    override fun removeBreakpoint(breakpointNumber: Int) {
-        println("removed bp number $breakpointNumber")
-        execute(RemoveBreakpointCommand(breakpointNumber))
-    }
+    override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber))
 }
