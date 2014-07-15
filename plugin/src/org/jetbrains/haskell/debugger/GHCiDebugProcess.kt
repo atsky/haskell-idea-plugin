@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import com.intellij.xdebugger.frame.XSuspendContext
 
 /**
  * Created by vlad on 7/10/14.
@@ -40,11 +41,13 @@ public class GHCiDebugProcess(session: XDebugSession,
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
             HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)
     )
+
     override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
         return _breakpointHandlers
     }
 
-    private val registeredBreakpoints: MutableMap<Int, Int> = hashMapOf()
+    private class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
+    private val registeredBreakpoints: MutableMap<Int, BreakpointEntry> = hashMapOf()
 
     //    private fun tryAddBreakpointHandlersFromExtensions() {
     //        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
@@ -92,11 +95,12 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     public fun addBreakpoint(position: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+        registeredBreakpoints.put(position, BreakpointEntry(null, breakpoint))
         debugger.setBreakpoint(position)
     }
 
     public fun removeBreakpoint(position: Int) {
-        val breakpointNumber: Int? = registeredBreakpoints.get(position)
+        val breakpointNumber: Int? = registeredBreakpoints.get(position)?.breakpointNumber
         if (breakpointNumber != null) {
             registeredBreakpoints.remove(position)
             debugger.removeBreakpoint(breakpointNumber)
@@ -156,7 +160,10 @@ public class GHCiDebugProcess(session: XDebugSession,
             val lastWord = parts[parts.size - 1]
             val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
             val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
-            registeredBreakpoints.put(lineNumber, breakpointNumber)
+            val entry = registeredBreakpoints.get(lineNumber)
+            if (entry != null) {
+                entry.breakpointNumber = breakpointNumber
+            }
         }
     }
 
@@ -168,10 +175,10 @@ public class GHCiDebugProcess(session: XDebugSession,
             val secondColon: Int = output.lastIndexOf(':')
             val firstColon: Int = output.lastIndexOf(':', secondColon - 1)
             val lineNumber: Int = Integer.parseInt(output.substring(firstColon + 1, secondColon))
-            val breakpointIndex: Int = registeredBreakpoints.get(lineNumber)!!
-
+            val breakpoint = registeredBreakpoints.get(lineNumber)!!.breakpoint
+            val context = object : XSuspendContext() {}
+            getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         } catch (e: Exception) {
         }
     }
-
 }
