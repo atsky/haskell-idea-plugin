@@ -70,26 +70,25 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
+    fun isLastOnThisLevel(prevLevel: Int) : Boolean {
+        while ((!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
+            if (indentSize(builder.getTokenText()!!) <= prevLevel) {
+                return true
+                break;
+            }
+            builder.advanceLexer();
+        }
+        return false
+    }
+
     fun parseValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean) : Boolean {
         var res = parseValue()
-        var isLast = false
-        while ((!builder.eof()) && res && (!isLast)) {
-            val marker = builder.mark()!!
-            var wantNext = parseSeparator()
+        while ((!builder.eof()) && res) {
+            if (isLastOnThisLevel(prevLevel)) break
 
-            while (wantNext && (!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
-                if (indentSize(builder.getTokenText()!!) <= prevLevel) {
-                    isLast = true
-                    break;
-                }
-                builder.advanceLexer();
-            }
-            if ((!wantNext) || isLast) {
-                marker.rollbackTo()
-                break
-            } else {
+            res = parseSeparator()
+            if (res && !isLastOnThisLevel(prevLevel)) {
                 res = parseValue()
-                marker.drop()
             }
         }
         return res
@@ -100,47 +99,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseDependensList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
 
     fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
-
-//    fun parseDependensList(prevLevel: Int) : Boolean {
-//        var res = parseFullVersionConstraint(prevLevel)
-//        var isLast = false
-//        while ((!builder.eof()) && res && (!isLast)) {
-//            val marker = builder.mark()!!
-//            var wantNext = token(CabalTokelTypes.COMMA)
-//
-//            while (wantNext && (!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
-//                if (indentSize(builder.getTokenText()!!) <= prevLevel) {
-//                    isLast = true
-//                    break;
-//                }
-//                builder.advanceLexer();
-//            }
-//            if ((!wantNext) || isLast) {
-//                marker.rollbackTo()
-//                break
-//            } else {
-//                res = parseFullVersionConstraint(prevLevel)
-//                marker.drop()
-//            }
-//        }
-//        return res
-//    }
-
-//    fun parseFileRefList(prevLevel: Int) : Boolean {
-//        var res = parseFileRef()
-//        while ((!builder.eof()) && res) {
-//            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-//                if (indentSize(builder.getTokenText()!!) == prevLevel) {
-//                    break;
-//                }
-//                builder.advanceLexer()
-//            }
-//            else {
-//                res = parseFileRef()
-//            }
-//        }
-//        return res
-//    }
 
     fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
         var res = token(CabalTokelTypes.ID)
@@ -160,15 +118,21 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseProperty(level: Int) = parseField(CabalTokelTypes.PROPERTY, null, {  parsePropertyValue(level) })
 
     fun parseTopLevelField() : Boolean {
-        return parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileRefList() })
+      return   parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
+            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint(0) })
+            || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
+//            || parseField(CabalTokelTypes.BUILD_TYPE   , "build-type"        , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.LICENSE      , "license"           , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.LICENSE_FILE , "license-file"      , { parseFileName() })
+//            || parseField(CabalTokelTypes.MAINTAINER   , "copyright"         , { token(CabalTokelTypes.ID) })
+            || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
+            || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
+//            || parseField(CabalTokelTypes.BUG_REPORTS  , "bug-reports"       , { parseURL() })
+//            || parseField(CabalTokelTypes.TESTED_WITH  , "tested-with"       , { token(CabalTokelTypes.ID) })
+            || parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileRefList() })
             || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileRefList() })
-            || parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
-            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint(0) })
-            || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
-            || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
-            || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
     }
 
     fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
