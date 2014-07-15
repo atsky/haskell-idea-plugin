@@ -62,46 +62,20 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
-    fun parseFileRefList() : Boolean {
-        var res = parseFileRef()
-        while ((!builder.eof()) && res) {
-            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
-                if (indentSize(builder.getTokenText()!!) == 0) {
-                    break;
-                }
-                builder.advanceLexer()
-            }
-            else {
-                res = parseFileRef()
-            }
-        }
-        return res
-    }
-
-    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
+    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
         (token(CabalTokelTypes.COMPARATOR)) && (token(CabalTokelTypes.ID))
-    }
-
-    fun parseComplexVersionConstraint(prevLevel : Int = 0) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
-        parseSimpleVersionConstraint()
     }
 
     fun parseURL() = start(CabalTokelTypes.URL) {
         token(CabalTokelTypes.ID)
     }
 
-    fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
-        var res = token(CabalTokelTypes.ID)
-        parseComplexVersionConstraint(prevLevel)
-        res
-    }
-
-    fun parseDependensList(prevLevel: Int) : Boolean {
-        var res = parseFullVersionConstraint(prevLevel)
+    fun parseValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean) : Boolean {
+        var res = parseValue()
         var isLast = false
         while ((!builder.eof()) && res && (!isLast)) {
             val marker = builder.mark()!!
-            var wantNext = token(CabalTokelTypes.COMMA)
+            var wantNext = parseSeparator()
 
             while (wantNext && (!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
                 if (indentSize(builder.getTokenText()!!) <= prevLevel) {
@@ -114,12 +88,68 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 marker.rollbackTo()
                 break
             } else {
-                res = parseFullVersionConstraint(prevLevel)
+                res = parseValue()
                 marker.drop()
             }
         }
         return res
     }
+
+    fun parseFileRefList(prevLevel: Int = 0) = parseValueList(prevLevel, { parseFileRef() }, { true })
+
+    fun parseDependensList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
+
+    fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
+
+//    fun parseDependensList(prevLevel: Int) : Boolean {
+//        var res = parseFullVersionConstraint(prevLevel)
+//        var isLast = false
+//        while ((!builder.eof()) && res && (!isLast)) {
+//            val marker = builder.mark()!!
+//            var wantNext = token(CabalTokelTypes.COMMA)
+//
+//            while (wantNext && (!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
+//                if (indentSize(builder.getTokenText()!!) <= prevLevel) {
+//                    isLast = true
+//                    break;
+//                }
+//                builder.advanceLexer();
+//            }
+//            if ((!wantNext) || isLast) {
+//                marker.rollbackTo()
+//                break
+//            } else {
+//                res = parseFullVersionConstraint(prevLevel)
+//                marker.drop()
+//            }
+//        }
+//        return res
+//    }
+
+//    fun parseFileRefList(prevLevel: Int) : Boolean {
+//        var res = parseFileRef()
+//        while ((!builder.eof()) && res) {
+//            if (builder.getTokenType() == TokenType.NEW_LINE_INDENT) {
+//                if (indentSize(builder.getTokenText()!!) == prevLevel) {
+//                    break;
+//                }
+//                builder.advanceLexer()
+//            }
+//            else {
+//                res = parseFileRef()
+//            }
+//        }
+//        return res
+//    }
+
+    fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
+        var res = token(CabalTokelTypes.ID)
+        parseComplexVersionConstraint(prevLevel)
+        res
+    }
+
+
+
 
     fun parseField(tokenType : IElementType, key : String?, parseValue : () -> Boolean) = start(tokenType) {
         parsePropertyKey(key)
@@ -135,7 +165,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileRefList() })
             || parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
-            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint() })
+            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint(0) })
             || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
             || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
             || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
@@ -203,8 +233,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
         token(CabalTokelTypes.ID);
     }
-
-
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
