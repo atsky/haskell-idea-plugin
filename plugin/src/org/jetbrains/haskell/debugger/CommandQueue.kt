@@ -16,10 +16,10 @@ public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) :
 
     override fun run() {
         while (running) {
-            if (commands.empty || flag.compareAndSet(false, false)) {
+            if (commands.empty || !flag.getAndSet(false)) {
                 Thread.sleep(100);
             } else {
-                val command = commands.remove(0)
+                val command = removeCommand()
                 debugger.execute(command)
             }
         }
@@ -27,6 +27,10 @@ public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) :
 
     public synchronized fun addCommand(command: AbstractCommand) {
         commands.add(command)
+    }
+
+    private synchronized fun removeCommand(): AbstractCommand {
+        return commands.remove(0)
     }
 
     public fun start() {
