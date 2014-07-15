@@ -23,6 +23,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         queue = CommandQueue(this, debugProcess.readyForInput)
         queue.start()
     }
+    public var debugStarted : Boolean = false
+        private set
 
     override fun trace() {
         queue.addCommand(TraceCommand())
@@ -42,14 +44,12 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
             os.write(bytes)
             os.flush()
+
+            if(lastCommand is TraceCommand) {
+                debugStarted = true
+            }
         }
     }
-
-//    override fun setBreakpoint(typeId: String, fileName: String?, line: Int, condition: String?, logExpression: String?) =
-//            execute(SetBreakpointCommand(line))
-//
-//    override fun removeBreakpoint(typeId: String, fileName: String?, line: Int) =
-//        execute(RemoveBreakpointCommand(line))
 
     override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line))
 

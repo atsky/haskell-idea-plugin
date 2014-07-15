@@ -16,6 +16,8 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.commands.TraceCommand
 import com.intellij.xdebugger.frame.XSuspendContext
 
 /**
@@ -143,15 +145,15 @@ public class GHCiDebugProcess(session: XDebugSession,
     // methods to handle GHCi output
     private fun handleGHCiOutput(output: String?) {
         if (output != null) {
-            when (debugger.lastCommand?.commandName) {
-                "SetBreakpoint" -> tryHandleSetBreakpointCommandResult(output)
-                "Trace" -> tryHandleStoppedAtBreakpoint(output)
+            when (debugger.lastCommand) {
+                is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
+                is TraceCommand -> tryHandleStoppedAtBreakpoint(output)
             }
-
+            tryHandleDebugFinished(output)
         }
     }
 
-    private fun tryHandleSetBreakpointCommandResult(output: String) {
+    private fun handleSetBreakpointCommandResult(output: String) {
         //temporary and not optimal, later parser should do this work (added just for testing)
         val parts = output.split(' ')
 
@@ -164,6 +166,9 @@ public class GHCiDebugProcess(session: XDebugSession,
             if (entry != null) {
                 entry.breakpointNumber = breakpointNumber
             }
+            debugger.lastCommand = null
+        } else {
+            throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
         }
     }
 
@@ -179,6 +184,13 @@ public class GHCiDebugProcess(session: XDebugSession,
             val context = object : XSuspendContext() {}
             getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         } catch (e: Exception) {
+        }
+    }
+
+    private fun tryHandleDebugFinished(output : String) {
+        // temporary
+        if(debugger.debugStarted && output.equals("*Main> ")) {
+            getSession()?.stop()
         }
     }
 }
