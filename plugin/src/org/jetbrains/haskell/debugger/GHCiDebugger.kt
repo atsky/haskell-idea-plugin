@@ -17,6 +17,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 
     private val lockObject = Any()
     private val queue: CommandQueue
+    public var lastCommand: AbstractCommand? = null;
 
     {
         queue = CommandQueue(this, debugProcess.readyForInput)
@@ -31,6 +32,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         val bytes = command.getBytes()
 
         synchronized(lockObject) {
+            lastCommand = command
+
             debugProcess.printToConsole(String(bytes))
 
             System.out.write(bytes)
