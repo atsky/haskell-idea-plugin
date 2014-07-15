@@ -11,10 +11,9 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(val debugProcess: GHCiDebugProcess, listener: HaskellDebugProcessListener) : ProcessDebugger {
+public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
 
     private val lockObject = Any()
-    private val readyForInput = listener.ready
 
     override fun trace() {
         execute(TraceCommand())
@@ -34,7 +33,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess, listener: HaskellD
         // Wait for the line "*Main> " to appear (if this line is an output of program, may be misunderstood),
         // needed for correct displaying of input/output of the process in console.
         // Another variant could be: execute command immediately, but display in console later.
-        while (readyForInput.compareAndSet(false, false)) {
+        while (debugProcess.readyForInput.compareAndSet(false, false)) {
             Thread.sleep(100)
         }
 

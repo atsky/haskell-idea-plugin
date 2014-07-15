@@ -12,6 +12,10 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.openapi.extensions.Extensions
 import java.util.ArrayList
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.execution.process.ProcessListener
+import java.util.concurrent.atomic.AtomicBoolean
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.openapi.util.Key
 
 /**
  * Created by vlad on 7/10/14.
@@ -19,15 +23,18 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 public class GHCiDebugProcess(session: XDebugSession,
                               val executionConsole: ExecutionConsole,
-                              val myProcessHandler: ProcessHandler,
-                              listener: HaskellDebugProcessListener) : XDebugProcess(session) {
+                              val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
     private val debugger: GHCiDebugger
 
+    public val readyForInput: AtomicBoolean = AtomicBoolean(false);
+
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-        debugger = GHCiDebugger(this, listener)
+        debugger = GHCiDebugger(this)
+
+        myProcessHandler.addProcessListener(this)
     }
 
     private var _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
@@ -97,5 +104,25 @@ public class GHCiDebugProcess(session: XDebugSession,
         }.start()
     }
 
+
+    // ProcessListener
+
+    override fun startNotified(event: ProcessEvent?) {
+    }
+
+    override fun processTerminated(event: ProcessEvent?) {
+    }
+
+    override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) {
+    }
+
+    override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
+        print(event?.getText())
+        if (isReadyForInput(event?.getText())) {
+            readyForInput.set(true)
+        }
+    }
+
+    private fun isReadyForInput(line: String?): Boolean = "*Main>".equals(line?.trim())    //temporary
 
 }
