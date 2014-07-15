@@ -74,7 +74,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         while ((!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
             if (indentSize(builder.getTokenText()!!) <= prevLevel) {
                 return true
-                break;
             }
             builder.advanceLexer();
         }
