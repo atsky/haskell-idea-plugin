@@ -53,8 +53,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         execute(SetBreakpointCommand(line))
     }
 
-    override fun removeBreakpoint(line: Int) {
-        println("bp removed from line $line")
-        execute(RemoveBreakpointCommand(line))
+    override fun removeBreakpoint(breakpointNumber: Int) {
+        println("removed bp number $breakpointNumber")
+        execute(RemoveBreakpointCommand(breakpointNumber))
     }
 }

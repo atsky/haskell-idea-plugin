@@ -42,22 +42,23 @@ public class GHCiDebugProcess(session: XDebugSession,
         myProcessHandler.addProcessListener(this)
     }
 
-    private val _breakpointHandlers: ArrayList<XBreakpointHandler<*>>
-    {
-        _breakpointHandlers = ArrayList<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>()
-        _breakpointHandlers.add(HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this))
-        tryAddBreakpointHandlersFromExtensions()
+    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
+            HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)
+    )
+    override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
+        return _breakpointHandlers
     }
-    private val registeredBreakpoints: MutableMap<Int, XLineBreakpoint<*>> = ConcurrentHashMap()
 
-    private fun tryAddBreakpointHandlersFromExtensions() {
-        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
-        if(extPointName != null) {
-            for (factory in Extensions.getExtensions(extPointName)) {
-                _breakpointHandlers.add(factory.createBreakpointHandler(this))
-            }
-        }
-    }
+    private val registeredBreakpoints: MutableMap<Int, Int> = hashMapOf()
+
+//    private fun tryAddBreakpointHandlersFromExtensions() {
+//        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
+//        if(extPointName != null) {
+//            for (factory in Extensions.getExtensions(extPointName)) {
+//                _breakpointHandlers.add(factory.createBreakpointHandler(this))
+//            }
+//        }
+//    }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
         return debuggerEditorsProvider
@@ -94,26 +95,15 @@ public class GHCiDebugProcess(session: XDebugSession,
         throw UnsupportedOperationException()
     }
 
-    override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
-        // bad decision but for now I don't know how to convert ArrayList to Array better
-        return _breakpointHandlers.toArray(Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>>(
-                _breakpointHandlers.size, {i -> HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)}))
-    }
-
     public fun addBreakpoint(position: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        registeredBreakpoints.put(position, breakpoint)
-        // isConnected check is omitted
-//        debugger.setBreakpoint(breakpoint.getType().getId(), position.fileName, position.line, breakpoint.getCondition(), breakpoint.getLogExpression())
         debugger.setBreakpoint(position)
     }
 
     public fun removeBreakpoint(position: Int) {
-        val breakpoint = registeredBreakpoints.get(position)
-        if (breakpoint != null) {
+        val breakpointNumber : Int? = registeredBreakpoints.get(position)
+        if (breakpointNumber != null) {
             registeredBreakpoints.remove(position)
-            // isConnected check is omitted
-//            debugger.removeBreakpoint(breakpoint.getType().getId(), position.fileName, position.line)
-            debugger.removeBreakpoint(position)
+            debugger.removeBreakpoint(breakpointNumber)
         }
     }
 
@@ -149,8 +139,29 @@ public class GHCiDebugProcess(session: XDebugSession,
         if (isReadyForInput(event?.getText())) {
             readyForInput.set(true)
         }
+        handleGHCiOutput(event?.getText())
     }
 
     private fun isReadyForInput(line: String?): Boolean = "*Main>".equals(line?.trim())    //temporary
+
+    // methods to handle GHCi output
+    private fun handleGHCiOutput(output: String?) {
+        if(output != null) {
+            tryHandleSetBreakpointCommandResult(output)
+        }
+    }
+
+    private fun tryHandleSetBreakpointCommandResult(output: String) {
+        //temporary and not optimal, later parser should do this work (added just for testing)
+        val parts = output.split(' ')
+
+        if(parts.size > 4 && parts[0] == "Breakpoint" && parts[2] == "activated" && parts[3] == "at") {
+            val breakpointNumber = parts[1].toInt()
+            val lastWord = parts[parts.size - 1]
+            val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
+            val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
+            registeredBreakpoints.put(lineNumber, breakpointNumber)
+        }
+    }
 
 }
