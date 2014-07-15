@@ -16,6 +16,8 @@ import com.intellij.execution.process.ProcessListener
 import java.util.concurrent.atomic.AtomicBoolean
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
+import com.intellij.execution.ui.ConsoleView
+import com.intellij.execution.ui.ConsoleViewContentType
 
 /**
  * Created by vlad on 7/10/14.
@@ -102,6 +104,11 @@ public class GHCiDebugProcess(session: XDebugSession,
                 debugger.trace()
             }
         }.start()
+    }
+
+
+    public fun printToConsole(text: String) {
+        (executionConsole as ConsoleView).print(text, ConsoleViewContentType.NORMAL_OUTPUT)
     }
 
 

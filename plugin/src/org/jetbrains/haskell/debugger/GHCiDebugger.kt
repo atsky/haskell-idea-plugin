@@ -38,6 +38,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         }
 
         synchronized(lockObject) {
+            debugProcess.printToConsole(String(bytes))
+
             System.out.write(bytes)
             System.out.flush()
 
