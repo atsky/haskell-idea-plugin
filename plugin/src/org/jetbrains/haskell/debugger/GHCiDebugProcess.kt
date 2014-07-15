@@ -80,7 +80,6 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
-        while (true);
     }
 
     override fun resume() {
