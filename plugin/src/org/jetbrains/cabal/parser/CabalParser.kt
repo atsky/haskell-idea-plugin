@@ -3,8 +3,8 @@ package org.jetbrains.haskell.cabal
 import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.CabalTokelTypes
 import com.intellij.psi.TokenType
+import org.jetbrains.cabal.parser.CabalTokelTypes
 import org.jetbrains.haskell.parser.rules.BaseParser
 
 
@@ -14,12 +14,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return parseInternal(root)
     }
 
-    fun parsePropertyKey() = start(CabalTokelTypes.PROPERTY_KEY) {
-        token(CabalTokelTypes.ID)
-    }
-
-    fun parsePropertyKey(propName : String) = start(CabalTokelTypes.PROPERTY_KEY) {
-        matchesIgnoreCase(CabalTokelTypes.ID, propName)
+    fun parsePropertyKey(propName : String?) = start(CabalTokelTypes.PROPERTY_KEY) {
+        if (propName == null) token(CabalTokelTypes.ID) else matchesIgnoreCase(CabalTokelTypes.ID, propName)
     }
 
     fun indentSize(str: String): Int {
@@ -52,13 +48,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             builder.advanceLexer()
         }
         true;
-    }
-
-    fun parseProperty(level: Int) = start(CabalTokelTypes.PROPERTY) {
-        var res = parsePropertyKey()
-        res = res && token(CabalTokelTypes.COLON)
-        res = res && parsePropertyValue(level)
-        res
     }
 
     fun parseName() = start(CabalTokelTypes.NAME) {
@@ -132,81 +121,29 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
-    ///////////////////////////////////////////  global properties parsing  /////////////////////////////////////////////////
-
-    fun parseNameField() = start(CabalTokelTypes.NAME_FIELD) {
-        parsePropertyKey("name")
+    fun parseField(tokenType : IElementType, key : String?, parseValue : () -> Boolean) = start(tokenType) {
+        parsePropertyKey(key)
                 && token(CabalTokelTypes.COLON)
-                && parseName()
+                && parseValue()
     }
 
-    fun parseHomepage() = start(CabalTokelTypes.HOMEPAGE) {
-        parsePropertyKey("homepage")
-                && token(CabalTokelTypes.COLON)
-                && parseURL()
+    fun parseProperty(level: Int) = parseField(CabalTokelTypes.PROPERTY, null, {  parsePropertyValue(level) })
+
+    fun parseTopLevelField() : Boolean {
+        return parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileRefList() })
+            || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileRefList() })
+            || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileRefList() })
+            || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileRefList() })
+            || parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
+            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint() })
+            || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
+            || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
+            || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
     }
 
-    fun parsePackageURL() = start(CabalTokelTypes.PACKAGE_URL) {
-        var res = parsePropertyKey("package-url")
-        res = res && token(CabalTokelTypes.COLON)
-        res = res && parseURL()
-        res
-    }
+    fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
 
-    fun parseCabalVersionField() = start(CabalTokelTypes.CABAL_VERSION) {
-        var res = parsePropertyKey("cabal-version")
-        res = res && token(CabalTokelTypes.COLON)
-        res = res && parseComplexVersionConstraint()
-        res
-    }
-
-    fun parseVersionProperty() = start(CabalTokelTypes.VERSION) {
-        var res = parsePropertyKey("version")
-        res = res && token(CabalTokelTypes.COLON)
-        res = res && token(CabalTokelTypes.ID)
-        res
-    }
-
-    fun parseDataFiles() = start(CabalTokelTypes.DATA_FILES) {
-        parsePropertyKey("data-files")
-                && token(CabalTokelTypes.COLON)
-                && parseFileRefList()
-    }
-
-    fun parseExtraSource() = start(CabalTokelTypes.EXTRA_SOURCE) {
-        parsePropertyKey("extra-source-files")
-                && token(CabalTokelTypes.COLON)
-                && parseFileRefList()
-    }
-
-    fun parseExtraTmp() = start(CabalTokelTypes.EXTRA_TMP) {
-        parsePropertyKey("extra-tmp-files")
-                && token(CabalTokelTypes.COLON)
-                && parseFileRefList()
-    }
-
-    fun parseExtraDoc() = start(CabalTokelTypes.EXTRA_DOC) {
-        parsePropertyKey("extra-doc-files")
-                && token(CabalTokelTypes.COLON)
-                && parseFileRefList()
-    }
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    fun parseMainFile(level: Int) = start(CabalTokelTypes.MAIN_FILE) {
-        parsePropertyKey("main-is")
-                && token(CabalTokelTypes.COLON)
-                && parseFileName()
-    }
-
-    /////////////////////////////////////////////   build information parsing  //////////////////////////////////////////
-
-    fun parseBuildDepends(level: Int) = start(CabalTokelTypes.BUILD_DEPENDS) {
-        parsePropertyKey("build-depends")
-                && token(CabalTokelTypes.COLON)
-                && parseDependensList(level)
-    }
-
+    fun parseBuildDepends(level: Int) = parseField(CabalTokelTypes.BUILD_DEPENDS, "build-depends", { parseDependensList(level) })
 
     fun parseProperties(prevLevel: Int, isExecutable : Boolean): Boolean {
         var currentLevel : Int? = null;
@@ -225,7 +162,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
             var result = false
             if (isExecutable) {
-                result = parseMainFile(prevLevel)
+                result = parseMainFile()
             }
             result = result
                   || parseBuildDepends(currentLevel!!)
@@ -308,12 +245,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseExtraDoc() || parseExtraDoc()          || parseExtraTmp()
-                                  || parseDataFiles()
-                                  || parseExtraSource()       ||parseVersionProperty()
-                                  || parseCabalVersionField() || parseNameField()
-                                  || parsePackageURL()        || parseHomepage()
-                                  || parseProperty(0)         || parseSection(0))) {
+            if (!(parseTopLevelField() || parseProperty(0) || parseSection(0))) {
                 builder.advanceLexer()
             }
         }
