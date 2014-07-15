@@ -85,6 +85,7 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
+        debugger.close();
     }
 
     override fun resume() {

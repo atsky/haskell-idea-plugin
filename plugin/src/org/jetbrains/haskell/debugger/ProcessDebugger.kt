@@ -15,4 +15,6 @@ public trait ProcessDebugger {
     public fun setBreakpoint(line: Int)
 
     public fun removeBreakpoint(breakpointNumber: Int)
+
+    public fun close()
 }

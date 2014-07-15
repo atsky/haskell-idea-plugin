@@ -51,4 +51,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line))
 
     override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber))
+
+    override fun close() {
+        queue.stop()
+    }
 }
