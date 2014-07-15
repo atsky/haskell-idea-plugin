@@ -14,9 +14,15 @@ import java.util.concurrent.atomic.AtomicBoolean
 public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
 
     private val lockObject = Any()
+    private val queue: CommandQueue
+
+    {
+        queue = CommandQueue(this, debugProcess.readyForInput)
+        queue.start()
+    }
 
     override fun trace() {
-        execute(TraceCommand())
+        queue.addCommand(TraceCommand())
     }
 
     override fun addBreakPoint(file: String, line: String) {
@@ -29,13 +35,6 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
-
-        // Wait for the line "*Main> " to appear (if this line is an output of program, may be misunderstood),
-        // needed for correct displaying of input/output of the process in console.
-        // Another variant could be: execute command immediately, but display in console later.
-        while (debugProcess.readyForInput.compareAndSet(false, false)) {
-            Thread.sleep(100)
-        }
 
         synchronized(lockObject) {
             debugProcess.printToConsole(String(bytes))

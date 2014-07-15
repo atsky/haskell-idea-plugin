@@ -34,11 +34,12 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw ExecutionException("Module not specified")
         }
 
-        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
-        val filePath = joinPath(baseDir!!, "src", "Main.hs")
+        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
+        val srcDir = joinPath(baseDir, "src")
+        val filePath = joinPath(baseDir, "src", "Main.hs")
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
-        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath)
+        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDir)
         return OSProcessHandler(process)
     }
 
