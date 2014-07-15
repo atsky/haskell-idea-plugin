@@ -17,6 +17,10 @@ import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
+import org.jetbrains.haskell.run.haskell.CabalRunConfiguration
+import com.intellij.notification.Notification
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationType
 
 /**
  * Class for starting debug session.
@@ -34,10 +38,10 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     override fun getRunnerId(): String = HS_PROGRAM_RUNNER_ID
 
     /**
-     * Checks if this debugger can be used with specified executor and RunProfile
+     * Checks if this runner can be used with specified executor and RunProfile
      */
     override fun canRun(executorId: String, profile: RunProfile): Boolean =
-            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)
+            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile is CabalRunConfiguration
 
     /**
      * This method is executed when debug session is started (when you press "Debug" button)
@@ -45,14 +49,20 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
-        val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
-        val processHandler = executionResult.getProcessHandler()!!
+        try {
+            val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
+            val processHandler = executionResult.getProcessHandler()!!
 
-        val session = XDebuggerManager.getInstance(project)!!.
-                startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
-                    override fun start(session: XDebugSession): XDebugProcess =
-                            GHCiDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
-                })
-        return session.getRunContentDescriptor()
+            val session = XDebuggerManager.getInstance(project)!!.
+                    startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
+                        override fun start(session: XDebugSession): XDebugProcess =
+                                GHCiDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
+                    })
+            return session.getRunContentDescriptor()
+        } catch (e: Exception) {
+            val msg =  "Cannot execute debug process for ${project.getName()}. Check run configurations to try to fix the problem"
+            Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
+        }
+        return null
     }
 }
