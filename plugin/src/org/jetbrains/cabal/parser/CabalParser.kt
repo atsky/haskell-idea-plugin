@@ -90,18 +90,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.SIMPLE_CONSTRAINT) {
-        var res = false
-        var mark = builder.mark()!!
-        if (token(CabalTokelTypes.ID)) {
-            if (token(CabalTokelTypes.ID)) {
-                res = true
-                mark.drop()
-            }
-            else {
-                mark.rollbackTo()
-            }
-        }
-        res
+        (token(CabalTokelTypes.COMPARATOR)) && (token(CabalTokelTypes.ID))
     }
 
     fun parseComplexVersionConstraint(prevLevel : Int = 0) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {

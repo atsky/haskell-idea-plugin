@@ -27,17 +27,17 @@ public trait CabalTokelTypes {
         val STRING: IElementType = HaskellToken("string")
         val NUMBER: IElementType = HaskellToken("number")
         val ID: IElementType = HaskellToken("id")
+        val COMPARATOR: IElementType = HaskellToken("COMPARATOR")
+        val LOGIC: IElementType = HaskellToken("LOGIC")
 
         val PROPERTY: IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
-        val NAME: IElementType = CabalCompositeElementType("NAME", { Name(it) })
-        val FILE_NAME: IElementType = CabalCompositeElementType("FILE_NAME", { FileName(it) })
-        val FILE_REF : IElementType = CabalCompositeElementType("FILE_REF" , { FileReference(it) })
         val PROPERTY_KEY: IElementType = CabalCompositeElementType("PROPERTY_KEY", { PropertyKey(it) })
         val PROPERTY_VALUE: IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
         val EXECUTABLE: IElementType = CabalCompositeElementType("EXECUTABLE", { Executable(it) })
         val TEST_SUITE: IElementType = CabalCompositeElementType("TEST_SUITE", { TestSuite(it) })
         val SECTION: IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE: IElementType = CabalCompositeElementType("SECTION_TYPE", { SectionType(it) })
+
 
         val COMMENTS   : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
@@ -59,5 +59,8 @@ public trait CabalTokelTypes {
         val COMPLEX_CONSTRAINT: IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , { ComplexVersionConstraint(it) })
         val FULL_CONSTRAINT   : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , { FullVersionConstraint(it) }   )
         val URL               : IElementType = CabalCompositeElementType("URL"                      , { URL(it) }                     )
+        val NAME              : IElementType = CabalCompositeElementType("NAME"                     , { Name(it) }                    )
+        val FILE_NAME         : IElementType = CabalCompositeElementType("FILE_NAME"                , { FileName(it) }                )
+        val FILE_REF          : IElementType = CabalCompositeElementType("FILE_REF"                 , { FileReference(it) }           )
     }
 }
