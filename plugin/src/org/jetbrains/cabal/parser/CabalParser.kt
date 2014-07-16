@@ -1,9 +1,9 @@
 package org.jetbrains.haskell.cabal
 
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.TokenType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.ASTNode
-import com.intellij.psi.TokenType
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import org.jetbrains.haskell.parser.rules.BaseParser
 import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
@@ -12,23 +12,24 @@ import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
 class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
     class object {
-        val OPTIONS_FIELD_NAMES : List<String> = listOf (
-                  "ghc-options"
-                , "ghc-prof-options"
-                , "ghc-shared-options"
-                , "hugs-options"
-                , "nhc98-options"
-                , "cc-options"
-                , "ld-options"
+
+        public val OPTIONS_FIELD_NAMES : List<String> = listOf (
+                "ghc-options",
+                "ghc-prof-options",
+                "ghc-shared-options",
+                "hugs-options",
+                "nhc98-options",
+                "cc-options",
+                "ld-options"
         )
 
-        val FREE_FORM_FIELD_NAMES : List<String> = listOf (
-                  "copyright"
-                , "author"
-                , "stability"
-                , "synopsis"
-                , "description"
-                , "category"
+        public val FREE_FORM_FIELD_NAMES : List<String> = listOf (
+                "copyright",
+                "author",
+                "stability",
+                "synopsis",
+                "description",
+                "category"
         )
     }
 
@@ -129,7 +130,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseFileRefList(prevLevel: Int = 0) = parseValueList(prevLevel, { parseFileRef() }, { true })
 
-    fun parsePackageList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
+    fun parseConstraintList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
 
     fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
 
@@ -183,8 +184,9 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
 
     fun parseBuildInformation(level: Int) =
-               parseField(CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parsePackageList(level) })
-            || parseField(CabalTokelTypes.PKG_CONFIG_DEPENDS, "pkgconfig-depends", { parsePackageList(level) })
+               parseField(CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parseConstraintList(level) })
+            || parseField(CabalTokelTypes.PKG_CONFIG_DEPENDS, "pkgconfig-depends", { parseConstraintList(level) })
+            || parseField(CabalTokelTypes.BUILD_TOOLS       , "build-tools"      , { parseConstraintList(level) })
 
             || parseFieldList(CabalTokelTypes.OPTIONS_FIELD , OPTIONS_FIELD_NAMES, { parseIDList(level) })
 

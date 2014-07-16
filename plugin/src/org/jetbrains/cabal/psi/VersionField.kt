@@ -3,6 +3,5 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 
-public class ExtraSource(node: ASTNode) : ASTWrapperPsiElement(node) {
-
+public class VersionField(node: ASTNode) : ASTWrapperPsiElement(node) {
 }

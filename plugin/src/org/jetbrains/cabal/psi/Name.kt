@@ -7,5 +7,4 @@ import com.intellij.lang.ASTNode
  * Created by atsky on 13/12/13.
  */
 public class Name(node: ASTNode) : ASTWrapperPsiElement(node) {
-
 }

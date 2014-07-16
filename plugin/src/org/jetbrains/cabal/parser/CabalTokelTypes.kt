@@ -43,20 +43,21 @@ public trait CabalTokelTypes {
         val SECTION_TYPE       : IElementType = CabalCompositeElementType("SECTION_TYPE", ::SectionType)
 
 
-        val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionProperty         )
+        val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
         val HOMEPAGE           : IElementType = CabalCompositeElementType("HOMEPAGE"                 , ::HomepageField           )
         val PACKAGE_URL        : IElementType = CabalCompositeElementType("PACKAGE_URL"              , ::PackageURLField         )
         val NAME_FIELD         : IElementType = CabalCompositeElementType("NAME_FIELD"               , ::NameField               )
-        val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFile                )
-        val DATA_FILES         : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFiles               )
-        val EXTRA_SOURCE       : IElementType = CabalCompositeElementType("EXTRA_SOURCE"             , ::ExtraSource             )
-        val EXTRA_TMP          : IElementType = CabalCompositeElementType("EXTRA_TMP"                , ::ExtraTmp                )
-        val EXTRA_DOC          : IElementType = CabalCompositeElementType("EXTRA_DOC"                , ::ExtraDoc                )
+        val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
+        val DATA_FILES         : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFilesField          )
+        val EXTRA_SOURCE       : IElementType = CabalCompositeElementType("EXTRA_SOURCE"             , ::ExtraSourceField        )
+        val EXTRA_TMP          : IElementType = CabalCompositeElementType("EXTRA_TMP"                , ::ExtraTmpField           )
+        val EXTRA_DOC          : IElementType = CabalCompositeElementType("EXTRA_DOC"                , ::ExtraDocField           )
         val FREE_FIELD         : IElementType = CabalCompositeElementType("FREE_FORM_FIELD"          , ::FreeField               )
 
         val BUILD_DEPENDS      : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , ::BuildDependsField       )
         val PKG_CONFIG_DEPENDS : IElementType = CabalCompositeElementType("PKG_CONFIG_DEPENDS"       , ::PkgConfigDependsField   )
+        val BUILD_TOOLS        : IElementType = CabalCompositeElementType("BUILD_TOOLS"              , ::BuildToolsField         )
         val OPTIONS_FIELD      : IElementType = CabalCompositeElementType("OPTIONS_FIELD"            , ::OptionsField            )
 
         val VERSION_CONSTRAINT : IElementType = CabalCompositeElementType("VERSION_CONSTRAINT"       , ::VersionConstraint       )
