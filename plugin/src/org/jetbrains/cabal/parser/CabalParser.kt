@@ -6,9 +6,31 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.TokenType
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import org.jetbrains.haskell.parser.rules.BaseParser
+import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
 
 
 class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
+
+    class object {
+        val OPTIONS_FIELD_NAMES : List<String> = listOf (
+                  "ghc-options"
+                , "ghc-prof-options"
+                , "ghc-shared-options"
+                , "hugs-options"
+                , "nhc98-options"
+                , "cc-options"
+                , "ld-options"
+        )
+
+        val FREE_FORM_FIELD_NAMES : List<String> = listOf (
+                  "copyright"
+                , "author"
+                , "stability"
+                , "synopsis"
+                , "description"
+                , "category"
+        )
+    }
 
     public fun parse(): ASTNode {
         return parseInternal(root)
@@ -103,9 +125,11 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
+    fun parseIDList(level: Int) = parseValueList(level, { token(CabalTokelTypes.ID) }, { true })
+
     fun parseFileRefList(prevLevel: Int = 0) = parseValueList(prevLevel, { parseFileRef() }, { true })
 
-    fun parseDependensList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
+    fun parsePackageList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
 
     fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
 
@@ -124,38 +148,45 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 && parseValue()
     }
 
-    fun parseProperty(level: Int) = parseField(CabalTokelTypes.PROPERTY, null, {  parsePropertyValue(level) })
+    fun parseFieldList(tokenType : IElementType, names: List<String>, parseValue : () -> Boolean) : Boolean {
+        var res = true
+        for (name in names) {
+            res = res || parseField(tokenType, name, parseValue)
+        }
+        return res
+    }
 
-    fun parseTopFreeFormFields() =
-               parseField(CabalTokelTypes.FREE_FIELD, "copyright"  , { parseFreeForm(0) })
-            || parseField(CabalTokelTypes.FREE_FIELD, "author"     , { parseFreeForm(0) })
-            || parseField(CabalTokelTypes.FREE_FIELD, "stability"  , { parseFreeForm(0) })
-            || parseField(CabalTokelTypes.FREE_FIELD, "synopsis"   , { parseFreeForm(0) })
-            || parseField(CabalTokelTypes.FREE_FIELD, "description", { parseFreeForm(0) })
-            || parseField(CabalTokelTypes.FREE_FIELD, "category"   , { parseFreeForm(0) })
+    fun parseProperty(level: Int) = parseField(CabalTokelTypes.PROPERTY, null, {  parsePropertyValue(level) })
 
     fun parseTopLevelField() =
                parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
-            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint(0) })
+            || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseSimpleVersionConstraint() })
             || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
 //            || parseField(CabalTokelTypes.BUILD_TYPE   , "build-type"        , { token(CabalTokelTypes.ID) })
 //            || parseField(CabalTokelTypes.LICENSE      , "license"           , { token(CabalTokelTypes.ID) })
 //            || parseField(CabalTokelTypes.LICENSE_FILE , "license-file"      , { parseFileName() })
+//            || parseField(CabalTokelTypes.LICENSE_FILE , "license-files"     , { parseValueList(0, { parseFileName() }, { true }) })
 //            || parseField(CabalTokelTypes.MAINTAINER   , "copyright"         , { token(CabalTokelTypes.ID) })
             || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
             || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
 //            || parseField(CabalTokelTypes.BUG_REPORTS  , "bug-reports"       , { parseURL() })
 //            || parseField(CabalTokelTypes.TESTED_WITH  , "tested-with"       , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.DATA_DIR     , "data-dir"          , { token(CabalTokelTypes.ID) })
             || parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileRefList() })
             || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileRefList() })
-            || parseTopFreeFormFields()
+
+            || parseFieldList(CabalTokelTypes.FREE_FIELD, FREE_FORM_FIELD_NAMES, { parseFreeForm(0) })
 
 
     fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
 
-    fun parseBuildDepends(level: Int) = parseField(CabalTokelTypes.BUILD_DEPENDS, "build-depends", { parseDependensList(level) })
+    fun parseBuildInformation(level: Int) =
+               parseField(CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parsePackageList(level) })
+            || parseField(CabalTokelTypes.PKG_CONFIG_DEPENDS, "pkgconfig-depends", { parsePackageList(level) })
+
+            || parseFieldList(CabalTokelTypes.OPTIONS_FIELD , OPTIONS_FIELD_NAMES, { parseIDList(level) })
 
     fun parseProperties(prevLevel: Int, isExecutable : Boolean): Boolean {
         var currentLevel : Int? = null;
@@ -177,7 +208,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 result = parseMainFile()
             }
             result = result
-                  || parseBuildDepends(currentLevel!!)
+                  || parseBuildInformation(currentLevel!!)
                   || parseProperty(currentLevel!!)
                   || parseIf(currentLevel!!, isExecutable)
                   || parseElse(currentLevel!!, isExecutable)

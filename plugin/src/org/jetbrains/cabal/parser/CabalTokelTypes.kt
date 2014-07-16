@@ -56,6 +56,8 @@ public trait CabalTokelTypes {
         val FREE_FIELD         : IElementType = CabalCompositeElementType("FREE_FORM_FIELD"          , ::FreeField               )
 
         val BUILD_DEPENDS      : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , ::BuildDependsField       )
+        val PKG_CONFIG_DEPENDS : IElementType = CabalCompositeElementType("PKG_CONFIG_DEPENDS"       , ::PkgConfigDependsField   )
+        val OPTIONS_FIELD      : IElementType = CabalCompositeElementType("OPTIONS_FIELD"            , ::OptionsField            )
 
         val VERSION_CONSTRAINT : IElementType = CabalCompositeElementType("VERSION_CONSTRAINT"       , ::VersionConstraint       )
         val FULL_CONSTRAINT    : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , ::FullVersionConstraint   )
