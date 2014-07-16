@@ -187,6 +187,14 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseExposedModules(level: Int) = parseField(CabalTokelTypes.EXPOSED_MODULES, "exposed-modules", { parseIDList(level) })
     fun parseExposed()                  = parseField(CabalTokelTypes.EXPOSED        , "exposed"        , { token(CabalTokelTypes.ID) })
 
+    fun parseRepoFields(level: Int) = false
+//               parseField(CabalTokelTypes.REPO_TYPE         , "type"             , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.REPO_LOCATION     , "location"         , { parseURL() })
+//            || parseField(CabalTokelTypes.REPO_MODULE       , "module"           , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.REPO_BRANCH       , "branch"           , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.REPO_TAG          , "tag"              , { token(CabalTokelTypes.ID) })
+//            || parseField(CabalTokelTypes.REPO_SUBDIR       , "subdir"           , { parseDirectory() })
+
     fun parseBuildInformation(level: Int) =
                parseField(CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parseConstraintList(level) })
             || parseField(CabalTokelTypes.PKG_CONFIG_DEPENDS, "pkgconfig-depends", { parseConstraintList(level) })
@@ -264,35 +272,23 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 && parseProperties(level, { parseMainFile() })
     }
 
-    fun parseLibrary(level: Int) = start(CabalTokelTypes.LIBRARY) {
-        parseSectionType("library")
-                && parseProperties(level, { parseExposedModules(level) || parseExposed() })
+    fun parseExactSection(level: Int, tokenType: IElementType, sectionName: String, nameNeeded: Boolean, parseBody: (Int) -> Boolean) = start(tokenType) {
+        parseSectionType(sectionName)
+                && (!nameNeeded || token(CabalTokelTypes.ID))
+                && parseProperties(level, parseBody)
     }
-
-
-    fun parseTestSuite(level: Int) = start(CabalTokelTypes.TEST_SUITE) {
-        parseSectionType("test-suite")
-                && token(CabalTokelTypes.ID)
-                && parseProperties(level, { parseMainFile()
-                                    //     || parseType()
-                                    //     || parseTestModule()
-                                           })
-    }
-
-    fun parseBenchmark(level: Int) = start(CabalTokelTypes.BENCHMARK) {
-        parseSectionType("benchmark")
-                && token(CabalTokelTypes.ID)
-                && parseProperties(level, { parseMainFile()
-                                    //     || parseType()
-                                           })
-    }
-
 
     fun parseSection(level: Int) =
                parseExecutable(level)
-            || parseTestSuite(level)
-            || parseLibrary(level)
-            || parseBenchmark(level)
+            || parseExactSection(level, CabalTokelTypes.TEST_SUITE , "test-suite"       , true , { parseMainFile()
+                                                                                         //       || parseType()
+                                                                                         //       || parseTestModule()
+                                                                                                 })
+            || parseExactSection(level, CabalTokelTypes.LIBRARY    , "library"          , false, { parseExposedModules(it) || parseExposed() })
+            || parseExactSection(level, CabalTokelTypes.BENCHMARK  , "benchmark"        , true , { parseMainFile()
+                                                                                         //       || parseType()
+                                                                                                 })
+            || parseExactSection(level, CabalTokelTypes.SOURCE_REPO, "source-repository", true , { parseRepoFields(level) })
 
 //            ||  start(CabalTokelTypes.SECTION) {
 //                val sections = listOf("source-repository", "flag")

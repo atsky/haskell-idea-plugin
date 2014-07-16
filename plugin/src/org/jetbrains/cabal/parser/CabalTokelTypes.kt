@@ -45,6 +45,7 @@ public trait CabalTokelTypes {
         val LIBRARY            : IElementType = CabalCompositeElementType("LIBRARY"                  , ::Library                 )
         val BENCHMARK          : IElementType = CabalCompositeElementType("BENCHMARK"                , ::Benchmark               )
         val TEST_SUITE         : IElementType = CabalCompositeElementType("TEST_SUITE"               , ::TestSuite               )
+        val SOURCE_REPO        : IElementType = CabalCompositeElementType("SOURCE_REPO"              , ::SourceRepo              )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
