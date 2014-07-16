@@ -22,6 +22,10 @@ import com.intellij.xdebugger.frame.XSuspendContext
 import org.jetbrains.haskell.debugger.commands.StepIntoCommand
 import org.jetbrains.haskell.debugger.commands.StepOverCommand
 import org.jetbrains.haskell.debugger.commands.ResumeCommand
+import java.io.File
+import java.util.regex.Pattern
+import java.util.ArrayList
+import org.codehaus.groovy.tools.shell.commands.HistoryCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -125,6 +129,9 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     // ProcessListener
 
+    private class CallInfo(val index: Int, val function: String, val position: FilePosition)
+    private var callStack: ArrayList<CallInfo>? = null
+
     override fun startNotified(event: ProcessEvent?) {
     }
 
@@ -160,6 +167,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                 is ResumeCommand -> tryHandleStoppedAtBreakpoint(output)
                 is StepIntoCommand,
                 is StepOverCommand -> tryHandleStoppedAtPosition(output)
+                is HistoryCommand -> handleHistory(output)
             }
             tryHandleDebugFinished(output)
         }
@@ -185,40 +193,108 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     private fun tryHandleStoppedAtBreakpoint(output: String) {
-        if (!output.startsWith("Stopped at")) {
-            return
-        }
-        try {
-            val secondColon: Int = output.lastIndexOf(':')
-            val firstColon: Int = output.lastIndexOf(':', secondColon - 1)
-            val lineNumber: Int = Integer.parseInt(output.substring(firstColon + 1, secondColon))
-            val breakpoint = registeredBreakpoints.get(lineNumber)!!.breakpoint
-            val context = object : XSuspendContext() {}
-            getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-        } catch (e: Exception) {
+        val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(output.trim())
+        if (matcher.matches()) {
+            System.err?.println("HERE")
+            val str = matcher.toMatchResult().group(2)!!
+            val filePosition = FilePosition.tryCreateFilePosition(str)
+            if (filePosition != null) {
+                val lineNumber = filePosition.startLine
+                val breakpoint = registeredBreakpoints.get(lineNumber)!!.breakpoint
+                val context = object : XSuspendContext() {}
+                getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+            }
         }
     }
 
 
     private fun tryHandleStoppedAtPosition(output: String) {
-        if (!output.startsWith("Stopped at")) {
-            return
-        }
-        try {
-//            val secondColon: Int = output.lastIndexOf(':')
-//            val firstColon: Int = output.lastIndexOf(':', secondColon - 1)
-//            val lineNumber: Int = Integer.parseInt(output.substring(firstColon + 1, secondColon))
-            val context = object : XSuspendContext() {}
-            getSession()!!.positionReached(context)
-        } catch (e: Exception) {
-
+        val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(output.trim())
+        if (matcher.matches()) {
+            val filePosition = FilePosition.tryCreateFilePosition(matcher.toMatchResult().group(2)!!)
+            if (filePosition != null) {
+                val context = object : XSuspendContext() {}
+                getSession()!!.positionReached(context)
+            }
         }
     }
 
-    private fun tryHandleDebugFinished(output : String) {
+    private fun handleHistory(output: String) {
+        if (output.trim().equals("<end of history>")) {
+            // mark history as ready
+        } else {
+            val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(output.trim())
+            if (matcher.matches()) {
+                val index = -Integer.parseInt(matcher.toMatchResult().group(1)!!)
+                val function = matcher.toMatchResult().group(2)!!
+                val line = matcher.toMatchResult().group(3)!!
+                val filePosition = FilePosition.tryCreateFilePosition(line)
+                if (filePosition == null) {
+                    throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
+                }
+                if (callStack == null) {
+                    callStack = ArrayList<CallInfo>()
+                }
+                callStack!!.add(CallInfo(index, function, filePosition))
+            } else {
+                throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
+            }
+        }
+    }
+
+    private fun tryHandleDebugFinished(output: String) {
         // temporary
-        if(debugger.debugStarted && output.equals("*Main> ")) {
+        if (debugger.debugStarted && output.equals("*Main> ")) {
             getSession()?.stop()
         }
+    }
+
+
+    /*
+     * Maybe better to move class outside
+     */
+
+    public class FilePosition private (val file: String, val startLine: Int, val startSymbol: Int,
+                                       val endLine: Int, val endSymbol: Int) {
+
+        class object {
+            public fun tryCreateFilePosition(line: String): FilePosition? {
+                val matcher1 = Pattern.compile(FILE_POSITION_PATTERN_1).matcher(line)
+                val matcher2 = Pattern.compile(FILE_POSITION_PATTERN_2).matcher(line)
+                if (matcher1.matches()) {
+                    val path = matcher1.toMatchResult().group(1)!!
+                    if (!File(path).exists()) {
+                        return null;
+                    }
+                    val values = IntArray(3)
+                    for (i in 0..(values.size - 1)) {
+                        values[i] = Integer.parseInt(matcher1.toMatchResult().group(i + 2)!!)
+                    }
+                    return FilePosition(path, values[0], values[1], values[0], values[2])
+                } else if (matcher2.matches()) {
+                    val path = matcher2.toMatchResult().group(1)!!
+                    if (!File(path).exists()) {
+                        return null;
+                    }
+                    val values = IntArray(4)
+                    for (i in 0..(values.size - 1)) {
+                        values[i] = Integer.parseInt(matcher2.toMatchResult().group(i + 2)!!)
+                    }
+                    return FilePosition(path, values[0], values[1], values[2], values[3])
+                } else {
+                    return null;
+                }
+            }
+
+            private val FILE_POSITION_PATTERN_1 = "(.*):(\\d+):(\\d+)-(\\d+)"
+            private val FILE_POSITION_PATTERN_2 = "(.*):\\((\\d+),(\\d+)\\)-\\((\\d+),(\\d+)\\)"
+        }
+    }
+
+    class object {
+
+        private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
+        private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
+
     }
 }
