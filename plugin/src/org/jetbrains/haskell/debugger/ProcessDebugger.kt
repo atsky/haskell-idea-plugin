@@ -17,4 +17,8 @@ public trait ProcessDebugger {
     public fun removeBreakpoint(breakpointNumber: Int)
 
     public fun close()
+
+    public fun stepInto()
+
+    public fun stepOver()
 }

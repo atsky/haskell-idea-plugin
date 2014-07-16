@@ -8,6 +8,8 @@ import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
 import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.commands.RemoveBreakpointCommand
+import org.jetbrains.haskell.debugger.commands.StepIntoCommand
+import org.jetbrains.haskell.debugger.commands.StepOverCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -54,6 +56,14 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line))
 
     override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber))
+
+    override fun stepInto() {
+        queue.addCommand(StepIntoCommand())
+    }
+
+    override fun stepOver() {
+        queue.addCommand(StepOverCommand())
+    }
 
     override fun close() {
         queue.stop()

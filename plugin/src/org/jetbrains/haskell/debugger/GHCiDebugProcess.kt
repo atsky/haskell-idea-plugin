@@ -19,6 +19,8 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.commands.TraceCommand
 import com.intellij.xdebugger.frame.XSuspendContext
+import org.jetbrains.haskell.debugger.commands.StepIntoCommand
+import org.jetbrains.haskell.debugger.commands.StepOverCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -73,11 +75,11 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun startStepOver() {
-        throw UnsupportedOperationException()
+        debugger.stepOver()
     }
 
     override fun startStepInto() {
-        throw UnsupportedOperationException()
+        debugger.stepInto()
     }
 
     override fun startStepOut() {
@@ -140,14 +142,22 @@ public class GHCiDebugProcess(session: XDebugSession,
         }
     }
 
-    private fun isReadyForInput(line: String?): Boolean = "*Main>".equals(line?.trim())    //temporary
+    private fun isReadyForInput(line: String?): Boolean = line?.endsWith("*Main> ") ?: false    //temporary
 
     // methods to handle GHCi output
     private fun handleGHCiOutput(output: String?) {
+        /*
+         * todo:
+         * "handle" methods do not work when there was an output without '\n' at the end of it before "Stopped at".
+         * Need to find the way to distinct debug output and program output.
+         * Debug output is always at the end before input is available and fits some patterns, need to use it.
+         */
         if (output != null) {
             when (debugger.lastCommand) {
                 is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
                 is TraceCommand -> tryHandleStoppedAtBreakpoint(output)
+                is StepIntoCommand,
+                is StepOverCommand -> tryHandleStoppedAtPosition(output)
             }
             tryHandleDebugFinished(output)
         }
@@ -184,6 +194,22 @@ public class GHCiDebugProcess(session: XDebugSession,
             val context = object : XSuspendContext() {}
             getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         } catch (e: Exception) {
+        }
+    }
+
+
+    private fun tryHandleStoppedAtPosition(output: String) {
+        if (!output.startsWith("Stopped at")) {
+            return
+        }
+        try {
+//            val secondColon: Int = output.lastIndexOf(':')
+//            val firstColon: Int = output.lastIndexOf(':', secondColon - 1)
+//            val lineNumber: Int = Integer.parseInt(output.substring(firstColon + 1, secondColon))
+            val context = object : XSuspendContext() {}
+            getSession()!!.positionReached(context)
+        } catch (e: Exception) {
+
         }
     }
 
