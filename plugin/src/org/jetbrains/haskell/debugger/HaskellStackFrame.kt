@@ -21,9 +21,7 @@ import com.intellij.xdebugger.frame.XValueChildrenList
  * @author Habibullin Marat
  * @see com.intellij.xdebugger.frame.XStackFrame
  */
-public class HaskellStackFrame(private val myProject: Project,
-//                          private val myFrameInfo: PyStackFrameInfo,
-                          private val positionInSource: XSourcePosition?) : XStackFrame() {
+public class HaskellStackFrame(private val positionInSource: XSourcePosition?) : XStackFrame() {
 
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
@@ -74,20 +72,4 @@ public class HaskellStackFrame(private val myProject: Project,
             }
         })
     }
-//
-//    public fun getThreadId(): String {
-//        return myFrameInfo.getThreadId()
-//    }
-//
-//    public fun getFrameId(): String {
-//        return myFrameInfo.getId()
-//    }
-//
-//    public fun getThreadFrameId(): String {
-//        return myFrameInfo.getThreadId() + ":" + myFrameInfo.getId()
-//    }
-//
-//    protected fun getPosition(): XSourcePosition {
-//        return positionInSource
-//    }
 }
