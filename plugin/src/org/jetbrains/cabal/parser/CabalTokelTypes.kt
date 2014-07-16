@@ -53,6 +53,7 @@ public trait CabalTokelTypes {
         val EXTRA_SOURCE       : IElementType = CabalCompositeElementType("EXTRA_SOURCE"             , ::ExtraSource             )
         val EXTRA_TMP          : IElementType = CabalCompositeElementType("EXTRA_TMP"                , ::ExtraTmp                )
         val EXTRA_DOC          : IElementType = CabalCompositeElementType("EXTRA_DOC"                , ::ExtraDoc                )
+        val FREE_FIELD         : IElementType = CabalCompositeElementType("FREE_FORM_FIELD"          , ::FreeField               )
 
         val BUILD_DEPENDS      : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , ::BuildDependsField       )
 
@@ -62,5 +63,6 @@ public trait CabalTokelTypes {
         val NAME               : IElementType = CabalCompositeElementType("NAME"                     , ::Name                    )
         val FILE_NAME          : IElementType = CabalCompositeElementType("FILE_NAME"                , ::FileName                )
         val FILE_REF           : IElementType = CabalCompositeElementType("FILE_REF"                 , ::FileReference           )
+        val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
     }
 }

@@ -70,6 +70,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
+    fun parseFreeForm(prevLevel: Int) = start(CabalTokelTypes.FREE_FORM) {
+        while (!builder.eof()) {
+            if ((builder.getTokenType() == TokenType.NEW_LINE_INDENT) && (indentSize(builder.getTokenText()!!) <= prevLevel)) {
+                break
+            }
+            builder.advanceLexer();
+        }
+        true
+    }
+
     fun isLastOnThisLevel(prevLevel: Int) : Boolean {
         while ((!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {
             if (indentSize(builder.getTokenText()!!) <= prevLevel) {
@@ -116,8 +126,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseProperty(level: Int) = parseField(CabalTokelTypes.PROPERTY, null, {  parsePropertyValue(level) })
 
-    fun parseTopLevelField() : Boolean {
-      return   parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
+    fun parseTopFreeFormFields() =
+               parseField(CabalTokelTypes.FREE_FIELD, "copyright"  , { parseFreeForm(0) })
+            || parseField(CabalTokelTypes.FREE_FIELD, "author"     , { parseFreeForm(0) })
+            || parseField(CabalTokelTypes.FREE_FIELD, "stability"  , { parseFreeForm(0) })
+            || parseField(CabalTokelTypes.FREE_FIELD, "synopsis"   , { parseFreeForm(0) })
+            || parseField(CabalTokelTypes.FREE_FIELD, "description", { parseFreeForm(0) })
+            || parseField(CabalTokelTypes.FREE_FIELD, "category"   , { parseFreeForm(0) })
+
+    fun parseTopLevelField() =
+               parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
             || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseComplexVersionConstraint(0) })
             || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
 //            || parseField(CabalTokelTypes.BUILD_TYPE   , "build-type"        , { token(CabalTokelTypes.ID) })
@@ -132,7 +150,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileRefList() })
             || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileRefList() })
             || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileRefList() })
-    }
+            || parseTopFreeFormFields()
+
 
     fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
 
