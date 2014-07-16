@@ -26,6 +26,7 @@ import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
 import org.codehaus.groovy.tools.shell.commands.HistoryCommand
+import com.intellij.execution.process.ProcessOutputTypes
 
 /**
  * Created by vlad on 7/10/14.
@@ -37,14 +38,20 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
     private val debugger: GHCiDebugger
+    private val inputReadinessListener: InputReadinessListener
 
-    public val readyForInput: AtomicBoolean = AtomicBoolean(false);
+    public val readyForInput: AtomicBoolean = AtomicBoolean(false)
+
+    public val debugFinished: Boolean = false;
 
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
 
         myProcessHandler.addProcessListener(this)
+
+        inputReadinessListener = InputReadinessListener(this)
+        inputReadinessListener.start()
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
@@ -118,6 +125,7 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     override fun sessionInitialized() {
         super<XDebugProcess>.sessionInitialized()
+        debugger.prepareGHCi()
         debugger.trace()
     }
 
@@ -142,21 +150,25 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        print(event?.getText())
-        handleGHCiOutput(event?.getText())
-
-        if (isReadyForInput(event?.getText())) {
+        if (outputType == ProcessOutputTypes.STDOUT) {
+            print(event?.getText())
+            handleGHCiOutput(event?.getText())
+        } else if (outputType == ProcessOutputTypes.STDERR) {
+            val text = fixStderrOutput(event?.getText())
+            print(text)
+        }
+        if (!inputReadinessListener.connected && isReadyForInput(event?.getText())) {
             readyForInput.set(true)
         }
     }
 
-    private fun isReadyForInput(line: String?): Boolean = line?.endsWith("*Main> ") ?: false    //temporary
+    private fun isReadyForInput(line: String?): Boolean =
+            line?.endsWith(PROMPT_LINE) ?: false
 
     // methods to handle GHCi output
     private fun handleGHCiOutput(output: String?) {
         /*
          * todo:
-         * "handle" methods do not work when there was an output without '\n' at the end of it before "Stopped at".
          * Need to find the way to distinguish debug output and program output.
          * Debug output is always at the end before input is available and fits some patterns, need to use it.
          */
@@ -169,7 +181,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                 is StepOverCommand -> tryHandleStoppedAtPosition(output)
                 is HistoryCommand -> handleHistory(output)
             }
-            tryHandleDebugFinished(output)
+//            tryHandleDebugFinished(output)
         }
     }
 
@@ -231,7 +243,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                 if (filePosition == null) {
                     throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                 }
-                if (callStack == null) {
+                if (callStack == null) { // or when new history invocation
                     callStack = ArrayList<CallInfo>()
                 }
                 callStack!!.add(CallInfo(index, function, filePosition))
@@ -241,11 +253,15 @@ public class GHCiDebugProcess(session: XDebugSession,
         }
     }
 
-    private fun tryHandleDebugFinished(output: String) {
-        // temporary
-        if (debugger.debugStarted && output.equals("*Main> ")) {
-            getSession()?.stop()
-        }
+//    private fun tryHandleDebugFinished(output: String) {
+//        // temporary
+//        if (debugger.debugStarted && output.equals("*Main> ")) {
+//            getSession()?.stop()
+//        }
+//    }
+
+    private fun fixStderrOutput(text: String?): String? {
+        return text?.replace("" + 0.toChar(), "")?.replace("" + 1.toChar(), "")
     }
 
 
@@ -295,5 +311,9 @@ public class GHCiDebugProcess(session: XDebugSession,
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
 
+        public val PROMPT_LINE: String = "debug> "
+
+        // todo: change
+        public val INPUT_READINESS_PORT: Int = 12345
     }
 }

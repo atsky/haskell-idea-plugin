@@ -23,4 +23,8 @@ public trait ProcessDebugger {
     public fun stepOver()
 
     public fun resume()
+
+    public fun prepareGHCi() {
+
+    }
 }
