@@ -150,7 +150,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseFieldList(tokenType : IElementType, names: List<String>, parseValue : () -> Boolean) : Boolean {
-        var res = true
+        var res = false
         for (name in names) {
             res = res || parseField(tokenType, name, parseValue)
         }
