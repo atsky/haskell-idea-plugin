@@ -46,6 +46,7 @@ public trait CabalTokelTypes {
         val BENCHMARK          : IElementType = CabalCompositeElementType("BENCHMARK"                , ::Benchmark               )
         val TEST_SUITE         : IElementType = CabalCompositeElementType("TEST_SUITE"               , ::TestSuite               )
         val SOURCE_REPO        : IElementType = CabalCompositeElementType("SOURCE_REPO"              , ::SourceRepo              )
+        val FLAG               : IElementType = CabalCompositeElementType("FLAG"                     , ::Flag                    )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
@@ -79,5 +80,6 @@ public trait CabalTokelTypes {
         val FILE_NAME          : IElementType = CabalCompositeElementType("FILE_NAME"                , ::FileName                )
         val FILE_REF           : IElementType = CabalCompositeElementType("FILE_REF"                 , ::FileReference           )
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
+        val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
     }
 }
