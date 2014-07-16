@@ -279,18 +279,26 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                                            })
     }
 
+    fun parseBenchmark(level: Int) = start(CabalTokelTypes.BENCHMARK) {
+        parseSectionType("benchmark")
+                && token(CabalTokelTypes.ID)
+                && parseProperties(level, { parseMainFile()
+                                    //     || parseType()
+                                           })
+    }
+
+
     fun parseSection(level: Int) =
                parseExecutable(level)
             || parseTestSuite(level)
             || parseLibrary(level)
+            || parseBenchmark(level)
 
 //            ||  start(CabalTokelTypes.SECTION) {
 //                val sections = listOf("source-repository", "flag")
 //
 //                val result: Boolean = if (sections.contains(builder.getTokenText()?.toLowerCase())) {
 //                    parseSectionType() && token(CabalTokelTypes.ID)
-//                } else if (builder.getTokenText()?.toLowerCase() == "library") {
-//                    parseSectionType()
 //                } else {
 //                    false
 //                }

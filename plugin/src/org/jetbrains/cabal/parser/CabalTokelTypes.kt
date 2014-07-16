@@ -37,12 +37,14 @@ public trait CabalTokelTypes {
         val PROPERTY           : IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val PROPERTY_KEY       : IElementType = CabalCompositeElementType("PROPERTY_KEY", ::PropertyKey)
         val PROPERTY_VALUE     : IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
-        val TEST_SUITE         : IElementType = CabalCompositeElementType("TEST_SUITE", ::TestSuite)
         val SECTION            : IElementType = CabalCompositeElementType("SECTION", defaultContructor)
-        val SECTION_TYPE       : IElementType = CabalCompositeElementType("SECTION_TYPE", ::SectionType)
+
+        val SECTION_TYPE       : IElementType = CabalCompositeElementType("SECTION_TYPE"             , ::SectionType             )
 
         val EXECUTABLE         : IElementType = CabalCompositeElementType("EXECUTABLE"               , ::Executable              )
         val LIBRARY            : IElementType = CabalCompositeElementType("LIBRARY"                  , ::Library                 )
+        val BENCHMARK          : IElementType = CabalCompositeElementType("BENCHMARK"                , ::Benchmark               )
+        val TEST_SUITE         : IElementType = CabalCompositeElementType("TEST_SUITE"               , ::TestSuite               )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
