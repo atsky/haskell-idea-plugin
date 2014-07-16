@@ -37,18 +37,18 @@ public trait CabalTokelTypes {
         val PROPERTY           : IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val PROPERTY_KEY       : IElementType = CabalCompositeElementType("PROPERTY_KEY", ::PropertyKey)
         val PROPERTY_VALUE     : IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
-        val EXECUTABLE         : IElementType = CabalCompositeElementType("EXECUTABLE", ::Executable)
         val TEST_SUITE         : IElementType = CabalCompositeElementType("TEST_SUITE", ::TestSuite)
         val SECTION            : IElementType = CabalCompositeElementType("SECTION", defaultContructor)
         val SECTION_TYPE       : IElementType = CabalCompositeElementType("SECTION_TYPE", ::SectionType)
 
+        val EXECUTABLE         : IElementType = CabalCompositeElementType("EXECUTABLE"               , ::Executable              )
+        val LIBRARY            : IElementType = CabalCompositeElementType("LIBRARY"                  , ::Library                 )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
         val HOMEPAGE           : IElementType = CabalCompositeElementType("HOMEPAGE"                 , ::HomepageField           )
         val PACKAGE_URL        : IElementType = CabalCompositeElementType("PACKAGE_URL"              , ::PackageURLField         )
         val NAME_FIELD         : IElementType = CabalCompositeElementType("NAME_FIELD"               , ::NameField               )
-        val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
         val DATA_FILES         : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFilesField          )
         val EXTRA_SOURCE       : IElementType = CabalCompositeElementType("EXTRA_SOURCE"             , ::ExtraSourceField        )
         val EXTRA_TMP          : IElementType = CabalCompositeElementType("EXTRA_TMP"                , ::ExtraTmpField           )
@@ -58,6 +58,11 @@ public trait CabalTokelTypes {
         val EXTENSIONS         : IElementType = CabalCompositeElementType("EXTENSIONS"               , ::ExtensionsField         )
         val HS_SOURCE_DIRS     : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HsSourceDirsField       )
         val OTHER_MODULES      : IElementType = CabalCompositeElementType("OTHER_MODULES"            , ::OtherModulesField       )
+
+        val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
+
+        val EXPOSED_MODULES    : IElementType = CabalCompositeElementType("EXPOSED_MODULES"          , ::ExposedModulesField     )
+        val EXPOSED            : IElementType = CabalCompositeElementType("EXPOSED"                  , ::ExposedField            )
 
         val BUILD_DEPENDS      : IElementType = CabalCompositeElementType("BUILD_DEPENDS"            , ::BuildDependsField       )
         val PKG_CONFIG_DEPENDS : IElementType = CabalCompositeElementType("PKG_CONFIG_DEPENDS"       , ::PkgConfigDependsField   )

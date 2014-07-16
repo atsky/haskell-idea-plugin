@@ -128,9 +128,9 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseIDList(level: Int) = parseValueList(level, { token(CabalTokelTypes.ID) }, { true })
 
-    fun parseFileNameList(prevLevel: Int = 0) = parseValueList(prevLevel, { parseFileName() }, { true })
+    fun parseFileNameList(prevLevel: Int) = parseValueList(prevLevel, { parseFileName() }, { true })
 
-    fun parseDirectoryList(prevLevel: Int = 0) = parseValueList(prevLevel, { parseDirectory() }, { true })
+    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { true })
 
     fun parseConstraintList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
 
@@ -165,25 +165,27 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                parseField(CabalTokelTypes.VERSION      , "version"           , { token(CabalTokelTypes.ID) })
             || parseField(CabalTokelTypes.CABAL_VERSION, "cabal-version"     , { parseSimpleVersionConstraint() })
             || parseField(CabalTokelTypes.NAME_FIELD   , "name"              , { parseName() })
+            || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
+            || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
+            || parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileNameList(0) })
+            || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileNameList(0) })
+            || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileNameList(0) })
+            || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileNameList(0) })
 //            || parseField(CabalTokelTypes.BUILD_TYPE   , "build-type"        , { token(CabalTokelTypes.ID) })
 //            || parseField(CabalTokelTypes.LICENSE      , "license"           , { token(CabalTokelTypes.ID) })
 //            || parseField(CabalTokelTypes.LICENSE_FILE , "license-file"      , { parseFileName() })
-//            || parseField(CabalTokelTypes.LICENSE_FILE , "license-files"     , { parseFileNameList() })
+//            || parseField(CabalTokelTypes.LICENSE_FILE , "license-files"     , { parseFileNameList(0) })
 //            || parseField(CabalTokelTypes.MAINTAINER   , "copyright"         , { token(CabalTokelTypes.ID) })
-            || parseField(CabalTokelTypes.PACKAGE_URL  , "package-url"       , { parseURL() })
-            || parseField(CabalTokelTypes.HOMEPAGE     , "homepage"          , { parseURL() })
 //            || parseField(CabalTokelTypes.BUG_REPORTS  , "bug-reports"       , { parseURL() })
 //            || parseField(CabalTokelTypes.TESTED_WITH  , "tested-with"       , { token(CabalTokelTypes.ID) })
 //            || parseField(CabalTokelTypes.DATA_DIR     , "data-dir"          , { token(CabalTokelTypes.ID) })
-            || parseField(CabalTokelTypes.EXTRA_DOC    , "extra-doc-files"   , { parseFileNameList() })
-            || parseField(CabalTokelTypes.EXTRA_TMP    , "extra-tmp-files"   , { parseFileNameList() })
-            || parseField(CabalTokelTypes.DATA_FILES   , "data-files"        , { parseFileNameList() })
-            || parseField(CabalTokelTypes.EXTRA_SOURCE , "extra-source-files", { parseFileNameList() })
 
             || parseFieldList(CabalTokelTypes.FREE_FIELD, FREE_FORM_FIELD_NAMES, { parseFreeForm(0) })
 
+    fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })                           //
 
-    fun parseMainFile() = parseField(CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
+    fun parseExposedModules(level: Int) = parseField(CabalTokelTypes.EXPOSED_MODULES, "exposed-modules", { parseIDList(level) })
+    fun parseExposed()                  = parseField(CabalTokelTypes.EXPOSED        , "exposed"        , { token(CabalTokelTypes.ID) })
 
     fun parseBuildInformation(level: Int) =
                parseField(CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parseConstraintList(level) })
@@ -193,10 +195,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(CabalTokelTypes.EXTENSIONS        , "extensions"       , { parseIDList(level) })
             || parseField(CabalTokelTypes.OTHER_MODULES     , "other-modules"    , { parseIDList(level) })
             || parseField(CabalTokelTypes.HS_SOURCE_DIRS    , "hs-source-dirs"   , { parseDirectoryList(level) })
-
+//            || parseField(CabalTokelTypes.INCLUDES          , "includes"         , { parseFileNameList(level) })
+//            || parseField(CabalTokelTypes.INSTALL_INCLUDES  , "install-includes" , { parseFileNameList(level) })
+//            || parseField(CabalTokelTypes.C_SOURCES         , "c-sources"        , { parseFileNameList(level) })
+//            || parseField(CabalTokelTypes.FRAMEWORKS        , "frameworks"       , { parseIDList(level) })
+//            || parseField(CabalTokelTypes.EXTRA_LIB_DIRS    , "extra-lib-dirs"   , { parseDirectoryList(level) })
+//            || parseField(CabalTokelTypes.INCLUDE_DIRS      , "include-dirs"     , { parseDirectoryList(level) })
+//            || parseField(CabalTokelTypes.EXTRA_LIBRARIES   , "extra-libraries"  , { parseIDList(level) })
             || parseFieldList(CabalTokelTypes.OPTIONS_FIELD , OPTIONS_FIELD_NAMES, { parseIDList(level) })
 
-    fun parseProperties(prevLevel: Int, isExecutable : Boolean): Boolean {
+    fun parseProperties(prevLevel: Int, parseSectionFields: (Int) -> Boolean): Boolean {
         var currentLevel : Int? = null;
         while (!builder.eof()) {
             val level = findLevel(currentLevel)
@@ -210,16 +218,11 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                     return false;
                 }
             }
-
-            var result = false
-            if (isExecutable) {
-                result = parseMainFile()
-            }
-            result = result
+            var result = parseSectionFields(currentLevel!!)
                   || parseBuildInformation(currentLevel!!)
                   || parseProperty(currentLevel!!)
-                  || parseIf(currentLevel!!, isExecutable)
-                  || parseElse(currentLevel!!, isExecutable)
+                  || parseIf(currentLevel!!, parseSectionFields)
+                  || parseElse(currentLevel!!, parseSectionFields)
 
             if (!result) {
                 builder.advanceLexer()
@@ -230,7 +233,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    fun parseIf(level: Int, isExecutable : Boolean) = start(CabalTokelTypes.PROPERTY) {
+    fun parseIf(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.PROPERTY) {
         val result = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "if") }
         if (result) {
             while (!builder.eof()) {
@@ -239,62 +242,70 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 }
                 builder.advanceLexer()
             }
-            parseProperties(level, isExecutable)
+            parseProperties(level, parseSectionFields)
         } else {
             false
         }
     }
 
-    fun parseElse(level: Int, isExecutable : Boolean) = start(CabalTokelTypes.PROPERTY) {
+    fun parseElse(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.PROPERTY) {
         var r = start(CabalTokelTypes.PROPERTY_KEY) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
-        r = r && parseProperties(level, isExecutable);
+        r = r && parseProperties(level, parseSectionFields);
         r
     }
 
-    fun parseSectionType() = start(CabalTokelTypes.SECTION_TYPE) {
-        token(CabalTokelTypes.ID);
+    fun parseSectionType(name: String) = start(CabalTokelTypes.SECTION_TYPE) {
+        matchesIgnoreCase(CabalTokelTypes.ID, name)
     }
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
-        if (matchesIgnoreCase(CabalTokelTypes.ID, "executable")) {
-            parseName() && parseProperties(level, true)
-        } else {
-            false
-        }
+        parseSectionType("executable")
+                && parseName()
+                && parseProperties(level, { parseMainFile() })
     }
 
+    fun parseLibrary(level: Int) = start(CabalTokelTypes.LIBRARY) {
+        parseSectionType("library")
+                && parseProperties(level, { parseExposedModules(level) || parseExposed() })
+    }
+
+
     fun parseTestSuite(level: Int) = start(CabalTokelTypes.TEST_SUITE) {
-        if (matchesIgnoreCase(CabalTokelTypes.ID, "test-suite")) {
-            token(CabalTokelTypes.ID) && parseProperties(level, false);
-        } else {
-            false
-        }
+        parseSectionType("test-suite")
+                && token(CabalTokelTypes.ID)
+                && parseProperties(level, { parseMainFile()
+                                    //     || parseType()
+                                    //     || parseTestModule()
+                                           })
     }
 
     fun parseSection(level: Int) =
-            parseExecutable(level) ||
-            parseTestSuite(level) ||
-            start(CabalTokelTypes.SECTION) {
-                val sections = listOf("source-repository", "flag")
+               parseExecutable(level)
+            || parseTestSuite(level)
+            || parseLibrary(level)
 
-                val result: Boolean = if (sections.contains(builder.getTokenText()?.toLowerCase())) {
-                    parseSectionType() && token(CabalTokelTypes.ID)
-                } else if (builder.getTokenText()?.toLowerCase() == "library") {
-                    parseSectionType()
-                } else {
-                    false
-                }
-                if (result) {
-                    parseProperties(level, false);
-                }
-                result
-            }
+//            ||  start(CabalTokelTypes.SECTION) {
+//                val sections = listOf("source-repository", "flag")
+//
+//                val result: Boolean = if (sections.contains(builder.getTokenText()?.toLowerCase())) {
+//                    parseSectionType() && token(CabalTokelTypes.ID)
+//                } else if (builder.getTokenText()?.toLowerCase() == "library") {
+//                    parseSectionType()
+//                } else {
+//                    false
+//                }
+//                if (result) {
+//                    parseProperties(level, false);
+//                }
+//                result
+//            }
 
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
 
         while (!builder.eof()) {
-            if (!(parseTopLevelField() || parseProperty(0) || parseSection(0))) {
+            if (!(parseTopLevelField() || parseProperty(0) || parseSection(0)
+                         )){
                 builder.advanceLexer()
             }
         }
