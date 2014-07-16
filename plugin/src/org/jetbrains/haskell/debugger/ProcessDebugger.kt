@@ -21,4 +21,6 @@ public trait ProcessDebugger {
     public fun stepInto()
 
     public fun stepOver()
+
+    public fun resume()
 }

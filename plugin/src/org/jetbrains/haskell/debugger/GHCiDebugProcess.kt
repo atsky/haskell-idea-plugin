@@ -21,6 +21,7 @@ import org.jetbrains.haskell.debugger.commands.TraceCommand
 import com.intellij.xdebugger.frame.XSuspendContext
 import org.jetbrains.haskell.debugger.commands.StepIntoCommand
 import org.jetbrains.haskell.debugger.commands.StepOverCommand
+import org.jetbrains.haskell.debugger.commands.ResumeCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -91,7 +92,7 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun resume() {
-        throw UnsupportedOperationException()
+        debugger.resume()
     }
 
     override fun runToPosition(position: XSourcePosition) {
@@ -149,13 +150,14 @@ public class GHCiDebugProcess(session: XDebugSession,
         /*
          * todo:
          * "handle" methods do not work when there was an output without '\n' at the end of it before "Stopped at".
-         * Need to find the way to distinct debug output and program output.
+         * Need to find the way to distinguish debug output and program output.
          * Debug output is always at the end before input is available and fits some patterns, need to use it.
          */
         if (output != null) {
             when (debugger.lastCommand) {
                 is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
-                is TraceCommand -> tryHandleStoppedAtBreakpoint(output)
+                is TraceCommand,
+                is ResumeCommand -> tryHandleStoppedAtBreakpoint(output)
                 is StepIntoCommand,
                 is StepOverCommand -> tryHandleStoppedAtPosition(output)
             }
