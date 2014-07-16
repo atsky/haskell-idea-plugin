@@ -195,7 +195,6 @@ public class GHCiDebugProcess(session: XDebugSession,
     private fun tryHandleStoppedAtBreakpoint(output: String) {
         val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(output.trim())
         if (matcher.matches()) {
-            System.err?.println("HERE")
             val str = matcher.toMatchResult().group(2)!!
             val filePosition = FilePosition.tryCreateFilePosition(str)
             if (filePosition != null) {
@@ -259,9 +258,20 @@ public class GHCiDebugProcess(session: XDebugSession,
 
         class object {
             public fun tryCreateFilePosition(line: String): FilePosition? {
+                val matcher0 = Pattern.compile(FILE_POSITION_PATTERN_0).matcher(line)
                 val matcher1 = Pattern.compile(FILE_POSITION_PATTERN_1).matcher(line)
                 val matcher2 = Pattern.compile(FILE_POSITION_PATTERN_2).matcher(line)
-                if (matcher1.matches()) {
+                if (matcher0.matches()) {
+                    val path = matcher0.toMatchResult().group(1)!!
+                    if (!File(path).exists()) {
+                        return null;
+                    }
+                    val values = IntArray(2)
+                    for (i in 0..(values.size - 1)) {
+                        values[i] = Integer.parseInt(matcher0.toMatchResult().group(i + 2)!!)
+                    }
+                    return FilePosition(path, values[0], values[1], values[0], values[1])
+                } else if (matcher1.matches()) {
                     val path = matcher1.toMatchResult().group(1)!!
                     if (!File(path).exists()) {
                         return null;
@@ -286,6 +296,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                 }
             }
 
+            private val FILE_POSITION_PATTERN_0 = "(.*):(\\d+):(\\d+)"
             private val FILE_POSITION_PATTERN_1 = "(.*):(\\d+):(\\d+)-(\\d+)"
             private val FILE_POSITION_PATTERN_2 = "(.*):\\((\\d+),(\\d+)\\)-\\((\\d+),(\\d+)\\)"
         }
