@@ -26,7 +26,7 @@ import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
 import com.intellij.execution.process.ProcessOutputTypes
-import org.jetbrains.haskell.debugger.commands.HistoryCommand
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -154,7 +154,7 @@ public class GHCiDebugProcess(session: XDebugSession,
             print(event?.getText())
             handleGHCiOutput(event?.getText())
         } else if (outputType == ProcessOutputTypes.STDERR) {
-            print(event?.getText)
+            print(event?.getText())
         }
         if (!inputReadinessListener.connected && isReadyForInput(event?.getText())) {
             readyForInput.set(true)

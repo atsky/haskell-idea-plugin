@@ -7,6 +7,9 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcess
  */
 
 public abstract class AbstractCommand() {
+
     public abstract fun getBytes(): ByteArray
+
+//    public abstract fun handleOutput(output: String, debugProcess: GHCiDebugProcess)
 
 }
