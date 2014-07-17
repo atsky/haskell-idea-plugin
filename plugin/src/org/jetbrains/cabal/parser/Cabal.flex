@@ -31,9 +31,9 @@ EOL_COMMENT      = ("--"[^\n]*)
 COMPARATOR       = (>= | <= | == | < | >)
 LOGIC            = (&& | \|\|)
 
-SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><=&|{-]
+SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><=&|{]
 
-IDENTIFIER_PART  = ({DIGIT} | {SIMPLE_LETTER} | - | (=({SIMPLE_LETTER}|[&|{-])) | (&({SIMPLE_LETTER}|[=|-{])) | (\|({SIMPLE_LETTER}|[&={-])) | (\{({SIMPLE_LETTER}|[=|&{])))
+IDENTIFIER_PART  = ({DIGIT} | {SIMPLE_LETTER} | (=({SIMPLE_LETTER}|[&|{-])) | (&({SIMPLE_LETTER}|[=|-{])) | (\|({SIMPLE_LETTER}|[&={-])) | (\{({SIMPLE_LETTER}|[=|&{])))
 IDENTIFIER       = {IDENTIFIER_PART}+
 
 %%
