@@ -1,20 +1,20 @@
 package org.jetbrains.haskell.debugger
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.ColoredTextContainer
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XCompositeNode
 import com.intellij.xdebugger.frame.XStackFrame
 import com.intellij.xdebugger.frame.XValueChildrenList
+import org.jetbrains.debugger.VariableView
+import org.jetbrains.debugger.VariableImpl
+import org.jetbrains.debugger.values.PrimitiveValue
+import org.jetbrains.debugger.values.ValueType
+import org.jetbrains.debugger.VariableContextBase
+import org.jetbrains.debugger.EvaluateContext
+import org.jetbrains.debugger.DebuggerViewSupport
+import org.jetbrains.debugger.DebuggerViewSupport.SimpleDebuggerViewSupport
 
 
 /**
@@ -51,7 +51,7 @@ public class HaskellStackFrame(private val positionInSource: XSourcePosition?) :
     /**
      * Stack frame appearance customization, not implemented yet, default implementation is used
      */
-//    override fun customizePresentation(component: ColoredTextContainer)
+    //    override fun customizePresentation(component: ColoredTextContainer)
 
     /**
      * This method should compute local variables and other frame data to show in 'Variables' panel of 'Debug' tool window.
@@ -64,12 +64,31 @@ public class HaskellStackFrame(private val positionInSource: XSourcePosition?) :
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    node.addChildren(XValueChildrenList.EMPTY, true)
+                    val list = XValueChildrenList()
+                    list.add(createVariable("ten", "10"))
+                    node.addChildren(list, true)
                 } catch (e: Exception) {
+                    e.printStackTrace()
                     node.setErrorMessage("Unable to display frame variables")
                 }
 
             }
         })
+    }
+
+    private fun createVariable(name: String, value: String): VariableView {
+        return VariableView(VariableImpl(name, PrimitiveValue(ValueType.STRING, value)),
+                object : VariableContextBase() {
+                    override fun getEvaluateContext(): EvaluateContext {
+                        throw UnsupportedOperationException()
+                    }
+                    override fun watchableAsEvaluationExpression(): Boolean {
+                        return false
+                    }
+                    override fun getDebugProcess(): DebuggerViewSupport {
+                        return SimpleDebuggerViewSupport()
+                    }
+
+                })
     }
 }

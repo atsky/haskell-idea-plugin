@@ -79,6 +79,10 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         queue.addCommand(HistoryCommand(breakpoint))
     }
 
+    override fun requestVariables() {
+        throw UnsupportedOperationException()
+    }
+
     override fun prepareGHCi() {
         execute(object : HiddenCommand() {
             override fun getBytes(): ByteArray {
