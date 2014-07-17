@@ -15,7 +15,9 @@ public class SetBreakpointCommand(val lineNumber: Int) : RealTimeCommand() {
 
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
         val result = Parser.parseSetBreakpointCommandResult(output)
-        debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine)
+        if (result != null) {
+            debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine)
+        }
         debugProcess.debugger.lastCommand = null
     }
 }

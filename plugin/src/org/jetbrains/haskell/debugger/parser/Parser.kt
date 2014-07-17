@@ -14,6 +14,7 @@ public class Parser() {
     class object {
 
         private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d+) activated at (.*)"
+        private val BREAKPOINT_NOT_ACTIVATED_PATTERN = "No breakpoints found at that location."
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
         val FILE_POSITION_PATTERNS = array(
@@ -47,31 +48,24 @@ public class Parser() {
         }
 
         /**
-         * Returns line where breakpoint was activated and breakpoint number
+         * Returns line where breakpoint was activated and breakpoint number, null if not activated
          */
-        public fun parseSetBreakpointCommandResult(output: Deque<String?>): BreakpointCommandResult {
+        public fun parseSetBreakpointCommandResult(output: Deque<String?>): BreakpointCommandResult? {
             val it = output.descendingIterator()
             while (it.hasNext()) {
-                val line = it.next()
-                val matcher = Pattern.compile(BREAKPOINT_ACTIVATED_PATTERN).matcher(line!!.trim())
-                if (matcher.matches()) {
-                    val breakpointNumber = matcher.group(1)!!.toInt()
-                    val filePositionLine = matcher.group(2)!!
+                val line = it.next()!!
+                val matcher1 = Pattern.compile(BREAKPOINT_ACTIVATED_PATTERN).matcher(line.trim())
+                val matcher2 = Pattern.compile(BREAKPOINT_NOT_ACTIVATED_PATTERN).matcher(line.trim())
+                if (matcher1.matches()) {
+                    val breakpointNumber = matcher1.group(1)!!.toInt()
+                    val filePositionLine = matcher1.group(2)!!
                     val filePosition = tryCreateFilePosition(filePositionLine)
                     if (filePosition != null) {
                         return BreakpointCommandResult(breakpointNumber, filePosition)
                     }
+                } else if (matcher2.matches()) {
+                    return null;
                 }
-//                val line = it.next()
-//                val parts = line!!.split(' ')
-//
-//                if (parts.size > 4 && parts[0] == "Breakpoint" && parts[2] == "activated" && parts[3] == "at") {
-//                    val breakpointNumber = parts[1].toInt()
-//                    val lastWord = parts[parts.size - 1]
-//                    val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
-//                    val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
-//                    return BreakpointCommandResult(breakpointNumber, lineNumber)
-//                }
             }
             throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
         }
