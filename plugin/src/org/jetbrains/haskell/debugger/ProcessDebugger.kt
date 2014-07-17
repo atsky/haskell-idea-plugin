@@ -24,7 +24,5 @@ public trait ProcessDebugger {
 
     public fun resume()
 
-    public fun prepareGHCi() {
-
-    }
+    public fun prepareGHCi()
 }

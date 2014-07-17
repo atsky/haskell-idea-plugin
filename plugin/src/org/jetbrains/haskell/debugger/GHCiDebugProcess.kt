@@ -25,8 +25,8 @@ import org.jetbrains.haskell.debugger.commands.ResumeCommand
 import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
-import org.codehaus.groovy.tools.shell.commands.HistoryCommand
 import com.intellij.execution.process.ProcessOutputTypes
+import org.jetbrains.haskell.debugger.commands.HistoryCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -181,7 +181,6 @@ public class GHCiDebugProcess(session: XDebugSession,
                 is StepOverCommand -> tryHandleStoppedAtPosition(output)
                 is HistoryCommand -> handleHistory(output)
             }
-//            tryHandleDebugFinished(output)
         }
     }
 
@@ -243,7 +242,8 @@ public class GHCiDebugProcess(session: XDebugSession,
                 if (filePosition == null) {
                     throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                 }
-                if (callStack == null) { // or when new history invocation
+                if (callStack == null) {
+                    // or when new history invocation
                     callStack = ArrayList<CallInfo>()
                 }
                 callStack!!.add(CallInfo(index, function, filePosition))
@@ -253,12 +253,12 @@ public class GHCiDebugProcess(session: XDebugSession,
         }
     }
 
-//    private fun tryHandleDebugFinished(output: String) {
-//        // temporary
-//        if (debugger.debugStarted && output.equals("*Main> ")) {
-//            getSession()?.stop()
-//        }
-//    }
+    //    private fun tryHandleDebugFinished(output: String) {
+    //        // temporary
+    //        if (debugger.debugStarted && output.equals("*Main> ")) {
+    //            getSession()?.stop()
+    //        }
+    //    }
 
     private fun fixStderrOutput(text: String?): String? {
         return text?.replace("" + 0.toChar(), "")?.replace("" + 1.toChar(), "")
