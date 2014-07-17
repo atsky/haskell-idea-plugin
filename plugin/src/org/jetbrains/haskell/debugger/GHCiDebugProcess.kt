@@ -197,6 +197,6 @@ public class GHCiDebugProcess(session: XDebugSession,
         public val PROMPT_LINE: String = "debug> "
 
         // todo: change
-        public val INPUT_READINESS_PORT: Int = 12345
+        public val INPUT_READINESS_PORT: Int = 52435
     }
 }

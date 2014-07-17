@@ -62,6 +62,8 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
         } catch (e: Exception) {
             val msg =  "Cannot execute debug process for ${project.getName()}. Check run configurations to try to fix the problem"
             Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
+            println("ERROR(HaskellProgramRunner.doExecute): ${e.getMessage()}")
+            e.printStackTrace()
         }
         return null
     }

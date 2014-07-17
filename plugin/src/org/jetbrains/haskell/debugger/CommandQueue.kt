@@ -4,6 +4,7 @@ import java.util.Queue
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.sun.jmx.remote.internal.ArrayQueue
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.LinkedList
 
 /**
  * Created by vlad on 7/15/14.
@@ -11,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) : Runnable {
 
-    private val commands = ArrayQueue<AbstractCommand>(10)
+    private val commands = LinkedList<AbstractCommand>()
     private var running = true
 
     override fun run() {
@@ -26,11 +27,11 @@ public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) :
     }
 
     public synchronized fun addCommand(command: AbstractCommand) {
-        commands.add(command)
+        commands.addFirst(command)
     }
 
     private synchronized fun removeCommand(): AbstractCommand {
-        return commands.remove(0)
+        return commands.removeLast()
     }
 
     public fun start() {
