@@ -20,6 +20,7 @@ import com.intellij.execution.process.ProcessOutputTypes
 import java.util.LinkedList
 import java.util.Deque
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
+import java.util.ArrayList
 
 /**
  * Created by vlad on 7/10/14.
@@ -30,16 +31,17 @@ public class GHCiDebugProcess(session: XDebugSession,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    public val debugger: GHCiDebugger
     private val inputReadinessListener: InputReadinessListener
+    private val collectedOutput: Deque<String?> = LinkedList()
+
+    public val debugger: GHCiDebugger
+    public val debugFinished: Boolean = false
 
     public val readyForInput: AtomicBoolean = AtomicBoolean(false)
     public val allOutputAccepted: AtomicBoolean = AtomicBoolean(false)
-    private val collectedOutput: Deque<String?> = LinkedList()
+//    public var stackFrames: ArrayList<HaskellStackFrameInfo> = ArrayList()
 
-    public val debugFinished: Boolean = false;
-
-    {
+    ;{
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
 
@@ -157,7 +159,7 @@ public class GHCiDebugProcess(session: XDebugSession,
         if (outputType == ProcessOutputTypes.STDOUT) {
             val text = event?.getText()
             print(text)
-            collectedOutput.addFirst(text)
+            collectedOutput.addLast(text)
             if (allOutputAccepted.get()) {
                 handleGHCiOutput()
                 allOutputAccepted.set(false)

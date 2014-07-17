@@ -25,6 +25,8 @@ public abstract class FlowCommand : AbstractCommand() {
             // "Main" is temporary name
             val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
             debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+
+            debugProcess.debugger.history(breakpoint)
         }
     }
 }

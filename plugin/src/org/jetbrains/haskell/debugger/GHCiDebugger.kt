@@ -8,6 +8,9 @@ import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
 import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 
 /**
  * Created by vlad on 7/11/14.
@@ -70,6 +73,10 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 
     override fun resume() {
         queue.addCommand(ResumeCommand())
+    }
+
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) {
+        queue.addCommand(HistoryCommand(breakpoint))
     }
 
     override fun prepareGHCi() {

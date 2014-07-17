@@ -24,6 +24,8 @@ public abstract class StepCommand : AbstractCommand() {
             // "Main" is temporary name
             val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
             debugProcess.getSession()!!.positionReached(context)
+
+            debugProcess.debugger.history(null)
         }
     }
 }

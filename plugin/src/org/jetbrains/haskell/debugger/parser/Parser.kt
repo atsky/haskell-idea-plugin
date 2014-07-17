@@ -104,8 +104,6 @@ public class Parser() {
                             throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                         }
                         callStack.list.add(CallInfo(index, function, filePosition))
-                    } else {
-                        throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                     }
                 }
             }

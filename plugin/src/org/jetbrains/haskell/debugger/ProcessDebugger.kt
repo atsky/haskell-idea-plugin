@@ -1,6 +1,8 @@
 package org.jetbrains.haskell.debugger
 
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 
 /**
  * Created by vlad on 7/11/14.
@@ -25,4 +27,6 @@ public trait ProcessDebugger {
     public fun resume()
 
     public fun prepareGHCi()
+
+    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?)
 }
