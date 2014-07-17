@@ -194,8 +194,6 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     class object {
 
-//        private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d)+ activated at *:(\\d)+:(\\d)+-(\\d)+"
-
         public val PROMPT_LINE: String = "debug> "
 
         // todo: change

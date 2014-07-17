@@ -13,6 +13,7 @@ public class Parser() {
     // we can put here functions to parse some known things like 'parseSetBreakpointResult' ect...
     class object {
 
+        private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d+) activated at (.*)"
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
         val FILE_POSITION_PATTERNS = array(
@@ -30,13 +31,13 @@ public class Parser() {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
                 if (matcher.matches()) {
-                    val path = matcher.toMatchResult().group(1)!!
+                    val path = matcher.group(1)!!
                     if (!File(path).exists()) {
                         return null;
                     }
                     val values = IntArray(matcher.groupCount() - 1)
                     for (j in 0..(values.size - 1)) {
-                        values[j] = Integer.parseInt(matcher.toMatchResult().group(j + 2)!!)
+                        values[j] = Integer.parseInt(matcher.group(j + 2)!!)
                     }
                     return FilePosition(path, values[POSITION_PATTERN_PLACES[i][0]], values[POSITION_PATTERN_PLACES[i][1]],
                             values[POSITION_PATTERN_PLACES[i][2]], values[POSITION_PATTERN_PLACES[i][3]])
@@ -52,15 +53,25 @@ public class Parser() {
             val it = output.descendingIterator()
             while (it.hasNext()) {
                 val line = it.next()
-                val parts = line!!.split(' ')
-
-                if (parts.size > 4 && parts[0] == "Breakpoint" && parts[2] == "activated" && parts[3] == "at") {
-                    val breakpointNumber = parts[1].toInt()
-                    val lastWord = parts[parts.size - 1]
-                    val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
-                    val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
-                    return BreakpointCommandResult(breakpointNumber, lineNumber)
+                val matcher = Pattern.compile(BREAKPOINT_ACTIVATED_PATTERN).matcher(line!!.trim())
+                if (matcher.matches()) {
+                    val breakpointNumber = matcher.group(1)!!.toInt()
+                    val filePositionLine = matcher.group(2)!!
+                    val filePosition = tryCreateFilePosition(filePositionLine)
+                    if (filePosition != null) {
+                        return BreakpointCommandResult(breakpointNumber, filePosition)
+                    }
                 }
+//                val line = it.next()
+//                val parts = line!!.split(' ')
+//
+//                if (parts.size > 4 && parts[0] == "Breakpoint" && parts[2] == "activated" && parts[3] == "at") {
+//                    val breakpointNumber = parts[1].toInt()
+//                    val lastWord = parts[parts.size - 1]
+//                    val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
+//                    val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
+//                    return BreakpointCommandResult(breakpointNumber, lineNumber)
+//                }
             }
             throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
         }
@@ -74,7 +85,7 @@ public class Parser() {
                 val line = it.next()
                 val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(line!!.trim())
                 if (matcher.matches()) {
-                    val str = matcher.toMatchResult().group(2)!!
+                    val str = matcher.group(2)!!
                     val filePosition = tryCreateFilePosition(str)
                     return filePosition
                 }
@@ -91,10 +102,10 @@ public class Parser() {
                 } else {
                     val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
                     if (matcher.matches()) {
-                        val index = -Integer.parseInt(matcher.toMatchResult().group(1)!!)
-                        val function = matcher.toMatchResult().group(2)!!
-                        val line = matcher.toMatchResult().group(3)!!
-                        val filePosition = tryCreateFilePosition(line)
+                        val index = -Integer.parseInt(matcher.group(1)!!)
+                        val function = matcher.group(2)!!
+                        val filePositionLine = matcher.group(3)!!
+                        val filePosition = tryCreateFilePosition(filePositionLine)
                         if (filePosition == null) {
                             throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                         }
@@ -111,7 +122,7 @@ public class Parser() {
          * Result classes
          */
         public open class ParseResult
-        public class BreakpointCommandResult(val breakpointNumber: Int, val lineNumber: Int) : ParseResult()
+        public class BreakpointCommandResult(public val breakpointNumber: Int, public val position: FilePosition) : ParseResult()
         public class FilePosition(public val file: String, public val startLine: Int, public val startSymbol: Int,
                                   public val endLine: Int, public val endSymbol: Int) : ParseResult()
         public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
