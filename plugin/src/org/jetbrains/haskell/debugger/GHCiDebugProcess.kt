@@ -27,6 +27,7 @@ import java.util.regex.Pattern
 import java.util.ArrayList
 import com.intellij.execution.process.ProcessOutputTypes
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import java.util.LinkedList
 import java.util.Deque
 
@@ -39,7 +40,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    private val debugger: GHCiDebugger
+    public val debugger: GHCiDebugger
     private val inputReadinessListener: InputReadinessListener
 
     public val readyForInput: AtomicBoolean = AtomicBoolean(false)
@@ -68,6 +69,17 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     private class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
     private val registeredBreakpoints: MutableMap<Int, BreakpointEntry> = hashMapOf()
+
+    public fun setBreakpointNumberAtLine(breakpointNumber: Int, line: Int) {
+        val entry = registeredBreakpoints.get(line)
+        if (entry != null) {
+            entry.breakpointNumber = breakpointNumber
+        }
+    }
+
+    public fun getBreakpointAtLine(line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
+        return registeredBreakpoints.get(line)?.breakpoint
+    }
 
     //    private fun tryAddBreakpointHandlersFromExtensions() {
     //        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
@@ -141,9 +153,6 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     // ProcessListener
 
-    private class CallInfo(val index: Int, val function: String, val position: FilePosition)
-    private var callStack: ArrayList<CallInfo>? = null
-
     override fun startNotified(event: ProcessEvent?) {
     }
 
@@ -176,146 +185,14 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     // methods to handle GHCi output
     private fun handleGHCiOutput() {
-        /*
-         * todo:
-         * Need to find the way to distinguish debug output and program output.
-         * Debug output is always at the end before input is available and fits some patterns, need to use it.
-         */
         if (!collectedOutput.empty) {
-            // call command to handle collected output
-//            when (debugger.lastCommand) {
-//                is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
-//                is TraceCommand,
-//                is ResumeCommand -> tryHandleStoppedAtBreakpoint(output)
-//                is StepIntoCommand,
-//                is StepOverCommand -> tryHandleStoppedAtPosition(output)
-//                is HistoryCommand -> handleHistory(output)
-//            }
-        }
-    }
-
-    private fun handleSetBreakpointCommandResult(output: String) {
-        //temporary and not optimal, later parser should do this work (added just for testing)
-        val parts = output.split(' ')
-
-        if (parts.size > 4 && parts[0] == "Breakpoint" && parts[2] == "activated" && parts[3] == "at") {
-            val breakpointNumber = parts[1].toInt()
-            val lastWord = parts[parts.size - 1]
-            val lineNumberBegSubstr = lastWord.substring(lastWord.indexOf(':') + 1)
-            val lineNumber = lineNumberBegSubstr.substring(0, lineNumberBegSubstr.indexOf(':')).toInt()
-            val entry = registeredBreakpoints.get(lineNumber)
-            if (entry != null) {
-                entry.breakpointNumber = breakpointNumber
-            }
-            debugger.lastCommand = null
-        } else {
-            throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
-        }
-    }
-
-    private fun tryHandleStoppedAtBreakpoint(output: String) {
-        val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(output.trim())
-        if (matcher.matches()) {
-            val str = matcher.toMatchResult().group(2)!!
-            val filePosition = FilePosition.tryCreateFilePosition(str)
-            if (filePosition != null) {
-                val lineNumber = filePosition.startLine
-                val breakpoint = registeredBreakpoints.get(lineNumber)!!.breakpoint
-                val context = object : XSuspendContext() {}
-                getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-            }
-        }
-    }
-
-
-    private fun tryHandleStoppedAtPosition(output: String) {
-        val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(output.trim())
-        if (matcher.matches()) {
-            val filePosition = FilePosition.tryCreateFilePosition(matcher.toMatchResult().group(2)!!)
-            if (filePosition != null) {
-                val context = object : XSuspendContext() {}
-                getSession()!!.positionReached(context)
-            }
-        }
-    }
-
-    private fun handleHistory(output: String) {
-        if (output.trim().equals("<end of history>")) {
-            // mark history as ready
-        } else {
-            val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(output.trim())
-            if (matcher.matches()) {
-                val index = -Integer.parseInt(matcher.toMatchResult().group(1)!!)
-                val function = matcher.toMatchResult().group(2)!!
-                val line = matcher.toMatchResult().group(3)!!
-                val filePosition = FilePosition.tryCreateFilePosition(line)
-                if (filePosition == null) {
-                    throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
-                }
-                if (callStack == null) {
-                    // or when new history invocation
-                    callStack = ArrayList<CallInfo>()
-                }
-                callStack!!.add(CallInfo(index, function, filePosition))
-            } else {
-                throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
-            }
-        }
-    }
-
-    //    private fun tryHandleDebugFinished(output: String) {
-    //        // temporary
-    //        if (debugger.debugStarted && output.equals("*Main> ")) {
-    //            getSession()?.stop()
-    //        }
-    //    }
-
-
-    /*
-     * Maybe better to move class outside
-     */
-
-    public class FilePosition private (val file: String, val startLine: Int, val startSymbol: Int,
-                                       val endLine: Int, val endSymbol: Int) {
-
-        class object {
-            public fun tryCreateFilePosition(line: String): FilePosition? {
-                for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
-                    val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
-                    if (matcher.matches()) {
-                        val path = matcher.toMatchResult().group(1)!!
-                        if (!File(path).exists()) {
-                            return null;
-                        }
-                        val values = IntArray(matcher.groupCount() - 1)
-                        for (j in 0..(values.size - 1)) {
-                            values[j] = Integer.parseInt(matcher.toMatchResult().group(j + 2)!!)
-                        }
-                        return FilePosition(path, values[POSITION_PATTERN_PLACES[i][0]], values[POSITION_PATTERN_PLACES[i][1]],
-                                values[POSITION_PATTERN_PLACES[i][2]], values[POSITION_PATTERN_PLACES[i][3]])
-                    }
-                }
-                return null;
-            }
-
-            private val FILE_POSITION_PATTERNS = array(
-                    "(.*):(\\d+):(\\d+)",
-                    "(.*):(\\d+):(\\d+)-(\\d+)",
-                    "(.*):\\((\\d+),(\\d+)\\)-\\((\\d+),(\\d+)\\)"
-            )
-
-            private val POSITION_PATTERN_PLACES = array(
-                    array(0, 1, 0, 1),
-                    array(0, 1, 0, 2),
-                    array(0, 1, 2, 3)
-            )
+            debugger.lastCommand?.handleOutput(collectedOutput, this)
+            collectedOutput.clear()
         }
     }
 
     class object {
 
-        private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
-        private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
 //        private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d)+ activated at *:(\\d)+:(\\d)+-(\\d)+"
 
         public val PROMPT_LINE: String = "debug> "

@@ -4,13 +4,11 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcess
 import java.util.Deque
 
 /**
- * @author Habibullin Marat
+ * Created by vlad on 7/17/14.
  */
 
-public class RemoveBreakpointCommand(val lineNumber: Int) : AbstractCommand() {
-    override fun getBytes(): ByteArray {
-        return ":delete $lineNumber\n".toByteArray()
-    }
+public abstract class HiddenCommand : AbstractCommand() {
+
 
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
     }

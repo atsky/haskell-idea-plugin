@@ -7,6 +7,7 @@ import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
 import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
 import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
+import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -38,10 +39,12 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         synchronized(lockObject) {
             lastCommand = command
 
-            debugProcess.printToConsole(String(bytes))
+            if (lastCommand !is HiddenCommand) {
+                debugProcess.printToConsole(String(bytes))
 
-            System.out.write(bytes)
-            System.out.flush()
+                System.out.write(bytes)
+                System.out.flush()
+            }
 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
             os.write(bytes)
@@ -70,7 +73,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     }
 
     override fun prepareGHCi() {
-        execute(object : AbstractCommand() {
+        execute(object : HiddenCommand() {
             override fun getBytes(): ByteArray {
                 return (":set prompt \"" + GHCiDebugProcess.PROMPT_LINE + "\"\n").toByteArray()
             }
@@ -102,7 +105,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
                 ":set stop $stop_cmd\n"
         )
         for (cmd in commands) {
-            queue.addCommand(object : AbstractCommand() {
+            queue.addCommand(object : HiddenCommand() {
                 override fun getBytes(): ByteArray {
                     return cmd.toByteArray()
                 }
