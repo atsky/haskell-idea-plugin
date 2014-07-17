@@ -6,7 +6,7 @@ import com.intellij.xdebugger.frame.XExecutionStack
 /**
  * @author Habibullin Marat
  */
-public class HaskellSuspendContext(private val ghciDebugProcess: GHCiDebugProcess, threadInfo: GHCiThreadInfo) : XSuspendContext() {
+public class HaskellSuspendContext(threadInfo: ProgramThreadInfo) : XSuspendContext() {
     private val _activeExecutionStack : XExecutionStack = HaskellExecutionStack(threadInfo)
     override fun getActiveExecutionStack(): XExecutionStack? = _activeExecutionStack
 

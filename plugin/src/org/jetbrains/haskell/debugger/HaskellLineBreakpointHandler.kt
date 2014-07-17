@@ -42,6 +42,11 @@ public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreak
         }
     }
 
-    private fun getHaskellBreakpointLineNumber(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>): Int? =
-            breakpoint.getSourcePosition()?.getLine()?.plus(1)
+    private fun getHaskellBreakpointLineNumber(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>): Int? {
+        val lineNum = breakpoint.getSourcePosition()?.getLine()
+        if(lineNum != null) {
+            return HaskellUtils.zeroBasedToHaskellLineNumber(lineNum)
+        }
+        return null
+    }
 }

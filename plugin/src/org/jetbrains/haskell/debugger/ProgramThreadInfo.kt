@@ -5,7 +5,7 @@ package org.jetbrains.haskell.debugger
  *
  * @author Habibullin Marat
  */
-public class GHCiThreadInfo(public val id: String?,
+public class ProgramThreadInfo(public val id: String?,
                             public val name: String,
                             public var frames: List<HaskellStackFrameInfo>?) {
 
@@ -15,7 +15,7 @@ public class GHCiThreadInfo(public val id: String?,
         KILLED
     }
 
-    public var state: State = State.RUNNING
+    public var state: State = State.SUSPENDED
         private set
 
     public fun updateState(newState: State, newFrames: List<HaskellStackFrameInfo>?) {
