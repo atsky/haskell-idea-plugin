@@ -27,6 +27,8 @@ import java.util.regex.Pattern
 import java.util.ArrayList
 import com.intellij.execution.process.ProcessOutputTypes
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import java.util.LinkedList
+import java.util.Deque
 
 /**
  * Created by vlad on 7/10/14.
@@ -41,6 +43,8 @@ public class GHCiDebugProcess(session: XDebugSession,
     private val inputReadinessListener: InputReadinessListener
 
     public val readyForInput: AtomicBoolean = AtomicBoolean(false)
+    public val allOutputAccepted: AtomicBoolean = AtomicBoolean(false)
+    private val collectedOutput: Deque<String?> = LinkedList()
 
     public val debugFinished: Boolean = false;
 
@@ -151,8 +155,14 @@ public class GHCiDebugProcess(session: XDebugSession,
 
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
         if (outputType == ProcessOutputTypes.STDOUT) {
-            print(event?.getText())
-            handleGHCiOutput(event?.getText())
+            val text = event?.getText()
+            print(text)
+            collectedOutput.addFirst(text)
+            if(allOutputAccepted.get()) {
+                handleGHCiOutput()
+                allOutputAccepted.set(false)
+                readyForInput.set(true)
+            }
         } else if (outputType == ProcessOutputTypes.STDERR) {
             print(event?.getText())
         }
@@ -165,21 +175,22 @@ public class GHCiDebugProcess(session: XDebugSession,
             line?.endsWith(PROMPT_LINE) ?: false
 
     // methods to handle GHCi output
-    private fun handleGHCiOutput(output: String?) {
+    private fun handleGHCiOutput() {
         /*
          * todo:
          * Need to find the way to distinguish debug output and program output.
          * Debug output is always at the end before input is available and fits some patterns, need to use it.
          */
-        if (output != null) {
-            when (debugger.lastCommand) {
-                is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
-                is TraceCommand,
-                is ResumeCommand -> tryHandleStoppedAtBreakpoint(output)
-                is StepIntoCommand,
-                is StepOverCommand -> tryHandleStoppedAtPosition(output)
-                is HistoryCommand -> handleHistory(output)
-            }
+        if (!collectedOutput.empty) {
+            // call command to handle collected output
+//            when (debugger.lastCommand) {
+//                is SetBreakpointCommand -> handleSetBreakpointCommandResult(output)
+//                is TraceCommand,
+//                is ResumeCommand -> tryHandleStoppedAtBreakpoint(output)
+//                is StepIntoCommand,
+//                is StepOverCommand -> tryHandleStoppedAtPosition(output)
+//                is HistoryCommand -> handleHistory(output)
+//            }
         }
     }
 

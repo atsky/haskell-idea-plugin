@@ -27,7 +27,7 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
                 val inputStream = socket.getInputStream()!!
                 val b = inputStream.read()
                 if (b == 0) {
-                    debugProcess.readyForInput.set(true)
+                    debugProcess.allOutputAccepted.set(true)
                 } else {
                     debugProcess.getSession()?.stop()
                     running = false
