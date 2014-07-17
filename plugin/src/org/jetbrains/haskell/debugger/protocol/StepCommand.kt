@@ -19,7 +19,6 @@ public abstract class StepCommand : AbstractCommand() {
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
         val filePosition = Parser.tryParseStoppedAt(output)
         if (filePosition != null) {
-            println("FILE POS: filePosition.startLine - ${filePosition.startLine}, filePosition.endLine - ${filePosition.endLine}")
             val frames = ArrayList<HaskellStackFrameInfo>()
             frames.add(HaskellStackFrameInfo(filePosition))
             // "Main" is temporary name
