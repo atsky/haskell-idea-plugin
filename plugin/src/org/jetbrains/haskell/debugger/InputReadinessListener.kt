@@ -15,6 +15,8 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
     private val serverSocket: ServerSocket = ServerSocket(GHCiDebugProcess.INPUT_READINESS_PORT)
 
     override fun run() {
+
+        // todo: need to be careful with stopping the process
         try {
             while (running) {
                 /*
@@ -23,17 +25,12 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
                 val socket = serverSocket.accept()
                 connected = true
                 val inputStream = socket.getInputStream()!!
-                while (inputStream.available() == 0 && running) {
-                    Thread.sleep(100)
-                }
-                if (inputStream.available() > 0 && running) {
-                    val b = inputStream.read()
-                    if (b == 0) {
-                        debugProcess.readyForInput.set(true)
-                    } else {
-                        debugProcess.getSession()?.stop()
-                        running = false
-                    }
+                val b = inputStream.read()
+                if (b == 0) {
+                    debugProcess.readyForInput.set(true)
+                } else {
+                    debugProcess.getSession()?.stop()
+                    running = false
                 }
                 connected = false
                 socket.close()

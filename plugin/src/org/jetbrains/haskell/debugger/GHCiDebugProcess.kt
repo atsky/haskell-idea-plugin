@@ -154,8 +154,7 @@ public class GHCiDebugProcess(session: XDebugSession,
             print(event?.getText())
             handleGHCiOutput(event?.getText())
         } else if (outputType == ProcessOutputTypes.STDERR) {
-            val text = fixStderrOutput(event?.getText())
-            print(text)
+            print(event?.getText)
         }
         if (!inputReadinessListener.connected && isReadyForInput(event?.getText())) {
             readyForInput.set(true)
@@ -259,10 +258,6 @@ public class GHCiDebugProcess(session: XDebugSession,
     //            getSession()?.stop()
     //        }
     //    }
-
-    private fun fixStderrOutput(text: String?): String? {
-        return text?.replace("" + 0.toChar(), "")?.replace("" + 1.toChar(), "")
-    }
 
 
     /*
