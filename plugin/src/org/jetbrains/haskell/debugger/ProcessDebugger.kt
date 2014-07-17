@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger
 
-import org.jetbrains.haskell.debugger.commands.AbstractCommand
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 
 /**
  * Created by vlad on 7/11/14.

@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.debugger
 
 import java.util.Queue
-import org.jetbrains.haskell.debugger.commands.AbstractCommand
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.sun.jmx.remote.internal.ArrayQueue
 import java.util.concurrent.atomic.AtomicBoolean
 

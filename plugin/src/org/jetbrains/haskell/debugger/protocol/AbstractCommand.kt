@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger.commands
+package org.jetbrains.haskell.debugger.protocol
 
 import org.jetbrains.haskell.debugger.GHCiDebugProcess
 

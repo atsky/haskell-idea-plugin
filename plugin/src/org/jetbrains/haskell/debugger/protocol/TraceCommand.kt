@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger.commands
+package org.jetbrains.haskell.debugger.protocol
 
 /**
  * Created by vlad on 7/10/14.

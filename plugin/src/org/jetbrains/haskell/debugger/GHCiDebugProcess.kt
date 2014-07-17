@@ -16,12 +16,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
-import org.jetbrains.haskell.debugger.commands.TraceCommand
+import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.protocol.TraceCommand
 import com.intellij.xdebugger.frame.XSuspendContext
-import org.jetbrains.haskell.debugger.commands.StepIntoCommand
-import org.jetbrains.haskell.debugger.commands.StepOverCommand
-import org.jetbrains.haskell.debugger.commands.ResumeCommand
+import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
+import org.jetbrains.haskell.debugger.protocol.StepOverCommand
+import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import java.io.File
 import java.util.regex.Pattern
 import java.util.ArrayList
@@ -305,6 +305,7 @@ public class GHCiDebugProcess(session: XDebugSession,
 
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
+//        private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d)+ activated at *:(\\d)+:(\\d)+-(\\d)+"
 
         public val PROMPT_LINE: String = "debug> "
 

@@ -1,12 +1,12 @@
 package org.jetbrains.haskell.debugger
 
-import org.jetbrains.haskell.debugger.commands.AbstractCommand
-import org.jetbrains.haskell.debugger.commands.TraceCommand
-import org.jetbrains.haskell.debugger.commands.SetBreakpointCommand
-import org.jetbrains.haskell.debugger.commands.RemoveBreakpointCommand
-import org.jetbrains.haskell.debugger.commands.StepIntoCommand
-import org.jetbrains.haskell.debugger.commands.StepOverCommand
-import org.jetbrains.haskell.debugger.commands.ResumeCommand
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import org.jetbrains.haskell.debugger.protocol.TraceCommand
+import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
+import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
+import org.jetbrains.haskell.debugger.protocol.StepOverCommand
+import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 
 /**
  * Created by vlad on 7/11/14.
