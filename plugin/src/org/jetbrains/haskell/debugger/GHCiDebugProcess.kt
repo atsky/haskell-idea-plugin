@@ -16,20 +16,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
-import org.jetbrains.haskell.debugger.protocol.TraceCommand
-import com.intellij.xdebugger.frame.XSuspendContext
-import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
-import org.jetbrains.haskell.debugger.protocol.StepOverCommand
-import org.jetbrains.haskell.debugger.protocol.ResumeCommand
-import java.io.File
-import java.util.regex.Pattern
-import java.util.ArrayList
 import com.intellij.execution.process.ProcessOutputTypes
-import org.jetbrains.haskell.debugger.protocol.HistoryCommand
-import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import java.util.LinkedList
 import java.util.Deque
+import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -168,7 +158,7 @@ public class GHCiDebugProcess(session: XDebugSession,
             val text = event?.getText()
             print(text)
             collectedOutput.addFirst(text)
-            if(allOutputAccepted.get()) {
+            if (allOutputAccepted.get()) {
                 handleGHCiOutput()
                 allOutputAccepted.set(false)
                 readyForInput.set(true)
@@ -176,13 +166,15 @@ public class GHCiDebugProcess(session: XDebugSession,
         } else if (outputType == ProcessOutputTypes.STDERR) {
             print(event?.getText())
         }
-        if (!inputReadinessListener.connected && isReadyForInput(event?.getText())) {
+        if (!allOutputAccepted.get() && (!inputReadinessListener.connected || debugger.lastCommand is RealTimeCommand) &&
+                simpleReadinessCheck(event?.getText())) {
+            handleGHCiOutput()
+            allOutputAccepted.set(false)
             readyForInput.set(true)
         }
     }
 
-    private fun isReadyForInput(line: String?): Boolean =
-            line?.endsWith(PROMPT_LINE) ?: false
+    private fun simpleReadinessCheck(line: String?): Boolean = line?.endsWith(PROMPT_LINE) ?: false
 
     // methods to handle GHCi output
     private fun handleGHCiOutput() {

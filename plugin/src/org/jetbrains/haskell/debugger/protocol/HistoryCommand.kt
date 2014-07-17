@@ -8,7 +8,7 @@ import java.util.Deque
  * Created by vlad on 7/16/14.
  */
 
-public class HistoryCommand : AbstractCommand() {
+public class HistoryCommand : RealTimeCommand() {
 
     override fun getBytes(): ByteArray {
         return ":hist\n".toByteArray()

@@ -8,14 +8,14 @@ import java.util.Deque
  * @author Habibullin Marat
  */
 
-public class SetBreakpointCommand(val lineNumber: Int) : AbstractCommand() {
+public class SetBreakpointCommand(val lineNumber: Int) : RealTimeCommand() {
     override fun getBytes(): ByteArray {
         return ":break $lineNumber\n".toByteArray()
     }
 
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
         val result = Parser.parseSetBreakpointCommandResult(output)
-        debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine + 1)
+        debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine)
         debugProcess.debugger.lastCommand = null
     }
 }

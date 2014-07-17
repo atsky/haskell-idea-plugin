@@ -7,11 +7,10 @@ import java.util.Deque
  * @author Habibullin Marat
  */
 
-public class RemoveBreakpointCommand(val lineNumber: Int) : AbstractCommand() {
+public class RemoveBreakpointCommand(val breakpointNumber: Int) : RealTimeCommand() {
     override fun getBytes(): ByteArray {
-        return ":delete $lineNumber\n".toByteArray()
+        return ":delete $breakpointNumber\n".toByteArray()
     }
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
-    }
+    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {}
 }
