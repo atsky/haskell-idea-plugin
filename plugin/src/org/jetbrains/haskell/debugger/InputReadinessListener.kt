@@ -1,12 +1,18 @@
 package org.jetbrains.haskell.debugger
 
 import java.net.ServerSocket
+import java.net.Socket
+import java.net.SocketException
 
 /**
  * Created by vlad on 7/16/14.
  */
 
 public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnable {
+
+    class object {
+        private val OUTPUT_ACCEPTED_BYTE: Int = 0
+    }
 
     private var running = true
     public var connected: Boolean = false
@@ -16,27 +22,31 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
 
     override fun run() {
 
-        // todo: need to be careful with stopping the process
+        var socket: Socket? = null
         try {
             while (running) {
                 /*
                  * Need to always reopen connection (not because of hClose command in ghci)
                  */
-                val socket = serverSocket.accept()
+                socket = serverSocket.accept()
                 connected = true
-                val inputStream = socket.getInputStream()!!
-                val b = inputStream.read()
-                if (b == 0) {
+                val b = socket!!.getInputStream()!!.read()
+                if (b == OUTPUT_ACCEPTED_BYTE) {
                     debugProcess.allOutputAccepted.set(true)
                 } else {
                     debugProcess.getSession()?.stop()
                     running = false
                 }
+                socket!!.close()
                 connected = false
-                socket.close()
             }
-            serverSocket.close()
         } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            running = false
+            connected = false
+            socket?.close()
+            serverSocket.close()
         }
     }
 
@@ -46,7 +56,6 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
 
     public fun stop() {
         running = false
-        connected = false
         serverSocket.close()
     }
 

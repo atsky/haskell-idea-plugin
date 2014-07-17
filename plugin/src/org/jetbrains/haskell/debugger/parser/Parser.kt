@@ -46,7 +46,7 @@ public class Parser() {
         }
 
         /**
-         * Returns line where breakpoint was activated
+         * Returns line where breakpoint was activated and breakpoint number
          */
         public fun parseSetBreakpointCommandResult(output: Deque<String?>): BreakpointCommandResult {
             val it = output.descendingIterator()
@@ -114,7 +114,7 @@ public class Parser() {
         public class BreakpointCommandResult(val breakpointNumber: Int, val lineNumber: Int) : ParseResult()
         public class FilePosition(public val file: String, public val startLine: Int, public val startSymbol: Int,
                                   public val endLine: Int, public val endSymbol: Int) : ParseResult()
-        public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition)
+        public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
         public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
     }

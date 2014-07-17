@@ -115,6 +115,7 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
+        inputReadinessListener.stop()
         debugger.close();
     }
 
