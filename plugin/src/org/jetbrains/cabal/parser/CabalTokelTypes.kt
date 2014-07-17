@@ -52,18 +52,15 @@ public trait CabalTokelTypes {
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
-        val HOMEPAGE           : IElementType = CabalCompositeElementType("HOMEPAGE"                 , ::HomepageField           )
-        val PACKAGE_URL        : IElementType = CabalCompositeElementType("PACKAGE_URL"              , ::PackageURLField         )
+        val URL_FIELD          : IElementType = CabalCompositeElementType("URL_FIELD"                , ::URLField                )
         val NAME_FIELD         : IElementType = CabalCompositeElementType("NAME_FIELD"               , ::NameField               )
-        val DATA_FILES         : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFilesField          )
-        val EXTRA_SOURCE       : IElementType = CabalCompositeElementType("EXTRA_SOURCE"             , ::ExtraSourceField        )
-        val EXTRA_TMP          : IElementType = CabalCompositeElementType("EXTRA_TMP"                , ::ExtraTmpField           )
-        val EXTRA_DOC          : IElementType = CabalCompositeElementType("EXTRA_DOC"                , ::ExtraDocField           )
+        val FILE_LIST          : IElementType = CabalCompositeElementType("FILE_LIST"                , ::FileListField           )
         val FREE_FIELD         : IElementType = CabalCompositeElementType("FREE_FORM_FIELD"          , ::FreeField               )
         val BUILDABLE          : IElementType = CabalCompositeElementType("BUILDABLE"                , ::BuildableField          )
         val EXTENSIONS         : IElementType = CabalCompositeElementType("EXTENSIONS"               , ::ExtensionsField         )
         val HS_SOURCE_DIRS     : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HsSourceDirsField       )
         val OTHER_MODULES      : IElementType = CabalCompositeElementType("OTHER_MODULES"            , ::OtherModulesField       )
+        val DIRECTORY_FIELD    : IElementType = CabalCompositeElementType("DIRECTORY_FIELD"          , ::DirectoryField          )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
