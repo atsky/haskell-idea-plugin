@@ -65,13 +65,13 @@ public trait CabalTokelTypes {
         val FREE_FIELD         : IElementType = CabalCompositeElementType("FREE_FORM_FIELD"          , ::FreeField               )
         val BUILDABLE          : IElementType = CabalCompositeElementType("BUILDABLE"                , ::BuildableField          )
         val EXTENSIONS         : IElementType = CabalCompositeElementType("EXTENSIONS"               , ::ExtensionsField         )
-        val HS_SOURCE_DIRS     : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HsSourceDirsField       )
         val OTHER_MODULES      : IElementType = CabalCompositeElementType("OTHER_MODULES"            , ::OtherModulesField       )
         val DIRECTORY_FIELD    : IElementType = CabalCompositeElementType("DIRECTORY_FIELD"          , ::DirectoryField          )
         val BUILD_TYPE         : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildTypeField          )
         val LICENSE            : IElementType = CabalCompositeElementType("LICENSE"                  , ::LicenseField            )
         val TESTED_WITH        : IElementType = CabalCompositeElementType("TESTED_WITH"              , ::TestedWithField         )
         val LICENSE_FILES      : IElementType = CabalCompositeElementType("LICENSE_FILES"            , ::LicenseFilesField       )
+        val DIRECTORY_LIST     : IElementType = CabalCompositeElementType("DIRECTORY_LIST"           , ::DirectoryListField      )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 

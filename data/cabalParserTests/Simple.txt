@@ -62,7 +62,7 @@ FILE
       FileName(FILE_NAME)
         PsiElement(id)('Main.hs')
     PsiElement(NEW_LINE_INDENT)('\n  ')
-    HsSourceDirsField(HS_SOURCE_DIRS)
+    DirectoryListField(DIRECTORY_LIST)
       PropertyKey(PROPERTY_KEY)
         PsiElement(id)('hs-source-dirs')
       PsiElement(:)(':')
