@@ -83,9 +83,9 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseCondition(level: Int) = start(CabalTokelTypes.CONDITION) {                                                   //!!!!!!!!!
         matches(CabalTokelTypes.ID, "true") || matches(CabalTokelTypes.ID, "false")
-                || (token(CabalTokelTypes.ID) && token(CabalTokelTypes.LEFT_PAREN)
+                || (token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)
                                               && ((parseFullVersionConstraint(level)) || (token(CabalTokelTypes.ID)))
-                                              && token(CabalTokelTypes.RIGHT_PAREN))
+                                              && token(CabalTokelTypes.CLOSE_PAREN))
     }
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {

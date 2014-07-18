@@ -31,9 +31,9 @@ EOL_COMMENT      = ("--"[^\n]*)
 COMPARATOR       = (>= | <= | == | < | >)
 LOGIC            = (&& | \|\|)
 
-SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><=&|{]
+SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\]
 
-IDENTIFIER_PART  = ({DIGIT} | {SIMPLE_LETTER} | (=({SIMPLE_LETTER}|[&|{-])) | (&({SIMPLE_LETTER}|[=|-{])) | (\|({SIMPLE_LETTER}|[&={-])) | (\{({SIMPLE_LETTER}|[=|&{])))
+IDENTIFIER_PART  = {DIGIT} | {SIMPLE_LETTER}
 IDENTIFIER       = {IDENTIFIER_PART}+
 
 %%
@@ -47,17 +47,18 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 {COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
 {LOGIC}               { return CabalTokelTypes.LOGIC; }
-"("                   { return CabalTokelTypes.LEFT_PAREN; }
-")"                   { return CabalTokelTypes.RIGHT_PAREN; }
+"("                   { return CabalTokelTypes.OPEN_PAREN; }
+")"                   { return CabalTokelTypes.CLOSE_PAREN; }
 ":"                   { return CabalTokelTypes.COLON; }
 ","                   { return CabalTokelTypes.COMMA; }
+"="                   { return CabalTokelTypes.EQUAL; }
+"&"                   { return CabalTokelTypes.AND; }
+"|"                   { return CabalTokelTypes.OR; }
+"{"                   { return CabalTokelTypes.OPEN_CURLY; }
+"}"                   { return CabalTokelTypes.CLOSE_CURLY; }
 "{-"/[^#]             { yybegin(BLOCK_COMMENT); return CabalTokelTypes.COMMENT; }
 ({DIGIT})+            { return CabalTokelTypes.NUMBER; }
 \"([^\"]|"\\\"")*\"   { return CabalTokelTypes.STRING; }
 
-{IDENTIFIER}/(== | && | \|\| | \{-)
-                      { return CabalTokelTypes.ID; }
-
-{IDENTIFIER}[=&|{]?   { return CabalTokelTypes.ID; }
-[=&|{]                { return CabalTokelTypes.ID; }
+{IDENTIFIER}          { return CabalTokelTypes.ID; }
 .                     { return TokenType.BAD_CHARACTER; }
