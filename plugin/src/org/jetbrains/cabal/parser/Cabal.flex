@@ -28,10 +28,11 @@ DIGIT            = [0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
 INDENT           = ([\n]({WHITE_SPACE_CHAR}|"\n")*)
 EOL_COMMENT      = ("--"[^\n]*)
-COMPARATOR       = (>= | <= | == | < | >)
+COMPARATOR       = (>= | <= | < | >)
+EQUALITY         = ==
 LOGIC            = (&& | \|\|)
 
-SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\]
+SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><={}&|]
 
 IDENTIFIER_PART  = {DIGIT} | {SIMPLE_LETTER}
 IDENTIFIER       = {IDENTIFIER_PART}+
@@ -46,12 +47,13 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 {COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
+{EQUALITY}            { return CabalTokelTypes.EQUALITY; }
 {LOGIC}               { return CabalTokelTypes.LOGIC; }
 "("                   { return CabalTokelTypes.OPEN_PAREN; }
 ")"                   { return CabalTokelTypes.CLOSE_PAREN; }
 ":"                   { return CabalTokelTypes.COLON; }
 ","                   { return CabalTokelTypes.COMMA; }
-"="                   { return CabalTokelTypes.EQUAL; }
+"="                   { return CabalTokelTypes.EQ; }
 "&"                   { return CabalTokelTypes.AND; }
 "|"                   { return CabalTokelTypes.OR; }
 "{"                   { return CabalTokelTypes.OPEN_CURLY; }

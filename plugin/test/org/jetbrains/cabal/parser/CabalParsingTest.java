@@ -27,5 +27,5 @@ public class CabalParsingTest extends ParsingTestCase {
     public void testSimpleTopLevel() throws Exception { doTest(true); }
 
     @Test
-    public void testURL() throws Exception { doTest(true); }
+    public void testURLTest() throws Exception { doTest(true); }
 }
