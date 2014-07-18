@@ -20,4 +20,12 @@ public class CabalParsingTest extends ParsingTestCase {
     @Test
     public void testSimple() throws Exception { doTest(true); }
 
+    @Test
+    public void testFreeForm() throws Exception { doTest(true); }
+
+    @Test
+    public void testSimpleTopLevel() throws Exception { doTest(true); }
+
+    @Test
+    public void testURL() throws Exception { doTest(true); }
 }
