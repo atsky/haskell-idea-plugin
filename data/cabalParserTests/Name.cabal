@@ -1,0 +1,5 @@
+name: abc
+executable abc-a
+  main-is: bad-wolf.hs
+executable a-b-c-d
+  main-is: omega.hs

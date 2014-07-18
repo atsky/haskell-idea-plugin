@@ -65,8 +65,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         true;
     }
 
+    fun parseIDPattern(pattern: String): Boolean {
+        if ((builder.getTokenType() == CabalTokelTypes.ID) && builder.getTokenText()!!.matches(pattern)) {
+            builder.advanceLexer()
+            return true;
+        }
+        return false;
+    }
+
     fun parseName() = start(CabalTokelTypes.NAME) {
-        token(CabalTokelTypes.ID)
+        parseIDPattern("([a-zA-Z]([a-zA-Z0-9]*)-)*([a-zA-Z]([a-zA-Z0-9]*))")
     }
 
     fun parseFileName() = start(CabalTokelTypes.FILE_NAME) {
@@ -88,16 +96,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                                               && token(CabalTokelTypes.CLOSE_PAREN))
     }
 
-    fun parseIDPattern(pattern: String): Boolean {
-        if ((builder.getTokenType() == CabalTokelTypes.ID) && builder.getTokenText()!!.matches(pattern)) {
-            builder.advanceLexer()
-            return true;
-        }
-        return false;
-    }
-
     fun parseSimpleVersion(): Boolean {
-        return parseIDPattern("([0-9]+\\.)*([0-9]+)") || token(CabalTokelTypes.NUMBER)
+        return token(CabalTokelTypes.NUMBER) || parseIDPattern("([0-9]+\\.)*([0-9]+)")
     }
 
     fun parseRangeVersion(): Boolean {
@@ -106,7 +106,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
         (token(CabalTokelTypes.COMPARATOR) &&  parseSimpleVersion())
-                || (token(CabalTokelTypes.EQUALITY) && (parseRangeVersion() || parseSimpleVersion()))
+                || (token(CabalTokelTypes.EQUALITY) && (parseSimpleVersion() || parseRangeVersion()))
     }
 
     fun parseURL() = start(CabalTokelTypes.URL) {
@@ -136,7 +136,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun isLastOnThisLevel(prevLevel: Int) : Boolean {
-        if ((nextLevel() != null) && (nextLevel()!! <= prevLevel)) {
+        if ((builder.eof()) || (nextLevel() != null) && (nextLevel()!! <= prevLevel)) {
             return true
         }
         skipNewLines()
@@ -191,7 +191,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseTopLevelField() =
                parseField(0, CabalTokelTypes.VERSION        , "version"           , { parseSimpleVersion() && isLastOnThisLevel(it) })
-            || parseField(0, CabalTokelTypes.CABAL_VERSION  , "cabal-version"     , { parseSimpleVersionConstraint() && isLastOnThisLevel(it) })
+            || parseField(0, CabalTokelTypes.CABAL_VERSION  , "cabal-version"     , { parseComplexVersionConstraint(0) && isLastOnThisLevel(it) })
             || parseField(0, CabalTokelTypes.NAME_FIELD     , "name"              , { parseName() && isLastOnThisLevel(it) })
             || parseField(0, CabalTokelTypes.URL_FIELD      , "package-url"       , { parseURL() && isLastOnThisLevel(it) })
             || parseField(0, CabalTokelTypes.URL_FIELD      , "homepage"          , { parseURL() && isLastOnThisLevel(it) })

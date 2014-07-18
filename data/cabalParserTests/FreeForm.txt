@@ -55,7 +55,7 @@ FILE
       PsiWhiteSpace(' ')
       PsiElement(COMPARATOR)('>=')
       PsiWhiteSpace(' ')
-      PsiElement(COMPARATOR)('==')
+      PsiElement(==)('==')
       PsiWhiteSpace(' ')
       PsiElement(=)('=')
       PsiWhiteSpace(' ')
