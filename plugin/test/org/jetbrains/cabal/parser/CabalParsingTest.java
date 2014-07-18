@@ -28,4 +28,13 @@ public class CabalParsingTest extends ParsingTestCase {
 
     @Test
     public void testURLTest() throws Exception { doTest(true); }
+
+    @Test
+    public void testName() throws Exception { doTest(true); }
+
+    @Test
+    public void testSimpleVersion() throws Exception { doTest(true); }
+
+    @Test
+    public void testVersionConstraint() throws Exception { doTest(true); }
 }
