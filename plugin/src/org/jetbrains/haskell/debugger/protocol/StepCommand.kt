@@ -4,10 +4,10 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcess
 import com.intellij.xdebugger.frame.XSuspendContext
 import org.jetbrains.haskell.debugger.parser.Parser
 import java.util.Deque
-import org.jetbrains.haskell.debugger.HaskellSuspendContext
-import org.jetbrains.haskell.debugger.ProgramThreadInfo
+import org.jetbrains.haskell.debugger.frames.HaskellSuspendContext
+import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 /**
  * Created by vlad on 7/17/14.

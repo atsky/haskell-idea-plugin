@@ -1,10 +1,5 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.frames
 
-/**
- * Represents info about debugging process thread. For now main thing here is frames property
- *
- * @author Habibullin Marat
- */
 public class ProgramThreadInfo(public val id: String?,
                             public val name: String,
                             public var frames: List<HaskellStackFrameInfo>?) {

@@ -11,6 +11,7 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 /**
  * Created by vlad on 7/11/14.

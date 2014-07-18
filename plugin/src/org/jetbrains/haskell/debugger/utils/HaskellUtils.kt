@@ -1,8 +1,4 @@
-package org.jetbrains.haskell.debugger
-
-/**
- * Created by marat-x on 7/17/14.
- */
+package org.jetbrains.haskell.debugger.utils
 
 public class HaskellUtils {
     class object {

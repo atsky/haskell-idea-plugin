@@ -1,23 +1,18 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.breakpoints
 
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.haskell.fileType.HaskellFileType
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.util.Processor
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.PsiComment
+import org.jetbrains.haskell.debugger.HaskellDebuggerEditorsProvider
+import org.jetbrains.haskell.fileType.HaskellFileType
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.xdebugger.XDebuggerUtil
 
-/**
- * Class represents haskell specific breakpoint type
- *
- * @author Habibullin Marat
- */
 public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
 {

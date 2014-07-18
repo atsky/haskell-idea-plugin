@@ -1,17 +1,16 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.frames
 
+import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import com.intellij.xdebugger.frame.XExecutionStack
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrame
 import com.intellij.xdebugger.frame.XStackFrame
-import com.intellij.xdebugger.frame.XExecutionStack.XStackFrameContainer
-import java.util.Collections
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 import java.util.LinkedList
+import java.util.Collections
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
-
-/**
- * @author Habibullin Marat
- */
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
 public class HaskellExecutionStack(private val threadInfo: ProgramThreadInfo?) : XExecutionStack(threadInfo!!.name) {
 
@@ -27,7 +26,7 @@ public class HaskellExecutionStack(private val threadInfo: ProgramThreadInfo?) :
         return topFrame
     }
 
-    override fun computeStackFrames(firstFrameIndex: Int, container: XStackFrameContainer?) {
+    override fun computeStackFrames(firstFrameIndex: Int, container: XExecutionStack.XStackFrameContainer?) {
         if(container != null) {
 //            if (threadInfo!!.state != ProgramThreadInfo.State.SUSPENDED) {
 //                container.errorOccurred("Frames not available in non-suspended state")

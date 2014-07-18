@@ -1,26 +1,20 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.frames
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.XSourcePosition
+import com.intellij.xdebugger.frame.XStackFrame
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XCompositeNode
-import com.intellij.xdebugger.frame.XStackFrame
-import com.intellij.xdebugger.frame.XValueChildrenList
 import org.jetbrains.debugger.VariableView
-import org.jetbrains.debugger.VariableImpl
-import org.jetbrains.debugger.values.PrimitiveValue
-import org.jetbrains.debugger.values.ValueType
 import org.jetbrains.debugger.VariableContextBase
 import org.jetbrains.debugger.EvaluateContext
 import org.jetbrains.debugger.DebuggerViewSupport
-import org.jetbrains.debugger.DebuggerViewSupport.SimpleDebuggerViewSupport
+import org.jetbrains.debugger.values.PrimitiveValue
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.xdebugger.frame.XValueChildrenList
+import org.jetbrains.debugger.VariableImpl
+import org.jetbrains.debugger.values.ValueType
 
-
-/**
- * @author Habibullin Marat
- * @see com.intellij.xdebugger.frame.XStackFrame
- */
 public class HaskellStackFrame(private val positionInSource: XSourcePosition?) : XStackFrame() {
 
     class object {
@@ -86,7 +80,7 @@ public class HaskellStackFrame(private val positionInSource: XSourcePosition?) :
                         return false
                     }
                     override fun getDebugProcess(): DebuggerViewSupport {
-                        return SimpleDebuggerViewSupport()
+                        return DebuggerViewSupport.SimpleDebuggerViewSupport()
                     }
 
                 })

@@ -1,17 +1,12 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.breakpoints
 
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import org.jetbrains.haskell.debugger.GHCiDebugProcess
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointType
-import com.intellij.xdebugger.XSourcePosition
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
-/**
- * Class is used to handle breakpoint registration events, i.e. when you add / remove breakpoints on debug process is running
- * or when debug process starts having set breakpoints, methods of this class are called to perform appropriate actions
- *
- * @author Habibullin Marat
- */
 public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
                                           val debugProcess: GHCiDebugProcess)
                                         : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass)

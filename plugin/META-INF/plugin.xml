@@ -123,11 +123,11 @@
 
         <!--Haskell debugger-->
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
-        <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.HaskellLineBreakpointType"/>
+        <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType"/>
 
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="Haskell.breakpointHandler" interface="org.jetbrains.haskell.debugger.HaskellBreakpointHandlerFactory"/>
+        <extensionPoint qualifiedName="Haskell.breakpointHandler" interface="org.jetbrains.haskell.debugger.breakpoints.HaskellBreakpointHandlerFactory"/>
     </extensionPoints>
 </idea-plugin>

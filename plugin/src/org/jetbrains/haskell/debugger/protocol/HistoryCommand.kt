@@ -4,11 +4,11 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcess
 import org.jetbrains.haskell.debugger.parser.Parser
 import java.util.Deque
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.HaskellSuspendContext
-import org.jetbrains.haskell.debugger.ProgramThreadInfo
+import org.jetbrains.haskell.debugger.frames.HaskellSuspendContext
+import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 
 /**
  * Created by vlad on 7/16/14.

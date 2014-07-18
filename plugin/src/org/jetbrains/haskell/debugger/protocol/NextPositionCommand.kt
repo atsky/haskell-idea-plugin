@@ -3,10 +3,10 @@ package org.jetbrains.haskell.debugger.protocol
 import java.util.Deque
 import org.jetbrains.haskell.debugger.GHCiDebugProcess
 import org.jetbrains.haskell.debugger.parser.Parser
-import org.jetbrains.haskell.debugger.HaskellStackFrameInfo
-import org.jetbrains.haskell.debugger.HaskellSuspendContext
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HaskellSuspendContext
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.ProgramThreadInfo
+import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 
 /**
  * Created by marat-x on 7/18/14.

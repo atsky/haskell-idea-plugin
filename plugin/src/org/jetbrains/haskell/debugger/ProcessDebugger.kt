@@ -3,6 +3,7 @@ package org.jetbrains.haskell.debugger
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 /**
  * Created by vlad on 7/11/14.

@@ -21,6 +21,8 @@ import java.util.LinkedList
 import java.util.Deque
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import java.util.ArrayList
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
 
 /**
  * Created by vlad on 7/10/14.
