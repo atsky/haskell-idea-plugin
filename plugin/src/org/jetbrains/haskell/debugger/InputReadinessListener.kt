@@ -32,7 +32,7 @@ public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnab
                 connected = true
                 val b = socket!!.getInputStream()!!.read()
                 if (b == OUTPUT_ACCEPTED_BYTE) {
-                    debugProcess.allOutputAccepted.set(true)
+                    debugProcess.processStopped.set(true)
                 } else {
                     debugProcess.getSession()?.stop()
                     running = false

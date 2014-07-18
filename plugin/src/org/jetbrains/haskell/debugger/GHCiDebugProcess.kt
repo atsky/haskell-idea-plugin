@@ -40,7 +40,7 @@ public class GHCiDebugProcess(session: XDebugSession,
     public val debugFinished: Boolean = false
 
     public val readyForInput: AtomicBoolean = AtomicBoolean(false)
-    public val allOutputAccepted: AtomicBoolean = AtomicBoolean(false)
+    public val processStopped: AtomicBoolean = AtomicBoolean(false)
 //    public var stackFrames: ArrayList<HaskellStackFrameInfo> = ArrayList()
 
     ;{
@@ -162,19 +162,14 @@ public class GHCiDebugProcess(session: XDebugSession,
             val text = event?.getText()
             print(text)
             collectedOutput.addLast(text)
-            if (allOutputAccepted.get()) {
+            if (simpleReadinessCheck(event?.getText()) &&
+                    (processStopped.get() || !inputReadinessListener.connected || debugger.lastCommand is RealTimeCommand)) {
                 handleGHCiOutput()
-                allOutputAccepted.set(false)
+                processStopped.set(false)
                 readyForInput.set(true)
             }
         } else if (outputType == ProcessOutputTypes.STDERR) {
             print(event?.getText())
-        }
-        if (!allOutputAccepted.get() && (!inputReadinessListener.connected || debugger.lastCommand is RealTimeCommand) &&
-                simpleReadinessCheck(event?.getText())) {
-            handleGHCiOutput()
-            allOutputAccepted.set(false)
-            readyForInput.set(true)
         }
     }
 

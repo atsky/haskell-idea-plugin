@@ -70,8 +70,8 @@ public class HaskellStackFrame(private val positionInSource: XSourcePosition?) :
         })
     }
 
-    private fun createVariable(name: String, value: String): VariableView {
-        return VariableView(VariableImpl(name, PrimitiveValue(ValueType.STRING, value)),
+    public fun createVariable(name: String, value: String, valueType: ValueType = ValueType.STRING): VariableView {
+        return VariableView(VariableImpl(name, PrimitiveValue(valueType, value)),
                 object : VariableContextBase() {
                     override fun getEvaluateContext(): EvaluateContext {
                         throw UnsupportedOperationException()
