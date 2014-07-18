@@ -77,8 +77,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         token(CabalTokelTypes.ID)
     }
 
-    fun parseCondition() = start(CabalTokelTypes.CONDITION) {                                                   //!!!!!!!!!
-        token(CabalTokelTypes.ID)
+    fun parseBool(): Boolean {
+        return matches(CabalTokelTypes.ID, "true") || (matches(CabalTokelTypes.ID, "false"))
+    }
+
+    fun parseCondition(level: Int) = start(CabalTokelTypes.CONDITION) {                                                   //!!!!!!!!!
+        matches(CabalTokelTypes.ID, "true") || matches(CabalTokelTypes.ID, "false")
+                || (token(CabalTokelTypes.ID) && token(CabalTokelTypes.LEFT_PAREN)
+                                              && ((parseFullVersionConstraint(level)) || (token(CabalTokelTypes.ID)))
+                                              && token(CabalTokelTypes.RIGHT_PAREN))
     }
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
@@ -215,13 +222,14 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
 
     fun parseIf(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.IF_CONDITION) {
-        start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "if") } && parseCondition()
+        start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "if") } && parseCondition(level)
                 && parseProperties(level, true, parseSectionFields)
     }
 
     fun parseElse(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.ELSE_CONDITION) {
-            start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
-                    && parseProperties(level, true, parseSectionFields);
+        skipNewLines()
+        start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
+                && parseProperties(level, true, parseSectionFields);
     }
 
     fun parseProperties(prevLevel: Int, canContainIf: Boolean, parseSectionFields: (Int) -> Boolean): Boolean {
@@ -249,7 +257,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseIfElse(level: Int, parseSectionFields: (Int) -> Boolean): Boolean {
         if (parseIf(level, parseSectionFields)) {
             if (nextLevel() == level) {
-                skipNewLines()
                 parseElse(level, parseSectionFields)
             }
             return true
