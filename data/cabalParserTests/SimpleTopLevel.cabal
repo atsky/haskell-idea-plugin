@@ -5,8 +5,9 @@ cabal-version:       >= 1.2
 package-url:         //some_url.com/folder/
 homepage:            //www.vk.com
 license:             identifier
-license-file:        filename or
-license-files:       filename list
+license-file:        filenameor
+license-files:       filename
+                     list
 copyright:           freeform
 author:              freeform
 maintainer:          address
@@ -17,9 +18,13 @@ package-url:         URL
 synopsis:            freeform
 description:         freeform
 category:            freeform
-tested-with:         compiler list
-data-files:          filename list
+tested-with:         compilerlist
+data-files:          filename
+                     list
 data-dir:            directory
-extra-source-files:  filename list
-extra-doc-files:     filename list
-extra-tmp-files:     filename list
+extra-source-files:  filename
+                     list
+extra-doc-files:     filename
+                     list
+extra-tmp-files:     filename
+                     list

@@ -51,6 +51,7 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 {LOGIC}               { return CabalTokelTypes.LOGIC; }
 "("                   { return CabalTokelTypes.OPEN_PAREN; }
 ")"                   { return CabalTokelTypes.CLOSE_PAREN; }
+--"/"                   { return CabalTokelTypes.SLASH; }
 ":"                   { return CabalTokelTypes.COLON; }
 ","                   { return CabalTokelTypes.COMMA; }
 "="                   { return CabalTokelTypes.EQ; }
