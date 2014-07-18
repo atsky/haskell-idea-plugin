@@ -28,7 +28,7 @@ public trait ProcessDebugger {
 
     public fun prepareGHCi()
 
-    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?)
+    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HaskellStackFrameInfo)
 
     public fun requestVariables()
 }

@@ -14,7 +14,7 @@ import org.jetbrains.haskell.debugger.ProgramThreadInfo
  * Created by vlad on 7/16/14.
  */
 
-public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) : RealTimeCommand() {
+public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, val topFrameInfo : HaskellStackFrameInfo) : RealTimeCommand() {
 
     override fun getBytes(): ByteArray {
         return ":hist\n".toByteArray()
@@ -23,6 +23,7 @@ public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointPropertie
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
         val history = Parser.parseHistory(output)
         val frames = ArrayList<HaskellStackFrameInfo>()
+        frames.add(topFrameInfo)
         for (callInfo in history.list) {
             frames.add(HaskellStackFrameInfo(callInfo.position))
         }

@@ -13,19 +13,12 @@ import org.jetbrains.haskell.debugger.HaskellStackFrameInfo
  * Created by vlad on 7/17/14.
  */
 
-public abstract class StepCommand : AbstractCommand() {
-
+public abstract class StepCommand : NextPositionCommand() {
 
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
-        val filePosition = Parser.tryParseStoppedAt(output)
-        if (filePosition != null) {
-            val frames = ArrayList<HaskellStackFrameInfo>()
-            frames.add(HaskellStackFrameInfo(filePosition))
-            // "Main" is temporary name
-            val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
-            debugProcess.getSession()!!.positionReached(context)
-
-            debugProcess.debugger.history(null)
+        val topFrameInfo = getCurrentFrame(output)
+        if (topFrameInfo != null) {
+            debugProcess.debugger.history(null, topFrameInfo)
         }
     }
 }

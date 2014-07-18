@@ -75,8 +75,8 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
         queue.addCommand(ResumeCommand())
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) {
-        queue.addCommand(HistoryCommand(breakpoint))
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HaskellStackFrameInfo) {
+        queue.addCommand(HistoryCommand(breakpoint, topFrameInfo))
     }
 
     override fun requestVariables() {

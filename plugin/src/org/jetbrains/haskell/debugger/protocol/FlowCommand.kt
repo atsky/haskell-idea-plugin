@@ -13,20 +13,13 @@ import org.jetbrains.haskell.debugger.HaskellStackFrameInfo
  * Created by vlad on 7/17/14.
  */
 
-public abstract class FlowCommand : AbstractCommand() {
+public abstract class FlowCommand : NextPositionCommand() {
 
     override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
-        val filePosition = Parser.tryParseStoppedAt(output)
-        if (filePosition != null) {
-            val lineNumber = filePosition.startLine
-            val breakpoint = debugProcess.getBreakpointAtLine(lineNumber)!!
-            val frames = ArrayList<HaskellStackFrameInfo>()
-            frames.add(HaskellStackFrameInfo(filePosition))
-            // "Main" is temporary name
-            val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
-            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-
-            debugProcess.debugger.history(breakpoint)
+        val topFrameInfo = getCurrentFrame(output)
+        if (topFrameInfo != null) {
+            val breakpoint = debugProcess.getBreakpointAtLine(topFrameInfo.startLine)!!
+            debugProcess.debugger.history(breakpoint, topFrameInfo)
         }
     }
 }
