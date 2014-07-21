@@ -67,15 +67,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         return registeredBreakpoints.get(line)?.breakpoint
     }
 
-    //    private fun tryAddBreakpointHandlersFromExtensions() {
-    //        val extPointName: ExtensionPointName<HaskellBreakpointHandlerFactory>? = HaskellBreakpointHandlerFactory.EXTENSION_POINT_NAME
-    //        if(extPointName != null) {
-    //            for (factory in Extensions.getExtensions(extPointName)) {
-    //                _breakpointHandlers.add(factory.createBreakpointHandler(this))
-    //            }
-    //        }
-    //    }
-
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
         return debuggerEditorsProvider
     }

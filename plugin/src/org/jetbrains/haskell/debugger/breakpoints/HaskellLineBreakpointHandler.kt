@@ -11,8 +11,6 @@ public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreak
                                           val debugProcess: HaskellDebugProcess)
                                         : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass)
 {
-//    private val breakpointPositions : MutableMap<XLineBreakpoint<XBreakpointProperties<*>>, XSourcePosition> = hashMapOf()
-
     /**
      * Called when new breakpoint is added
      *

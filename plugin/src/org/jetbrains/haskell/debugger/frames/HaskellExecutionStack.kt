@@ -28,11 +28,6 @@ public class HaskellExecutionStack(private val threadInfo: ProgramThreadInfo?) :
 
     override fun computeStackFrames(firstFrameIndex: Int, container: XExecutionStack.XStackFrameContainer?) {
         if(container != null) {
-//            if (threadInfo!!.state != ProgramThreadInfo.State.SUSPENDED) {
-//                container.errorOccurred("Frames not available in non-suspended state")
-//                return
-//            }
-
             val allFrames = threadInfo!!.frames
             if (allFrames != null && firstFrameIndex < allFrames.size()) {
                 val xFrames = LinkedList<HaskellStackFrame>()
