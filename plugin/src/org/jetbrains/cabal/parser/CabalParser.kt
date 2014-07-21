@@ -46,13 +46,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 "bug-reports",
                 "maintainer"
         )
-//        public val BUILD_TYPES : List<String> = listOf (
-//                "Simple",
-//                "Configure",
-//                "Custom",
-//                "Make"
-//        )
-//
+
 //        public val LICENSE_TYPES : List<String> = listOf (
 //                "GPL",
 //                "GNU",
@@ -165,7 +159,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
-    fun parseDirectory() = start(CabalTokelTypes.FILE_REF) {
+    fun parseDirectory() = start(CabalTokelTypes.DIRECTORY) {
         var res = false
         while (!builder.eof() && (builder.getTokenType() != TokenType.NEW_LINE_INDENT)) {
             res = token(CabalTokelTypes.ID) || token(CabalTokelTypes.SLASH)
@@ -345,8 +339,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
         while (!builder.eof()) {
-            parseTopLevelField() || parseSection(0)
-            builder.advanceLexer()
+            if (!(parseTopLevelField() || parseSection(0)))
+              builder.advanceLexer()
         }
         rootMarker.done(root)
         return builder.getTreeBuilt()!!

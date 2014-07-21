@@ -41,9 +41,7 @@ public trait CabalTokelTypes {
         val COMMENTS     : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES  : TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
-        val PROPERTY           : IElementType = CabalCompositeElementType("PROPERTY", defaultContructor)
         val PROPERTY_KEY       : IElementType = CabalCompositeElementType("PROPERTY_KEY", ::PropertyKey)
-        val PROPERTY_VALUE     : IElementType = CabalCompositeElementType("PROPERTY_VALUE" , defaultContructor)
         val SECTION            : IElementType = CabalCompositeElementType("SECTION", defaultContructor)
 
         val SECTION_TYPE       : IElementType = CabalCompositeElementType("SECTION_TYPE"             , ::SectionType             )
@@ -91,7 +89,7 @@ public trait CabalTokelTypes {
         val URL                : IElementType = CabalCompositeElementType("URL"                      , ::URL                     )
         val NAME               : IElementType = CabalCompositeElementType("NAME"                     , ::Name                    )
         val FILE_NAME          : IElementType = CabalCompositeElementType("FILE_NAME"                , ::FileName                )
-        val FILE_REF           : IElementType = CabalCompositeElementType("FILE_REF"                 , ::FileReference           )
+        val DIRECTORY          : IElementType = CabalCompositeElementType("DIRECTORY"                , ::Directory               )
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
         val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
     }
