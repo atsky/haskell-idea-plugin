@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.breakpoints
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointType
@@ -8,7 +8,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
 public class HaskellLineBreakpointHandler(breakpointTypeClass : Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
-                                          val debugProcess: GHCiDebugProcess)
+                                          val debugProcess: HaskellDebugProcess)
                                         : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass)
 {
 //    private val breakpointPositions : MutableMap<XLineBreakpoint<XBreakpointProperties<*>>, XSourcePosition> = hashMapOf()

@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.debugger.protocol
 
 import java.util.Deque
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.Parser
 import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 import org.jetbrains.haskell.debugger.frames.HaskellSuspendContext

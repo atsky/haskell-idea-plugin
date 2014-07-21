@@ -27,7 +27,7 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
  * Created by vlad on 7/10/14.
  */
 
-public class GHCiDebugProcess(session: XDebugSession,
+public class HaskellDebugProcess(session: XDebugSession,
                               val executionConsole: ExecutionConsole,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 

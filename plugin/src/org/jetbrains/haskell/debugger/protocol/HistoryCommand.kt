@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.Parser
 import java.util.Deque
 import java.util.ArrayList
@@ -20,7 +20,7 @@ public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointPropertie
         return ":hist\n".toByteArray()
     }
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
+    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
         val history = Parser.parseHistory(output)
         val frames = ArrayList<HaskellStackFrameInfo>()
         frames.add(topFrameInfo)

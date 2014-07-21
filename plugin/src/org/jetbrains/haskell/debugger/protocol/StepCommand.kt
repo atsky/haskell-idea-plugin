@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.xdebugger.frame.XSuspendContext
 import org.jetbrains.haskell.debugger.parser.Parser
 import java.util.Deque
@@ -15,7 +15,7 @@ import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 public abstract class StepCommand : NextPositionCommand() {
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
+    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
         val topFrameInfo = getCurrentFrame(output)
         if (topFrameInfo != null) {
             debugProcess.debugger.history(null, topFrameInfo)

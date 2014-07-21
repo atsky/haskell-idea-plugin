@@ -56,7 +56,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
             val session = XDebuggerManager.getInstance(project)!!.
                     startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
                         override fun start(session: XDebugSession): XDebugProcess =
-                                GHCiDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
+                                HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
                     })
             return session.getRunContentDescriptor()
         } catch (e: Exception) {

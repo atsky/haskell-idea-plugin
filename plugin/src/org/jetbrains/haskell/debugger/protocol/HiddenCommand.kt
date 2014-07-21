@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.Deque
 
 /**
@@ -10,6 +10,6 @@ import java.util.Deque
 public abstract class HiddenCommand : AbstractCommand() {
 
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {
+    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
     }
 }

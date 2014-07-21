@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
+public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
 
     class object {
         public val PROMPT_LINE: String = "debug> "
@@ -116,7 +116,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
                 "socketToHandle sock ReadWriteMode >>=  " +
                 "(\\handle -> return handle)))"
         val host = "\"localhost\""
-        val port = GHCiDebugProcess.INPUT_READINESS_PORT
+        val port = HaskellDebugProcess.INPUT_READINESS_PORT
         var stop_cmd = "withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 
         /*

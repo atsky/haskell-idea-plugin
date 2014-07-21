@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.Deque
 
 /**
@@ -11,6 +11,6 @@ public abstract class AbstractCommand() {
 
     public abstract fun getBytes(): ByteArray
 
-    public abstract fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess)
+    public abstract fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess)
 
 }

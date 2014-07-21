@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.GHCiDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.Deque
 
 /**
@@ -12,5 +12,5 @@ public class RemoveBreakpointCommand(val breakpointNumber: Int) : RealTimeComman
         return ":delete $breakpointNumber\n".toByteArray()
     }
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: GHCiDebugProcess) {}
+    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {}
 }

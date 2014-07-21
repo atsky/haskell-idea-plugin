@@ -18,7 +18,7 @@ public class InputReadinessChecker(val debugger: GHCiDebugger) : Runnable {
     public var connected: Boolean = false
         private set
 
-    private val serverSocket: ServerSocket = ServerSocket(GHCiDebugProcess.INPUT_READINESS_PORT)
+    private val serverSocket: ServerSocket = ServerSocket(HaskellDebugProcess.INPUT_READINESS_PORT)
 
     override fun run() {
 
