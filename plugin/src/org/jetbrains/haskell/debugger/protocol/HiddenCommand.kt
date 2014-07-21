@@ -9,6 +9,16 @@ import java.util.Deque
 
 public abstract class HiddenCommand : AbstractCommand() {
 
+    class object {
+        public fun createInstance(command: String): HiddenCommand {
+            return object : HiddenCommand() {
+                override fun getBytes(): ByteArray {
+                    return command.toByteArray()
+                }
+
+            }
+        }
+    }
 
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
     }

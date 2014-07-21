@@ -33,7 +33,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     private val inputReadinessChecker: InputReadinessChecker
-    private val collectedOutput: Deque<String?> = LinkedList()
+    private var collectedOutput: StringBuilder = StringBuilder()
     private val queue: CommandQueue
     private val writeLock = Any()
     private val handleName = "handle"
@@ -108,11 +108,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun prepareGHCi() {
-        execute(object : HiddenCommand() {
-            override fun getBytes(): ByteArray {
-                return (":set prompt \"$PROMPT_LINE\"\n").toByteArray()
-            }
-        })
+        execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
 
         val connectTo_host_port = "\\host port_ -> let port = toEnum port_ in " +
                 "socket AF_INET Stream 0 >>= " +
@@ -140,11 +136,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 ":set stop $stop_cmd\n"
         )
         for (cmd in commands) {
-            queue.addCommand(object : HiddenCommand() {
-                override fun getBytes(): ByteArray {
-                    return cmd.toByteArray()
-                }
-            })
+            queue.addCommand(HiddenCommand.createInstance(cmd))
         }
     }
 
@@ -155,8 +147,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         if (outputType != ProcessOutputTypes.SYSTEM) {
-            collectedOutput.addLast(text)
-            if (simpleReadinessCheck(text) &&
+            collectedOutput.append(text)
+            if (simpleReadinessCheck() &&
                     (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
                 handleOutput()
                 processStopped.set(false)
@@ -170,15 +162,15 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     private fun handleOutput() {
-        lastCommand?.handleOutput(collectedOutput, debugProcess)
-        collectedOutput.clear()
+        lastCommand?.handleOutput(collectedOutput.toString().split('\n').toLinkedList(), debugProcess)
+        collectedOutput = StringBuilder()
     }
 
     private fun outputIsDefinite(): Boolean {
         return lastCommand is RealTimeCommand
     }
 
-    private fun simpleReadinessCheck(line: String?): Boolean = line?.endsWith(PROMPT_LINE) ?: false
+    private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(PROMPT_LINE)
 
     private fun onStopSignal() {
         debugProcess.getSession()?.stop()
