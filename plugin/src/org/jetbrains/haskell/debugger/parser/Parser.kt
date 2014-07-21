@@ -18,6 +18,7 @@ public class Parser() {
         private val BREAKPOINT_NOT_ACTIVATED_PATTERN = "No breakpoints found at that location."
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
+        private val LOGGED_BREAKPOINT_AT_PATTERN = "Logged breakpoint\\sat\\s(.*)"
         val FILE_POSITION_PATTERNS = array(
                 "(.*):(\\d+):(\\d+)",
                 "(.*):(\\d+):(\\d+)-(\\d+)",
@@ -28,13 +29,16 @@ public class Parser() {
                 array(0, 1, 0, 2),
                 array(0, 1, 2, 3)
         )
-        val LOCAL_BINDING_PATTERN = "([a-zA-Z_]?\\w*)(\\s::\\s)(\\[\\w*\\]|\\w*)((\\s=\\s\\w*)?)"
+
+        val LOCAL_BINDING_PATTERN = "([a-zA-Z_]?\\w*)(\\s::\\s)(\\[[\\w\\s\\(\\)]*\\]|[\\w\\s\\(\\)]*)((\\s=\\s\\w*)?)"
         val BINDING_NAME_GROUP = 1
         val BINDING_TYPE_GROUP = 3
         // using LOCAL_BINDING_PATTERN above, one get substring ' = <value>' in one group. We need only value so
         // BINDING_VALUE_PRECEDING_SUBSTR is used to find where in substring is binding's value located
         val BINDING_VALUE_CONTAINING_GROUP = 4
         val BINDING_VALUE_PRECEDING_SUBSTR = "="
+
+        val NO_MORE_BREAKPOINTS_PATTERN = "no more logged breakpoints"
 
         public fun tryCreateFilePosition(line: String): FilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
@@ -80,55 +84,60 @@ public class Parser() {
 
         /**
          * Parses ghci output that appears on reaching some position in file under debugging (after commands :continue,
-         * :trace, :step, :steplocal). Output may contain some program output at the beginning so we parse lines in
-         * reversed order
+         * :trace, :step, :steplocal).
+         */
+        public fun tryParseStoppedAt(output: Deque<String?>): HaskellStackFrameInfo? =
+            tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
+
+        /**
+         * Parses ghci output that appears on calling ':back' command
+         */
+        public fun tryParseLoggedBreakpointAt(output: Deque<String?>): HaskellStackFrameInfo? =
+            tryParseOutputWithFrameInfo(output, LOGGED_BREAKPOINT_AT_PATTERN)
+
+        /**
+         * Parses ghci output containing frame info (reached position in file, local bindings). Output may contain some
+         * program output at the beginning so we parse lines in reversed order
          *
          * @return stack frame info containing info about position in file and local bindings list
          */
-        public fun tryParseStoppedAt(output: Deque<String?>): HaskellStackFrameInfo? {
+        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HaskellStackFrameInfo? {
             val it = output.descendingIterator()
             var filePosition: FilePosition?
             val localBindings = ArrayList<LocalBinding>()
+            var res: LocalBinding?
             while (it.hasNext()) {
                 val currentLine = it.next()
-                filePosition = tryParseFilePosition(currentLine?.trim())
+                filePosition = tryParseFilePosition(currentLine?.trim(), pattern)
                 if(filePosition != null) {
                     return HaskellStackFrameInfo(filePosition as FilePosition, localBindings)
                 }
-                val res = tryParseLocalBinding(currentLine?.trim())
+                res = tryParseLocalBinding(currentLine?.trim())
                 if(res != null) {
-                    localBindings.add(res)
+                    localBindings.add(res as LocalBinding)
                 }
             }
             return null
         }
 
-
-        public fun parseHistory(output: Deque<String?>): HistoryResult {
-            val callStack = HistoryResult(ArrayList<CallInfo>())
+        public fun parseHistory(output: Deque<String?>): Int {
+            var entriesNumber = 0
             for (line in output) {
                 if (line?.trim().equals("<end of history>")) {
                     break
                 } else {
                     val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
                     if (matcher.matches()) {
-                        val index = -Integer.parseInt(matcher.group(1)!!)
-                        val function = matcher.group(2)!!
-                        val filePositionLine = matcher.group(3)!!
-                        val filePosition = tryCreateFilePosition(filePositionLine)
-                        if (filePosition == null) {
-                            throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
-                        }
-                        callStack.list.add(CallInfo(index, function, filePosition))
+                        entriesNumber += 1
                     }
                 }
             }
-            return callStack
+            return entriesNumber
         }
 
-        private fun tryParseFilePosition(string: String?): FilePosition? {
+        private fun tryParseFilePosition(string: String?, pattern: String): FilePosition? {
             if(string != null) {
-                val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(string)
+                val matcher = Pattern.compile("(.*)" + pattern).matcher(string)
                 if (matcher.matches()) {
                     val str = matcher.group(2)!!
                     return tryCreateFilePosition(str)
@@ -145,7 +154,7 @@ public class Parser() {
                     val typeName = matcher.group(BINDING_TYPE_GROUP)
                     val substrWithValue = matcher.group(BINDING_VALUE_CONTAINING_GROUP)
                     var value: String? = null
-                    if(substrWithValue != null) {
+                        if(substrWithValue != null && !substrWithValue.isEmpty()) {
                         value = substrWithValue.substring(substrWithValue.indexOf(BINDING_VALUE_PRECEDING_SUBSTR))
                     }
                     return LocalBinding(name, typeName, value)

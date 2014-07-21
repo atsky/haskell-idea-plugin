@@ -20,6 +20,7 @@ import java.util.LinkedList
 import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
 import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -98,6 +99,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(HistoryCommand(breakpoint, topFrameInfo))
     }
 
+    override fun back(sequenceOfBacks: SequenceOfBacksCommand) {
+        queue.addCommand(sequenceOfBacks)
+    }
+
     override fun requestVariables() {
         throw UnsupportedOperationException()
     }
@@ -149,7 +154,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        if (outputType == ProcessOutputTypes.STDOUT) {
+        if (outputType != ProcessOutputTypes.SYSTEM) {
             collectedOutput.addLast(text)
             if (simpleReadinessCheck(text) &&
                     (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {

@@ -14,24 +14,20 @@ import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
  * Created by vlad on 7/16/14.
  */
 
-public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, val topFrameInfo : HaskellStackFrameInfo) : RealTimeCommand() {
-
+public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
+                            val topFrameInfo : HaskellStackFrameInfo) : SuspendContextSetterCommand() {
     override fun getBytes(): ByteArray {
         return ":hist\n".toByteArray()
     }
 
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-        val history = Parser.parseHistory(output)
-        val frames = ArrayList<HaskellStackFrameInfo>()
-        frames.add(topFrameInfo)
-        for (callInfo in history.list) {
-            frames.add(HaskellStackFrameInfo(callInfo.position, ArrayList()))
-        }
-        val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
-        if (breakpoint != null) {
-            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+        val singleFrameList = ArrayList<HaskellStackFrameInfo>()
+        singleFrameList.add(topFrameInfo)
+        val histEntriesNumber = Parser.parseHistory(output)
+        if(histEntriesNumber <= 0) {
+            setSuspendContext(breakpoint, singleFrameList, debugProcess)
         } else {
-            debugProcess.getSession()!!.positionReached(context)
+            debugProcess.debugger.back(SequenceOfBacksCommand(breakpoint, singleFrameList, histEntriesNumber - 1))
         }
     }
 }

@@ -19,7 +19,7 @@ public abstract class FlowCommand : NextPositionCommand() {
         val topFrameInfo = getCurrentFrame(output)
         if (topFrameInfo != null) {
             val breakpoint = debugProcess.getBreakpointAtLine(topFrameInfo.filePosition.startLine)!!
-            debugProcess.debugger.history(breakpoint, topFrameInfo)
+            sendHistCommand(breakpoint, topFrameInfo, debugProcess)
         }
     }
 }

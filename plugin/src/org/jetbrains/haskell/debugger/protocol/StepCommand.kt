@@ -18,7 +18,7 @@ public abstract class StepCommand : NextPositionCommand() {
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
         val topFrameInfo = getCurrentFrame(output)
         if (topFrameInfo != null) {
-            debugProcess.debugger.history(null, topFrameInfo)
+            sendHistCommand(null, topFrameInfo, debugProcess)
         }
     }
 }

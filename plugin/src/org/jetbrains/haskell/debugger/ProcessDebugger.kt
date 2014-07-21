@@ -5,6 +5,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 import com.intellij.openapi.util.Key
+import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -31,6 +32,8 @@ public trait ProcessDebugger {
     public fun prepareGHCi()
 
     public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HaskellStackFrameInfo)
+
+    public fun back(sequenceOfBacks: SequenceOfBacksCommand)
 
     public fun requestVariables()
 
