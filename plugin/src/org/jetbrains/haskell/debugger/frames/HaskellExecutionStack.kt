@@ -20,7 +20,7 @@ public class HaskellExecutionStack(private val threadInfo: ProgramThreadInfo?) :
         if (topFrame == null) {
             val allFrames = threadInfo!!.frames
             if (allFrames != null) {
-                topFrame = createFrame(allFrames.get(0))
+                topFrame = HaskellStackFrame(allFrames.get(0))
             }
         }
         return topFrame
@@ -32,18 +32,12 @@ public class HaskellExecutionStack(private val threadInfo: ProgramThreadInfo?) :
             if (allFrames != null && firstFrameIndex < allFrames.size()) {
                 val xFrames = LinkedList<HaskellStackFrame>()
                 for (i in firstFrameIndex .. allFrames.size() - 1) {
-                    xFrames.add(createFrame(allFrames.get(i)))
+                    xFrames.add(HaskellStackFrame(allFrames.get(i)))
                 }
                 container.addStackFrames(xFrames, true)
             } else {
                 container.addStackFrames(Collections.emptyList<XStackFrame>(), true)
             }
         }
-    }
-
-    private fun createFrame(frameInfo: HaskellStackFrameInfo): HaskellStackFrame {
-        return HaskellStackFrame(XDebuggerUtil.getInstance()!!.createPosition(
-                LocalFileSystem.getInstance()?.findFileByIoFile(File(frameInfo.filePath)),
-                HaskellUtils.haskellLineNumberToZeroBased(frameInfo.startLine)))
     }
 }

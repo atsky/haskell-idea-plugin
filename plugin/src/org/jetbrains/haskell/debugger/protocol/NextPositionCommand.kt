@@ -9,14 +9,10 @@ import java.util.ArrayList
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 
 /**
- * Created by marat-x on 7/18/14.
+ * @author Habibullin Marat
  */
 public abstract class NextPositionCommand : AbstractCommand() {
     protected fun getCurrentFrame(output: Deque<String?>): HaskellStackFrameInfo? {
-        val filePosition = Parser.tryParseStoppedAt(output)
-        if (filePosition != null) {
-            return HaskellStackFrameInfo(filePosition)
-        }
-        return null
+        return Parser.tryParseStoppedAt(output)
     }
 }

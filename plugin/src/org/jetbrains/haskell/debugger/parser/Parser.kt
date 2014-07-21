@@ -4,6 +4,7 @@ import java.util.regex.Pattern
 import java.io.File
 import java.util.ArrayList
 import java.util.Deque
+import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 /**
  * @author Habibullin Marat
@@ -12,7 +13,7 @@ import java.util.Deque
 public class Parser() {
     // we can put here functions to parse some known things like 'parseSetBreakpointResult' ect...
     class object {
-
+        // the strings above are used as patterns for regexps
         private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d+) activated at (.*)"
         private val BREAKPOINT_NOT_ACTIVATED_PATTERN = "No breakpoints found at that location."
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
@@ -27,6 +28,13 @@ public class Parser() {
                 array(0, 1, 0, 2),
                 array(0, 1, 2, 3)
         )
+        val LOCAL_BINDING_PATTERN = "([a-zA-Z_]?\\w*)(\\s::\\s)(\\[\\w*\\]|\\w*)((\\s=\\s\\w*)?)"
+        val BINDING_NAME_GROUP = 1
+        val BINDING_TYPE_GROUP = 3
+        // using LOCAL_BINDING_PATTERN above, one get substring ' = <value>' in one group. We need only value so
+        // BINDING_VALUE_PRECEDING_SUBSTR is used to find where in substring is binding's value located
+        val BINDING_VALUE_CONTAINING_GROUP = 4
+        val BINDING_VALUE_PRECEDING_SUBSTR = "="
 
         public fun tryCreateFilePosition(line: String): FilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
@@ -71,22 +79,27 @@ public class Parser() {
         }
 
         /**
-         * Returns FilePosition, where stopped
+         * Parses ghci output that appears on reaching some position in file under debugging (after commands :continue,
+         * :trace, :step, :steplocal). Output may contain some program output at the beginning so we parse lines in
+         * reversed order
+         *
+         * @return stack frame info containing info about position in file and local bindings list
          */
-        public fun tryParseStoppedAt(output: Deque<String?>): FilePosition? {
-            val it = output.iterator()
+        public fun tryParseStoppedAt(output: Deque<String?>): HaskellStackFrameInfo? {
+            val it = output.descendingIterator()
+            var filePosition: FilePosition?
+            val localBindings = ArrayList<LocalBinding>()
             while (it.hasNext()) {
-                val line = it.next()
-                val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(line!!.trim())
-                if (matcher.matches()) {
-                    val str = matcher.group(2)!!
-                    val filePosition = tryCreateFilePosition(str)
-                    return filePosition
+                val currentLine = it.next()
+                filePosition = tryParseFilePosition(currentLine?.trim())
+                if(filePosition != null) {
+                    return HaskellStackFrameInfo(filePosition as FilePosition, localBindings)
+                }
+                val res = tryParseLocalBinding(currentLine?.trim())
+                if(res != null) {
+                    localBindings.add(res)
                 }
             }
-//            while (it.hasNext()) {
-//
-//            }
             return null
         }
 
@@ -113,16 +126,33 @@ public class Parser() {
             return callStack
         }
 
-        /*
-         * Result classes
-         */
-//        public open class ParseResult
-//        public class BreakpointCommandResult(public val breakpointNumber: Int, public val position: FilePosition) : ParseResult()
-//        public class FilePosition(public val file: String, public val startLine: Int, public val startSymbol: Int,
-//                                  public val endLine: Int, public val endSymbol: Int) : ParseResult()
-//        public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
-//        public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
+        private fun tryParseFilePosition(string: String?): FilePosition? {
+            if(string != null) {
+                val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(string)
+                if (matcher.matches()) {
+                    val str = matcher.group(2)!!
+                    return tryCreateFilePosition(str)
+                }
+            }
+            return null
+        }
 
+        private fun tryParseLocalBinding(string: String?): LocalBinding? {
+            if(string != null) {
+                val matcher = Pattern.compile(LOCAL_BINDING_PATTERN).matcher(string)
+                if (matcher.matches()) {
+                    val name = matcher.group(BINDING_NAME_GROUP)
+                    val typeName = matcher.group(BINDING_TYPE_GROUP)
+                    val substrWithValue = matcher.group(BINDING_VALUE_CONTAINING_GROUP)
+                    var value: String? = null
+                    if(substrWithValue != null) {
+                        value = substrWithValue.substring(substrWithValue.indexOf(BINDING_VALUE_PRECEDING_SUBSTR))
+                    }
+                    return LocalBinding(name, typeName, value)
+                }
+            }
+            return null
+        }
     }
 }
 

@@ -18,7 +18,7 @@ public abstract class FlowCommand : NextPositionCommand() {
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
         val topFrameInfo = getCurrentFrame(output)
         if (topFrameInfo != null) {
-            val breakpoint = debugProcess.getBreakpointAtLine(topFrameInfo.startLine)!!
+            val breakpoint = debugProcess.getBreakpointAtLine(topFrameInfo.filePosition.startLine)!!
             debugProcess.debugger.history(breakpoint, topFrameInfo)
         }
     }

@@ -25,7 +25,7 @@ public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointPropertie
         val frames = ArrayList<HaskellStackFrameInfo>()
         frames.add(topFrameInfo)
         for (callInfo in history.list) {
-            frames.add(HaskellStackFrameInfo(callInfo.position))
+            frames.add(HaskellStackFrameInfo(callInfo.position, ArrayList()))
         }
         val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
         if (breakpoint != null) {

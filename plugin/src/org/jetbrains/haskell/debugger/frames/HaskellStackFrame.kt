@@ -14,27 +14,28 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.xdebugger.frame.XValueChildrenList
 import org.jetbrains.debugger.VariableImpl
 import org.jetbrains.debugger.values.ValueType
+import com.intellij.xdebugger.XDebuggerUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import java.io.File
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
-public class HaskellStackFrame(private val positionInSource: XSourcePosition?) : XStackFrame() {
+public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo?) : XStackFrame() {
 
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
-
-        private fun gray(attributes: SimpleTextAttributes, gray: Boolean): SimpleTextAttributes {
-            if (!gray) {
-                return attributes
-            } else {
-                return if ((attributes.getStyle() and SimpleTextAttributes.STYLE_ITALIC) != 0)
-                    SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES
-                else
-                    SimpleTextAttributes.GRAYED_ATTRIBUTES
-            }
-        }
     }
 
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
 
-    override fun getSourcePosition(): XSourcePosition? = positionInSource
+    private val _sourcePosition =
+        if(stackFrameInfo != null) {
+            XDebuggerUtil.getInstance()!!.createPosition(
+                    LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition.filePath)),
+                    HaskellUtils.haskellLineNumberToZeroBased(stackFrameInfo.filePosition.startLine))
+        }
+        else null
+
+    override fun getSourcePosition(): XSourcePosition? = _sourcePosition
 
     /**
      * This method should return evaluator (to use 'Evaluate expression' and other such tools) but this functionality
@@ -58,9 +59,14 @@ public class HaskellStackFrame(private val positionInSource: XSourcePosition?) :
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    val list = XValueChildrenList()
-                    list.add(createVariable("ten", "10"))
-                    node.addChildren(list, true)
+                    if(stackFrameInfo != null) {
+                        val list = XValueChildrenList()
+                        //                    list.add(createVariable("ten", "10"))
+                        for (binding in stackFrameInfo.bindings) {
+                            list.add(HsDebugValue(binding))
+                        }
+                        node.addChildren(list, true)
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
                     node.setErrorMessage("Unable to display frame variables")
