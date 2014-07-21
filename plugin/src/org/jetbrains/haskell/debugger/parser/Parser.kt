@@ -74,7 +74,7 @@ public class Parser() {
          * Returns FilePosition, where stopped
          */
         public fun tryParseStoppedAt(output: Deque<String?>): FilePosition? {
-            val it = output.descendingIterator()
+            val it = output.iterator()
             while (it.hasNext()) {
                 val line = it.next()
                 val matcher = Pattern.compile("(.*)" + STOPPED_AT_PATTERN).matcher(line!!.trim())
@@ -84,6 +84,9 @@ public class Parser() {
                     return filePosition
                 }
             }
+//            while (it.hasNext()) {
+//
+//            }
             return null
         }
 
@@ -113,12 +116,12 @@ public class Parser() {
         /*
          * Result classes
          */
-        public open class ParseResult
-        public class BreakpointCommandResult(public val breakpointNumber: Int, public val position: FilePosition) : ParseResult()
-        public class FilePosition(public val file: String, public val startLine: Int, public val startSymbol: Int,
-                                  public val endLine: Int, public val endSymbol: Int) : ParseResult()
-        public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
-        public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
+//        public open class ParseResult
+//        public class BreakpointCommandResult(public val breakpointNumber: Int, public val position: FilePosition) : ParseResult()
+//        public class FilePosition(public val file: String, public val startLine: Int, public val startSymbol: Int,
+//                                  public val endLine: Int, public val endSymbol: Int) : ParseResult()
+//        public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
+//        public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
     }
 }
