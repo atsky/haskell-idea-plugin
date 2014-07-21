@@ -12,6 +12,8 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Created by vlad on 7/11/14.
@@ -19,15 +21,16 @@ import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 
 public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
 
-    private val lockObject = Any()
     private val queue: CommandQueue
+
+    private val writeLock = Any()
 
     private val handleName = "handle"
 
     public var lastCommand: AbstractCommand? = null;
 
     {
-        queue = CommandQueue(this, debugProcess.readyForInput)
+        queue = CommandQueue(this)
         queue.start()
     }
     public var debugStarted: Boolean = false
@@ -40,7 +43,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     override fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
 
-        synchronized(lockObject) {
+        synchronized(writeLock) {
             lastCommand = command
 
             if (lastCommand !is HiddenCommand) {
@@ -127,5 +130,9 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
 
     override fun close() {
         queue.stop()
+    }
+
+    override fun setReadyForInput() {
+        queue.setReadyForInput()
     }
 }

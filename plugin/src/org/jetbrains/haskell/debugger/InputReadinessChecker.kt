@@ -8,7 +8,7 @@ import java.net.SocketException
  * Created by vlad on 7/16/14.
  */
 
-public class InputReadinessListener(val debugProcess: GHCiDebugProcess) : Runnable {
+public class InputReadinessChecker(val debugProcess: GHCiDebugProcess) : Runnable {
 
     class object {
         private val OUTPUT_ACCEPTED_BYTE: Int = 0

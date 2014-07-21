@@ -5,33 +5,42 @@ import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.sun.jmx.remote.internal.ArrayQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.LinkedList
+import java.util.concurrent.locks.ReentrantLock
+import java.util.Collections
 
 /**
  * Created by vlad on 7/15/14.
  */
 
-public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) : Runnable {
+public class CommandQueue(val debugger: GHCiDebugger) : Runnable {
 
     private val commands = LinkedList<AbstractCommand>()
     private var running = true
 
+    private val inputLock = ReentrantLock()
+    private var ready: Boolean = false
+    private val readyCondition = inputLock.newCondition()
+
     override fun run() {
         while (running) {
-            if (commands.empty || !flag.getAndSet(false)) {
-                Thread.sleep(100);
-            } else {
-                val command = removeCommand()
+            inputLock.lock()
+            while (running && (commands.empty || !ready)) {
+                readyCondition.await()
+            }
+            val command = if (running) commands.removeLast() else null
+            inputLock.unlock()
+
+            if (command != null) {
                 debugger.execute(command)
             }
         }
     }
 
-    public synchronized fun addCommand(command: AbstractCommand) {
+    public fun addCommand(command: AbstractCommand) {
+        inputLock.lock()
         commands.addFirst(command)
-    }
-
-    private synchronized fun removeCommand(): AbstractCommand {
-        return commands.removeLast()
+        readyCondition.signal()
+        inputLock.unlock()
     }
 
     public fun start() {
@@ -39,7 +48,17 @@ public class CommandQueue(val debugger: GHCiDebugger, val flag: AtomicBoolean) :
     }
 
     public fun stop() {
+        inputLock.lock()
         running = false
+        readyCondition.signal()
+        inputLock.unlock()
+    }
+
+    public fun setReadyForInput() {
+        inputLock.lock()
+        ready = true
+        readyCondition.signal()
+        inputLock.unlock()
     }
 
 }

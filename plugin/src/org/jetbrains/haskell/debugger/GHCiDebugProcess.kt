@@ -33,13 +33,12 @@ public class GHCiDebugProcess(session: XDebugSession,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    private val inputReadinessListener: InputReadinessListener
+    private val inputReadinessListener: InputReadinessChecker
     private val collectedOutput: Deque<String?> = LinkedList()
 
     public val debugger: GHCiDebugger
     public val debugFinished: Boolean = false
 
-    public val readyForInput: AtomicBoolean = AtomicBoolean(false)
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 //    public var stackFrames: ArrayList<HaskellStackFrameInfo> = ArrayList()
 
@@ -49,7 +48,7 @@ public class GHCiDebugProcess(session: XDebugSession,
 
         myProcessHandler.addProcessListener(this)
 
-        inputReadinessListener = InputReadinessListener(this)
+        inputReadinessListener = InputReadinessChecker(this)
         inputReadinessListener.start()
     }
 
@@ -166,7 +165,7 @@ public class GHCiDebugProcess(session: XDebugSession,
                     (processStopped.get() || !inputReadinessListener.connected || debugger.lastCommand is RealTimeCommand)) {
                 handleGHCiOutput()
                 processStopped.set(false)
-                readyForInput.set(true)
+                debugger.setReadyForInput()
             }
         } else if (outputType == ProcessOutputTypes.STDERR) {
             print(event?.getText())

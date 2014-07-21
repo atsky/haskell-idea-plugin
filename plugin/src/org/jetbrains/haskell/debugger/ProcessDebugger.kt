@@ -32,4 +32,6 @@ public trait ProcessDebugger {
     public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HaskellStackFrameInfo)
 
     public fun requestVariables()
+
+    public fun setReadyForInput()
 }
