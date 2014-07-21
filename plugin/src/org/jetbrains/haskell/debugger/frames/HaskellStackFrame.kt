@@ -49,8 +49,8 @@ public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo
     //    override fun customizePresentation(component: ColoredTextContainer)
 
     /**
-     * This method should compute local variables and other frame data to show in 'Variables' panel of 'Debug' tool window.
-     * So we need to get ghci output, parse it, convert to XValueChildrenList and pass to node.addChildren() method
+     * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
+     * added HsDebugValue instances are shown in 'Variables' panel of 'Debug' tool window.
      */
     override fun computeChildren(node: XCompositeNode) {
         if (node.isObsolete()) {
@@ -61,7 +61,6 @@ public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo
                 try {
                     if(stackFrameInfo != null) {
                         val list = XValueChildrenList()
-                        //                    list.add(createVariable("ten", "10"))
                         for (binding in stackFrameInfo.bindings) {
                             list.add(HsDebugValue(binding))
                         }
@@ -74,21 +73,5 @@ public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo
 
             }
         })
-    }
-
-    public fun createVariable(name: String, value: String, valueType: ValueType = ValueType.STRING): VariableView {
-        return VariableView(VariableImpl(name, PrimitiveValue(valueType, value)),
-                object : VariableContextBase() {
-                    override fun getEvaluateContext(): EvaluateContext {
-                        throw UnsupportedOperationException()
-                    }
-                    override fun watchableAsEvaluationExpression(): Boolean {
-                        return false
-                    }
-                    override fun getDebugProcess(): DebuggerViewSupport {
-                        return DebuggerViewSupport.SimpleDebuggerViewSupport()
-                    }
-
-                })
     }
 }
