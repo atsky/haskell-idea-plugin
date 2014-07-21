@@ -34,11 +34,5 @@ public trait ProcessDebugger {
 
     public fun requestVariables()
 
-    public fun setReadyForInput()
-
-    public fun handleOutput()
-
-    public fun outputIsDefinite(): Boolean
-
     public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
 }

@@ -8,7 +8,7 @@ import java.net.SocketException
  * Created by vlad on 7/16/14.
  */
 
-public class InputReadinessChecker(val debugger: GHCiDebugger) : Runnable {
+public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal: () -> Unit) : Runnable {
 
     class object {
         private val OUTPUT_ACCEPTED_BYTE: Int = 0
@@ -34,7 +34,7 @@ public class InputReadinessChecker(val debugger: GHCiDebugger) : Runnable {
                 if (b == OUTPUT_ACCEPTED_BYTE) {
                     debugger.processStopped.set(true)
                 } else {
-                    debugger.onStopSignal()
+                    onStopSignal()
                     running = false
                 }
                 socket!!.close()

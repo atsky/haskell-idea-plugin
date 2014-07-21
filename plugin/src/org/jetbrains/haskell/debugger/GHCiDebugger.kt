@@ -45,7 +45,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue = CommandQueue(this)
         queue.start()
 
-        inputReadinessChecker = InputReadinessChecker(this)
+        inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal()})
         inputReadinessChecker.start()
     }
     public var debugStarted: Boolean = false
@@ -148,19 +148,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.stop()
     }
 
-    override fun setReadyForInput() {
-        queue.setReadyForInput()
-    }
-
-    override fun handleOutput() {
-        lastCommand?.handleOutput(collectedOutput, debugProcess)
-        collectedOutput.clear()
-    }
-
-    override fun outputIsDefinite(): Boolean {
-        return lastCommand is RealTimeCommand
-    }
-
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         if (outputType == ProcessOutputTypes.STDOUT) {
             collectedOutput.addLast(text)
@@ -173,9 +160,22 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
+    private fun setReadyForInput() {
+        queue.setReadyForInput()
+    }
+
+    private fun handleOutput() {
+        lastCommand?.handleOutput(collectedOutput, debugProcess)
+        collectedOutput.clear()
+    }
+
+    private fun outputIsDefinite(): Boolean {
+        return lastCommand is RealTimeCommand
+    }
+
     private fun simpleReadinessCheck(line: String?): Boolean = line?.endsWith(PROMPT_LINE) ?: false
 
-    public fun onStopSignal() {
+    private fun onStopSignal() {
         debugProcess.getSession()?.stop()
     }
 }
