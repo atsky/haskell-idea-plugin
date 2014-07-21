@@ -4,6 +4,7 @@ import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import com.intellij.openapi.util.Key
 
 /**
  * Created by vlad on 7/11/14.
@@ -34,4 +35,10 @@ public trait ProcessDebugger {
     public fun requestVariables()
 
     public fun setReadyForInput()
+
+    public fun handleOutput()
+
+    public fun outputIsDefinite(): Boolean
+
+    public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
 }

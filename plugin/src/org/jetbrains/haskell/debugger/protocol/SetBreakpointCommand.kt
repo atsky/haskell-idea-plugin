@@ -18,6 +18,5 @@ public class SetBreakpointCommand(val lineNumber: Int) : RealTimeCommand() {
         if (result != null) {
             debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine)
         }
-        debugProcess.debugger.lastCommand = null
     }
 }

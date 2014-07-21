@@ -20,7 +20,6 @@ import com.intellij.execution.process.ProcessOutputTypes
 import java.util.LinkedList
 import java.util.Deque
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
-import java.util.ArrayList
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
 
@@ -33,13 +32,9 @@ public class GHCiDebugProcess(session: XDebugSession,
                               val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    private val inputReadinessListener: InputReadinessChecker
-    private val collectedOutput: Deque<String?> = LinkedList()
 
-    public val debugger: GHCiDebugger
-    public val debugFinished: Boolean = false
+    public val debugger: ProcessDebugger
 
-    public val processStopped: AtomicBoolean = AtomicBoolean(false)
 //    public var stackFrames: ArrayList<HaskellStackFrameInfo> = ArrayList()
 
     ;{
@@ -48,8 +43,6 @@ public class GHCiDebugProcess(session: XDebugSession,
 
         myProcessHandler.addProcessListener(this)
 
-        inputReadinessListener = InputReadinessChecker(this)
-        inputReadinessListener.start()
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
@@ -108,7 +101,6 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
-        inputReadinessListener.stop()
         debugger.close();
     }
 
@@ -157,34 +149,14 @@ public class GHCiDebugProcess(session: XDebugSession,
     }
 
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        if (outputType == ProcessOutputTypes.STDOUT) {
-            val text = event?.getText()
+        val text = event?.getText()
+        if (text != null) {
             print(text)
-            collectedOutput.addLast(text)
-            if (simpleReadinessCheck(event?.getText()) &&
-                    (processStopped.get() || !inputReadinessListener.connected || debugger.lastCommand is RealTimeCommand)) {
-                handleGHCiOutput()
-                processStopped.set(false)
-                debugger.setReadyForInput()
-            }
-        } else if (outputType == ProcessOutputTypes.STDERR) {
-            print(event?.getText())
-        }
-    }
-
-    private fun simpleReadinessCheck(line: String?): Boolean = line?.endsWith(PROMPT_LINE) ?: false
-
-    // methods to handle GHCi output
-    private fun handleGHCiOutput() {
-        if (!collectedOutput.empty) {
-            debugger.lastCommand?.handleOutput(collectedOutput, this)
-            collectedOutput.clear()
+            debugger.onTextAvailable(text, outputType)
         }
     }
 
     class object {
-
-        public val PROMPT_LINE: String = "debug> "
 
         // todo: change
         public val INPUT_READINESS_PORT: Int = 52435

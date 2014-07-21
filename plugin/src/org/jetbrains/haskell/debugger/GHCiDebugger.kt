@@ -14,6 +14,12 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
+import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
+import java.util.Deque
+import java.util.LinkedList
+import com.intellij.openapi.util.Key
+import com.intellij.execution.process.ProcessOutputTypes
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vlad on 7/11/14.
@@ -21,17 +27,26 @@ import java.util.concurrent.locks.ReentrantLock
 
 public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger {
 
+    class object {
+        public val PROMPT_LINE: String = "debug> "
+    }
+
+    private val inputReadinessChecker: InputReadinessChecker
+    private val collectedOutput: Deque<String?> = LinkedList()
     private val queue: CommandQueue
-
     private val writeLock = Any()
-
     private val handleName = "handle"
+
+    public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
     public var lastCommand: AbstractCommand? = null;
 
     {
         queue = CommandQueue(this)
         queue.start()
+
+        inputReadinessChecker = InputReadinessChecker(this)
+        inputReadinessChecker.start()
     }
     public var debugStarted: Boolean = false
         private set
@@ -90,7 +105,7 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     override fun prepareGHCi() {
         execute(object : HiddenCommand() {
             override fun getBytes(): ByteArray {
-                return (":set prompt \"" + GHCiDebugProcess.PROMPT_LINE + "\"\n").toByteArray()
+                return (":set prompt \"$PROMPT_LINE\"\n").toByteArray()
             }
         })
 
@@ -129,10 +144,38 @@ public class GHCiDebugger(val debugProcess: GHCiDebugProcess) : ProcessDebugger 
     }
 
     override fun close() {
+        inputReadinessChecker.stop()
         queue.stop()
     }
 
     override fun setReadyForInput() {
         queue.setReadyForInput()
+    }
+
+    override fun handleOutput() {
+        lastCommand?.handleOutput(collectedOutput, debugProcess)
+        collectedOutput.clear()
+    }
+
+    override fun outputIsDefinite(): Boolean {
+        return lastCommand is RealTimeCommand
+    }
+
+    override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
+        if (outputType == ProcessOutputTypes.STDOUT) {
+            collectedOutput.addLast(text)
+            if (simpleReadinessCheck(text) &&
+                    (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
+                handleOutput()
+                processStopped.set(false)
+                setReadyForInput()
+            }
+        }
+    }
+
+    private fun simpleReadinessCheck(line: String?): Boolean = line?.endsWith(PROMPT_LINE) ?: false
+
+    public fun onStopSignal() {
+        debugProcess.getSession()?.stop()
     }
 }
