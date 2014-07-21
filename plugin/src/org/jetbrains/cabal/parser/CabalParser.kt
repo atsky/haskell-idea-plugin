@@ -313,7 +313,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
             || parseExactSection(level, CabalTokelTypes.LIBRARY, "library", false) {
                               parseField(it, CabalTokelTypes.EXPOSED_MODULES, "exposed-modules", { parseIDList(it) })
-                           || parseField(it, CabalTokelTypes.EXPOSED        , "exposed"        , { token(CabalTokelTypes.ID) })
+                           || parseField(it, CabalTokelTypes.EXPOSED        , "exposed"        , { parseBool() })
                }
 
             || parseExactSection(level, CabalTokelTypes.BENCHMARK, "benchmark", true ) {
