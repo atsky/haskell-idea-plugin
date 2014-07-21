@@ -159,21 +159,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
-    fun parseDirectory() = start(CabalTokelTypes.DIRECTORY) {
-        var res = false
-        while (!builder.eof() && (builder.getTokenType() != TokenType.NEW_LINE_INDENT)) {
-            res = token(CabalTokelTypes.ID) || token(CabalTokelTypes.SLASH)
-            if (!res) break
-        }
-        res
-    }
-
-    fun parseURL() = start(CabalTokelTypes.URL) {
+    fun parseFreeLine(): Boolean {
         while (!builder.eof() && (builder.getTokenType() != TokenType.NEW_LINE_INDENT)) {
             builder.advanceLexer()
         }
-        true
+        return true
     }
+
+    fun parseDirectory() = start(CabalTokelTypes.DIRECTORY, { parseFreeLine() })
+
+    fun parseURL() = start(CabalTokelTypes.URL, { parseFreeLine() })
 
     fun parseIDList(level: Int) = parseValueList(level, { token(CabalTokelTypes.ID) }, { true })
 
