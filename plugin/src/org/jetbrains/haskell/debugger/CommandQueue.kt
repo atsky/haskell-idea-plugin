@@ -27,11 +27,15 @@ public class CommandQueue(val debugger: GHCiDebugger) : Runnable {
             while (running && (commands.empty || !ready)) {
                 readyCondition.await()
             }
-            val command = if (running) commands.removeLast() else null
+            var command: AbstractCommand? = null
+            if (running) {
+                command = commands.removeLast()
+                ready = false
+            }
             inputLock.unlock()
 
             if (command != null) {
-                debugger.execute(command)
+                debugger.execute(command!!)
             }
         }
     }
