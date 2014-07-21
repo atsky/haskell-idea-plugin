@@ -26,13 +26,12 @@ import com.intellij.psi.tree.IElementType;
 
 DIGIT            = [0-9]
 WHITE_SPACE_CHAR = [\ \t\f]
-INDENT           = ([\n]({WHITE_SPACE_CHAR}|"\n")*)
-EOL_COMMENT      = ("--"[^\n]*)
-COMPARATOR       = (>= | <= | < | >)
-EQUALITY         = ==
-LOGIC            = (&& | \|\|)
+INDENT           = [\n]({WHITE_SPACE_CHAR}|"\n")*
+EOL_COMMENT      = "--"[^\n]*
+COMPARATOR       = >= | <= | < | > | ==
+LOGIC            = && | \|\|
 
-SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><={}&|]
+SIMPLE_LETTER    = [^0-9\"(),\ \n\t\f:\\><={}&|/]
 
 IDENTIFIER_PART  = {DIGIT} | {SIMPLE_LETTER}
 IDENTIFIER       = {IDENTIFIER_PART}+
@@ -47,11 +46,10 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 {COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
-{EQUALITY}            { return CabalTokelTypes.EQUALITY; }
 {LOGIC}               { return CabalTokelTypes.LOGIC; }
 "("                   { return CabalTokelTypes.OPEN_PAREN; }
 ")"                   { return CabalTokelTypes.CLOSE_PAREN; }
---"/"                   { return CabalTokelTypes.SLASH; }
+"/"                   { return CabalTokelTypes.SLASH; }
 ":"                   { return CabalTokelTypes.COLON; }
 ","                   { return CabalTokelTypes.COMMA; }
 "="                   { return CabalTokelTypes.EQ; }

@@ -23,7 +23,7 @@ public trait CabalTokelTypes {
         val COMMENT            : IElementType  = HaskellToken("COMMENT")
         val OPEN_PAREN         : IElementType  = HaskellToken("(")
         val CLOSE_PAREN        : IElementType  = HaskellToken(")")
-        //val SLASH              : IElementType  = HaskellToken("/")
+        val SLASH              : IElementType  = HaskellToken("/")
         val DOT                : IElementType  = HaskellToken(".")
         val END_OF_LINE_COMMENT: IElementType? = HaskellToken("--")
         val STRING             : IElementType  = HaskellToken("string")
@@ -72,6 +72,9 @@ public trait CabalTokelTypes {
         val TESTED_WITH        : IElementType = CabalCompositeElementType("TESTED_WITH"              , ::TestedWithField         )
         val LICENSE_FILES      : IElementType = CabalCompositeElementType("LICENSE_FILES"            , ::LicenseFilesField       )
         val DIRECTORY_LIST     : IElementType = CabalCompositeElementType("DIRECTORY_LIST"           , ::DirectoryListField      )
+        val BOOL_FIELD         : IElementType = CabalCompositeElementType("BOOL_FIELD"               , ::BoolField               )
+        val TOKEN_FIELD        : IElementType = CabalCompositeElementType("TOKEN_FIELD"              , ::TokenField              )
+        val TOKEN_LIST         : IElementType = CabalCompositeElementType("TOKEN_LIST"               , ::TokenListField          )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
