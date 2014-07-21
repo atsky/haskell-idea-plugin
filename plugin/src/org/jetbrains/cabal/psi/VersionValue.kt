@@ -3,11 +3,12 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.Checkable
+import com.intellij.psi.PsiElement
 
-public class Directory(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
+public class VersionValue(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun isValidValue(): String? {
-        if (!getNode().getText()!!.matches("^[^ ]+$")) return "invalid directory"
+        if (!(this : PsiElement).getText()!!.matches("([0-9]+\\.)*([0-9]+)")) return "invalid version"
         return null
     }
 }

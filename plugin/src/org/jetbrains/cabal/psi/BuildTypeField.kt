@@ -17,7 +17,7 @@ public class BuildTypeField(node: ASTNode) : ASTWrapperPsiElement(node), Checkab
     }
 
     public override fun isValidPSIElem(): Boolean {
-        if ((this as PsiElement).getLastChild()!!.getText() in VALID_BUILD_TYPES) return true
+        if ((this : PsiElement).getLastChild()!!.getText() in VALID_BUILD_TYPES) return true
         return false
     }
 }

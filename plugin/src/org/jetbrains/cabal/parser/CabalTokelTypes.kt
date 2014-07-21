@@ -24,13 +24,11 @@ public trait CabalTokelTypes {
         val OPEN_PAREN         : IElementType  = HaskellToken("(")
         val CLOSE_PAREN        : IElementType  = HaskellToken(")")
         val SLASH              : IElementType  = HaskellToken("/")
-        val DOT                : IElementType  = HaskellToken(".")
         val END_OF_LINE_COMMENT: IElementType? = HaskellToken("--")
         val STRING             : IElementType  = HaskellToken("string")
         val NUMBER             : IElementType  = HaskellToken("number")
         val ID                 : IElementType  = HaskellToken("id")
         val COMPARATOR         : IElementType  = HaskellToken("COMPARATOR")
-        val EQUALITY           : IElementType  = HaskellToken("==")
         val LOGIC              : IElementType  = HaskellToken("LOGIC")
         val EQ                 : IElementType  = HaskellToken("=")
         val AND                : IElementType  = HaskellToken("&")
@@ -92,5 +90,6 @@ public trait CabalTokelTypes {
         val DIRECTORY          : IElementType = CabalCompositeElementType("DIRECTORY"                , ::Directory               )
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
         val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
+        val VERSION_VALUE      : IElementType = CabalCompositeElementType("VERSION_VALUE"            , ::VersionValue            )
     }
 }

@@ -14,15 +14,15 @@ public class Condition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
         )
     }
 
-    public override fun isValidPSIElem(): Boolean {
+    public override fun isValidValue(): String? {
         if (getChildren().size != 1) {
             if (getFirstChild()!!.getText() in VALID_TESTS_NAMES) {
-                return true
+                return null
             }
             else {
-                return true                                                 //TODO: check whether there is such flag
+                return null                                                 //TODO: check whether there is such flag
             }
         }
-        return true
+        return null
     }
 }

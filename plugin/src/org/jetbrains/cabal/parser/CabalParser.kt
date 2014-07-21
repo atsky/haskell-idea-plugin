@@ -202,7 +202,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseTopLevelField() =
-               parseField(0, CabalTokelTypes.VERSION         , "version"                , { parseVersion() })
+               parseField(0, CabalTokelTypes.VERSION         , "version"                , { start(CabalTokelTypes.VERSION_VALUE, { parseVersion() }) })
             || parseField(0, CabalTokelTypes.CABAL_VERSION   , "cabal-version"          , { parseComplexVersionConstraint(0) })
             || parseField(0, CabalTokelTypes.NAME_FIELD      , "name"                   , { parseName() })
             || parseField(0, CabalTokelTypes.BUILD_TYPE      , "build-type"             , { token(CabalTokelTypes.ID) })

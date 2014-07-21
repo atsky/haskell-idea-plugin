@@ -10,6 +10,7 @@ import org.jetbrains.cabal.parser.Checkable
 public class Name(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun isValidValue(): String? {
-        return if (getNode()!!.getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) null else "invalid name"
+        if (!getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return "invalid name"
+        return null
     }
 }
