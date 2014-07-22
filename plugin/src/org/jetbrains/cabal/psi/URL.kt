@@ -7,7 +7,7 @@ import org.jetbrains.cabal.parser.Checkable
 public class URL(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun isValidValue(): String? {
-        if (!getNode().getText()!!.matches("^.+$")) return "invalid URL"
+        if (!getNode().getText()!!.matches("^[^ ]+$")) return "invalid URL"
         return null
     }
 

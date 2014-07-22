@@ -7,7 +7,7 @@ import org.jetbrains.cabal.parser.Checkable
 public class Option(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun isValidValue(): String? {
-        if (!getNode().getText()!!.matches("^(<\\w|[.\\-@])*$")) return "invalid option"
+        if (!getNode().getText()!!.matches("^(\\w|[.\\-@])*$")) return "invalid option"
         return null
     }
 }

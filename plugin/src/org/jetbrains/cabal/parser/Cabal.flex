@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 %xstate BLOCK_COMMENT
 
 DIGIT            = [0-9]
-WHITE_SPACE_CHAR = [\ \t\f]
+WHITE_SPACE_CHAR = [\ \f]
 INDENT           = [\n]({WHITE_SPACE_CHAR}|"\n")*
 EOL_COMMENT      = "--"[^\n]*
 COMPARATOR       = >= | <= | < | > | ==
@@ -62,4 +62,6 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 \"([^\"]|"\\\"")*\"   { return CabalTokelTypes.STRING; }
 
 {IDENTIFIER}          { return CabalTokelTypes.ID; }
+
+\t                    { return CabalTokelTypes.TAB; }
 .                     { return TokenType.BAD_CHARACTER; }

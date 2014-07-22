@@ -34,6 +34,7 @@ public trait CabalTokelTypes {
         val OR                 : IElementType  = HaskellToken("|")
         val OPEN_CURLY         : IElementType  = HaskellToken("{")
         val CLOSE_CURLY        : IElementType  = HaskellToken("}")
+        val TAB                : IElementType  = HaskellToken("TAB")
 
         val COMMENTS     : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES  : TokenSet = TokenSet.create(TokenType.WHITE_SPACE)

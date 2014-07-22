@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.cabal.parser.CabalLexer;
 import org.jetbrains.cabal.parser.CabalTokelTypes;
 import org.jetbrains.haskell.highlight.HaskellHighlighter;
+import com.intellij.openapi.editor.HighlighterColors;
 
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class CabalHighlighter extends SyntaxHighlighterBase {
     keys1.put(CabalTokelTypes.STRING, HaskellHighlighter.STRING_LITERAL);
     keys1.put(CabalTokelTypes.END_OF_LINE_COMMENT, HaskellHighlighter.COMMENT_STYLE);
     keys1.put(CabalTokelTypes.COMMENT, HaskellHighlighter.COMMENT_STYLE);
+    keys1.put(CabalTokelTypes.TAB, HighlighterColors.BAD_CHARACTER);
 
 
   }
