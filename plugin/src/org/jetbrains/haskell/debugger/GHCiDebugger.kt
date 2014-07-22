@@ -11,7 +11,7 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
@@ -95,7 +95,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(ResumeCommand())
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HaskellStackFrameInfo) {
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HsStackFrameInfo) {
         queue.addCommand(HistoryCommand(breakpoint, topFrameInfo))
     }
 

@@ -1,10 +1,10 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.frames.HaskellSuspendContext
+import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.ArrayList
 
@@ -13,9 +13,9 @@ import java.util.ArrayList
  */
 public abstract class SuspendContextSetterCommand(): RealTimeCommand() {
     protected fun setSuspendContext(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
-                                    frames: ArrayList<HaskellStackFrameInfo>,
+                                    frames: ArrayList<HsStackFrameInfo>,
                                     debugProcess: HaskellDebugProcess) {
-        val context = HaskellSuspendContext(ProgramThreadInfo(null, "Main", frames))
+        val context = HsSuspendContext(ProgramThreadInfo(null, "Main", frames))
         if (breakpoint != null) {
             debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         } else {

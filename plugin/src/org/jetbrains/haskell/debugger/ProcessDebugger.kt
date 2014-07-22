@@ -3,7 +3,7 @@ package org.jetbrains.haskell.debugger
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 import com.intellij.openapi.util.Key
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 
@@ -31,7 +31,7 @@ public trait ProcessDebugger {
 
     public fun prepareGHCi()
 
-    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HaskellStackFrameInfo)
+    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsStackFrameInfo)
 
     public fun back(sequenceOfBacks: SequenceOfBacksCommand)
 

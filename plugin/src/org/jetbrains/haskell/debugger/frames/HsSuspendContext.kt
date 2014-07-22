@@ -4,8 +4,8 @@ import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import com.intellij.xdebugger.frame.XSuspendContext
 import com.intellij.xdebugger.frame.XExecutionStack
 
-public class HaskellSuspendContext(public val threadInfo: ProgramThreadInfo) : XSuspendContext() {
-    private val _activeExecutionStack : XExecutionStack = HaskellExecutionStack(threadInfo)
+public class HsSuspendContext(public val threadInfo: ProgramThreadInfo) : XSuspendContext() {
+    private val _activeExecutionStack : XExecutionStack = HsExecutionStack(threadInfo)
     override fun getActiveExecutionStack(): XExecutionStack? = _activeExecutionStack
 
     /**

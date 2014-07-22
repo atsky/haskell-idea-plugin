@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
-public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo?) : XStackFrame() {
+public class HsStackFrame(private val stackFrameInfo: HsStackFrameInfo?) : XStackFrame() {
 
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()

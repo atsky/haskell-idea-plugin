@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 import java.io.File
 import java.util.ArrayList
 import java.util.Deque
-import org.jetbrains.haskell.debugger.frames.HaskellStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 
 /**
  * @author Habibullin Marat
@@ -86,13 +86,13 @@ public class Parser() {
          * Parses ghci output that appears on reaching some position in file under debugging (after commands :continue,
          * :trace, :step, :steplocal).
          */
-        public fun tryParseStoppedAt(output: Deque<String?>): HaskellStackFrameInfo? =
+        public fun tryParseStoppedAt(output: Deque<String?>): HsStackFrameInfo? =
             tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
 
         /**
          * Parses ghci output that appears on calling ':back' command
          */
-        public fun tryParseLoggedBreakpointAt(output: Deque<String?>): HaskellStackFrameInfo? =
+        public fun tryParseLoggedBreakpointAt(output: Deque<String?>): HsStackFrameInfo? =
             tryParseOutputWithFrameInfo(output, LOGGED_BREAKPOINT_AT_PATTERN)
 
         /**
@@ -101,7 +101,7 @@ public class Parser() {
          *
          * @return stack frame info containing info about position in file and local bindings list
          */
-        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HaskellStackFrameInfo? {
+        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HsStackFrameInfo? {
             val it = output.descendingIterator()
             var filePosition: FilePosition?
             val localBindings = ArrayList<LocalBinding>()
@@ -110,7 +110,7 @@ public class Parser() {
                 val currentLine = it.next()
                 filePosition = tryParseFilePosition(currentLine?.trim(), pattern)
                 if(filePosition != null) {
-                    return HaskellStackFrameInfo(filePosition as FilePosition, localBindings)
+                    return HsStackFrameInfo(filePosition as FilePosition, localBindings)
                 }
                 res = tryParseLocalBinding(currentLine?.trim())
                 if(res != null) {
