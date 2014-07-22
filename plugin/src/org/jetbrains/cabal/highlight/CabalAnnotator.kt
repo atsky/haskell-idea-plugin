@@ -13,8 +13,11 @@ public class CabalAnnotator() : Annotator {
             holder.createInfoAnnotation(e, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
         }
 
-        if ((element is Checkable) && (!element.isValidPSIElem() || (element.isValidValue() != null))) {
-            val annotation = holder.createErrorAnnotation(element.getNode()!!, "something is wrong")
+        if (element is Checkable) {
+            val errorMsg = element.isValidValue()
+            if (errorMsg != null) {
+                holder.createErrorAnnotation(element.getNode()!!, errorMsg)
+            }
         }
 
         if ((element is PropertyKey) || (element is SectionType)) {

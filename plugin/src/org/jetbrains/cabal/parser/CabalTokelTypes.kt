@@ -52,6 +52,7 @@ public trait CabalTokelTypes {
         val FLAG               : IElementType = CabalCompositeElementType("FLAG"                     , ::Flag                    )
         val IF_CONDITION       : IElementType = CabalCompositeElementType("IF_CONDITION"             , ::IfCondition             )
         val ELSE_CONDITION     : IElementType = CabalCompositeElementType("ELSE_CONDITION"           , ::ElseCondition           )
+        val REPO_KIND          : IElementType = CabalCompositeElementType("REPO_KIND"                , ::RepoKind                )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )
@@ -71,6 +72,7 @@ public trait CabalTokelTypes {
         val BOOL_FIELD         : IElementType = CabalCompositeElementType("BOOL_FIELD"               , ::BoolField               )
         val TOKEN_FIELD        : IElementType = CabalCompositeElementType("TOKEN_FIELD"              , ::TokenField              )
         val TOKEN_LIST         : IElementType = CabalCompositeElementType("TOKEN_LIST"               , ::TokenListField          )
+        val MAINTAINER         : IElementType = CabalCompositeElementType("MAINTAINER"               , ::MaintainerField         )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
@@ -91,5 +93,9 @@ public trait CabalTokelTypes {
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
         val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
         val VERSION_VALUE      : IElementType = CabalCompositeElementType("VERSION_VALUE"            , ::VersionValue            )
+        val IDENTIFIER         : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier              )
+        val E_MAIL             : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                  )
+        val TOKEN              : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                   )
+
     }
 }
