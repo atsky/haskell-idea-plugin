@@ -110,7 +110,6 @@ public class Parser() {
          * Parses ghci output trying to find local bindings in it
          */
         public fun tryParseLocalBindings(output: Deque<String?>): ArrayList<LocalBinding> {
-//            tryParseOutputWithFrameInfo(output, LOGGED_BREAKPOINT_AT_PATTERN)
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             for(currentLine in output) {
@@ -122,45 +121,6 @@ public class Parser() {
             return localBindings
         }
 
-        /**
-         * Parses ghci output containing frame info (reached position in file, local bindings). Output may contain some
-         * program output at the beginning so we parse lines in reversed order
-         *
-         * @return stack frame info containing info about position in file and local bindings list
-         */
-//        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HsStackFrameInfo? {
-//            val it = output.descendingIterator()
-//            var filePosition: FilePosition?
-//            val localBindings = ArrayList<LocalBinding>()
-//            var res: LocalBinding?
-//            while (it.hasNext()) {
-//                val currentLine = it.next()
-//                filePosition = tryParseFilePosition(currentLine?.trim(), pattern)
-//                if(filePosition != null) {
-//                    return HsTopStackFrameInfo(filePosition as FilePosition, localBindings)
-//                }
-//                res = tryParseLocalBinding(currentLine?.trim())
-//                if(res != null) {
-//                    localBindings.add(res as LocalBinding)
-//                }
-//            }
-//            return null
-//        }
-
-//        public fun parseHistory(output: Deque<String?>): Int {
-//            var entriesNumber = 0
-//            for (line in output) {
-//                if (line?.trim().equals("<end of history>")) {
-//                    break
-//                } else {
-//                    val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
-//                    if (matcher.matches()) {
-//                        entriesNumber += 1
-//                    }
-//                }
-//            }
-//            return entriesNumber
-//        }
         public fun parseHistory(output: Deque<String?>): ArrayList<HsGeneralStackFrameInfo> {
             val callStack = ArrayList<HsGeneralStackFrameInfo>()
             for (line in output) {
