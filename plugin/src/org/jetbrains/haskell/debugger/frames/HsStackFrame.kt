@@ -18,23 +18,29 @@ import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.ReentrantLock
+import java.util.concurrent.locks.Condition
+import java.util.ArrayList
+import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.FilePosition
 
-public class HsStackFrame(private val stackFrameInfo: HsStackFrameInfo?) : XStackFrame() {
-
+public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
+                                   filePosition: FilePosition?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
-
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
 
     private val _sourcePosition =
-        if(stackFrameInfo != null) {
-            XDebuggerUtil.getInstance()!!.createPosition(
-                    LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition.filePath)),
-                    HaskellUtils.haskellLineNumberToZeroBased(stackFrameInfo.filePosition.startLine))
-        }
-        else null
-
+            if(filePosition != null) {
+                XDebuggerUtil.getInstance()!!.createPosition(
+                        LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition.filePath)),
+                        HaskellUtils.haskellLineNumberToZeroBased(filePosition.startLine))
+            }
+            else null
     override fun getSourcePosition(): XSourcePosition? = _sourcePosition
 
     /**
@@ -48,31 +54,11 @@ public class HsStackFrame(private val stackFrameInfo: HsStackFrameInfo?) : XStac
      */
     //    override fun customizePresentation(component: ColoredTextContainer)
 
-    /**
-     * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
-     * added HsDebugValue instances are shown in 'Variables' panel of 'Debug' tool window.
-     */
-    override fun computeChildren(node: XCompositeNode) {
-//        println("DBG: computeChildren entered")
-        if (node.isObsolete()) {
-            return
+    protected fun setChildrenToNode(node: XCompositeNode, bindings: ArrayList<LocalBinding>) {
+        val list = XValueChildrenList()
+        for (binding in bindings) {
+            list.add(HsDebugValue(binding))
         }
-        ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
-            override fun run() {
-                try {
-                    if(stackFrameInfo != null) {
-                        val list = XValueChildrenList()
-                        for (binding in stackFrameInfo.bindings) {
-                            list.add(HsDebugValue(binding))
-                        }
-                        node.addChildren(list, true)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    node.setErrorMessage("Unable to display frame variables")
-                }
-
-            }
-        })
+        node.addChildren(list, true)
     }
 }

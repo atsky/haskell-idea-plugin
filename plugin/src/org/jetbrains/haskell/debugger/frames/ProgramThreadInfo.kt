@@ -1,8 +1,12 @@
 package org.jetbrains.haskell.debugger.frames
 
+import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsGeneralStackFrameInfo
+
 public class ProgramThreadInfo(public val id: String?,
                             public val name: String,
-                            public var frames: List<HsStackFrameInfo>?) {
+                            public val topFrameInfo: HsTopStackFrameInfo,
+                            public var restFramesInfo: List<HsGeneralStackFrameInfo>?) {
 
     public enum class State {
         RUNNING
@@ -12,9 +16,4 @@ public class ProgramThreadInfo(public val id: String?,
 
     public var state: State = State.SUSPENDED
         private set
-
-    public fun updateState(newState: State, newFrames: List<HsStackFrameInfo>?) {
-        state = newState
-        frames = if (newFrames == null || newFrames.size == 0) null else newFrames
-    }
 }

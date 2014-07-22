@@ -7,18 +7,17 @@ import java.util.Deque
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 
 /**
  * Created by vlad on 7/17/14.
  */
 
-public abstract class StepCommand : NextPositionCommand() {
+public abstract class StepCommand : AbstractCommand() {
 
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-        val topFrameInfo = getCurrentFrame(output)
+        val topFrameInfo = Parser.tryParseStoppedAt(output)
         if (topFrameInfo != null) {
-            sendHistCommand(null, topFrameInfo, debugProcess)
+            debugProcess.debugger.history(null, topFrameInfo)
         }
     }
 }

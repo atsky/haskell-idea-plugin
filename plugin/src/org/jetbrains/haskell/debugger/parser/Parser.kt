@@ -4,7 +4,7 @@ import java.util.regex.Pattern
 import java.io.File
 import java.util.ArrayList
 import java.util.Deque
-import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
+import org.jetbrains.haskell.debugger.frames
 
 /**
  * @author Habibullin Marat
@@ -86,14 +86,41 @@ public class Parser() {
          * Parses ghci output that appears on reaching some position in file under debugging (after commands :continue,
          * :trace, :step, :steplocal).
          */
-        public fun tryParseStoppedAt(output: Deque<String?>): HsStackFrameInfo? =
-            tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
+        public fun tryParseStoppedAt(output: Deque<String?>): HsTopStackFrameInfo? {
+            //            tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
+            val it = output.descendingIterator()
+            var filePosition: FilePosition?
+            val localBindings = ArrayList<LocalBinding>()
+            var res: LocalBinding?
+            while (it.hasNext()) {
+                val currentLine = it.next()
+                filePosition = tryParseFilePosition(currentLine?.trim(), STOPPED_AT_PATTERN)
+                if (filePosition != null) {
+                    return HsTopStackFrameInfo(filePosition as FilePosition, localBindings)
+                }
+                res = tryParseLocalBinding(currentLine?.trim())
+                if (res != null) {
+                    localBindings.add(res as LocalBinding)
+                }
+            }
+            return null
+        }
 
         /**
-         * Parses ghci output that appears on calling ':back' command
+         * Parses ghci output trying to find local bindings in it
          */
-        public fun tryParseLoggedBreakpointAt(output: Deque<String?>): HsStackFrameInfo? =
-            tryParseOutputWithFrameInfo(output, LOGGED_BREAKPOINT_AT_PATTERN)
+        public fun tryParseLocalBindings(output: Deque<String?>): ArrayList<LocalBinding> {
+//            tryParseOutputWithFrameInfo(output, LOGGED_BREAKPOINT_AT_PATTERN)
+            val localBindings = ArrayList<LocalBinding>()
+            var res: LocalBinding?
+            for(currentLine in output) {
+                res = tryParseLocalBinding(currentLine?.trim())
+                if (res != null) {
+                    localBindings.add(res as LocalBinding)
+                }
+            }
+            return localBindings
+        }
 
         /**
          * Parses ghci output containing frame info (reached position in file, local bindings). Output may contain some
@@ -101,40 +128,61 @@ public class Parser() {
          *
          * @return stack frame info containing info about position in file and local bindings list
          */
-        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HsStackFrameInfo? {
-            val it = output.descendingIterator()
-            var filePosition: FilePosition?
-            val localBindings = ArrayList<LocalBinding>()
-            var res: LocalBinding?
-            while (it.hasNext()) {
-                val currentLine = it.next()
-                filePosition = tryParseFilePosition(currentLine?.trim(), pattern)
-                if(filePosition != null) {
-                    return HsStackFrameInfo(filePosition as FilePosition, localBindings)
-                }
-                res = tryParseLocalBinding(currentLine?.trim())
-                if(res != null) {
-                    localBindings.add(res as LocalBinding)
-                }
-            }
-            return null
-        }
+//        private fun tryParseOutputWithFrameInfo(output: Deque<String?>, pattern: String): HsStackFrameInfo? {
+//            val it = output.descendingIterator()
+//            var filePosition: FilePosition?
+//            val localBindings = ArrayList<LocalBinding>()
+//            var res: LocalBinding?
+//            while (it.hasNext()) {
+//                val currentLine = it.next()
+//                filePosition = tryParseFilePosition(currentLine?.trim(), pattern)
+//                if(filePosition != null) {
+//                    return HsTopStackFrameInfo(filePosition as FilePosition, localBindings)
+//                }
+//                res = tryParseLocalBinding(currentLine?.trim())
+//                if(res != null) {
+//                    localBindings.add(res as LocalBinding)
+//                }
+//            }
+//            return null
+//        }
 
-        public fun parseHistory(output: Deque<String?>): Int {
-            var entriesNumber = 0
+//        public fun parseHistory(output: Deque<String?>): Int {
+//            var entriesNumber = 0
+//            for (line in output) {
+//                if (line?.trim().equals("<end of history>")) {
+//                    break
+//                } else {
+//                    val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
+//                    if (matcher.matches()) {
+//                        entriesNumber += 1
+//                    }
+//                }
+//            }
+//            return entriesNumber
+//        }
+        public fun parseHistory(output: Deque<String?>): ArrayList<HsGeneralStackFrameInfo> {
+            val callStack = ArrayList<HsGeneralStackFrameInfo>()
             for (line in output) {
-                if (line?.trim().equals("<end of history>")) {
+                if (line?.trim().equals("<end of history>") ||
+                    line?.trim().equals("Empty history. Perhaps you forgot to use :trace?")) {
                     break
                 } else {
                     val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
                     if (matcher.matches()) {
-                        entriesNumber += 1
+                        val index = -Integer.parseInt(matcher.group(1)!!)
+                        val function = matcher.group(2)!!
+                        val filePositionLine = matcher.group(3)!!
+                        val filePosition = tryCreateFilePosition(filePositionLine)
+                        if (filePosition == null) {
+                            throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
+                        }
+                        callStack.add(HsGeneralStackFrameInfo(index * (-1), function, filePosition, null))
                     }
                 }
             }
-            return entriesNumber
+            return callStack
         }
-
         private fun tryParseFilePosition(string: String?, pattern: String): FilePosition? {
             if(string != null) {
                 val matcher = Pattern.compile("(.*)" + pattern).matcher(string)

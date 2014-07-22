@@ -23,6 +23,10 @@ import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
+import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.Condition
+import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 
 /**
  * Created by vlad on 7/10/14.
@@ -35,8 +39,6 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
     public val debugger: ProcessDebugger
-
-//    public var stackFrames: ArrayList<HaskellStackFrameInfo> = ArrayList()
 
     ;{
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
@@ -115,6 +117,13 @@ public class HaskellDebugProcess(session: XDebugSession,
             registeredBreakpoints.remove(position)
             debugger.removeBreakpoint(breakpointNumber)
         }
+    }
+
+    public fun fillFrameFromHistory(frameToFill: HsCommonStackFrame,
+                                    syncObject: Lock,
+                                    frameIsFilled: Condition,
+                                    frameHistoryIndex: Int) {
+        debugger.backsSequence(SequenceOfBacksCommand(frameToFill, syncObject, frameIsFilled, frameHistoryIndex))
     }
 
     override fun sessionInitialized() {

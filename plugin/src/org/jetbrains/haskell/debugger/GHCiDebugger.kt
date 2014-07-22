@@ -11,7 +11,6 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.frames.HsStackFrameInfo
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
@@ -20,7 +19,11 @@ import java.util.LinkedList
 import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
 import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
+import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
+import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
+import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -95,12 +98,15 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(ResumeCommand())
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HsStackFrameInfo) {
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HsTopStackFrameInfo) {
         queue.addCommand(HistoryCommand(breakpoint, topFrameInfo))
     }
 
-    override fun back(sequenceOfBacks: SequenceOfBacksCommand) {
-        queue.addCommand(sequenceOfBacks)
+    override public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) {
+        queue.addCommand(sequenceOfBacksCommand)
+    }
+    override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) {
+        queue.addCommand(sequenceOfForwardsCommand)
     }
 
     override fun requestVariables() {

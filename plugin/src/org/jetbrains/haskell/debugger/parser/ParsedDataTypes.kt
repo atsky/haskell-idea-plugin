@@ -9,14 +9,31 @@ import java.util.ArrayList
  */
 
 public open class ParseResult
-public class BreakpointCommandResult(public val breakpointNumber: Int, public val position: FilePosition) : ParseResult()
-public class FilePosition(public val filePath: String, public val startLine: Int, public val startSymbol: Int,
-                          public val endLine: Int, public val endSymbol: Int) : ParseResult()
-public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
-public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
-public class LocalBinding(val name:String?, val typeName: String?, val value: String?) : ParseResult() {
+public class BreakpointCommandResult(public val breakpointNumber: Int,
+                                     public val position: FilePosition) : ParseResult()
+
+public class FilePosition(public val filePath: String,
+                          public val startLine: Int,
+                          public val startSymbol: Int,
+                          public val endLine: Int,
+                          public val endSymbol: Int) : ParseResult()
+
+//public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
+//public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
+
+public class LocalBinding(val name:String?,
+                          val typeName: String?,
+                          val value: String?) : ParseResult() {
     class object {
         public val EMPTY_BINDING: LocalBinding = LocalBinding(null, null, null)
     }
 }
+
+public open class HsTopStackFrameInfo(val filePosition: FilePosition,
+                                      var bindings: ArrayList<LocalBinding>?) : ParseResult()
+
+public class HsGeneralStackFrameInfo(val index: Int,
+                                     val functionName: String,
+                                     filePosition: FilePosition,
+                                     bindings: ArrayList<LocalBinding>?) : HsTopStackFrameInfo(filePosition, bindings)
