@@ -154,8 +154,8 @@ public class Parser() {
                     val typeName = matcher.group(BINDING_TYPE_GROUP)
                     val substrWithValue = matcher.group(BINDING_VALUE_CONTAINING_GROUP)
                     var value: String? = null
-                        if(substrWithValue != null && !substrWithValue.isEmpty()) {
-                        value = substrWithValue.substring(substrWithValue.indexOf(BINDING_VALUE_PRECEDING_SUBSTR))
+                    if(substrWithValue != null && !substrWithValue.isEmpty()) {
+                        value = substrWithValue.substring(substrWithValue.indexOf(BINDING_VALUE_PRECEDING_SUBSTR) + 1).trim()
                     }
                     return LocalBinding(name, typeName, value)
                 }

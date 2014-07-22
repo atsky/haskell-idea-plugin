@@ -53,6 +53,7 @@ public class HaskellStackFrame(private val stackFrameInfo: HaskellStackFrameInfo
      * added HsDebugValue instances are shown in 'Variables' panel of 'Debug' tool window.
      */
     override fun computeChildren(node: XCompositeNode) {
+//        println("DBG: computeChildren entered")
         if (node.isObsolete()) {
             return
         }
