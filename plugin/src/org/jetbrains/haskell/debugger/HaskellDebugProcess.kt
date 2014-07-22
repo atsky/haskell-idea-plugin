@@ -27,6 +27,7 @@ import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
+import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 
 /**
  * Created by vlad on 7/10/14.
@@ -119,11 +120,11 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun fillFrameFromHistory(frameToFill: HsCommonStackFrame,
-                                    syncObject: Lock,
-                                    frameIsFilled: Condition,
-                                    frameHistoryIndex: Int) {
-        debugger.backsSequence(SequenceOfBacksCommand(frameToFill, syncObject, frameIsFilled, frameHistoryIndex))
+    public fun fillFramesFromHistory(allHistFramesArray: ArrayList<HsCommonStackFrameInfo>,
+                                     syncObject: Lock,
+                                     frameIsFilled: Condition,
+                                     frameHistoryIndex: Int) {
+        debugger.backsSequence(SequenceOfBacksCommand(allHistFramesArray, syncObject, frameIsFilled, frameHistoryIndex))
     }
 
     override fun sessionInitialized() {

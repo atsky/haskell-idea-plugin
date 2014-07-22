@@ -33,7 +33,7 @@ public class LocalBinding(val name:String?,
 public open class HsTopStackFrameInfo(val filePosition: FilePosition,
                                       var bindings: ArrayList<LocalBinding>?) : ParseResult()
 
-public class HsGeneralStackFrameInfo(val index: Int,
-                                     val functionName: String,
-                                     filePosition: FilePosition,
-                                     bindings: ArrayList<LocalBinding>?) : HsTopStackFrameInfo(filePosition, bindings)
+public class HsCommonStackFrameInfo(val index: Int,
+                                    val functionName: String,
+                                    filePosition: FilePosition,
+                                    bindings: ArrayList<LocalBinding>?) : HsTopStackFrameInfo(filePosition, bindings)

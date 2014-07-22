@@ -121,8 +121,8 @@ public class Parser() {
             return localBindings
         }
 
-        public fun parseHistory(output: Deque<String?>): ArrayList<HsGeneralStackFrameInfo> {
-            val callStack = ArrayList<HsGeneralStackFrameInfo>()
+        public fun parseHistory(output: Deque<String?>): ArrayList<HsCommonStackFrameInfo> {
+            val callStack = ArrayList<HsCommonStackFrameInfo>()
             for (line in output) {
                 if (line?.trim().equals("<end of history>") ||
                     line?.trim().equals("Empty history. Perhaps you forgot to use :trace?")) {
@@ -137,7 +137,7 @@ public class Parser() {
                         if (filePosition == null) {
                             throw RuntimeException("Wrong GHCi output occured while handling HistoryCommand result")
                         }
-                        callStack.add(HsGeneralStackFrameInfo(index * (-1), function, filePosition, null))
+                        callStack.add(HsCommonStackFrameInfo(index * (-1), function, filePosition, null))
                     }
                 }
             }

@@ -9,7 +9,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.parser.HsGeneralStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 
 /**
  * Created by vlad on 7/16/14.
@@ -22,7 +22,7 @@ public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointPropertie
     }
 
     override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-        val histFrames = ArrayList<HsGeneralStackFrameInfo>()
+        val histFrames = ArrayList<HsCommonStackFrameInfo>()
         histFrames.addAll(Parser.parseHistory(output))
         val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
         if (breakpoint != null) {

@@ -17,25 +17,17 @@ import com.intellij.xdebugger.frame.XValueChildrenList
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.parser.HsGeneralStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 
 /**
  * Created by marat-x on 7/22/14.
  */
 public class HsCommonStackFrame(debugProcess: HaskellDebugProcess,
-                                 private val stackFrameInfo: HsGeneralStackFrameInfo?)
-                               : HsStackFrame(debugProcess, stackFrameInfo?.filePosition) {
+                                private val indexInHist: Int,
+                                private val allHistFramesArray: ArrayList<HsCommonStackFrameInfo>)
+                              : HsStackFrame(debugProcess, allHistFramesArray.get(indexInHist).filePosition) {
 
-    public fun setBindings(newBindings: ArrayList<LocalBinding>?): Unit {
-        if(stackFrameInfo != null) {
-            if(newBindings == null) {
-                stackFrameInfo.bindings = null
-            } else {
-                stackFrameInfo.bindings = ArrayList<LocalBinding>()
-                stackFrameInfo.bindings?.addAll(newBindings)
-            }
-        }
-    }
+    private val thisStackFrameInfo = allHistFramesArray.get(indexInHist)
 
     /**
      * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
@@ -48,13 +40,11 @@ public class HsCommonStackFrame(debugProcess: HaskellDebugProcess,
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    if(stackFrameInfo != null) {
-                        if(stackFrameInfo.bindings == null) {
-                            tryGetBindings()
-                        }
-                        if(stackFrameInfo.bindings != null) {
-                            setChildrenToNode(node, stackFrameInfo.bindings as ArrayList<LocalBinding>)
-                        }
+                    if(thisStackFrameInfo.bindings == null) {
+                        tryGetBindings()
+                    }
+                    if(thisStackFrameInfo.bindings != null) {
+                        setChildrenToNode(node, thisStackFrameInfo.bindings as ArrayList<LocalBinding>)
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -66,18 +56,16 @@ public class HsCommonStackFrame(debugProcess: HaskellDebugProcess,
     }
 
     private fun tryGetBindings() {
-        if(stackFrameInfo != null) {
-            val syncObject: Lock = ReentrantLock()
-            val bindingsAreSet: Condition = syncObject.newCondition()
-            syncObject.lock()
-            try {
-                debugProcess.fillFrameFromHistory(this, syncObject, bindingsAreSet, stackFrameInfo.index)
-                while (stackFrameInfo.bindings == null) {
-                    bindingsAreSet.await()
-                }
-            } finally {
-                syncObject.unlock()
+        val syncObject: Lock = ReentrantLock()
+        val bindingsAreSet: Condition = syncObject.newCondition()
+        syncObject.lock()
+        try {
+            debugProcess.fillFramesFromHistory(allHistFramesArray, syncObject, bindingsAreSet, thisStackFrameInfo.index)
+            while (thisStackFrameInfo.bindings == null) {
+                bindingsAreSet.await()
             }
+        } finally {
+            syncObject.unlock()
         }
     }
 }
