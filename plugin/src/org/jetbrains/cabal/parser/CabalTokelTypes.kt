@@ -23,7 +23,7 @@ public trait CabalTokelTypes {
         val OPEN_PAREN         : IElementType  = HaskellToken("(")
         val CLOSE_PAREN        : IElementType  = HaskellToken(")")
         val SLASH              : IElementType  = HaskellToken("/")
-        val END_OF_LINE_COMMENT: IElementType? = HaskellToken("--")
+        val END_OF_LINE_COMMENT: IElementType  = HaskellToken("--")
         val STRING             : IElementType  = HaskellToken("string")
         val NUMBER             : IElementType  = HaskellToken("number")
         val ID                 : IElementType  = HaskellToken("id")
@@ -99,5 +99,6 @@ public trait CabalTokelTypes {
         val BENCHMARK_TYPE     : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType           )
         val BUILD_TYPE         : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildType               )
         val COMPILER           : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerID              )
+        val OPTION             : IElementType = CabalCompositeElementType("OPTION"                   , ::Option                  )
     }
 }
