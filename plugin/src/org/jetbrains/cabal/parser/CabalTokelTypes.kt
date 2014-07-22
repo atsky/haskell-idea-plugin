@@ -12,7 +12,6 @@ import org.jetbrains.cabal.psi.*
 
 public trait CabalTokelTypes {
 
-
     class object {
         val defaultContructor : (ASTNode) -> PsiElement = { node ->
             ASTWrapperPsiElement(node)
@@ -64,7 +63,7 @@ public trait CabalTokelTypes {
         val EXTENSIONS         : IElementType = CabalCompositeElementType("EXTENSIONS"               , ::ExtensionsField         )
         val OTHER_MODULES      : IElementType = CabalCompositeElementType("OTHER_MODULES"            , ::OtherModulesField       )
         val DIRECTORY_FIELD    : IElementType = CabalCompositeElementType("DIRECTORY_FIELD"          , ::DirectoryField          )
-        val BUILD_TYPE         : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildTypeField          )
+        val BUILD_TYPE_FIELD   : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildTypeField          )
         val LICENSE            : IElementType = CabalCompositeElementType("LICENSE"                  , ::LicenseField            )
         val TESTED_WITH        : IElementType = CabalCompositeElementType("TESTED_WITH"              , ::TestedWithField         )
         val LICENSE_FILES      : IElementType = CabalCompositeElementType("LICENSE_FILES"            , ::LicenseFilesField       )
@@ -88,7 +87,6 @@ public trait CabalTokelTypes {
         val FULL_CONSTRAINT    : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , ::FullVersionConstraint   )
         val URL                : IElementType = CabalCompositeElementType("URL"                      , ::URL                     )
         val NAME               : IElementType = CabalCompositeElementType("NAME"                     , ::Name                    )
-        val FILE_NAME          : IElementType = CabalCompositeElementType("FILE_NAME"                , ::FileName                )
         val DIRECTORY          : IElementType = CabalCompositeElementType("DIRECTORY"                , ::Directory               )
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
         val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
@@ -96,6 +94,10 @@ public trait CabalTokelTypes {
         val IDENTIFIER         : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier              )
         val E_MAIL             : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                  )
         val TOKEN              : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                   )
-
+        val TEST_SUIT_TYPE     : IElementType = CabalCompositeElementType("TEST_SUIT_TYPE"           , ::TestSuitType            )
+        val REPO_TYPE          : IElementType = CabalCompositeElementType("REPO_TYPE"                , ::RepoType                )
+        val BENCHMARK_TYPE     : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType           )
+        val BUILD_TYPE         : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildType               )
+        val COMPILER           : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerID              )
     }
 }

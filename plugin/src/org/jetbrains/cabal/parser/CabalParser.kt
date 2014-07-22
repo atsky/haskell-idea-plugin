@@ -80,13 +80,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return false;
     }
 
-    fun parseName()      = start(CabalTokelTypes.NAME     , { token(CabalTokelTypes.ID) })
-
-    fun parseRepoKind()  = start(CabalTokelTypes.REPO_KIND, { token(CabalTokelTypes.ID) })
-
-    fun parseFileName()  = start(CabalTokelTypes.FILE_NAME, { token(CabalTokelTypes.ID) })
-
-    fun parseBool() = matches(CabalTokelTypes.ID, "true") || (matches(CabalTokelTypes.ID, "false"))
+    fun parseBool() = matchesIgnoreCase(CabalTokelTypes.ID, "true") || matchesIgnoreCase(CabalTokelTypes.ID, "false")
 
     fun parseCondition(level: Int) = start(CabalTokelTypes.CONDITION) {
         parseBool()
@@ -123,21 +117,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return true
     }
 
-    fun parseToken()      = start(CabalTokelTypes.TOKEN, { parseFreeLine() })
+    fun parseIDValue(elemType: IElementType) = start(elemType, { token(CabalTokelTypes.ID) })
 
-    fun parseIdentifier() = start(CabalTokelTypes.IDENTIFIER, { token(CabalTokelTypes.ID) })
-
-    fun parseDirectory()  = start(CabalTokelTypes.DIRECTORY, { parseFreeLine() })
-
-    fun parseURL() = start(CabalTokelTypes.URL, { parseFreeLine() })
-
-    fun parseEmail() = start(CabalTokelTypes.E_MAIL, { parseFreeLine() })
+    fun parseTokenValue(elemType: IElementType) = start(elemType, { parseFreeLine() })
 
     fun nextLevel() : Int? {
-        return if ((!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {           // there cannot be two new_line_indents next to each other
-            indentSize(builder.getTokenText()!!)
+        if ((!builder.eof()) && (builder.getTokenType() == TokenType.NEW_LINE_INDENT)) {           // there cannot be two new_line_indents next to each other
+            return indentSize(builder.getTokenText()!!)
         }
-        else null
+        return null
     }
 
     fun skipNewLines(level: Int = -1) {
@@ -146,7 +134,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun isLastOnThisLevel(prevLevel: Int) : Boolean {
-        if ((builder.eof()) || (nextLevel() != null) && (nextLevel()!! <= prevLevel)) {
+        if (builder.eof() || ((nextLevel() != null) && (nextLevel()!! <= prevLevel))) {
             return true
         }
         skipNewLines()
@@ -165,23 +153,22 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
-    fun parseTokenList(level: Int) = parseValueList(level, { parseToken() }, { true })
+    fun parseTokenList(level: Int) = parseValueList(level, { parseTokenValue(CabalTokelTypes.TOKEN) }, { token(CabalTokelTypes.COMMA) || true })
 
-    fun parseIDList(level: Int) = parseValueList(level, { parseIdentifier() }, { true })
+    fun parseIDList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.IDENTIFIER) }, { token(CabalTokelTypes.COMMA) || true })
 
-    fun parseFileNameList(prevLevel: Int) = parseValueList(prevLevel, { parseFileName() }, { true })
-
-    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { true })
+    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseTokenValue(CabalTokelTypes.DIRECTORY) }, { token(CabalTokelTypes.COMMA) || true })
 
     fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
 
-    fun parseFullVersionConstraint(prevLevel: Int) = start(CabalTokelTypes.FULL_CONSTRAINT) {
-        var res = token(CabalTokelTypes.ID)
+    fun parseFullVersionConstraint(prevLevel: Int, tokenType: IElementType = CabalTokelTypes.IDENTIFIER) = start(CabalTokelTypes.FULL_CONSTRAINT) {
+        var res = parseIDValue(tokenType)
         parseComplexVersionConstraint(prevLevel)
         res
     }
 
-    fun parseConstraintList(prevLevel: Int) = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel) }, { token(CabalTokelTypes.COMMA) })
+    fun parseConstraintList(prevLevel: Int, tokenType: IElementType = CabalTokelTypes.IDENTIFIER)
+            = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel, tokenType) }, { token(CabalTokelTypes.COMMA) })
 
     fun parseField(level: Int, tokenType : IElementType, key : String?, parseValue : (Int) -> Boolean) = start(tokenType) {
         var res = parsePropertyKey(key) && token(CabalTokelTypes.COLON)
@@ -189,7 +176,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         res && parseValue(level) && isLastOnThisLevel(level)
     }
 
-    fun parseFieldList(level: Int, tokenType : IElementType, names: List<String>, parseValue : (Int) -> Boolean) : Boolean {
+    fun parseFieldVariety(level: Int, tokenType : IElementType, names: List<String>, parseValue : (Int) -> Boolean) : Boolean {
         var res = false
         for (name in names) {
             res = res || parseField(level, tokenType, name, parseValue)
@@ -198,47 +185,49 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
+    fun parseCompilerList(level: Int) = parseConstraintList(level, CabalTokelTypes.COMPILER)
+
     fun parseTopLevelField() =
                parseField(0, CabalTokelTypes.VERSION         , "version"                , { start(CabalTokelTypes.VERSION_VALUE, { parseVersion() }) })
             || parseField(0, CabalTokelTypes.CABAL_VERSION   , "cabal-version"          , { parseComplexVersionConstraint(0) })
-            || parseField(0, CabalTokelTypes.NAME_FIELD      , "name"                   , { parseName() })
-            || parseField(0, CabalTokelTypes.BUILD_TYPE      , "build-type"             , { token(CabalTokelTypes.ID) })                   //
-            || parseField(0, CabalTokelTypes.LICENSE         , "license"                , { parseIdentifier() })
-            || parseField(0, CabalTokelTypes.TESTED_WITH     , "tested-with"            , { parseConstraintList(it) })                     //
-            || parseField(0, CabalTokelTypes.LICENSE_FILES   , "license-file"           , { parseFileName() })
-            || parseField(0, CabalTokelTypes.LICENSE_FILES   , "license-files"          , { parseFileNameList(it) })
-            || parseField(0, CabalTokelTypes.DIRECTORY_FIELD , "data-dir"               , { parseDirectory() })
-            || parseField(0, CabalTokelTypes.MAINTAINER      , "maintainer"             , { parseEmail() })
-            || parseFieldList(0, CabalTokelTypes.URL_FIELD   , URL_FIELD_NAMES          , { parseURL() })
-            || parseFieldList(0, CabalTokelTypes.FILE_LIST   , TOP_FILE_LIST_FIELD_NAMES, { parseFileNameList(it) })
-            || parseFieldList(0, CabalTokelTypes.FREE_FIELD  , FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
+            || parseField(0, CabalTokelTypes.NAME_FIELD      , "name"                   , { parseIDValue(CabalTokelTypes.NAME) })
+            || parseField(0, CabalTokelTypes.BUILD_TYPE_FIELD, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
+            || parseField(0, CabalTokelTypes.LICENSE         , "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+            || parseField(0, CabalTokelTypes.TESTED_WITH     , "tested-with"            , { parseCompilerList(it) })
+            || parseField(0, CabalTokelTypes.LICENSE_FILES   , "license-file"           , { parseIDValue(CabalTokelTypes.DIRECTORY) })
+            || parseField(0, CabalTokelTypes.LICENSE_FILES   , "license-files"          , { parseDirectoryList(it) })
+            || parseField(0, CabalTokelTypes.DIRECTORY_FIELD , "data-dir"               , { parseTokenValue(CabalTokelTypes.DIRECTORY) })
+            || parseField(0, CabalTokelTypes.MAINTAINER      , "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
+            || parseFieldVariety(0, CabalTokelTypes.URL_FIELD   , URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseFieldVariety(0, CabalTokelTypes.FILE_LIST   , TOP_FILE_LIST_FIELD_NAMES, { parseDirectoryList(it) })
+            || parseFieldVariety(0, CabalTokelTypes.FREE_FIELD  , FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
 
-    fun parseMainFile(level: Int) = parseField(level, CabalTokelTypes.MAIN_FILE, "main-is", { parseFileName() })
+    fun parseMainFile(level: Int) = parseField(level, CabalTokelTypes.MAIN_FILE, "main-is", { parseIDValue(CabalTokelTypes.DIRECTORY) })
 
     fun parseRepoFields(level: Int) =
-               parseField(level, CabalTokelTypes.URL_FIELD         , "location"         , { parseURL() })
-            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "type"             , { token(CabalTokelTypes.ID) })                   //
-            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "module"           , { parseToken() })
-            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "branch"           , { parseToken() })
-            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "tag"              , { parseToken() })
-            || parseField(level, CabalTokelTypes.DIRECTORY_FIELD   , "subdir"           , { parseDirectory() })
+               parseField(level, CabalTokelTypes.URL_FIELD         , "location"         , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "type"             , { parseIDValue(CabalTokelTypes.REPO_TYPE) })
+            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "module"           , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "branch"           , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseField(level, CabalTokelTypes.TOKEN_FIELD       , "tag"              , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseField(level, CabalTokelTypes.DIRECTORY_FIELD   , "subdir"           , { parseTokenValue(CabalTokelTypes.DIRECTORY) })
 
     fun parseBuildInformation(level: Int) =
                parseField(level, CabalTokelTypes.BUILD_DEPENDS     , "build-depends"    , { parseConstraintList(it) })
             || parseField(level, CabalTokelTypes.PKG_CONFIG_DEPENDS, "pkgconfig-depends", { parseConstraintList(it) })
             || parseField(level, CabalTokelTypes.BUILD_TOOLS       , "build-tools"      , { parseConstraintList(it) })
             || parseField(level, CabalTokelTypes.BUILDABLE         , "buildable"        , { parseBool() })
-            || parseField(level, CabalTokelTypes.EXTENSIONS        , "extensions"       , { parseIDList(it) })                             //
+            || parseField(level, CabalTokelTypes.EXTENSIONS        , "extensions"       , { parseIDList(it) })
             || parseField(level, CabalTokelTypes.OTHER_MODULES     , "other-modules"    , { parseIDList(it) })
-            || parseField(level, CabalTokelTypes.FILE_LIST         , "includes"         , { parseFileNameList(it) })
-            || parseField(level, CabalTokelTypes.FILE_LIST         , "install-includes" , { parseFileNameList(it) })
-            || parseField(level, CabalTokelTypes.FILE_LIST         , "c-sources"        , { parseFileNameList(it) })
+            || parseField(level, CabalTokelTypes.FILE_LIST         , "includes"         , { parseDirectoryList(it) })
+            || parseField(level, CabalTokelTypes.FILE_LIST         , "install-includes" , { parseDirectoryList(it) })
+            || parseField(level, CabalTokelTypes.FILE_LIST         , "c-sources"        , { parseDirectoryList(it) })
             || parseField(level, CabalTokelTypes.DIRECTORY_LIST    , "hs-source-dirs"   , { parseDirectoryList(it) })
             || parseField(level, CabalTokelTypes.DIRECTORY_LIST    , "extra-lib-dirs"   , { parseDirectoryList(it) })
             || parseField(level, CabalTokelTypes.DIRECTORY_LIST    , "include-dirs"     , { parseDirectoryList(it) })
             || parseField(level, CabalTokelTypes.TOKEN_LIST        , "frameworks"       , { parseTokenList(it) })
             || parseField(level, CabalTokelTypes.TOKEN_LIST        , "extra-libraries"  , { parseTokenList(it) })
-            || parseFieldList(level, CabalTokelTypes.OPTIONS_FIELD , OPTIONS_FIELD_NAMES, { parseTokenList(it) })
+            || parseFieldVariety(level, CabalTokelTypes.OPTIONS_FIELD , OPTIONS_FIELD_NAMES, { parseTokenList(it) })
 
 
 
@@ -290,23 +279,23 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         parseSectionType("executable")
-                && parseName()
+                && parseIDValue(CabalTokelTypes.NAME)
                 && parseProperties(level, true, { parseMainFile(it) })
     }
 
     fun parseExactSection(level: Int, tokenType: IElementType, sectionName: String, parseAfterInfo: () -> Boolean, parseBody: (Int) -> Boolean) = start(tokenType) {
         parseSectionType(sectionName)
                 && parseAfterInfo()
-                && parseProperties(level, (sectionName == "library"), parseBody)
+                && parseProperties(level, (sectionName == "library"), { parseBody(it) })
     }
 
     fun parseSection(level: Int) =
                parseExecutable(level)
 
-            || parseExactSection(level, CabalTokelTypes.TEST_SUITE, "test-suite", { parseName() }) {
+            || parseExactSection(level, CabalTokelTypes.TEST_SUITE, "test-suite", { parseIDValue(CabalTokelTypes.NAME) }) {
                               parseMainFile(it)
-                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "type"       , { token(CabalTokelTypes.ID) })         //
-                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "test-module", { parseIdentifier() })
+                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "type"       , { parseIDValue(CabalTokelTypes.TEST_SUIT_TYPE) })
+                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
                }
 
             || parseExactSection(level, CabalTokelTypes.LIBRARY, "library", { true }) {
@@ -314,16 +303,16 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                            || parseField(it, CabalTokelTypes.EXPOSED        , "exposed"        , { parseBool() })
                }
 
-            || parseExactSection(level, CabalTokelTypes.BENCHMARK, "benchmark", { parseName() }) {
+            || parseExactSection(level, CabalTokelTypes.BENCHMARK, "benchmark", { parseIDValue(CabalTokelTypes.NAME) }) {
                               parseMainFile(it)
-                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "type"       , { token(CabalTokelTypes.ID) })         //
+                           || parseField(it, CabalTokelTypes.TOKEN_FIELD , "type"       , { parseIDValue(CabalTokelTypes.BENCHMARK_TYPE) })
                }
 
-            || parseExactSection(level, CabalTokelTypes.SOURCE_REPO, "source-repository", { parseRepoKind() }) {
+            || parseExactSection(level, CabalTokelTypes.SOURCE_REPO, "source-repository", { parseIDValue(CabalTokelTypes.REPO_KIND) }) {
                               parseRepoFields(it)
                }
 
-            || parseExactSection(level, CabalTokelTypes.FLAG, "flag", { parseName() }) {
+            || parseExactSection(level, CabalTokelTypes.FLAG, "flag", { parseIDValue(CabalTokelTypes.NAME) }) {
                               parseField(it, CabalTokelTypes.FREE_FIELD  , "description", { parseFreeForm(it) })
                            || parseField(it, CabalTokelTypes.BOOL_FIELD  , "default"    , { parseBool()       })
                            || parseField(it, CabalTokelTypes.BOOL_FIELD  , "manual"     , { parseBool()       })
