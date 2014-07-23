@@ -124,7 +124,8 @@ public class HaskellDebugProcess(session: XDebugSession,
                                      syncObject: Lock,
                                      frameIsFilled: Condition,
                                      frameHistoryIndex: Int) {
-        debugger.backsSequence(SequenceOfBacksCommand(allHistFramesArray, syncObject, frameIsFilled, frameHistoryIndex))
+        debugger.backsSequence(SequenceOfBacksCommand(allHistFramesArray, syncObject, frameIsFilled, frameHistoryIndex,
+                debugProcess = this))
     }
 
     override fun sessionInitialized() {

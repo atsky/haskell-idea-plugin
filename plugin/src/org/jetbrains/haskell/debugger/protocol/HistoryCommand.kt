@@ -10,25 +10,36 @@ import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import org.jetbrains.haskell.debugger.parser.History
 
 /**
  * Created by vlad on 7/16/14.
  */
 
-public class HistoryCommand(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
-                            val topFrameInfo : HsTopStackFrameInfo) : RealTimeCommand() {
+public class HistoryCommand(
+                            callback: CommandCallback?) : RealTimeCommand(callback) {
     override fun getBytes(): ByteArray {
         return ":hist\n".toByteArray()
     }
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-        val histFrames = ArrayList<HsCommonStackFrameInfo>()
-        histFrames.addAll(Parser.parseHistory(output))
-        val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
-        if (breakpoint != null) {
-            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-        } else {
-            debugProcess.getSession()!!.positionReached(context)
+    override fun parseOutput(output: Deque<String?>): ParseResult? =Parser.parseHistory(output)
+
+    class object {
+        public class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
+                                          val topFrameInfo: HsTopStackFrameInfo,
+                                          val debugProcess: HaskellDebugProcess) : CommandCallback() {
+            override fun execAfterHandling(result: ParseResult?) {
+                if (result != null && result is History) {
+                    val histFrames = result.list
+                    val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
+                    if (breakpoint != null) {
+                        debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                    } else {
+                        debugProcess.getSession()!!.positionReached(context)
+                    }
+                }
+            }
         }
     }
 }

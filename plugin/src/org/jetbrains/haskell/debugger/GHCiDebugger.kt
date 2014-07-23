@@ -24,6 +24,8 @@ import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
+import org.jetbrains.haskell.debugger.protocol.FlowCommand
+import org.jetbrains.haskell.debugger.protocol.StepCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -55,8 +57,13 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     public var debugStarted: Boolean = false
         private set
 
+    override fun evaluateExpression(expression: String) {
+        throw UnsupportedOperationException()
+    }
+
     override fun trace() {
-        queue.addCommand(TraceCommand("main >> (withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 1) >> hClose h)"))
+        queue.addCommand(TraceCommand("main >> (withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 1) >> hClose h)",
+                FlowCommand.StandardFlowCallback(debugProcess)))
     }
 
     /**
@@ -85,24 +92,25 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
-    override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line))
+    override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line,
+            SetBreakpointCommand.StandardSetBreakpointCallback(debugProcess)))
 
-    override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber))
+    override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber, null))
 
     override fun stepInto() {
-        queue.addCommand(StepIntoCommand())
+        queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
     }
 
     override fun stepOver() {
-        queue.addCommand(StepOverCommand())
+        queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
     }
 
     override fun resume() {
-        queue.addCommand(ResumeCommand())
+        queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
     }
 
     override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HsTopStackFrameInfo) {
-        queue.addCommand(HistoryCommand(breakpoint, topFrameInfo))
+        queue.addCommand(HistoryCommand(HistoryCommand.StandardHistoryCallback(breakpoint, topFrameInfo, debugProcess)))
     }
 
     override public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) {
@@ -110,10 +118,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
     override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) {
         queue.addCommand(sequenceOfForwardsCommand)
-    }
-
-    override fun requestVariables() {
-        throw UnsupportedOperationException()
     }
 
     override fun prepareGHCi() {
@@ -171,7 +175,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     private fun handleOutput() {
-        lastCommand?.handleOutput(collectedOutput.toString().split('\n').toLinkedList(), debugProcess)
+        lastCommand?.handleOutput(collectedOutput.toString().split('\n').toLinkedList())
         collectedOutput = StringBuilder()
     }
 

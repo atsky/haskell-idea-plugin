@@ -7,6 +7,4 @@ package org.jetbrains.haskell.debugger.protocol
 /**
  * Command like setting breakpoint
  */
-public abstract class RealTimeCommand: AbstractCommand() {
-
-}
+public abstract class RealTimeCommand(callback: CommandCallback?) : AbstractCommand(callback)

@@ -1,25 +1,21 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.Deque
+import org.jetbrains.haskell.debugger.parser.ParseResult
 
 /**
  * Created by vlad on 7/17/14.
  */
 
-public abstract class HiddenCommand : AbstractCommand() {
+public abstract class HiddenCommand : AbstractCommand(null) {
 
     class object {
         public fun createInstance(command: String): HiddenCommand {
             return object : HiddenCommand() {
-                override fun getBytes(): ByteArray {
-                    return command.toByteArray()
-                }
-
+                override fun getBytes(): ByteArray = command.toByteArray()
             }
         }
     }
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-    }
+    override fun parseOutput(output: Deque<String?>): ParseResult? = null
 }

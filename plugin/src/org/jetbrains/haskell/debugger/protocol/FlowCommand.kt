@@ -7,18 +7,26 @@ import java.util.Deque
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import java.util.ArrayList
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import org.jetbrains.haskell.debugger.GHCiDebugger
+import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 
 /**
  * Created by vlad on 7/17/14.
  */
 
-public abstract class FlowCommand : AbstractCommand() {
+public abstract class FlowCommand(callback: CommandCallback?) : AbstractCommand(callback) {
 
-    override fun handleOutput(output: Deque<String?>, debugProcess: HaskellDebugProcess) {
-        val topFrameInfo = Parser.tryParseStoppedAt(output)
-        if (topFrameInfo != null) {
-            val breakpoint = debugProcess.getBreakpointAtLine(topFrameInfo.filePosition.startLine)!!
-            debugProcess.debugger.history(breakpoint, topFrameInfo)
+    override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.tryParseStoppedAt(output)
+
+    class object {
+        public class StandardFlowCallback(val debugProcess: HaskellDebugProcess): CommandCallback() {
+            override fun execAfterHandling(result: ParseResult?) {
+                if (result != null && result is HsTopStackFrameInfo) {
+                    val breakpoint = debugProcess.getBreakpointAtLine(result.filePosition.startLine)!!
+                    debugProcess.debugger.history(breakpoint, result)
+                }
+            }
         }
     }
 }

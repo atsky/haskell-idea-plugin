@@ -4,7 +4,8 @@ package org.jetbrains.haskell.debugger.protocol
  * Created by vlad on 7/10/14.
  */
 
-public class TraceCommand(val function: String = "main", vararg val params: String) : FlowCommand() {
+public class TraceCommand(val function: String = "main", callback: CommandCallback?,
+                          vararg val params: String) : FlowCommand(callback) {
 
     override fun getBytes(): ByteArray {
         val builder = StringBuilder()

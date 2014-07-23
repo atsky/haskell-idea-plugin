@@ -40,6 +40,8 @@ public class Parser() {
 
         val NO_MORE_BREAKPOINTS_PATTERN = "no more logged breakpoints"
 
+        val EXPRESSION_TYPE_PATTERN = "(.*) :: (.*)"
+
         public fun tryCreateFilePosition(line: String): FilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
@@ -109,7 +111,7 @@ public class Parser() {
         /**
          * Parses ghci output trying to find local bindings in it
          */
-        public fun tryParseLocalBindings(output: Deque<String?>): ArrayList<LocalBinding> {
+        public fun tryParseLocalBindings(output: Deque<String?>): LocalBindingList {
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             for(currentLine in output) {
@@ -118,10 +120,10 @@ public class Parser() {
                     localBindings.add(res as LocalBinding)
                 }
             }
-            return localBindings
+            return LocalBindingList(localBindings)
         }
 
-        public fun parseHistory(output: Deque<String?>): ArrayList<HsCommonStackFrameInfo> {
+        public fun parseHistory(output: Deque<String?>): History {
             val callStack = ArrayList<HsCommonStackFrameInfo>()
             for (line in output) {
                 if (line?.trim().equals("<end of history>") ||
@@ -141,7 +143,7 @@ public class Parser() {
                     }
                 }
             }
-            return callStack
+            return History(callStack)
         }
         private fun tryParseFilePosition(string: String?, pattern: String): FilePosition? {
             if(string != null) {
@@ -169,6 +171,31 @@ public class Parser() {
                 }
             }
             return null
+        }
+
+        public fun parseExpressionType(string: String): ExpressionType {
+            val matcher = Pattern.compile(EXPRESSION_TYPE_PATTERN).matcher(string.trim())
+            if (matcher.matches()) {
+                return ExpressionType(matcher.group(1)!!, matcher.group(2)!!)
+            }
+            throw RuntimeException("Wrong GHCi output occured while handling TypeCommand result")
+        }
+
+        public fun parsePlainOutput(output: Deque<String?>): Plain {
+            val builder = StringBuilder()
+            for (line in output) {
+                if (line != output.last()) {
+                    builder.append(line)
+                } else {
+                    val matcher = Pattern.compile("(*.)${org.jetbrains.haskell.debugger.GHCiDebugger.PROMPT_LINE}").matcher(line!!)
+                    if (matcher.matches()) {
+                        builder.append(matcher.group(1)!!)
+                    } else {
+                        throw RuntimeException("Wrong GHCi output occured while handling plain result")
+                    }
+                }
+            }
+            return Plain(builder.toString().trim().replace("\n", "\\n"))
         }
     }
 }
