@@ -46,7 +46,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     public var lastCommand: AbstractCommand? = null;
 
     {
-        queue = CommandQueue(this)
+        queue = CommandQueue({(command : AbstractCommand) -> execute(command)})
         queue.start()
 
         inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal()})
@@ -59,7 +59,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(TraceCommand("main >> (withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 1) >> hClose h)"))
     }
 
-    override fun execute(command: AbstractCommand) {
+    /**
+     * Executes command immediately
+     */
+    private fun execute(command: AbstractCommand) {
         val bytes = command.getBytes()
 
         synchronized(writeLock) {

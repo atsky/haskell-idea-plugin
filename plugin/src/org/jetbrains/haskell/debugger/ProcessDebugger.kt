@@ -19,8 +19,6 @@ public trait ProcessDebugger {
 
     public fun trace()
 
-    public fun execute(command: AbstractCommand)
-
     public fun setBreakpoint(line: Int)
 
     public fun removeBreakpoint(breakpointNumber: Int)

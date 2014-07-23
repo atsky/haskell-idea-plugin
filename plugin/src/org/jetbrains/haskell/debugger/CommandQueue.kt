@@ -12,7 +12,7 @@ import java.util.Collections
  * Created by vlad on 7/15/14.
  */
 
-public class CommandQueue(val debugger: GHCiDebugger) : Runnable {
+public class CommandQueue(val execute : (AbstractCommand) -> Unit) : Runnable {
 
     private val commands = LinkedList<AbstractCommand>()
     private var running = true
@@ -35,7 +35,7 @@ public class CommandQueue(val debugger: GHCiDebugger) : Runnable {
             inputLock.unlock()
 
             if (command != null) {
-                debugger.execute(command!!)
+                execute(command!!)
             }
         }
     }
