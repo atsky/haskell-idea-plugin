@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.*
 import org.jetbrains.haskell.highlight.HaskellHighlighter
 import org.jetbrains.cabal.parser.Checkable
+import org.jetbrains.cabal.parser.Field
 
 public class CabalAnnotator() : Annotator {
 
@@ -18,6 +19,10 @@ public class CabalAnnotator() : Annotator {
             if (errorMsg != null) {
                 holder.createErrorAnnotation(element.getNode()!!, errorMsg)
             }
+        }
+
+        if ((element is Field) && !(element.isUniqueOnThisLevel())) {
+            holder.createErrorAnnotation(element.getKeyNode(), "duplicated field")
         }
 
         if ((element is PropertyKey) || (element is SectionType)) {

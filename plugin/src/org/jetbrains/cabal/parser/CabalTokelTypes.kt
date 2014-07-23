@@ -53,6 +53,7 @@ public trait CabalTokelTypes {
         val IF_CONDITION       : IElementType = CabalCompositeElementType("IF_CONDITION"             , ::IfCondition             )
         val ELSE_CONDITION     : IElementType = CabalCompositeElementType("ELSE_CONDITION"           , ::ElseCondition           )
         val REPO_KIND          : IElementType = CabalCompositeElementType("REPO_KIND"                , ::RepoKind                )
+//        val ROOT               : IElementType = CabalCompositeElementType("ROOT"                     , ::Root                    )
 
         val VERSION            : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField            )
         val CABAL_VERSION      : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField       )

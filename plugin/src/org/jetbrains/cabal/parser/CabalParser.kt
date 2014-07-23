@@ -312,7 +312,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         val rootMarker = mark()
         while (!builder.eof()) {
             if (!(parseTopLevelField() || parseSection(0)))
-              builder.advanceLexer()
+                builder.advanceLexer()
         }
         rootMarker.done(root)
         return builder.getTreeBuilt()!!

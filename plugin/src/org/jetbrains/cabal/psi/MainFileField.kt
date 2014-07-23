@@ -2,6 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
+import org.jetbrains.cabal.parser.Field
 
-public class MainFileField(node: ASTNode) : ASTWrapperPsiElement(node) {
+public class MainFileField(node: ASTNode) : ASTWrapperPsiElement(node), Field {
 }
