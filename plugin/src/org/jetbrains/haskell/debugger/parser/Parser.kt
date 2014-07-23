@@ -42,6 +42,8 @@ public class Parser() {
 
         val EXPRESSION_TYPE_PATTERN = "(.*) :: (.*)"
 
+        val SHOW_RESULT_PATTERN = "\"(.*)\""
+
         public fun tryCreateFilePosition(line: String): FilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
@@ -173,29 +175,23 @@ public class Parser() {
             return null
         }
 
-        public fun parseExpressionType(string: String): ExpressionType {
+        public fun parseExpressionType(string: String): ExpressionType? {
             val matcher = Pattern.compile(EXPRESSION_TYPE_PATTERN).matcher(string.trim())
             if (matcher.matches()) {
                 return ExpressionType(matcher.group(1)!!, matcher.group(2)!!)
             }
-            throw RuntimeException("Wrong GHCi output occured while handling TypeCommand result")
+            return null
         }
 
-        public fun parsePlainOutput(output: Deque<String?>): Plain {
-            val builder = StringBuilder()
-            for (line in output) {
-                if (line != output.last()) {
-                    builder.append(line)
-                } else {
-                    val matcher = Pattern.compile("(*.)${org.jetbrains.haskell.debugger.GHCiDebugger.PROMPT_LINE}").matcher(line!!)
-                    if (matcher.matches()) {
-                        builder.append(matcher.group(1)!!)
-                    } else {
-                        throw RuntimeException("Wrong GHCi output occured while handling plain result")
-                    }
+        public fun tryParseShowOutput(output: Deque<String?>): ShowOutput? {
+            val line = output.firstOrNull()
+            if (line != null) {
+                val matcher = Pattern.compile(SHOW_RESULT_PATTERN).matcher(line)
+                if (matcher.matches()) {
+                    return ShowOutput(matcher.group(1)!!)
                 }
             }
-            return Plain(builder.toString().trim().replace("\n", "\\n"))
+            return null;
         }
     }
 }

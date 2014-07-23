@@ -47,7 +47,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      * This method should return evaluator (to use 'Evaluate expression' and other such tools) but this functionality
      * is not supported yet
      */
-    override fun getEvaluator(): XDebuggerEvaluator? = null//HsDebuggerEvaluator(debugProcess.debugger)
+    override fun getEvaluator(): XDebuggerEvaluator? = HsDebuggerEvaluator(debugProcess.debugger)
 
     /**
      * Stack frame appearance customization, not implemented yet, default implementation is used

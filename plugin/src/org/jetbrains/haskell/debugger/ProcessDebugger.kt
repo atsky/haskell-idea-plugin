@@ -6,6 +6,8 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 
 /**
  * Created by vlad on 7/11/14.
@@ -13,7 +15,7 @@ import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
 
 public trait ProcessDebugger {
 
-    public fun evaluateExpression(expression: String)
+    public fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback)
 
     public fun trace()
 

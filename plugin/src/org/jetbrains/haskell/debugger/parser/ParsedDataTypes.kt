@@ -41,7 +41,7 @@ public class HsCommonStackFrameInfo(val index: Int,
 public class ExpressionType(public val expression: String,
                             public val expressionType: String) : ParseResult()
 
-public class Plain(public val output: String) : ParseResult()
+public class ShowOutput(public val output: String) : ParseResult()
 
 public class History(public val list: ArrayList<HsCommonStackFrameInfo>) : ParseResult()
 

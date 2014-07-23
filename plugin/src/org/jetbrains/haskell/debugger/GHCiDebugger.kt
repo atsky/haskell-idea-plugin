@@ -26,6 +26,12 @@ import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import org.jetbrains.haskell.debugger.protocol.ExpressionTypeCommand
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import org.jetbrains.haskell.debugger.parser.ExpressionType
+import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -57,8 +63,18 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     public var debugStarted: Boolean = false
         private set
 
-    override fun evaluateExpression(expression: String) {
-        throw UnsupportedOperationException()
+    override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
+        queue.addCommand(ExpressionTypeCommand(expression, object : CommandCallback() {
+            override fun execAfterHandling(result: ParseResult?) {
+                if (result == null) {
+                    callback.errorOccurred("Unknown expression")
+                } else if (result is ExpressionType) {
+                    val expType = result.expressionType
+                    queue.addCommand(ShowExpressionCommand(expression,
+                            ShowExpressionCommand.StandardShowExpressionCallback(expType, callback)))
+                }
+            }
+        }))
     }
 
     override fun trace() {
