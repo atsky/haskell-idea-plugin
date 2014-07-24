@@ -6,14 +6,14 @@ import org.jetbrains.cabal.parser.Field
 import org.jetbrains.cabal.parser.Disallowedable
 import com.intellij.psi.PsiElement
 
-public class MainFileField(node: ASTNode) : ASTWrapperPsiElement(node), Field, Disallowedable {
+public class TestModuleField(node: ASTNode) : ASTWrapperPsiElement(node), Field, Disallowedable {
 
     public override fun isEnabled(): String? {
         val parent = (this : PsiElement).getParent()!!
         if (parent is SourceRepo) {
             val sectType = parent.getFieldValue("type")
-            if ((sectType == null) || (sectType == "detailed-1.0")) return null
-            return "main-is field disallowed with such test suit type"
+            if ((sectType == null) || (sectType == "exitcode-stdio-1.0")) return null
+            return "test-module field disallowed with such test suit type"
         }
         return null
     }

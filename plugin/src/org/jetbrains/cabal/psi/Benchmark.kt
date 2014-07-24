@@ -27,10 +27,11 @@ public class Benchmark(node: ASTNode) : ASTWrapperPsiElement(node), Section {
                 mainIsFlag = true
             }
         }
+        if (typeValue == null) return "type field is required"
         if (typeValue == "exitcode-stdio-1.0") {
             if (!mainIsFlag) return "main-is field is required"
             return null
         }
-        return "type field is required"
+        return null
     }
 }

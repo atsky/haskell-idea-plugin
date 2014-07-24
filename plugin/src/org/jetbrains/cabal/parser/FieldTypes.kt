@@ -51,7 +51,7 @@ public val FIELD_TYPES: Map<String, IElementType> = mapOf(
          "module"               to CabalTokelTypes.REPO_MODULE       ,
          "branch"               to CabalTokelTypes.TOKEN_FIELD       ,
          "tag"                  to CabalTokelTypes.TOKEN_FIELD       ,
-         "test-module"          to CabalTokelTypes.TOKEN_FIELD       ,
+         "test-module"          to CabalTokelTypes.TEST_MODULE       ,
          "frameworks"           to CabalTokelTypes.TOKEN_LIST        ,
          "extra-libraries"      to CabalTokelTypes.TOKEN_LIST        ,
          "subdir"               to CabalTokelTypes.DIRECTORY_FIELD   ,

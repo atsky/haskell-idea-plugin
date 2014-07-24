@@ -29,6 +29,16 @@ public trait Section: PsiElement {
         return false
     }
 
+    public fun getFieldValue(fieldName: String): String? {
+        val nodes = getSectChildren()
+        for (node in nodes) {
+            if ((node is Field) && node.hasName(fieldName)) {
+                return node.getFieldName()
+            }
+        }
+        return null
+    }
+
     public fun getAfterTypeInfo(): String? {
         if (getSectName() == "library") return null
         var node = getFirstChild()!!

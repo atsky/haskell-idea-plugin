@@ -236,7 +236,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         var currentLevel : Int? = null
         while (!builder.eof()) {
             val level = nextLevel()
-            if ((level == null) || ((currentLevel == null) && (level <= prevLevel))) return false            //sections without any field is not allowed
+            if (level == null) return false
+            if ((currentLevel == null) && (level <= prevLevel)) return true                  //sections without any field is allowed
             else if ((currentLevel == null) && (level > prevLevel)) {
                 currentLevel = level
             } else if (level != currentLevel!!) return (level <= prevLevel)

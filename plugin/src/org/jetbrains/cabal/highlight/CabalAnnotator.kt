@@ -24,7 +24,7 @@ public class CabalAnnotator() : Annotator {
             holder.createErrorAnnotation(element.getKeyNode(), "duplicated field")
         }
 
-        if ((element is CanBeDisabledField)) {
+        if ((element is Disallowedable)) {
             val errorMsg = element.isEnabled()
             if (errorMsg != null) {
                 holder.createErrorAnnotation((element : Field).getKeyNode(), errorMsg)
