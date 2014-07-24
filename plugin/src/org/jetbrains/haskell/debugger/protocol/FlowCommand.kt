@@ -21,7 +21,7 @@ public abstract class FlowCommand(callback: CommandCallback?) : AbstractCommand(
 
     class object {
         public class StandardFlowCallback(val debugProcess: HaskellDebugProcess): CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is HsTopStackFrameInfo) {
                     val breakpoint = debugProcess.getBreakpointAtLine(result.filePosition.startLine)!!
                     debugProcess.debugger.history(breakpoint, result)

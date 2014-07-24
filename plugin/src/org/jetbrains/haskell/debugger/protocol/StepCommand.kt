@@ -18,7 +18,7 @@ public abstract class StepCommand(callback: CommandCallback?) : AbstractCommand(
 
     class object {
         public class StandardStepCallback(val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is HsTopStackFrameInfo) {
                     debugProcess.debugger.history(null, result)
                 }

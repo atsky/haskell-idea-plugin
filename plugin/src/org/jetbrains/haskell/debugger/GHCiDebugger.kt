@@ -65,7 +65,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
         queue.addCommand(ExpressionTypeCommand(expression, object : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result == null) {
                     callback.errorOccurred("Unknown expression")
                 } else if (result is ExpressionType) {

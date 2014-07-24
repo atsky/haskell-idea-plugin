@@ -16,7 +16,7 @@ public abstract class AbstractCommand(private val callback: CommandCallback?) {
 
     public fun handleOutput(output: Deque<String?>) {
         val result = parseOutput(output)
-        callback?.execAfterHandling(result)
+        callback?.execAfterParsing(result)
     }
 
 }

@@ -29,7 +29,7 @@ public class HistoryCommand(
         public class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
                                           val topFrameInfo: HsTopStackFrameInfo,
                                           val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is History) {
                     val histFrames = result.list
                     val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))

@@ -19,7 +19,7 @@ public class SetBreakpointCommand(val lineNumber: Int,
 
     class object {
         public class StandardSetBreakpointCallback(val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is BreakpointCommandResult) {
                     debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, result.position.startLine)
                 }

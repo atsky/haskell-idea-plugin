@@ -28,17 +28,24 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
                 /*
                  * Need to always reopen connection (not because of hClose command in ghci)
                  */
-                socket = serverSocket.accept()
-                connected = true
-                val b = socket!!.getInputStream()!!.read()
-                if (b == OUTPUT_ACCEPTED_BYTE) {
-                    debugger.processStopped.set(true)
-                } else {
-                    onStopSignal()
+                try {
+                    socket = serverSocket.accept()
+                    connected = true
+                } catch (e: SocketException) {
+                    println(e.getMessage())
                     running = false
                 }
-                socket!!.close()
-                connected = false
+                if (connected) {
+                    val b = socket!!.getInputStream()!!.read()
+                    if (b == OUTPUT_ACCEPTED_BYTE) {
+                        debugger.processStopped.set(true)
+                    } else {
+                        onStopSignal()
+                        running = false
+                    }
+                    connected = false
+                    socket!!.close()
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -46,6 +53,7 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
             running = false
             connected = false
             socket?.close()
+            if (!serverSocket.isClosed())
             serverSocket.close()
         }
     }
@@ -56,7 +64,9 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
 
     public fun stop() {
         running = false
-        serverSocket.close()
+        if (!serverSocket.isClosed()) {
+            serverSocket.close()
+        }
     }
 
 }

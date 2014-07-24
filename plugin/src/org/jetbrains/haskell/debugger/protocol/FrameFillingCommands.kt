@@ -40,7 +40,7 @@ public class SequenceOfBacksCommand(val allHistFramesArray: ArrayList<HsCommonSt
                                                      val sequenceLength: Int,
                                                      var currentStep: Int = sequenceLength - 1,
                                                      val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is LocalBindingList) {
                     if (currentStep != 0) {
                         fillFrameBindingsIfNeeded(result.list)
@@ -107,7 +107,7 @@ public class SequenceOfForwardsCommand(val frameBindingsAreSet: Condition,
                                                         val sequenceLength: Int,
                                                         var currentStep: Int = 1,
                                                         val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (currentStep != sequenceLength) {
                     currentStep += 1
                     debugProcess.debugger.forwardsSequence(SequenceOfForwardsCommand(

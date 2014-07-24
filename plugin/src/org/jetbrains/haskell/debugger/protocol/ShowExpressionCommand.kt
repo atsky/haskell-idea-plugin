@@ -26,7 +26,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
     class object {
         public class StandardShowExpressionCallback(val expressionType: String?,
                                                      val callback: XDebuggerEvaluator.XEvaluationCallback): CommandCallback() {
-            override fun execAfterHandling(result: ParseResult?) {
+            override fun execAfterParsing(result: ParseResult?) {
                 if (result == null) {
                     callback.errorOccurred("Cannot show type: $expressionType")
                 } else if (result is ShowOutput) {

@@ -7,5 +7,5 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
  */
 
 public abstract class CommandCallback {
-    public abstract fun execAfterHandling(result: ParseResult?)
+    public abstract fun execAfterParsing(result: ParseResult?)
 }
