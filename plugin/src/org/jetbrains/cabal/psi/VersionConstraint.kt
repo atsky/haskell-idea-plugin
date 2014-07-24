@@ -10,10 +10,10 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
     public override fun isValidValue(): String? {
         if ((this : PsiElement).getFirstChild()!!.getText()!!.equals("==")) {
             val version = (this : PsiElement).getLastChild()!!.getText()!!
-            if (version.matches("([0-9]+\\.)*([0-9]+)") || version.matches("([0-9]+\\.){2,}\\*")) return null
+            if (version.matches("([0-9]+(\\-[0-9a-zA_Z]+)*\\.)*([0-9]+(\\-[0-9a-zA_Z]+)*)") || version.matches("([0-9]+(\\-[0-9a-zA_Z]+)*\\.){2,}\\*")) return null
         }
         else {
-            if ((this : PsiElement).getLastChild()!!.getText()!!.matches("([0-9]+\\.)*([0-9]+)")) return null
+            if ((this : PsiElement).getLastChild()!!.getText()!!.matches("([0-9]+(\\-[0-9a-zA_Z]+)*\\.)*([0-9]+(\\-[0-9a-zA_Z]+)*)")) return null
         }
         return "invalid version constraint"
     }

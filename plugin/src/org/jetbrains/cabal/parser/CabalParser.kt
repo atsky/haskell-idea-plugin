@@ -113,6 +113,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseTokenValue(elemType: IElementType) = start(elemType, { parseFreeLine() })
 
+    fun parseDirectory() = parseTokenValue(CabalTokelTypes.DIRECTORY)
+
     fun skipNewLines(level: Int = -1) {
         val nextIndent = nextLevel()
         if ((nextIndent != null) && (nextIndent > level))
@@ -147,7 +149,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseOptionList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.OPTION) }, { token(CabalTokelTypes.COMMA) || true })
 
-    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseTokenValue(CabalTokelTypes.DIRECTORY) }, { token(CabalTokelTypes.COMMA) || true })
+    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { token(CabalTokelTypes.COMMA) || true })
 
     fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
 
@@ -184,15 +186,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(0, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
             || parseField(0, "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })
             || parseField(0, "tested-with"            , { parseCompilerList(it) })
-            || parseField(0, "license-file"           , { parseIDValue(CabalTokelTypes.DIRECTORY) })
+            || parseField(0, "license-file"           , { parseDirectory() })
             || parseField(0, "license-files"          , { parseDirectoryList(it) })
-            || parseField(0, "data-dir"               , { parseTokenValue(CabalTokelTypes.DIRECTORY) })
+            || parseField(0, "data-dir"               , { parseDirectory() })
             || parseField(0, "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
             || parseFieldVariety(0, URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
             || parseFieldVariety(0, TOP_FILE_LIST_FIELD_NAMES, { parseDirectoryList(it) })
             || parseFieldVariety(0, FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
 
-    fun parseMainFile(level: Int) = parseField(level, "main-is", { parseIDValue(CabalTokelTypes.DIRECTORY) })
+    fun parseMainFile(level: Int) = parseField(level, "main-is", { parseDirectory() })
 
     fun parseRepoFields(level: Int) =
                parseField(level, "location"         , { parseTokenValue(CabalTokelTypes.URL) })
@@ -200,7 +202,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(level, "module"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
             || parseField(level, "branch"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
             || parseField(level, "tag"              , { parseTokenValue(CabalTokelTypes.TOKEN) })
-            || parseField(level, "subdir"           , { parseTokenValue(CabalTokelTypes.DIRECTORY) })
+            || parseField(level, "subdir"           , { parseDirectory() })
 
     fun parseBuildInformation(level: Int) =
                parseField(level, "build-depends"    , { parseConstraintList(it) })
