@@ -10,20 +10,14 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.execution.process.ProcessListener
-import java.util.concurrent.atomic.AtomicBoolean
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.execution.process.ProcessOutputTypes
-import java.util.LinkedList
-import java.util.Deque
-import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
-import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
@@ -34,8 +28,8 @@ import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
  */
 
 public class HaskellDebugProcess(session: XDebugSession,
-                              val executionConsole: ExecutionConsole,
-                              val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
+                                 val executionConsole: ExecutionConsole,
+                                 val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
@@ -104,7 +98,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun runToPosition(position: XSourcePosition) {
-        throw UnsupportedOperationException()
+        debugger.runToPosition(position.getLine() + 1)
     }
 
     public fun addBreakpoint(position: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {

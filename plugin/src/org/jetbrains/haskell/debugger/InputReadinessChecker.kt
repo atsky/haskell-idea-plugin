@@ -53,8 +53,9 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
             running = false
             connected = false
             socket?.close()
-            if (!serverSocket.isClosed())
-            serverSocket.close()
+            if (!serverSocket.isClosed()) {
+                serverSocket.close()
+            }
         }
     }
 

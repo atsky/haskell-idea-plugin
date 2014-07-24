@@ -11,17 +11,11 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
-import java.util.Deque
-import java.util.LinkedList
 import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
 import java.util.concurrent.atomic.AtomicBoolean
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
-import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
@@ -32,6 +26,8 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
+import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import com.intellij.xdebugger.frame.XSuspendContext
 
 /**
  * Created by vlad on 7/11/14.
@@ -40,6 +36,8 @@ import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
 
     class object {
+        private val HANDLE_NAME = "handle"
+        private val TRACE_CMD = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
         public val PROMPT_LINE: String = "debug> "
     }
 
@@ -47,17 +45,16 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private var collectedOutput: StringBuilder = StringBuilder()
     private val queue: CommandQueue
     private val writeLock = Any()
-    private val handleName = "handle"
 
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
     public var lastCommand: AbstractCommand? = null;
 
     {
-        queue = CommandQueue({(command : AbstractCommand) -> execute(command)})
+        queue = CommandQueue({(command: AbstractCommand) -> execute(command) })
         queue.start()
 
-        inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal()})
+        inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
         inputReadinessChecker.start()
     }
     public var debugStarted: Boolean = false
@@ -78,7 +75,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun trace() {
-        queue.addCommand(TraceCommand("main >> (withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 1) >> hClose h)",
+        queue.addCommand(TraceCommand(TRACE_CMD,
                 FlowCommand.StandardFlowCallback(debugProcess)))
     }
 
@@ -121,11 +118,19 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
     }
 
+    override fun runToPosition(line: Int) {
+        if (debugProcess.getBreakpointAtLine(line) == null) {
+            queue.addCommand(SetBreakpointCommand(line, RunToPositionCallback(line)))
+        } else {
+            if (debugStarted) resume() else trace()
+        }
+    }
+
     override fun resume() {
         queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo : HsTopStackFrameInfo) {
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo) {
         queue.addCommand(HistoryCommand(HistoryCommand.StandardHistoryCallback(breakpoint, topFrameInfo, debugProcess)))
     }
 
@@ -147,7 +152,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 "(\\handle -> return handle)))"
         val host = "\"localhost\""
         val port = HaskellDebugProcess.INPUT_READINESS_PORT
-        var stop_cmd = "withSocketsDo $ $handleName >>= \\ h -> hPutChar h (chr 0) >> hClose h"
+        var stop_cmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 
         /*
          * todo:
@@ -161,11 +166,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 ":m +Network.BSD\n",
                 ":m +Control.Monad\n",
                 ":m +Control.Concurrent\n",
-                "let $handleName = ($connectTo_host_port) $host $port\n",
+                "let $HANDLE_NAME = ($connectTo_host_port) $host $port\n",
                 ":set stop $stop_cmd\n"
         )
         for (cmd in commands) {
-            queue.addCommand(HiddenCommand.createInstance(cmd))
+            queue.addCommand(HiddenCommand.createInstance(cmd), highPriority = true)
         }
     }
 
@@ -203,5 +208,47 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     private fun onStopSignal() {
         debugProcess.getSession()?.stop()
+    }
+
+
+    private inner class RunToPositionCallback(val line: Int): CommandCallback() {
+        // Was unable to define enum class here
+        private var state: Int = 0
+        private var breakpointNumber: Int? = null
+        private var flowResult: HsTopStackFrameInfo? = null
+
+        override fun execAfterParsing(result: ParseResult?) {
+            when (state) {
+                0 -> { // Run to temporary breakpoint
+                    state++
+                    if (result == null) {
+                        return
+                    } else if (result is BreakpointCommandResult) {
+                        breakpointNumber = result.breakpointNumber
+                    } else {
+                        throw RuntimeException("Wrong result obtained while setting a temporary breakpoint")
+                    }
+                    if (debugStarted) {
+                        queue.addCommand(ResumeCommand(this), true)
+                    } else {
+                        queue.addCommand(TraceCommand(TRACE_CMD, this), true)
+                    }
+                }
+                1 -> { // Remove temporary breakpoint
+                    state++
+                    if (result != null && result is HsTopStackFrameInfo) {
+                        flowResult = result
+                    } else {
+                        throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
+                    }
+                    queue.addCommand(RemoveBreakpointCommand(breakpointNumber!!, this), true)
+                }
+                2 -> { // Finish
+                    if (flowResult != null) {
+                        history(null, flowResult!!)
+                    }
+                }
+            }
+        }
     }
 }

@@ -34,12 +34,12 @@ public class SequenceOfBacksCommand(val allHistFramesArray: ArrayList<HsCommonSt
     override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.tryParseLocalBindings(output)
 
     class object {
-        public class StandardSequenceOfBacksCallback(val allHistFramesArray: ArrayList<HsCommonStackFrameInfo>,
-                                                     val syncObject: Lock,
-                                                     val frameBindingsAreSet: Condition,
-                                                     val sequenceLength: Int,
-                                                     var currentStep: Int = sequenceLength - 1,
-                                                     val debugProcess: HaskellDebugProcess) : CommandCallback() {
+        private class StandardSequenceOfBacksCallback(val allHistFramesArray: ArrayList<HsCommonStackFrameInfo>,
+                                                      val syncObject: Lock,
+                                                      val frameBindingsAreSet: Condition,
+                                                      val sequenceLength: Int,
+                                                      var currentStep: Int = sequenceLength - 1,
+                                                      val debugProcess: HaskellDebugProcess) : CommandCallback() {
             override fun execAfterParsing(result: ParseResult?) {
                 if (result != null && result is LocalBindingList) {
                     if (currentStep != 0) {
@@ -102,11 +102,11 @@ public class SequenceOfForwardsCommand(val frameBindingsAreSet: Condition,
     override fun parseOutput(output: Deque<String?>): ParseResult? = null
 
     class object {
-        public class StandardSequenceOfForwardsCallback(val frameBindingsAreSet: Condition,
-                                                        val syncObject: Lock,
-                                                        val sequenceLength: Int,
-                                                        var currentStep: Int = 1,
-                                                        val debugProcess: HaskellDebugProcess) : CommandCallback() {
+        private class StandardSequenceOfForwardsCallback(val frameBindingsAreSet: Condition,
+                                                         val syncObject: Lock,
+                                                         val sequenceLength: Int,
+                                                         var currentStep: Int = 1,
+                                                         val debugProcess: HaskellDebugProcess) : CommandCallback() {
             override fun execAfterParsing(result: ParseResult?) {
                 if (currentStep != sequenceLength) {
                     currentStep += 1

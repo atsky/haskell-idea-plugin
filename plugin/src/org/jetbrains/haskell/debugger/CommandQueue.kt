@@ -1,20 +1,17 @@
 package org.jetbrains.haskell.debugger
 
-import java.util.Queue
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
-import com.sun.jmx.remote.internal.ArrayQueue
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.LinkedList
 import java.util.concurrent.locks.ReentrantLock
-import java.util.Collections
 
 /**
  * Created by vlad on 7/15/14.
  */
 
-public class CommandQueue(val execute : (AbstractCommand) -> Unit) : Runnable {
+public class CommandQueue(val execute: (AbstractCommand) -> Unit) : Runnable {
 
-    private val commands = LinkedList<AbstractCommand>()
+    private val highPriorityCommands = LinkedList<AbstractCommand>()
+    private val lowPriorityCommands = LinkedList<AbstractCommand>()
     private var running = true
 
     private val inputLock = ReentrantLock()
@@ -24,12 +21,12 @@ public class CommandQueue(val execute : (AbstractCommand) -> Unit) : Runnable {
     override fun run() {
         while (running) {
             inputLock.lock()
-            while (running && (commands.empty || !ready)) {
+            while (running && (lowPriorityCommands.empty && highPriorityCommands.empty || !ready)) {
                 readyCondition.await()
             }
             var command: AbstractCommand? = null
             if (running) {
-                command = commands.removeLast()
+                command = if (!highPriorityCommands.empty) highPriorityCommands.removeFirst() else lowPriorityCommands.removeFirst()
                 ready = false
             }
             inputLock.unlock()
@@ -40,9 +37,17 @@ public class CommandQueue(val execute : (AbstractCommand) -> Unit) : Runnable {
         }
     }
 
-    public fun addCommand(command: AbstractCommand) {
+    /**
+     * Adds new command to the queue.
+     * @param highPriority should be set to true in another command's callback, so that the sequence of commands could be executed at once
+     */
+    public fun addCommand(command: AbstractCommand, highPriority: Boolean = false) {
         inputLock.lock()
-        commands.addFirst(command)
+        if (highPriority) {
+            highPriorityCommands.addLast(command)
+        } else {
+            lowPriorityCommands.addLast(command)
+        }
         readyCondition.signal()
         inputLock.unlock()
     }
