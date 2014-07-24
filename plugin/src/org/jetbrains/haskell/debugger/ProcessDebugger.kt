@@ -6,7 +6,6 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
-import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 
 /**
@@ -19,7 +18,7 @@ public trait ProcessDebugger {
 
     public fun trace()
 
-    public fun setBreakpoint(line: Int)
+    public fun setBreakpoint(module: String, line: Int)
 
     public fun removeBreakpoint(breakpointNumber: Int)
 
@@ -29,7 +28,7 @@ public trait ProcessDebugger {
 
     public fun stepOver()
 
-    public fun runToPosition(line: Int)
+    public fun runToPosition(module: String, line: Int)
 
     public fun resume()
 

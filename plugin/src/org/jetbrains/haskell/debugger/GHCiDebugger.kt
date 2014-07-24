@@ -27,7 +27,6 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import com.intellij.xdebugger.frame.XSuspendContext
 
 /**
  * Created by vlad on 7/11/14.
@@ -105,8 +104,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
-    override fun setBreakpoint(line: Int) = queue.addCommand(SetBreakpointCommand(line,
-            SetBreakpointCommand.StandardSetBreakpointCallback(debugProcess)))
+    override fun setBreakpoint(module: String, line: Int) = queue.addCommand(SetBreakpointCommand(module, line,
+            SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
 
     override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber, null))
 
@@ -118,9 +117,9 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
     }
 
-    override fun runToPosition(line: Int) {
-        if (debugProcess.getBreakpointAtLine(line) == null) {
-            queue.addCommand(SetBreakpointCommand(line, RunToPositionCallback(line)))
+    override fun runToPosition(module: String, line: Int) {
+        if (debugProcess.getBreakpointAtPosition(module, line) == null) {
+            queue.addCommand(SetBreakpointCommand(module, line, RunToPositionCallback(module, line)))
         } else {
             if (debugStarted) resume() else trace()
         }
@@ -211,7 +210,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
 
-    private inner class RunToPositionCallback(val line: Int): CommandCallback() {
+    private inner class RunToPositionCallback(val module: String,
+                                              val line: Int) : CommandCallback() {
         // Was unable to define enum class here
         private var state: Int = 0
         private var breakpointNumber: Int? = null
@@ -219,7 +219,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
         override fun execAfterParsing(result: ParseResult?) {
             when (state) {
-                0 -> { // Run to temporary breakpoint
+                0 -> {
+                    // Run to temporary breakpoint
                     state++
                     if (result == null) {
                         return
@@ -234,7 +235,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                         queue.addCommand(TraceCommand(TRACE_CMD, this), true)
                     }
                 }
-                1 -> { // Remove temporary breakpoint
+                1 -> {
+                    // Remove temporary breakpoint
                     state++
                     if (result != null && result is HsTopStackFrameInfo) {
                         flowResult = result
@@ -243,7 +245,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                     }
                     queue.addCommand(RemoveBreakpointCommand(breakpointNumber!!, this), true)
                 }
-                2 -> { // Finish
+                2 -> {
+                    // Finish
                     if (flowResult != null) {
                         history(null, flowResult!!)
                     }

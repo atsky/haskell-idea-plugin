@@ -22,6 +22,7 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
 /**
  * Created by vlad on 7/10/14.
@@ -44,25 +45,36 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
-            HaskellLineBreakpointHandler(javaClass<HaskellLineBreakpointType>(), this)
+            HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this)
     )
 
     override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
         return _breakpointHandlers
     }
 
+    private class BreakpointPosition(val module: String, val line: Int) {
+        override fun equals(other: Any?): Boolean {
+            if (other == null || other !is BreakpointPosition) {
+                return false
+            }
+            return module.equals(other.module) && line.equals(other.line)
+        }
+        override fun hashCode(): Int {
+            return module.hashCode() * 31 + line
+        }
+    }
     private class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
-    private val registeredBreakpoints: MutableMap<Int, BreakpointEntry> = hashMapOf()
+    private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
 
-    public fun setBreakpointNumberAtLine(breakpointNumber: Int, line: Int) {
-        val entry = registeredBreakpoints.get(line)
+    public fun setBreakpointNumberAtLine(breakpointNumber: Int, module: String, line: Int) {
+        val entry = registeredBreakpoints.get(BreakpointPosition(module, line))
         if (entry != null) {
             entry.breakpointNumber = breakpointNumber
         }
     }
 
-    public fun getBreakpointAtLine(line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
-        return registeredBreakpoints.get(line)?.breakpoint
+    public fun getBreakpointAtPosition(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
+        return registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpoint
     }
 
     override fun getEditorsProvider(): XDebuggerEditorsProvider {
@@ -90,7 +102,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
-        debugger.close();
+        debugger.close()
     }
 
     override fun resume() {
@@ -98,18 +110,21 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun runToPosition(position: XSourcePosition) {
-        debugger.runToPosition(position.getLine() + 1)
+        debugger.runToPosition(
+                HaskellUtils.getModuleName(getSession()!!.getProject(), position.getFile()),
+                HaskellUtils.zeroBasedToHaskellLineNumber(position.getLine()))
     }
 
-    public fun addBreakpoint(position: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        registeredBreakpoints.put(position, BreakpointEntry(null, breakpoint))
-        debugger.setBreakpoint(position)
+    public fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+        registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(null, breakpoint))
+        //        println(module)
+        debugger.setBreakpoint(module, line)
     }
 
-    public fun removeBreakpoint(position: Int) {
-        val breakpointNumber: Int? = registeredBreakpoints.get(position)?.breakpointNumber
+    public fun removeBreakpoint(module: String, line: Int) {
+        val breakpointNumber: Int? = registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpointNumber
         if (breakpointNumber != null) {
-            registeredBreakpoints.remove(position)
+            registeredBreakpoints.remove(BreakpointPosition(module, line))
             debugger.removeBreakpoint(breakpointNumber)
         }
     }
