@@ -8,7 +8,7 @@ public class RepoType(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     class object {
         public val VALID_REPO_TYPE : List<String> = listOf(
-                "arcs",
+                "darcs",
                 "git",
                 "svn",
                 "cvs",

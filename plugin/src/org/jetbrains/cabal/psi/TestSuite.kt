@@ -7,5 +7,5 @@ import org.jetbrains.cabal.parser.Section
 /**
  * @author Evgeny.Kurbatsky
  */
-public class TestSuite(node: ASTNode) : ASTWrapperPsiElement(node), Section {
+public class TestSuite(node: ASTNode) : ASTWrapperPsiElement(node) {
 }

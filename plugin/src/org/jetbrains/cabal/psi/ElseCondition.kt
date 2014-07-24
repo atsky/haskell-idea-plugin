@@ -5,4 +5,5 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.Section
 
 public class ElseCondition(node: ASTNode) : ASTWrapperPsiElement(node), Section {
+    override public val REQUIRED_FIELD_NAMES = null
 }

@@ -5,4 +5,5 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.Section
 
 public class Flag(node: ASTNode) : ASTWrapperPsiElement(node), Section {
+    public override val REQUIRED_FIELD_NAMES: List<String>? = null
 }

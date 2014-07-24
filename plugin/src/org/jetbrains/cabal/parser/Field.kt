@@ -5,9 +5,9 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.ASTNode
 import com.intellij.psi.impl.source.tree.SharedImplUtil
 
-public trait Field: PsiElement{
+public trait Field: PsiElement {
 
-    fun isUniqueOnThisLevel(): Boolean {
+    public fun isUniqueOnThisLevel(): Boolean {
         val siblings = (SharedImplUtil.getParent(getNode())!!).getChildren()
         var foundOne = false
         val selfType = (this : PsiElement).getNode()!!.getElementType()
@@ -22,5 +22,21 @@ public trait Field: PsiElement{
         return true
     }
 
-    fun getKeyNode(): PsiElement = getFirstChild()!!
+    public fun hasName(name: String): Boolean {
+        return getFirstChild()!!.getText()!!.equalsIgnoreCase(name)
+    }
+
+    public fun getToLowerCaseName(): String {
+        return getFirstChild()!!.getText()!!.toLowerCase()
+    }
+
+    public fun getFieldName(): String {
+        return getFirstChild()!!.getText()!!
+    }
+
+    public fun getLastValue(): String {
+        return getLastChild()!!.getText()!!
+    }
+
+    public fun getKeyNode(): PsiElement = getFirstChild()!!
 }

@@ -9,7 +9,8 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public override fun isValidValue(): String? {
         if ((this : PsiElement).getFirstChild()!!.getText()!!.equals("==")) {
-            if ((this : PsiElement).getLastChild()!!.getText()!!.matches("([0-9]+\\.)*([0-9]+(\\.\\*)?)")) return null
+            val version = (this : PsiElement).getLastChild()!!.getText()!!
+            if (version.matches("([0-9]+\\.)*([0-9]+)") || version.matches("([0-9]+\\.){2,}\\*")) return null
         }
         else {
             if ((this : PsiElement).getLastChild()!!.getText()!!.matches("([0-9]+\\.)*([0-9]+)")) return null

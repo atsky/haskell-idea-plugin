@@ -4,8 +4,7 @@ import com.intellij.lang.annotation.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.*
 import org.jetbrains.haskell.highlight.HaskellHighlighter
-import org.jetbrains.cabal.parser.Checkable
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.parser.*
 
 public class CabalAnnotator() : Annotator {
 
@@ -25,17 +24,23 @@ public class CabalAnnotator() : Annotator {
             holder.createErrorAnnotation(element.getKeyNode(), "duplicated field")
         }
 
+        if ((element is CanBeDisabledField)) {
+            val errorMsg = element.isEnabled()
+            if (errorMsg != null) {
+                holder.createErrorAnnotation((element : Field).getKeyNode(), errorMsg)
+            }
+        }
+
+        if ((element is Section)) {
+            val errorMsg = element.allRequiredFieldsExist()
+            if (errorMsg != null) {
+                holder.createErrorAnnotation(element.getSectTypeNode(), errorMsg)
+            }
+        }
+
         if ((element is PropertyKey) || (element is SectionType)) {
             keyword(element)
         }
-
-        if (element is Executable) {
-           keyword(element.getFirstChild()!!)
-        }
-        if (element is TestSuite) {
-            keyword(element.getFirstChild()!!)
-        }
-
     }
 
 }

@@ -74,6 +74,7 @@ public trait CabalTokelTypes {
         val TOKEN_FIELD        : IElementType = CabalCompositeElementType("TOKEN_FIELD"              , ::TokenField              )
         val TOKEN_LIST         : IElementType = CabalCompositeElementType("TOKEN_LIST"               , ::TokenListField          )
         val MAINTAINER         : IElementType = CabalCompositeElementType("MAINTAINER"               , ::MaintainerField         )
+        val REPO_MODULE        : IElementType = CabalCompositeElementType("REPO_MODULE"              , ::RepoModuleField         )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
