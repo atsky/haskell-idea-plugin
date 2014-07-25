@@ -33,7 +33,7 @@ public trait Section: PsiElement {
         val nodes = getSectChildren()
         for (node in nodes) {
             if ((node is Field) && node.hasName(fieldName)) {
-                return node.getFieldName()
+                return node.getLastValue()
             }
         }
         return null

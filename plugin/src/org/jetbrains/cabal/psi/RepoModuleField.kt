@@ -13,6 +13,6 @@ public class RepoModuleField(node: ASTNode) : ASTWrapperPsiElement(node), Disall
         val parent = (this : PsiElement).getParent()!! as SourceRepo
         val repoType = parent.getRepoType()
         if ((repoType == null) || (repoType == "cvs")) return null
-        return "module field disallowed with cvs repository type"
+        return "module field is allowed only with cvs repository type"
     }
 }

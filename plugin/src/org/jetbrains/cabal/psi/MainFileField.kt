@@ -10,9 +10,9 @@ public class MainFileField(node: ASTNode) : ASTWrapperPsiElement(node), Field, D
 
     public override fun isEnabled(): String? {
         val parent = (this : PsiElement).getParent()!!
-        if (parent is SourceRepo) {
+        if (parent is TestSuite) {
             val sectType = parent.getFieldValue("type")
-            if ((sectType == null) || (sectType == "detailed-1.0")) return null
+            if ((sectType == null) || (sectType == "exitcode-stdio-1.0")) return null
             return "main-is field disallowed with such test suit type"
         }
         return null

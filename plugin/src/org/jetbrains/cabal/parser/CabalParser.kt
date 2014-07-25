@@ -287,7 +287,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
             || parseExactSection(level, CabalTokelTypes.TEST_SUITE, "test-suite", { parseIDValue(CabalTokelTypes.NAME) }) {
                               parseMainFile(it)
-                           || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.TEST_SUIT_TYPE) })
+                           || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.TEST_SUITE_TYPE) })
                            || parseField(it, "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
                }
 

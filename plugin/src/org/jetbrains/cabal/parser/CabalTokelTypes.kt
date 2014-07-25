@@ -98,7 +98,7 @@ public trait CabalTokelTypes {
         val IDENTIFIER         : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier              )
         val E_MAIL             : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                  )
         val TOKEN              : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                   )
-        val TEST_SUIT_TYPE     : IElementType = CabalCompositeElementType("TEST_SUIT_TYPE"           , ::TestSuitType            )
+        val TEST_SUITE_TYPE    : IElementType = CabalCompositeElementType("TEST_SUITE_TYPE"          , ::TestSuiteType           )
         val REPO_TYPE          : IElementType = CabalCompositeElementType("REPO_TYPE"                , ::RepoType                )
         val BENCHMARK_TYPE     : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType           )
         val BUILD_TYPE         : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildType               )

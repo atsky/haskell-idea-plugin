@@ -4,8 +4,8 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.*
 
-public class RepoKind(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue {
+public class TestSuiteType(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue {
     public override fun availibleValues(): List<String> {
-        return REPO_KIND_VALS
+        return TS_TYPE_VALS
     }
 }
