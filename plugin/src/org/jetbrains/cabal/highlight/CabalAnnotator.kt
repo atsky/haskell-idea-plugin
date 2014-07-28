@@ -31,6 +31,10 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
+        if ((element is InvalidProperty)) {
+            holder.createErrorAnnotation(element, "invalid property")
+        }
+
         if ((element is Section)) {
             val errorMsg = element.allRequiredFieldsExist()
             if (errorMsg != null) {

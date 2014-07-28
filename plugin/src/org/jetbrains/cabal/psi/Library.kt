@@ -7,9 +7,7 @@ import java.util.ArrayList
 
 public class Library(node: ASTNode) : ASTWrapperPsiElement(node), Section {
 
-
     override public val REQUIRED_FIELD_NAMES = listOf ("exposed-modules")
-
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()

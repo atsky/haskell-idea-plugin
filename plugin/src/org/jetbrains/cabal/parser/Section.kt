@@ -27,6 +27,9 @@ public trait Section: PsiElement {
             if ((node is Field) && node.hasName(fieldName)) {
                 return true
             }
+            if ((node is Section) && node.fieldExists(fieldName)) {
+                return true
+            }
         }
         return false
     }

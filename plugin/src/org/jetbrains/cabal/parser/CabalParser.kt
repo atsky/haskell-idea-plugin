@@ -91,7 +91,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return res
     }
 
-    fun parseFreeForm(prevLevel: Int) = start(CabalTokelTypes.FREE_FORM) {
+    fun parseAllBiggerLevel(prevLevel: Int): Boolean {
         while (!builder.eof()) {
             val nextIndent = nextLevel()
             if ((nextIndent != null) && (nextIndent <= prevLevel)) {
@@ -99,7 +99,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             }
             builder.advanceLexer();
         }
-        true
+        return true
     }
 
     fun parseFreeLine(): Boolean {
@@ -108,6 +108,10 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         }
         return true
     }
+
+    fun parseFreeForm(prevLevel: Int) = start(CabalTokelTypes.FREE_FORM, { parseAllBiggerLevel(prevLevel) })
+
+    fun parseInvalidValue(prevLevel: Int) = start(CabalTokelTypes.INVALID_VALUE, { parseAllBiggerLevel(prevLevel) })
 
     fun parseIDValue(elemType: IElementType) = start(elemType, { token(CabalTokelTypes.ID) })
 
@@ -166,8 +170,13 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseField(level: Int, key : String?, parseValue : (Int) -> Boolean) = start(FIELD_TYPES.get(key)!!) {
         var res = parsePropertyKey(key) && token(CabalTokelTypes.COLON)
-        skipNewLines(level)
-        res && parseValue(level) && isLastOnThisLevel(level)
+        if (res) {
+            skipNewLines(level)
+            (parseValue(level) && isLastOnThisLevel(level)) || parseInvalidValue(level)
+        }
+        else {
+            false
+        }
     }
 
     fun parseFieldVariety(level: Int, names: List<String>, parseValue : (Int) -> Boolean) : Boolean {
@@ -177,6 +186,17 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             if (res) break
         }
         return res
+    }
+
+    fun parseInvalidProperty(level: Int) = start(CabalTokelTypes.INVALID_PROPERTY) {
+        var res = parsePropertyKey(null) && token(CabalTokelTypes.COLON)
+        if (res) {
+            skipNewLines(level)
+            parseInvalidValue(level)
+        }
+        else {
+            false
+        }
     }
 
     fun parseTopLevelField() =
@@ -245,7 +265,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             } else if (level != currentLevel!!) return (level <= prevLevel)
 
             skipNewLines()
-            var res = parseFields(currentLevel!!) || (canContainIf && parseIfElse(currentLevel!!, parseFields))
+            var res = parseFields(currentLevel!!) || (canContainIf && parseIfElse(currentLevel!!, parseFields)) || parseInvalidProperty(currentLevel!!)
 
             if (!res) {
                 builder.advanceLexer()
@@ -315,7 +335,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
         while (!builder.eof()) {
-            if (!(parseTopLevelField() || parseSection(0)))
+            if (!(parseTopLevelField() || parseSection(0) || parseInvalidProperty(0)))
                 builder.advanceLexer()
         }
         rootMarker.done(root)

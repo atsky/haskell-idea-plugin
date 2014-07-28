@@ -76,6 +76,8 @@ public trait CabalTokelTypes {
         val MAINTAINER         : IElementType = CabalCompositeElementType("MAINTAINER"               , ::MaintainerField         )
         val REPO_MODULE        : IElementType = CabalCompositeElementType("REPO_MODULE"              , ::RepoModuleField         )
         val TEST_MODULE        : IElementType = CabalCompositeElementType("TEST_MODULE"              , ::TestModuleField         )
+        val INVALID_PROPERTY   : IElementType = CabalCompositeElementType("INVALID_PROPERTY"         , ::InvalidProperty         )
+        val INVALID_VALUE      : IElementType = CabalCompositeElementType("INVALID_VALUE"            , ::InvalidValue            )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
