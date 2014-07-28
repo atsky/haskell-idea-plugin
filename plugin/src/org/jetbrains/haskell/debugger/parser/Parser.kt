@@ -159,6 +159,10 @@ public class Parser() {
             return null
         }
 
+        /**
+         * GHCi returns some output wrapped in special modifiers to make text bold in console. This method removes these
+         * modifiers (we no need them) and returns "clear" text
+         */
         private fun removeBoldModifier(boldText: String): String {
             val boldStartTag = "\u001B[1m"
             val boldEndTag = "\u001B[0m"

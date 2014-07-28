@@ -1,5 +1,7 @@
 package org.jetbrains.haskell.debugger.protocol
 
+import org.jetbrains.haskell.debugger.parser.ParseResult
+
 /**
  * Created by vlad on 7/17/14.
  */
@@ -7,4 +9,4 @@ package org.jetbrains.haskell.debugger.protocol
 /**
  * Command like setting breakpoint
  */
-public abstract class RealTimeCommand(callback: CommandCallback?) : AbstractCommand(callback)
+public abstract class RealTimeCommand<R : ParseResult?>(callback: CommandCallback<R>?) : AbstractCommand<R>(callback)

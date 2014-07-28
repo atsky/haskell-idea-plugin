@@ -12,14 +12,16 @@ import org.jetbrains.haskell.debugger.utils.HaskellUtils
  * Created by vlad on 7/17/14.
  */
 
-public abstract class FlowCommand(callback: CommandCallback?) : AbstractCommand(callback) {
+public abstract class FlowCommand(callback: CommandCallback<HsTopStackFrameInfo?>?)
+: AbstractCommand<HsTopStackFrameInfo?>(callback) {
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.tryParseStoppedAt(output)
+    override fun parseOutput(output: Deque<String?>): HsTopStackFrameInfo? = Parser.tryParseStoppedAt(output)
 
     class object {
-        public class StandardFlowCallback(val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterParsing(result: ParseResult?) {
-                if (result != null && result is HsTopStackFrameInfo) {
+        public class StandardFlowCallback(val debugProcess: HaskellDebugProcess)
+                                                                : CommandCallback<HsTopStackFrameInfo?>() {
+            override fun execAfterParsing(result: HsTopStackFrameInfo?) {
+                if (result != null) {
                     val breakpoint = debugProcess.getBreakpointAtPosition(
                             HaskellUtils.getModuleName(
                                     debugProcess.getSession()!!.getProject(),

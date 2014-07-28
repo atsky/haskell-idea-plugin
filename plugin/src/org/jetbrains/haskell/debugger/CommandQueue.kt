@@ -3,15 +3,16 @@ package org.jetbrains.haskell.debugger
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import java.util.LinkedList
 import java.util.concurrent.locks.ReentrantLock
+import org.jetbrains.haskell.debugger.parser.ParseResult
 
 /**
  * Created by vlad on 7/15/14.
  */
 
-public class CommandQueue(val execute: (AbstractCommand) -> Unit) : Runnable {
+public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Unit) : Runnable {
 
-    private val highPriorityCommands = LinkedList<AbstractCommand>()
-    private val lowPriorityCommands = LinkedList<AbstractCommand>()
+    private val highPriorityCommands = LinkedList<AbstractCommand<out ParseResult?>>()
+    private val lowPriorityCommands = LinkedList<AbstractCommand<out ParseResult?>>()
     private var running = true
 
     private val inputLock = ReentrantLock()
@@ -24,7 +25,7 @@ public class CommandQueue(val execute: (AbstractCommand) -> Unit) : Runnable {
             while (running && (lowPriorityCommands.empty && highPriorityCommands.empty || !ready)) {
                 readyCondition.await()
             }
-            var command: AbstractCommand? = null
+            var command: AbstractCommand<out ParseResult?>? = null
             if (running) {
                 command = if (!highPriorityCommands.empty) highPriorityCommands.removeFirst() else lowPriorityCommands.removeFirst()
                 ready = false
@@ -41,7 +42,7 @@ public class CommandQueue(val execute: (AbstractCommand) -> Unit) : Runnable {
      * Adds new command to the queue.
      * @param highPriority should be set to true in another command's callback, so that the sequence of commands could be executed at once
      */
-    public fun addCommand(command: AbstractCommand, highPriority: Boolean = false) {
+    public fun addCommand(command: AbstractCommand<out ParseResult?>, highPriority: Boolean = false) {
         inputLock.lock()
         if (highPriority) {
             highPriorityCommands.addLast(command)

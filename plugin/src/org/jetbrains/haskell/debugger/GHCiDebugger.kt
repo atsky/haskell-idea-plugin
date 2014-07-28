@@ -47,10 +47,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
-    public var lastCommand: AbstractCommand? = null;
+    public var lastCommand: AbstractCommand<out ParseResult?>? = null;
 
     {
-        queue = CommandQueue({(command: AbstractCommand) -> execute(command) })
+        queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })
         queue.start()
 
         inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
@@ -60,11 +60,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         private set
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
-        queue.addCommand(ExpressionTypeCommand(expression, object : CommandCallback() {
-            override fun execAfterParsing(result: ParseResult?) {
+        queue.addCommand(ExpressionTypeCommand(expression, object : CommandCallback<ExpressionType?>() {
+            override fun execAfterParsing(result: ExpressionType?) {
                 if (result == null) {
                     callback.errorOccurred("Unknown expression")
-                } else if (result is ExpressionType) {
+                } else {
                     val expType = result.expressionType
                     queue.addCommand(ShowExpressionCommand(expression,
                             ShowExpressionCommand.StandardShowExpressionCallback(expType, callback)))
@@ -81,7 +81,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     /**
      * Executes command immediately
      */
-    private fun execute(command: AbstractCommand) {
+    private fun execute(command: AbstractCommand<out ParseResult?>) {
         val bytes = command.getBytes()
 
         synchronized(writeLock) {
@@ -119,7 +119,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            queue.addCommand(SetBreakpointCommand(module, line, RunToPositionCallback(module, line)))
+            queue.addCommand(SetBreakpointCommand(module, line, SetTempBreakCallback()))
         } else {
             if (debugStarted) resume() else trace()
         }
@@ -209,49 +209,30 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         debugProcess.getSession()?.stop()
     }
 
-
-    private inner class RunToPositionCallback(val module: String,
-                                              val line: Int) : CommandCallback() {
-        // Was unable to define enum class here
-        private var state: Int = 0
-        private var breakpointNumber: Int? = null
-        private var flowResult: HsTopStackFrameInfo? = null
-
-        override fun execAfterParsing(result: ParseResult?) {
-            when (state) {
-                0 -> {
-                    // Run to temporary breakpoint
-                    state++
-                    if (result == null) {
-                        return
-                    } else if (result is BreakpointCommandResult) {
-                        breakpointNumber = result.breakpointNumber
-                    } else {
-                        throw RuntimeException("Wrong result obtained while setting a temporary breakpoint")
-                    }
-                    if (debugStarted) {
-                        queue.addCommand(ResumeCommand(this), true)
-                    } else {
-                        queue.addCommand(TraceCommand(TRACE_CMD, this), true)
-                    }
-                }
-                1 -> {
-                    // Remove temporary breakpoint
-                    state++
-                    if (result != null && result is HsTopStackFrameInfo) {
-                        flowResult = result
-                    } else {
-                        throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
-                    }
-                    queue.addCommand(RemoveBreakpointCommand(breakpointNumber!!, this), true)
-                }
-                2 -> {
-                    // Finish
-                    if (flowResult != null) {
-                        history(null, flowResult!!)
-                    }
-                }
+    private inner class SetTempBreakCallback() : CommandCallback<BreakpointCommandResult?>() {
+        override fun execAfterParsing(result: BreakpointCommandResult?) {
+            if (result == null) {
+                return
+            }
+            if (debugStarted) {
+                queue.addCommand(ResumeCommand(RunToPositionCallback(result.breakpointNumber)), true)
+            } else {
+                queue.addCommand(TraceCommand(TRACE_CMD, RunToPositionCallback(result.breakpointNumber)), true)
             }
         }
+    }
+
+    private inner class RunToPositionCallback(val breakpointNumber: Int) : CommandCallback<HsTopStackFrameInfo?>() {
+        override fun execAfterParsing(result: HsTopStackFrameInfo?) {
+            if (result == null) {
+                throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
+            }
+            queue.addCommand(RemoveBreakpointCommand(breakpointNumber, RemoveTempBreakCallback(result)), true)
+        }
+    }
+
+    private inner class RemoveTempBreakCallback(val flowResult: HsTopStackFrameInfo)
+    : CommandCallback<ParseResult?>() {
+        override fun execAfterParsing(result: ParseResult?) = history(null, flowResult)
     }
 }

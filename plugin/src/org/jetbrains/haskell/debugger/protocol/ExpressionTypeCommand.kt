@@ -10,10 +10,11 @@ import org.jetbrains.haskell.debugger.parser.ExpressionType
  * Created by vlad on 7/23/14.
  */
 
-public class ExpressionTypeCommand(val expression: String, callback: CommandCallback?) : RealTimeCommand(callback) {
+public class ExpressionTypeCommand(val expression: String, callback: CommandCallback<ExpressionType?>?)
+: RealTimeCommand<ExpressionType?>(callback) {
     override fun getBytes(): ByteArray {
         return ":type $expression\n".toByteArray()
     }
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.parseExpressionType(output.getFirst()!!)
+    override fun parseOutput(output: Deque<String?>): ExpressionType? = Parser.parseExpressionType(output.getFirst()!!)
 }

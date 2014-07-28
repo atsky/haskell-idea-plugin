@@ -7,7 +7,8 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
  * Created by vlad on 7/17/14.
  */
 
-public abstract class HiddenCommand : AbstractCommand(null) {
+public abstract class HiddenCommand
+: AbstractCommand<ParseResult?>(null) {
 
     class object {
         public fun createInstance(command: String): HiddenCommand {

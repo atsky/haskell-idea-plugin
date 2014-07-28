@@ -12,17 +12,19 @@ import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 
 public class SetBreakpointCommand(val module: String,
                                   val lineNumber: Int,
-                                  callback: CommandCallback) : RealTimeCommand(callback) {
+                                  callback: CommandCallback<BreakpointCommandResult?>)
+: RealTimeCommand<BreakpointCommandResult?>(callback) {
 
     override fun getBytes(): ByteArray = ":break $module $lineNumber\n".toByteArray()
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.parseSetBreakpointCommandResult(output)
+    override fun parseOutput(output: Deque<String?>): BreakpointCommandResult? = Parser.parseSetBreakpointCommandResult(output)
 
     class object {
         public class StandardSetBreakpointCallback(val module: String,
-                                                   val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterParsing(result: ParseResult?) {
-                if (result != null && result is BreakpointCommandResult) {
+                                                   val debugProcess: HaskellDebugProcess)
+                                                   : CommandCallback<BreakpointCommandResult?>() {
+            override fun execAfterParsing(result: BreakpointCommandResult?) {
+                if (result != null) {
                     debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, module, result.position.startLine)
                 }
             }

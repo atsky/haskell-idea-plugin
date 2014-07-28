@@ -14,19 +14,20 @@ import org.jetbrains.haskell.debugger.parser.ShowOutput
  * Created by vlad on 7/23/14.
  */
 
-public class ShowExpressionCommand(val expression: String, callback: CommandCallback) : RealTimeCommand(callback) {
+public class ShowExpressionCommand(val expression: String, callback: CommandCallback<ShowOutput?>)
+: RealTimeCommand<ShowOutput?>(callback) {
 
     /*
      * 'show' may be hidden
      */
     override fun getBytes(): ByteArray = ("Prelude.show (${expression.trim()})\n").toByteArray()
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = Parser.tryParseShowOutput(output)
+    override fun parseOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
 
     class object {
-        public class StandardShowExpressionCallback(val expressionType: String?,
-                                                     val callback: XDebuggerEvaluator.XEvaluationCallback): CommandCallback() {
-            override fun execAfterParsing(result: ParseResult?) {
+        public class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)
+        : CommandCallback<ShowOutput?>() {
+            override fun execAfterParsing(result: ShowOutput?) {
                 if (result == null) {
                     callback.errorOccurred("Cannot show type: $expressionType")
                 } else if (result is ShowOutput) {

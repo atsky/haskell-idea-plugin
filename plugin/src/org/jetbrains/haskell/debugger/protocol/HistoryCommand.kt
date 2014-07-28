@@ -17,19 +17,19 @@ import org.jetbrains.haskell.debugger.parser.History
  * Created by vlad on 7/16/14.
  */
 
-public class HistoryCommand(
-                            callback: CommandCallback?) : RealTimeCommand(callback) {
+public class HistoryCommand(callback: CommandCallback<History?>?) : RealTimeCommand<History?>(callback) {
     override fun getBytes(): ByteArray {
         return ":hist\n".toByteArray()
     }
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? =Parser.parseHistory(output)
+    override fun parseOutput(output: Deque<String?>): History? = Parser.parseHistory(output)
 
     class object {
         public class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
                                           val topFrameInfo: HsTopStackFrameInfo,
-                                          val debugProcess: HaskellDebugProcess) : CommandCallback() {
-            override fun execAfterParsing(result: ParseResult?) {
+                                          val debugProcess: HaskellDebugProcess)
+        : CommandCallback<History?>() {
+            override fun execAfterParsing(result: History?) {
                 if (result != null && result is History) {
                     val histFrames = result.list
                     val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
