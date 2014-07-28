@@ -135,7 +135,7 @@ public class Parser() {
                     val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line!!.trim())
                     if (matcher.matches()) {
                         val index = -Integer.parseInt(matcher.group(1)!!)
-                        val function = matcher.group(2)!!
+                        val function = removeBoldModifier(matcher.group(2)!!)
                         val filePositionLine = matcher.group(3)!!
                         val filePosition = tryCreateFilePosition(filePositionLine)
                         if (filePosition == null) {
@@ -147,6 +147,7 @@ public class Parser() {
             }
             return History(callStack)
         }
+
         private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {
             if(string != null) {
                 val matcher = Pattern.compile("(.*)" + pattern).matcher(string)
@@ -156,6 +157,14 @@ public class Parser() {
                 }
             }
             return null
+        }
+
+        private fun removeBoldModifier(boldText: String): String {
+            val boldStartTag = "\u001B[1m"
+            val boldEndTag = "\u001B[0m"
+            val startIndex = boldStartTag.size
+            val endIndex = boldText.size - boldEndTag.size
+            return boldText.substring(startIndex, endIndex)
         }
 
         private fun tryParseLocalBinding(string: String?): LocalBinding? {

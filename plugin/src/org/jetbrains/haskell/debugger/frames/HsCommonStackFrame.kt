@@ -18,6 +18,8 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
+import com.intellij.ui.ColoredTextContainer
+import com.intellij.ui.SimpleTextAttributes
 
 /**
  * Created by marat-x on 7/22/14.
@@ -53,6 +55,11 @@ public class HsCommonStackFrame(debugProcess: HaskellDebugProcess,
 
             }
         })
+    }
+
+    override fun customizePresentation(component: ColoredTextContainer) {
+        component.append(thisStackFrameInfo.functionName + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        super<HsStackFrame>.customizePresentation(component)
     }
 
     private fun tryGetBindings() {
