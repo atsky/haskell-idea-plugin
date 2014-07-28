@@ -31,7 +31,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   filePosition: HsFilePosition?) : XStackFrame() {
+                                   val filePosition: HsFilePosition?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
@@ -52,18 +52,39 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     override fun getEvaluator(): XDebuggerEvaluator? = HsDebuggerEvaluator(debugProcess.debugger)
 
     /**
-     * Stack frame appearance customization, not implemented yet, default implementation is used
+     * Makes stack frame appearance customization in frames list. Sets function name, source file name and part of code
+     * (span) that this frame represents
      */
-    //    override fun customizePresentation(component: ColoredTextContainer)
     override fun customizePresentation(component: ColoredTextContainer) {
         val position = getSourcePosition()
         if (position != null) {
             component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            setSourceSpan(component, position)
             component.setIcon(AllIcons.Debugger.StackFrame);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame") ?: "<invalid frame>",
                                                      SimpleTextAttributes.ERROR_ATTRIBUTES);
+        }
+    }
+
+    /**
+     * Sets the bounds of code in source file this frame represents. Format is similar to one in ghci:
+     * one line span: "<line number> : <start symbol number> - <end symbol number>"
+     * multiline span: "(<start line number>,<start symbol number>) - (<end line number>,<end symbol number>)"
+     */
+    private fun setSourceSpan(component: ColoredTextContainer, position: XSourcePosition) {
+        if (filePosition != null) {
+            val srcSpan: String
+            if (filePosition.startLine != filePosition.endLine) {
+                srcSpan = ":(" + filePosition.startLine + "," + filePosition.startSymbol + ")-(" +
+                        filePosition.endLine + "," + filePosition.endSymbol + ")"
+            } else {
+                srcSpan = ":" + filePosition.startLine +
+                        ":" + filePosition.startSymbol + "-" + filePosition.endSymbol
+            }
+            component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        } else {
+            component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
     }
 
