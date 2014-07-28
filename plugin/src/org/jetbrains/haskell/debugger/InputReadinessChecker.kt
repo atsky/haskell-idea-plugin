@@ -3,6 +3,7 @@ package org.jetbrains.haskell.debugger
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
+import java.util.Random
 
 /**
  * Created by vlad on 7/16/14.
@@ -18,7 +19,8 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
     public var connected: Boolean = false
         private set
 
-    private val serverSocket: ServerSocket = ServerSocket(HaskellDebugProcess.INPUT_READINESS_PORT)
+    private val serverSocket: ServerSocket = ServerSocket(0);
+    public val INPUT_READINESS_PORT: Int = serverSocket.getLocalPort()
 
     override fun run() {
 

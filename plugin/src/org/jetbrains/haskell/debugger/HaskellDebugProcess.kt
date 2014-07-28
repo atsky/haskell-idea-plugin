@@ -23,6 +23,7 @@ import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Created by vlad on 7/10/14.
@@ -166,11 +167,5 @@ public class HaskellDebugProcess(session: XDebugSession,
             print(text)
             debugger.onTextAvailable(text, outputType)
         }
-    }
-
-    class object {
-
-        // todo: change
-        public val INPUT_READINESS_PORT: Int = 52435
     }
 }

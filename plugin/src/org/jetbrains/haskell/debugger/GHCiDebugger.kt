@@ -150,7 +150,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 "socketToHandle sock ReadWriteMode >>=  " +
                 "(\\handle -> return handle)))"
         val host = "\"localhost\""
-        val port = HaskellDebugProcess.INPUT_READINESS_PORT
+        val port = inputReadinessChecker.INPUT_READINESS_PORT
         var stop_cmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 
         /*
