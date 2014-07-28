@@ -11,9 +11,9 @@ import java.util.ArrayList
 public open class ParseResult
 
 public class BreakpointCommandResult(public val breakpointNumber: Int,
-                                     public val position: FilePosition) : ParseResult()
+                                     public val position: HsFilePosition) : ParseResult()
 
-public class FilePosition(public val filePath: String,
+public class HsFilePosition(public val filePath: String,
                           public val startLine: Int,
                           public val startSymbol: Int,
                           public val endLine: Int,
@@ -30,12 +30,12 @@ public class LocalBinding(val name: String?,
     }
 }
 
-public open class HsTopStackFrameInfo(val filePosition: FilePosition,
+public open class HsTopStackFrameInfo(val filePosition: HsFilePosition,
                                       var bindings: ArrayList<LocalBinding>?) : ParseResult()
 
 public class HsCommonStackFrameInfo(val index: Int,
                                     val functionName: String,
-                                    filePosition: FilePosition,
+                                    filePosition: HsFilePosition,
                                     bindings: ArrayList<LocalBinding>?) : HsTopStackFrameInfo(filePosition, bindings)
 
 public class ExpressionType(public val expression: String,

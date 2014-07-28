@@ -44,7 +44,7 @@ public class Parser() {
 
         val SHOW_RESULT_PATTERN = "\"(.*)\""
 
-        public fun tryCreateFilePosition(line: String): FilePosition? {
+        public fun tryCreateFilePosition(line: String): HsFilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
                 if (matcher.matches()) {
@@ -56,7 +56,7 @@ public class Parser() {
                     for (j in 0..(values.size - 1)) {
                         values[j] = Integer.parseInt(matcher.group(j + 2)!!)
                     }
-                    return FilePosition(path, values[POSITION_PATTERN_PLACES[i][0]], values[POSITION_PATTERN_PLACES[i][1]],
+                    return HsFilePosition(path, values[POSITION_PATTERN_PLACES[i][0]], values[POSITION_PATTERN_PLACES[i][1]],
                             values[POSITION_PATTERN_PLACES[i][2]], values[POSITION_PATTERN_PLACES[i][3]])
                 }
             }
@@ -93,14 +93,14 @@ public class Parser() {
         public fun tryParseStoppedAt(output: Deque<String?>): HsTopStackFrameInfo? {
             //            tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
             val it = output.descendingIterator()
-            var filePosition: FilePosition?
+            var filePosition: HsFilePosition?
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             while (it.hasNext()) {
                 val currentLine = it.next()
                 filePosition = tryParseFilePosition(currentLine?.trim(), STOPPED_AT_PATTERN)
                 if (filePosition != null) {
-                    return HsTopStackFrameInfo(filePosition as FilePosition, localBindings)
+                    return HsTopStackFrameInfo(filePosition as HsFilePosition, localBindings)
                 }
                 res = tryParseLocalBinding(currentLine?.trim())
                 if (res != null) {
@@ -147,7 +147,7 @@ public class Parser() {
             }
             return History(callStack)
         }
-        private fun tryParseFilePosition(string: String?, pattern: String): FilePosition? {
+        private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {
             if(string != null) {
                 val matcher = Pattern.compile("(.*)" + pattern).matcher(string)
                 if (matcher.matches()) {

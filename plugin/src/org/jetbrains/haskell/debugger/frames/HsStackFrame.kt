@@ -25,10 +25,13 @@ import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.Condition
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.parser.FilePosition
+import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import com.intellij.ui.ColoredTextContainer
+import com.intellij.icons.AllIcons
+import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   filePosition: FilePosition?) : XStackFrame() {
+                                   filePosition: HsFilePosition?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
@@ -44,8 +47,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     override fun getSourcePosition(): XSourcePosition? = _sourcePosition
 
     /**
-     * This method should return evaluator (to use 'Evaluate expression' and other such tools) but this functionality
-     * is not supported yet
+     * Returns evaluator (to use 'Evaluate expression' and other such tools)
      */
     override fun getEvaluator(): XDebuggerEvaluator? = HsDebuggerEvaluator(debugProcess.debugger)
 
@@ -53,6 +55,17 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      * Stack frame appearance customization, not implemented yet, default implementation is used
      */
     //    override fun customizePresentation(component: ColoredTextContainer)
+    override fun customizePresentation(component: ColoredTextContainer) {
+        val position = getSourcePosition()
+        if (position != null) {
+            component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            component.setIcon(AllIcons.Debugger.StackFrame);
+        } else {
+            component.append(XDebuggerBundle.message("invalid.frame") ?: "<invalid frame>",
+                                                     SimpleTextAttributes.ERROR_ATTRIBUTES);
+        }
+    }
 
     protected fun setChildrenToNode(node: XCompositeNode, bindings: ArrayList<LocalBinding>) {
         val list = XValueChildrenList()
