@@ -17,8 +17,8 @@ public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
 {
     class object {
-        public val ID: String = "haskell-line"
-        private val TITLE: String = "haskell-line-breakpoint"
+        public val ID: String = "haskell-line-breakpoint"
+        private val TITLE: String = "Haskell breakpoints"
     }
     /**
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
