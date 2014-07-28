@@ -33,7 +33,6 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                 is Section -> {
                     colonNeeded = true
                     values.addAll(parent.getAvailableFieldNames())
-                    values.addAll(listOf("is", "else"))
                 }
                 is RangedValue -> {
                     values.addAll((parent as RangedValue).availibleValues())

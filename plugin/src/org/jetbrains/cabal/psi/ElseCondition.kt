@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.Section
 import org.jetbrains.cabal.parser.Field
+import java.util.ArrayList
 
 public class ElseCondition(node: ASTNode) : ASTWrapperPsiElement(node), Section {
     override public val REQUIRED_FIELD_NAMES = null
@@ -14,6 +15,10 @@ public class ElseCondition(node: ASTNode) : ASTWrapperPsiElement(node), Section 
     }
 
     public override fun getAvailableFieldNames(): List<String> {
-        return (getParent()!! as Section).getAvailableFieldNames()
+        var res = ArrayList<String>()
+        res.addAll((getParent()!! as Section).getAvailableFieldNames())
+        res.remove("if")
+        res.remove("else")
+        return res
     }
 }

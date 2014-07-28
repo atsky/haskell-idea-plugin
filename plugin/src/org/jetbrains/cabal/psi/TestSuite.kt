@@ -15,6 +15,7 @@ public class TestSuite(node: ASTNode) : ASTWrapperPsiElement(node), Section {
         var res = ArrayList<String>()
         res.addAll(TEST_SUITE_FIELDS)
         res.addAll(BUILD_INFO)
+        res.addAll(listOf("is", "else"))
         return res
     }
 

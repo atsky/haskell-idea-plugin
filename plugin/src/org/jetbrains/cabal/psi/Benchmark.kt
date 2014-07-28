@@ -15,6 +15,7 @@ public class Benchmark(node: ASTNode) : ASTWrapperPsiElement(node), Section {
         var res = ArrayList<String>()
         res.addAll(BENCHMARK_FIELDS)
         res.addAll(BUILD_INFO)
+        res.addAll(listOf("is", "else"))
         return res
     }
 

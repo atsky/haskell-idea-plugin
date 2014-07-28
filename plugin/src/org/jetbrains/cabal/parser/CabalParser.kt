@@ -223,18 +223,18 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
 
 
-    fun parseIf(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.IF_CONDITION) {
+    fun parseIf(level: Int, parseFields: (Int) -> Boolean) = start(CabalTokelTypes.IF_CONDITION) {
         start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "if") } && parseCondition(level)
-                && parseProperties(level, true, parseSectionFields)
+                && parseProperties(level, false, parseFields)
     }
 
-    fun parseElse(level: Int, parseSectionFields: (Int) -> Boolean) = start(CabalTokelTypes.ELSE_CONDITION) {
+    fun parseElse(level: Int, parseFields: (Int) -> Boolean) = start(CabalTokelTypes.ELSE_CONDITION) {
         skipNewLines(level - 1)
         start(CabalTokelTypes.SECTION_TYPE) { matchesIgnoreCase(CabalTokelTypes.ID, "else") }
-                && parseProperties(level, true, parseSectionFields);
+                && parseProperties(level, false, parseFields);
     }
 
-    fun parseProperties(prevLevel: Int, canContainIf: Boolean, parseSectionFields: (Int) -> Boolean): Boolean {
+    fun parseProperties(prevLevel: Int, canContainIf: Boolean, parseFields: (Int) -> Boolean): Boolean {
         var currentLevel : Int? = null
         while (!builder.eof()) {
             val level = nextLevel()
@@ -245,9 +245,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             } else if (level != currentLevel!!) return (level <= prevLevel)
 
             skipNewLines()
-            var res = parseSectionFields(currentLevel!!)
-                    || parseBuildInformation(currentLevel!!)
-                    || (canContainIf && parseIfElse(currentLevel!!, parseSectionFields))
+            var res = parseFields(currentLevel!!) || (canContainIf && parseIfElse(currentLevel!!, parseFields))
 
             if (!res) {
                 builder.advanceLexer()
@@ -256,10 +254,10 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return true
     }
 
-    fun parseIfElse(level: Int, parseSectionFields: (Int) -> Boolean): Boolean {
-        if (parseIf(level, parseSectionFields)) {
+    fun parseIfElse(level: Int, parseFields: (Int) -> Boolean): Boolean {
+        if (parseIf(level, parseFields)) {
             if (nextLevel() == level) {
-                parseElse(level, parseSectionFields)
+                parseElse(level, parseFields)
             }
             return true
         }
@@ -273,7 +271,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseExecutable(level: Int) = start(CabalTokelTypes.EXECUTABLE) {
         parseSectionType("executable")
                 && parseIDValue(CabalTokelTypes.NAME)
-                && parseProperties(level, true, { parseMainFile(it) })
+                && parseProperties(level, true, { parseMainFile(it) || parseBuildInformation(it) })
     }
 
     fun parseExactSection(level: Int, tokenType: IElementType, sectionName: String, parseAfterInfo: () -> Boolean, parseBody: (Int) -> Boolean) = start(tokenType) {
@@ -289,16 +287,19 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                               parseMainFile(it)
                            || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.TEST_SUITE_TYPE) })
                            || parseField(it, "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+                           || parseBuildInformation(it)
                }
 
             || parseExactSection(level, CabalTokelTypes.LIBRARY, "library", { true }) {
                               parseField(it, "exposed-modules", { parseIDList(it) })
                            || parseField(it, "exposed"        , { parseBool() })
+                           || parseBuildInformation(it)
                }
 
             || parseExactSection(level, CabalTokelTypes.BENCHMARK, "benchmark", { parseIDValue(CabalTokelTypes.NAME) }) {
                               parseMainFile(it)
                            || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.BENCHMARK_TYPE) })
+                           || parseBuildInformation(it)
                }
 
             || parseExactSection(level, CabalTokelTypes.SOURCE_REPO, "source-repository", { parseIDValue(CabalTokelTypes.REPO_KIND) }) {

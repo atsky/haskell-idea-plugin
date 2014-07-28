@@ -19,6 +19,7 @@ public class Executable(node: ASTNode) : ASTWrapperPsiElement(node), Section {
         var res = ArrayList<String>()
         res.addAll(EXECUTABLE_FIELDS)
         res.addAll(BUILD_INFO)
+        res.addAll(listOf("is", "else"))
         return res
     }
 }
