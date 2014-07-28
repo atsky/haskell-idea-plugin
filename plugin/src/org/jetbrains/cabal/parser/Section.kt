@@ -10,6 +10,8 @@ import com.intellij.psi.impl.source.tree.SharedImplUtil
 public trait Section: PsiElement {
     public val REQUIRED_FIELD_NAMES: List<String>?
 
+    public fun getAvailableFieldNames(): List<String> = listOf()
+
     public fun allRequiredFieldsExist(): String? {
         if (REQUIRED_FIELD_NAMES == null) return null
 

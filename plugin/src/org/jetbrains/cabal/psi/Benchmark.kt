@@ -2,14 +2,21 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.Section
-import org.jetbrains.cabal.parser.CabalTokelTypes
-import org.jetbrains.cabal.parser.FIELD_TYPES
 import com.intellij.psi.PsiElement
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.parser.BUILD_INFO
+import org.jetbrains.cabal.parser.BENCHMARK_FIELDS
+import org.jetbrains.cabal.parser.*
+import java.util.ArrayList
 
 public class Benchmark(node: ASTNode) : ASTWrapperPsiElement(node), Section {
     public override val REQUIRED_FIELD_NAMES = listOf ("type")
+
+    public override fun getAvailableFieldNames(): List<String> {
+        var res = ArrayList<String>()
+        res.addAll(BENCHMARK_FIELDS)
+        res.addAll(BUILD_INFO)
+        return res
+    }
 
     public override fun allRequiredFieldsExist(): String? {
         val nodes = getSectChildren()

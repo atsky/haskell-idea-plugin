@@ -12,4 +12,8 @@ public class ElseCondition(node: ASTNode) : ASTWrapperPsiElement(node), Section 
         if (getSectChildren().size == 0) return "empty else section is not allowed"
         return null
     }
+
+    public override fun getAvailableFieldNames(): List<String> {
+        return (getParent()!! as Section).getAvailableFieldNames()
+    }
 }

@@ -2,14 +2,21 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.Section
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.parser.*
+import java.util.ArrayList
 
 /**
  * @author Evgeny.Kurbatsky
  */
 public class TestSuite(node: ASTNode) : ASTWrapperPsiElement(node), Section {
     public override val REQUIRED_FIELD_NAMES = listOf ("type")
+
+    public override fun getAvailableFieldNames(): List<String> {
+        var res = ArrayList<String>()
+        res.addAll(TEST_SUITE_FIELDS)
+        res.addAll(BUILD_INFO)
+        return res
+    }
 
     public override fun allRequiredFieldsExist(): String? {
         val nodes = getSectChildren()

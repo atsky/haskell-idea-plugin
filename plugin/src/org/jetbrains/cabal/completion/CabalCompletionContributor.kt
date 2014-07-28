@@ -14,6 +14,7 @@ import org.jetbrains.cabal.parser.*
 import java.util.*
 
 
+
 public open class CabalCompletionContributor() : CompletionContributor() {
 
     public override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?): Unit {
@@ -23,18 +24,20 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             val parent = parameters?.getPosition()?.getParent()
             if (parent == null) { return }
 
-            if (parent is PsiFile) {
-                colonNeeded = true
-                values.addAll(PKG_DESCR_FIELD_DESCRS)
-                values.addAll(SECTION_FIELDS)
-            }
-            else if (parent is Section) {
-                colonNeeded = true
-                values.addAll(BUILD_INFO)
-                values.addAll(SECTION_FIELDS)
-            }
-            else if (parent is RangedValue) {
-                values.addAll((parent as RangedValue).availibleValues())
+            when (parent) {
+                is PsiFile -> {
+                    colonNeeded = true
+                    values.addAll(PKG_DESCR_FIELD_DESCRS)
+                    values.addAll(TOP_SECTIONS)
+                }
+                is Section -> {
+                    colonNeeded = true
+                    values.addAll(parent.getAvailableFieldNames())
+                    values.addAll(listOf("is", "else"))
+                }
+                is RangedValue -> {
+                    values.addAll((parent as RangedValue).availibleValues())
+                }
             }
 
             for (value in values) {

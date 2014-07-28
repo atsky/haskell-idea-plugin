@@ -2,8 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.cabal.parser.Section
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.parser.*
 import com.intellij.psi.PsiElement
 
 public class SourceRepo(node: ASTNode) : ASTWrapperPsiElement(node), Section {
@@ -11,6 +10,10 @@ public class SourceRepo(node: ASTNode) : ASTWrapperPsiElement(node), Section {
             "type",
             "location"
     )
+
+    public override fun getAvailableFieldNames(): List<String> {
+        return REPO_SOURCE_FIELDS
+    }
 
     public override fun allRequiredFieldsExist(): String? {
         val nodes = getSectChildren()

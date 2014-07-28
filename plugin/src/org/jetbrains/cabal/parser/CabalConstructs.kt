@@ -1,5 +1,9 @@
 package org.jetbrains.cabal.parser
 
+
+import java.util.*
+import org.jetbrains.cabal.parser.*
+
 // https://github.com/ghc/packages-Cabal/blob/master/Cabal/Distribution/PackageDescription/Parse.hs
 
 public val BUILD_INFO: List<String> = listOf(
@@ -59,14 +63,35 @@ public val PKG_DESCR_FIELD_DESCRS: List<String> = listOf(
                             "extra-tmp-files"
 )
 
-public val SECTION_FIELDS: List<String> = listOf(
+public val EXECUTABLE_FIELDS: List<String> = listOf("main-is")
+
+public val LIBRARY_FIELDS: List<String> = listOf("exposed-modules", "exposed")
+
+public val TEST_SUITE_FIELDS: List<String> = listOf("type", "main-is", "test-module")
+
+public val BENCHMARK_FIELDS: List<String> = listOf("type", "main-is")
+
+public val REPO_SOURCE_FIELDS: List<String> = listOf(
+        "type",
+        "location",
+        "module",
+        "branch",
+        "tag",
+        "subdir"
+)
+
+public val FLAG_FIELDS: List<String> = listOf(
+        "description",
+        "default",
+        "manual"
+)
+
+public val TOP_SECTIONS: List<String> = listOf(
                             "executable",
                             "library",
                             "benchmark",
                             "test-suite",
-                            "source-repository",
-                            "if",
-                            "else"
+                            "source-repository"
 )
 
 public val BENCH_TYPE_VALS: List<String> = listOf(
