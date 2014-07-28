@@ -35,6 +35,7 @@ public trait CabalTokelTypes {
         val OPEN_CURLY         : IElementType  = HaskellToken("{")
         val CLOSE_CURLY        : IElementType  = HaskellToken("}")
         val TAB                : IElementType  = HaskellToken("TAB")
+        val NEGATION           : IElementType  = HaskellToken("!")
 
         val COMMENTS     : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES  : TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
@@ -95,7 +96,7 @@ public trait CabalTokelTypes {
         val NAME               : IElementType = CabalCompositeElementType("NAME"                     , ::Name                    )
         val DIRECTORY          : IElementType = CabalCompositeElementType("DIRECTORY"                , ::Directory               )
         val FREE_FORM          : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
-        val CONDITION          : IElementType = CabalCompositeElementType("CONDITION"                , ::Condition               )
+        val SIMPLE_CONDITION   : IElementType = CabalCompositeElementType("SIMPLE_CONDITION"         , ::SimpleCondition               )
         val VERSION_VALUE      : IElementType = CabalCompositeElementType("VERSION_VALUE"            , ::VersionValue            )
         val IDENTIFIER         : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier              )
         val E_MAIL             : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                  )

@@ -56,13 +56,6 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseBool() = matchesIgnoreCase(CabalTokelTypes.ID, "true") || matchesIgnoreCase(CabalTokelTypes.ID, "false")
 
-    fun parseCondition(level: Int) = start(CabalTokelTypes.CONDITION) {
-        parseBool()
-                || (token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)
-                                              && ((parseFullVersionConstraint(level)) || (token(CabalTokelTypes.ID)))
-                                              && token(CabalTokelTypes.CLOSE_PAREN))
-    }
-
     fun parseVersion() = token(CabalTokelTypes.NUMBER) || token(CabalTokelTypes.ID)
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
@@ -134,39 +127,64 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return false
     }
 
-    fun parseValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, tillLessIndent: Boolean = true) : Boolean {
+    fun parseValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, tillEnd: Boolean = true) : Boolean {
         var res = parseValue()
         while ((!builder.eof()) && res) {
-            if (isLastOnThisLevel(prevLevel)) break
+            if (!onOneLine && isLastOnThisLevel(prevLevel)) break
 
             res = parseSeparator()
-            if (!tillLessIndent && !res) break
-            res = res && (!isLastOnThisLevel(prevLevel))
+            if (!tillEnd && !res) {
+                res = true
+                break
+            }
+            res = res && (onOneLine || !isLastOnThisLevel(prevLevel))
             res = res && parseValue()
         }
         return res
     }
 
-    fun parseTokenList(level: Int) = parseValueList(level, { parseTokenValue(CabalTokelTypes.TOKEN) }, { token(CabalTokelTypes.COMMA) || true })
+    fun parseTokenList(level: Int) = parseValueList(level, { parseTokenValue(CabalTokelTypes.TOKEN) }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseIDList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.IDENTIFIER) }, { token(CabalTokelTypes.COMMA) || true })
+    fun parseIDList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.IDENTIFIER) }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseOptionList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.OPTION) }, { token(CabalTokelTypes.COMMA) || true })
+    fun parseOptionList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.OPTION) }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { token(CabalTokelTypes.COMMA) || true })
+    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseComplexVersionConstraint(prevLevel : Int) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) })
+    fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine, false)
 
-    fun parseFullVersionConstraint(prevLevel: Int, tokenType: IElementType = CabalTokelTypes.IDENTIFIER) = start(CabalTokelTypes.FULL_CONSTRAINT) {
-        var res = parseIDValue(tokenType)
-        parseComplexVersionConstraint(prevLevel)
+    fun parseFullVersionConstraint(prevLevel: Int, tokenType: IElementType, onOneLine: Boolean = false) = start(CabalTokelTypes.FULL_CONSTRAINT) {
+        parseIDValue(tokenType)
+                && (parseComplexVersionConstraint(prevLevel, onOneLine) || true)
+    }
+
+    fun parseSimpleCondition(level: Int) = start(CabalTokelTypes.SIMPLE_CONDITION) {
+        var res = parseBool()
+        if (!res) {
+            val testName = builder.getTokenText()
+            res = token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)
+            if (res) {
+                if (testName == "impl") {
+                    res = parseFullVersionConstraint(level, CabalTokelTypes.IDENTIFIER, true)
+                } else {
+                    res = parseIDValue(CabalTokelTypes.IDENTIFIER)
+                }
+                res = res && token(CabalTokelTypes.CLOSE_PAREN)
+            }
+        }
         res
     }
+
+    fun parseConditionPart(level: Int): Boolean = parseSimpleCondition(level)
+                                               || (token(CabalTokelTypes.NEGATION) && parseConditionPart(level))
+                                               || (token(CabalTokelTypes.OPEN_PAREN) && parseCondition(level) && token(CabalTokelTypes.CLOSE_PAREN))
+
+    fun parseCondition(level: Int) = parseValueList(level, { parseConditionPart(level) }, { token(CabalTokelTypes.LOGIC) }, true, false)
 
     fun parseCompilerList(level: Int) = parseConstraintList(level, CabalTokelTypes.COMPILER)
 
     fun parseConstraintList(prevLevel: Int, tokenType: IElementType = CabalTokelTypes.IDENTIFIER)
-            = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel, tokenType) }, { token(CabalTokelTypes.COMMA) })
+            = parseValueList(prevLevel, { parseFullVersionConstraint(prevLevel, tokenType) }, { token(CabalTokelTypes.COMMA) }, false)
 
     fun parseField(level: Int, key : String?, parseValue : (Int) -> Boolean) = start(FIELD_TYPES.get(key)!!) {
         var res = parsePropertyKey(key) && token(CabalTokelTypes.COLON)
@@ -174,9 +192,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             skipNewLines(level)
             (parseValue(level) && isLastOnThisLevel(level)) || parseInvalidValue(level)
         }
-        else {
-            false
-        }
+        else false
     }
 
     fun parseFieldVariety(level: Int, names: List<String>, parseValue : (Int) -> Boolean) : Boolean {
@@ -194,9 +210,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             skipNewLines(level)
             parseInvalidValue(level)
         }
-        else {
-            false
-        }
+        else false
     }
 
     fun parseTopLevelField() =

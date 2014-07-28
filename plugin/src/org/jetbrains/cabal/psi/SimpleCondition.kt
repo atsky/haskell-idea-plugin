@@ -4,13 +4,14 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.Checkable
 
-public class Condition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
+public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     class object {
         public val VALID_TESTS_NAMES : List<String> = listOf(
                 "os",
                 "arch",
-                "impl"
+                "impl",
+                "flag"
         )
     }
 
