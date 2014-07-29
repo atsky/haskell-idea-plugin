@@ -166,8 +166,8 @@ public class Parser() {
         private fun removeBoldModifier(boldText: String): String {
             val boldStartTag = "\u001B[1m"
             val boldEndTag = "\u001B[0m"
-            val startIndex = boldStartTag.size
-            val endIndex = boldText.size - boldEndTag.size
+            val startIndex = if (boldText.startsWith(boldStartTag)) boldStartTag.size else 0
+            val endIndex = if (boldText.endsWith(boldEndTag)) boldText.size - boldEndTag.size else boldText.size
             return boldText.substring(startIndex, endIndex)
         }
 

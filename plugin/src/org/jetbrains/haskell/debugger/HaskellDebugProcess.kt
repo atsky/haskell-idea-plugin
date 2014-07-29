@@ -35,9 +35,9 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
-    public val debugger: ProcessDebugger
+    public val debugger: ProcessDebugger;
 
-    ;{
+    {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
 
