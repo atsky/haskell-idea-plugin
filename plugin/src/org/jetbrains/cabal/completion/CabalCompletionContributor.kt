@@ -11,6 +11,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.psi.RangedValue
+import org.jetbrains.cabal.psi.Section
 import java.util.*
 
 
@@ -35,7 +37,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     values.addAll(parent.getAvailableFieldNames())
                 }
                 is RangedValue -> {
-                    values.addAll((parent as RangedValue).availibleValues())
+                    values.addAll(parent.availibleValues())
                 }
             }
 

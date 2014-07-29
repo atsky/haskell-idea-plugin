@@ -1,8 +1,7 @@
 package org.jetbrains.cabal.psi
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.psi.PropertyField
 
-public class ExposedField(node: ASTNode) : ASTWrapperPsiElement(node), Field {
+public class ExposedField(node: ASTNode) : PropertyField(node) {
 }

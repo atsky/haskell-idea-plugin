@@ -1,6 +1,6 @@
-package org.jetbrains.cabal.parser
+package org.jetbrains.cabal.psi
 
-import org.jetbrains.cabal.parser.Checkable
+import org.jetbrains.cabal.psi.Checkable
 import com.intellij.psi.PsiElement
 
 

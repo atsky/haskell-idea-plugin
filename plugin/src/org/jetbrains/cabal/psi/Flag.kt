@@ -1,11 +1,12 @@
 package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.psi.Section
 
-public class Flag(node: ASTNode) : ASTWrapperPsiElement(node), Section {
-    public override val REQUIRED_FIELD_NAMES: List<String>? = null
+public class Flag(node: ASTNode) : Section(node) {
+
+    public override fun getRequiredFieldNames(): List<String> = listOf()
 
     public override fun getAvailableFieldNames(): List<String> {
         return FLAG_FIELDS

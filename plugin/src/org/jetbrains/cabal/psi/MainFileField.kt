@@ -1,18 +1,16 @@
 package org.jetbrains.cabal.psi
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement
+import org.jetbrains.cabal.psi.DisallowedableField
+import org.jetbrains.cabal.parser.CabalTokelTypes
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.Field
-import org.jetbrains.cabal.parser.Disallowedable
-import com.intellij.psi.PsiElement
 
-public class MainFileField(node: ASTNode) : ASTWrapperPsiElement(node), Field, Disallowedable {
+public class MainFileField(node: ASTNode) : DisallowedableField(node) {
 
     public override fun isEnabled(): String? {
-        val parent = (this : PsiElement).getParent()!!
+        val parent = getParent()
         if (parent is TestSuite) {
-            val sectType = parent.getFieldValue("type")
-            if ((sectType == null) || (sectType == "exitcode-stdio-1.0")) return null
+            val sectType = parent.getField(CabalTokelTypes.TEST_SUITE_TYPE)
+            if ((sectType == null) || (sectType.getLastValue() == "exitcode-stdio-1.0")) return null
             return "main-is field disallowed with such test suit type"
         }
         return null

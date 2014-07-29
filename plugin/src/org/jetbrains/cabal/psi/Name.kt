@@ -2,7 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.parser.Checkable
+import org.jetbrains.cabal.psi.Checkable
 
 /**
  * Created by atsky on 13/12/13.

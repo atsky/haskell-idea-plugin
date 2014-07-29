@@ -2,7 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.cabal.parser.Field
+import org.jetbrains.cabal.psi.PropertyField
 
-public class FreeField(node: ASTNode) : ASTWrapperPsiElement(node), Field {
+public class RepoTagField(node: ASTNode) : PropertyField(node) {
 }

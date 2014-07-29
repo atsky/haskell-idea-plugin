@@ -1,13 +1,12 @@
 package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
-import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.cabal.parser.Section
-import org.jetbrains.cabal.parser.Field
 import java.util.ArrayList
+import org.jetbrains.cabal.parser.CabalTokelTypes
 
-public class ElseCondition(node: ASTNode) : ASTWrapperPsiElement(node), Section {
-    override public val REQUIRED_FIELD_NAMES = null
+public class ElseCondition(node: ASTNode) : Section(node) {
+
+    public override fun getRequiredFieldNames(): List<String> = listOf()
 
     public override fun allRequiredFieldsExist(): String? {
         if (getSectChildren().size == 0) return "empty else section is not allowed"

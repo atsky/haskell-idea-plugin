@@ -20,14 +20,14 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
-        if ((element is Field) && !(element.isUniqueOnThisLevel())) {
+        if ((element is PropertyField) && !(element.isUniqueOnThisLevel())) {
             holder.createErrorAnnotation(element.getKeyNode(), "duplicated field")
         }
 
-        if ((element is Disallowedable)) {
+        if ((element is DisallowedableField)) {
             val errorMsg = element.isEnabled()
             if (errorMsg != null) {
-                holder.createErrorAnnotation((element : Field).getKeyNode(), errorMsg)
+                holder.createErrorAnnotation(element.getKeyNode(), errorMsg)
             }
         }
 
