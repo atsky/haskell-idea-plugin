@@ -73,6 +73,7 @@ public trait CabalTokelTypes {
         val TYPE               : IElementType = CabalCompositeElementType("TYPE"                     , ::TypeField               )
         val REPO_LOCATION      : IElementType = CabalCompositeElementType("REPO_LOCATION"            , ::RepoLocationField       )
         val REPO_TAG           : IElementType = CabalCompositeElementType("REPO_TAG"                 , ::RepoTagField            )
+        val HS_SOURCE_DIRS     : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HSSourceDirsField       )
 
         val MAIN_FILE          : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
@@ -84,6 +85,7 @@ public trait CabalTokelTypes {
         val BUILD_TOOLS        : IElementType = CabalCompositeElementType("BUILD_TOOLS"              , ::BuildToolsField         )
 
         val VERSION_CONSTRAINT : IElementType = CabalCompositeElementType("VERSION_CONSTRAINT"       , ::VersionConstraint       )
+        val COMPLEX_CONSTRAINT : IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , ::ComplexVersionConstraint)
         val FULL_CONSTRAINT    : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , ::FullVersionConstraint   )
         val SIMPLE_CONDITION   : IElementType = CabalCompositeElementType("SIMPLE_CONDITION"         , ::SimpleCondition         )
 

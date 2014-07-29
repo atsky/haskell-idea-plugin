@@ -23,4 +23,18 @@ public class Executable(node: ASTNode) : Section(node) {
         return res
     }
 
+    public fun getMainFile(): PropertyValue? = getField(CabalTokelTypes.MAIN_FILE)?.getLastValue()
+
+    public fun getHSSourceDirs(): List<Directory> = getField(CabalTokelTypes.HS_SOURCE_DIRS)?.getValues() as List<Directory>
+
+    public fun getBuildDepends(): List<Pair<String, ComplexVersionConstraint?>> {
+        val values = getField(CabalTokelTypes.BUILD_DEPENDS)?.getValues()
+        if (values == null) return listOf()
+        var res : ArrayList<Pair<String, ComplexVersionConstraint?>> = ArrayList()
+        for (value in values) {
+            res.add(Pair((value as FullVersionConstraint).getBaseName(), (value as FullVersionConstraint).getConstraint()))
+        }
+        return res
+    }
+
 }

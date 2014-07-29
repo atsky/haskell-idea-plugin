@@ -15,7 +15,7 @@ public class SourceRepo(node: ASTNode) : Section(node) {
     public override fun allRequiredFieldsExist(): String? {
         val nodes = getSectChildren()
 
-        var typeValue: String? = null
+        var typeValue: PropertyValue? = null
         var locationFlag = false
         var moduleFlag = false
         var tagFlag = false
@@ -30,7 +30,7 @@ public class SourceRepo(node: ASTNode) : Section(node) {
         }
         if (typeValue == null) return "type field is required"
         if (!locationFlag)     return "location field is required"
-        if ((typeValue == "cvs") && !moduleFlag) {
+        if ((typeValue!!.getText() == "cvs") && !moduleFlag) {
             return "module field is required with CVS repository type"
         }
         if (getAfterTypeValue().equals("this") && !tagFlag) return "tag field is required when repository kind is \"this\""

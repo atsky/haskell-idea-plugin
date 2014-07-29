@@ -22,7 +22,7 @@ public class TestSuite(node: ASTNode) : Section(node) {
     public override fun allRequiredFieldsExist(): String? {
         val nodes = getSectChildren()
 
-        var typeValue: String? = null
+        var typeValue: PropertyValue? = null
         var mainIsFlag = false
         var testModFlag = false
 
@@ -34,11 +34,11 @@ public class TestSuite(node: ASTNode) : Section(node) {
             }
         }
         if (typeValue == null) return "type field is required"
-        if (typeValue == "exitcode-stdio-1.0") {
+        if (typeValue!!.getText() == "exitcode-stdio-1.0") {
             if (!mainIsFlag) return "main-is field is required"
             return null
         }
-        if (typeValue == "detailed-1.0") {
+        if (typeValue!!.getText() == "detailed-1.0") {
             if (!testModFlag) return "test-module field is required"
             return null
         }

@@ -36,16 +36,6 @@ public open class Section(node: ASTNode): Field(node) {
         return false
     }
 
-//    public fun getField(T: Class): PsiElement? {
-//        val nodes = getSectChildren()
-//        for (node in nodes) {
-//            if (node is T) {
-//                return node
-//            }
-//        }
-//        return null
-//    }
-
     public fun getField(fieldType: IElementType): PropertyField? {
         var nodes = getSectChildren()
         for (node in nodes) {

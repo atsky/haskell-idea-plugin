@@ -24,7 +24,7 @@ public class Benchmark(node: ASTNode) : Section(node) {
 
         for (node in nodes) {
             if (node is TypeField) {
-                typeValue = node.getLastValue()
+                typeValue = node.getLastValue().getText()
             }
             if (node is MainFileField) {
                 mainIsFlag = true

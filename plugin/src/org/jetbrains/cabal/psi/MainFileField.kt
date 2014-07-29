@@ -10,7 +10,7 @@ public class MainFileField(node: ASTNode) : DisallowedableField(node) {
         val parent = getParent()
         if (parent is TestSuite) {
             val sectType = parent.getField(CabalTokelTypes.TEST_SUITE_TYPE)
-            if ((sectType == null) || (sectType.getLastValue() == "exitcode-stdio-1.0")) return null
+            if ((sectType == null) || (sectType.getLastValue().getText() == "exitcode-stdio-1.0")) return null
             return "main-is field disallowed with such test suit type"
         }
         return null

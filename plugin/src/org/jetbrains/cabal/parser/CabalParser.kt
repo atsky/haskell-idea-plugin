@@ -151,7 +151,9 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine, false)
+    fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
+        parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine, false)
+    }
 
     fun parseFullVersionConstraint(prevLevel: Int, tokenType: IElementType, onOneLine: Boolean = false) = start(CabalTokelTypes.FULL_CONSTRAINT) {
         parseIDValue(tokenType)
