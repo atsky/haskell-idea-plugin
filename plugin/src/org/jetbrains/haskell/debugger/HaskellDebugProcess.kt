@@ -23,7 +23,6 @@ import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
-import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Created by vlad on 7/10/14.

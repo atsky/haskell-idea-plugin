@@ -45,5 +45,7 @@ public class HaskellUtils {
             ApplicationManager.getApplication()!!.runReadAction(reader)
             return reader.returnName()
         }
+
+        public val HS_BOOLEAN_TRUE: String = "True"
     }
 }
