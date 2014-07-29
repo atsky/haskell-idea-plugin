@@ -19,12 +19,12 @@ import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
  * @see    XExecutionStack
  */
 public class HsExecutionStack(private val debugProcess: HaskellDebugProcess,
-                              private val threadInfo: ProgramThreadInfo?) : XExecutionStack(threadInfo!!.name) {
-    private val topFrame: HsStackFrame? = HsTopStackFrame(debugProcess, threadInfo?.topFrameInfo)
+                              private val threadInfo: ProgramThreadInfo) : XExecutionStack(threadInfo.name) {
+    private val topFrame: HsStackFrame? = HsTopStackFrame(debugProcess, threadInfo.topFrameInfo)
     override fun getTopFrame(): XStackFrame? = topFrame
 
     override fun computeStackFrames(firstFrameIndex: Int, container: XExecutionStack.XStackFrameContainer?) {
-        if(container != null && threadInfo != null) {
+        if(container != null) {
             val stackFrames = LinkedList<HsStackFrame>()
             var currentIndex = firstFrameIndex
             if(currentIndex == 0) {

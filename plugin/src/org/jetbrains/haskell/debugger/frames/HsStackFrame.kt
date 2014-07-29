@@ -31,20 +31,27 @@ import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   val filePosition: HsFilePosition?) : XStackFrame() {
+                                   val filePosition: HsFilePosition) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
 
-    private val _sourcePosition =
-            if(filePosition != null) {
-                XDebuggerUtil.getInstance()!!.createPosition(
+    /**
+     * This method always returns null because we need to switch off default debug highlighting provided by
+     * ExecutionPointHighlighter inside XDebuggerManagerImpl. Custom highlighting provided by
+     * HsExecutionPointHighlighter inside HsDebugSessionListener. Also, see hackSourcePosition property below
+     *
+     * @see com.intellij.xdebugger.impl.XDebuggerManagerImpl
+     */
+    override fun getSourcePosition(): XSourcePosition? = null
+
+    /**
+     * This property holds XSourcePosition value. Use it instead of getSourcePosition()
+     */
+    public val hackSourcePosition: XSourcePosition? = XDebuggerUtil.getInstance()!!.createPosition(
                         LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition.filePath)),
                         HaskellUtils.haskellLineNumberToZeroBased(filePosition.startLine))
-            }
-            else null
-    override fun getSourcePosition(): XSourcePosition? = _sourcePosition
 
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)
@@ -56,10 +63,10 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      * (span) that this frame represents
      */
     override fun customizePresentation(component: ColoredTextContainer) {
-        val position = getSourcePosition()
+        val position = hackSourcePosition
         if (position != null) {
             component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            setSourceSpan(component, position)
+            setSourceSpan(component)
             component.setIcon(AllIcons.Debugger.StackFrame);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame") ?: "<invalid frame>",
@@ -72,20 +79,16 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      * one line span: "<line number> : <start symbol number> - <end symbol number>"
      * multiline span: "(<start line number>,<start symbol number>) - (<end line number>,<end symbol number>)"
      */
-    private fun setSourceSpan(component: ColoredTextContainer, position: XSourcePosition) {
-        if (filePosition != null) {
-            val srcSpan: String
-            if (filePosition.startLine != filePosition.endLine) {
-                srcSpan = ":(" + filePosition.startLine + "," + filePosition.startSymbol + ")-(" +
-                        filePosition.endLine + "," + filePosition.endSymbol + ")"
-            } else {
-                srcSpan = ":" + filePosition.startLine +
-                        ":" + filePosition.startSymbol + "-" + filePosition.endSymbol
-            }
-            component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    private fun setSourceSpan(component: ColoredTextContainer) {
+        val srcSpan: String
+        if (filePosition.startLine != filePosition.endLine) {
+            srcSpan = ":(" + filePosition.startLine + "," + filePosition.startSymbol + ")-(" +
+                    filePosition.endLine + "," + filePosition.endSymbol + ")"
         } else {
-            component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            srcSpan = ":" + filePosition.startLine +
+                    ":" + filePosition.startSymbol + "-" + filePosition.endSymbol
         }
+        component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
 
     protected fun setChildrenToNode(node: XCompositeNode, bindings: ArrayList<LocalBinding>) {

@@ -23,6 +23,7 @@ import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import org.jetbrains.haskell.debugger.highlighting.HsDebugSessionListener
 
 /**
  * Created by vlad on 7/10/14.
@@ -41,7 +42,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         debugger = GHCiDebugger(this)
 
         myProcessHandler.addProcessListener(this)
-
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
@@ -139,6 +139,8 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     override fun sessionInitialized() {
         super<XDebugProcess>.sessionInitialized()
+        val currentSession = getSession()
+        currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
         debugger.prepareGHCi()
         debugger.trace()
     }

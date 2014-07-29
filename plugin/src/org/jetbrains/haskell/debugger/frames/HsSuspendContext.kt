@@ -8,7 +8,7 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
 public class HsSuspendContext(private val debugProcess: HaskellDebugProcess,
                               val threadInfo: ProgramThreadInfo) : XSuspendContext() {
     private val _activeExecutionStack : XExecutionStack = HsExecutionStack(debugProcess, threadInfo)
-    override fun getActiveExecutionStack(): XExecutionStack? = _activeExecutionStack
+    override fun getActiveExecutionStack(): XExecutionStack = _activeExecutionStack
 
     /**
      * This method is not overrode, default implementation returns array of one element - _activeExecutionStack

@@ -12,8 +12,8 @@ import com.intellij.xdebugger.frame.XValueChildrenList
  * Created by marat-x on 7/22/14.
  */
 public class HsTopStackFrame(debugProcess: HaskellDebugProcess,
-                             private val stackFrameInfo: HsTopStackFrameInfo?)
-                           : HsStackFrame(debugProcess, stackFrameInfo?.filePosition) {
+                             private val stackFrameInfo: HsTopStackFrameInfo)
+                           : HsStackFrame(debugProcess, stackFrameInfo.filePosition) {
 
     /**
      * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
@@ -26,7 +26,7 @@ public class HsTopStackFrame(debugProcess: HaskellDebugProcess,
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    if(stackFrameInfo != null && stackFrameInfo.bindings != null) {
+                    if(stackFrameInfo.bindings != null) {
                         setChildrenToNode(node, stackFrameInfo.bindings as ArrayList<LocalBinding>)
                     }
                 } catch (e: Exception) {
