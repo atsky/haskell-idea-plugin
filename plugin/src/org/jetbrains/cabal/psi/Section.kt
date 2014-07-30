@@ -6,7 +6,6 @@ import com.intellij.extapi.psi.ASTDelegatePsiElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.psi.PropertyField
-//import org.jetbrains.cabal.psi.Field
 import com.intellij.psi.impl.source.tree.SharedImplUtil
 import java.util.ArrayList
 

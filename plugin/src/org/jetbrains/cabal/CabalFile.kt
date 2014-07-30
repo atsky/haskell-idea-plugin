@@ -33,5 +33,4 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
         }
         return res
     }
-
 }

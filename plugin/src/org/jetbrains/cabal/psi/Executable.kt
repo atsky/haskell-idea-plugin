@@ -3,6 +3,7 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import java.util.ArrayList
+import com.intellij.psi.util.PsiTreeUtil
 
 /**
  * @author Evgeny.Kurbatsky
@@ -23,22 +24,14 @@ public class Executable(node: ASTNode) : Section(node) {
         return res
     }
 
-    public fun getMainFile(): PropertyValue? = getField(CabalTokelTypes.MAIN_FILE)?.getLastValue()
+    public fun getMainFile(): Directory? = getField(CabalTokelTypes.MAIN_FILE)?.getLastValue() as Directory
 
-    public fun getHSSourceDirs(): List<PropertyValue> {
-        val values = getField(CabalTokelTypes.HS_SOURCE_DIRS)?.getValues()
-        if (values == null) return listOf()
-        return values
+    public fun getHSSourceDirs(): List<Directory> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(getField(CabalTokelTypes.HS_SOURCE_DIRS), javaClass<Directory>())
     }
 
-    public fun getBuildDepends(): List<Pair<String, ComplexVersionConstraint?>> {
-        val values = getField(CabalTokelTypes.BUILD_DEPENDS)?.getValues()
-        if (values == null) return listOf()
-        var res : ArrayList<Pair<String, ComplexVersionConstraint?>> = ArrayList()
-        for (value in values) {
-            res.add(Pair((value as FullVersionConstraint).getBaseName(), (value as FullVersionConstraint).getConstraint()))
-        }
-        return res
+    public fun getBuildDepends(): MutableList<FullVersionConstraint> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(getField(CabalTokelTypes.BUILD_DEPENDS), javaClass<FullVersionConstraint>())
     }
 
 }
