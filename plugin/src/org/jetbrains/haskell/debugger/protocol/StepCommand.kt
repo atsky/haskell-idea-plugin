@@ -14,7 +14,7 @@ import org.jetbrains.haskell.debugger.parser.ShowOutput
 public abstract class StepCommand(callback: CommandCallback<HsTopStackFrameInfo?>?)
 : AbstractCommand<HsTopStackFrameInfo?>(callback) {
 
-    override fun parseOutput(output: Deque<String?>): HsTopStackFrameInfo? {
+    override fun parseGHCiOutput(output: Deque<String?>): HsTopStackFrameInfo? {
         return Parser.tryParseStoppedAt(output)
     }
 

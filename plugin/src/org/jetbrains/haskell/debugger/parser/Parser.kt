@@ -5,6 +5,8 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Deque
 import org.jetbrains.haskell.debugger.frames
+import org.codehaus.jettison.json.JSONObject
+import org.json.simple.parser.JSONParser
 
 /**
  * @author Habibullin Marat
@@ -205,6 +207,13 @@ public class Parser() {
                 }
             }
             return null;
+        }
+
+        public fun parseJSONObject(string: String): JSONResult {
+            val parser = JSONParser()
+            return JSONResult(parser.parse(string) as JSONObject)
+
+
         }
     }
 }

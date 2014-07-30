@@ -27,7 +27,7 @@ import com.intellij.notification.NotificationType
 public abstract class FlowCommand(callback: CommandCallback<HsTopStackFrameInfo?>?)
 : AbstractCommand<HsTopStackFrameInfo?>(callback) {
 
-    override fun parseOutput(output: Deque<String?>): HsTopStackFrameInfo? = Parser.tryParseStoppedAt(output)
+    override fun parseGHCiOutput(output: Deque<String?>): HsTopStackFrameInfo? = Parser.tryParseStoppedAt(output)
 
     class object {
         public class StandardFlowCallback(val debugProcess: HaskellDebugProcess)
@@ -35,10 +35,10 @@ public abstract class FlowCommand(callback: CommandCallback<HsTopStackFrameInfo?
             override fun execAfterParsing(result: HsTopStackFrameInfo?) {
                 if (result != null) {
                     val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
-                                        LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
+                            LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
                     val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)!!
                     val condition = breakpoint.getCondition()
-                    if(condition != null) {
+                    if (condition != null) {
                         handleCondition(breakpoint, condition, result)
                     } else {
                         debugProcess.debugger.history(breakpoint, result)
@@ -51,15 +51,15 @@ public abstract class FlowCommand(callback: CommandCallback<HsTopStackFrameInfo?
                 evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
                     override fun errorOccurred(errorMessage: String) {
                         val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.getLine()}" +
-                                  "cannot be evaluated, reason: $errorMessage"
+                                "cannot be evaluated, reason: $errorMessage"
                         Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
                         debugProcess.debugger.history(breakpoint, result)
                     }
                     override fun evaluated(evalResult: XValue) {
                         if (evalResult is HsDebugValue &&
-                            evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
-                            (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
-                                debugProcess.debugger.history(breakpoint, result)
+                                evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
+                                (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
+                            debugProcess.debugger.history(breakpoint, result)
                         } else {
                             debugProcess.debugger.resume()
                         }

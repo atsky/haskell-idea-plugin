@@ -47,7 +47,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
-    public var lastCommand: AbstractCommand<out ParseResult?>? = null;
+    private var lastCommand: AbstractCommand<out ParseResult?>? = null;
 
     {
         queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })

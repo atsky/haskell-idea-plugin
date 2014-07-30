@@ -17,7 +17,7 @@ public class SetBreakpointCommand(val module: String,
 
     override fun getBytes(): ByteArray = ":break $module $lineNumber\n".toByteArray()
 
-    override fun parseOutput(output: Deque<String?>): BreakpointCommandResult? = Parser.parseSetBreakpointCommandResult(output)
+    override fun parseGHCiOutput(output: Deque<String?>): BreakpointCommandResult? = Parser.parseSetBreakpointCommandResult(output)
 
     class object {
         public class StandardSetBreakpointCallback(val module: String,

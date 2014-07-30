@@ -28,7 +28,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return JavaCommandLineStateUtil.startProcess(generalCommandLine)
     }
 
-    protected fun startDebugProcess(): ProcessHandler {
+    private fun startGHCiDebugProcess(): ProcessHandler {
         val module = configuration.getModule()
         if (module == null) {
             throw ExecutionException("Module not specified")
@@ -44,7 +44,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     public fun executeDebug(executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
-        val processHandler = startDebugProcess()
+        val processHandler = startGHCiDebugProcess()
         val console = createConsole(executor)
         console?.attachToProcess(processHandler)
 

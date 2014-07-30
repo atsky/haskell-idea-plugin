@@ -22,7 +22,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
      */
     override fun getBytes(): ByteArray = ("Prelude.show (${expression.trim()})\n").toByteArray()
 
-    override fun parseOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
+    override fun parseGHCiOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
 
     class object {
         public class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)

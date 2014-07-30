@@ -1,6 +1,7 @@
 package org.jetbrains.haskell.debugger.parser
 
 import java.util.ArrayList
+import org.codehaus.jettison.json.JSONObject
 
 /**
  * This file contains data types for holding parsed information
@@ -55,3 +56,5 @@ public class ShowOutput(public val output: String) : ParseResult()
 public class History(public val list: ArrayList<HsCommonStackFrameInfo>) : ParseResult()
 
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
+
+public class JSONResult(public val json: JSONObject) : ParseResult()

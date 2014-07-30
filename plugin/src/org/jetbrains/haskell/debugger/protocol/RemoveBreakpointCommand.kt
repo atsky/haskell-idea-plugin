@@ -12,5 +12,5 @@ public class RemoveBreakpointCommand(val breakpointNumber: Int, callback: Comman
 
     override fun getBytes(): ByteArray = ":delete $breakpointNumber\n".toByteArray()
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = null
+    override fun parseGHCiOutput(output: Deque<String?>): ParseResult? = null
 }

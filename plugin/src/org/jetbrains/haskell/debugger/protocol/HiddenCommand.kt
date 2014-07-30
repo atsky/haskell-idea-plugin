@@ -18,5 +18,5 @@ public abstract class HiddenCommand
         }
     }
 
-    override fun parseOutput(output: Deque<String?>): ParseResult? = null
+    override fun parseGHCiOutput(output: Deque<String?>): ParseResult? = null
 }

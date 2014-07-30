@@ -22,7 +22,7 @@ public class HistoryCommand(callback: CommandCallback<History?>?) : RealTimeComm
         return ":hist\n".toByteArray()
     }
 
-    override fun parseOutput(output: Deque<String?>): History? = Parser.parseHistory(output)
+    override fun parseGHCiOutput(output: Deque<String?>): History? = Parser.parseHistory(output)
 
     class object {
         public class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,

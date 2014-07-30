@@ -16,5 +16,5 @@ public class ExpressionTypeCommand(val expression: String, callback: CommandCall
         return ":type $expression\n".toByteArray()
     }
 
-    override fun parseOutput(output: Deque<String?>): ExpressionType? = Parser.parseExpressionType(output.getFirst()!!)
+    override fun parseGHCiOutput(output: Deque<String?>): ExpressionType? = Parser.parseExpressionType(output.getFirst()!!)
 }
