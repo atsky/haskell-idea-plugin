@@ -10,7 +10,6 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import java.io.File
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.OS
-import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.Executor
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ExecutionResult
@@ -18,6 +17,10 @@ import com.intellij.execution.DefaultExecutionResult
 import com.intellij.execution.configurations.RunnerSettings
 import org.jetbrains.haskell.util.GHCUtil
 import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.haskell.debugger.GHCiProcessHandler
+import org.jetbrains.haskell.debugger.HaskellDebugProcessHandler
+import org.jetbrains.haskell.debugger.RemoteDebugStreamHandler
+import org.jetbrains.haskell.debugger.RemoteProcessHandler
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -28,7 +31,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return JavaCommandLineStateUtil.startProcess(generalCommandLine)
     }
 
-    private fun startGHCiDebugProcess(): ProcessHandler {
+    private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
         val module = configuration.getModule()
         if (module == null) {
             throw ExecutionException("Module not specified")
@@ -40,11 +43,29 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
         val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDir)
-        return OSProcessHandler(process)
+        return GHCiProcessHandler(process)
+    }
+
+    private fun startRemoteDebugProcess(): HaskellDebugProcessHandler {
+        val module = configuration.getModule()
+        if (module == null) {
+            throw ExecutionException("Module not specified")
+        }
+
+        val streamHandler = RemoteDebugStreamHandler()
+        streamHandler.start()
+
+        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
+        val debuggerPath = joinPath(baseDir, "HaskellDebugger") // temporary location
+
+        val builder = ProcessBuilder(debuggerPath, "-i${streamHandler.getPort()}")
+                .directory(File(baseDir))
+
+        return RemoteProcessHandler(builder.start(), streamHandler)
     }
 
     public fun executeDebug(executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
-        val processHandler = startGHCiDebugProcess()
+        val processHandler = startGHCiDebugProcess() // startRemoteDebugProcess
         val console = createConsole(executor)
         console?.attachToProcess(processHandler)
 

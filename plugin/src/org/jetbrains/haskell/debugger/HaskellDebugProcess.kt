@@ -31,7 +31,7 @@ import org.jetbrains.haskell.debugger.highlighting.HsDebugSessionListener
 
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
-                                 val myProcessHandler: ProcessHandler) : XDebugProcess(session), ProcessListener {
+                                 val myProcessHandler: HaskellDebugProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
@@ -41,7 +41,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
 
-        myProcessHandler.addProcessListener(this)
+        myProcessHandler.setDebugProcessListener(this)
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(

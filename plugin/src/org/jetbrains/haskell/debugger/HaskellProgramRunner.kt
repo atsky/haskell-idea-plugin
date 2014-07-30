@@ -51,7 +51,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
     {
         try {
             val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
-            val processHandler = executionResult.getProcessHandler()!!
+            val processHandler = executionResult.getProcessHandler()!! as HaskellDebugProcessHandler
 
             val session = XDebuggerManager.getInstance(project)!!.
                     startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
