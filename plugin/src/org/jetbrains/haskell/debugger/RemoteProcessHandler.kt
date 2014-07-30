@@ -8,6 +8,10 @@ import com.intellij.execution.process.ProcessListener
 
 public class RemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler) : HaskellDebugProcessHandler(process: Process) {
 
+    {
+        streamHandler.processHandler = this
+    }
+
     override fun setDebugProcessListener(listener: ProcessListener?) {
         streamHandler.listener = listener
     }

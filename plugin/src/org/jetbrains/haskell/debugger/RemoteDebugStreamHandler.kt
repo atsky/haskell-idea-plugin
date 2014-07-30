@@ -29,7 +29,7 @@ public class RemoteDebugStreamHandler: Runnable {
             if (line == null) {
                 stop()
             } else {
-                listener?.onTextAvailable(ProcessEvent(processHandler, line), ProcessOutputTypes.STDOUT)
+                listener?.onTextAvailable(ProcessEvent(processHandler, line + "\n"), ProcessOutputTypes.STDOUT)
             }
 
         }

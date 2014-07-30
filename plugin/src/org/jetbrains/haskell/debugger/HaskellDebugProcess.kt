@@ -40,6 +40,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
         debugger = GHCiDebugger(this)
+//        debugger = RemoteDebugger(this)
 
         myProcessHandler.setDebugProcessListener(this)
     }
@@ -141,7 +142,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         super<XDebugProcess>.sessionInitialized()
         val currentSession = getSession()
         currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
-        debugger.prepareGHCi()
+        debugger.prepareDebugger()
         debugger.trace()
     }
 
@@ -166,6 +167,10 @@ public class HaskellDebugProcess(session: XDebugSession,
         val text = event?.getText()
         if (text != null) {
             print(text)
+            // temporary
+            if (debugger is RemoteDebugger) {
+                printToConsole(text)
+            }
             debugger.onTextAvailable(text, outputType)
         }
     }

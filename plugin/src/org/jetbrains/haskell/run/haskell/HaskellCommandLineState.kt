@@ -58,14 +58,15 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
         val debuggerPath = joinPath(baseDir, "HaskellDebugger") // temporary location
 
-        val builder = ProcessBuilder(debuggerPath, "-i${streamHandler.getPort()}")
+        val builder = ProcessBuilder(debuggerPath, "-p${streamHandler.getPort()}")
                 .directory(File(baseDir))
 
         return RemoteProcessHandler(builder.start(), streamHandler)
     }
 
     public fun executeDebug(executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
-        val processHandler = startGHCiDebugProcess() // startRemoteDebugProcess
+        val processHandler = startGHCiDebugProcess()
+//        val processHandler = startRemoteDebugProcess()
         val console = createConsole(executor)
         console?.attachToProcess(processHandler)
 

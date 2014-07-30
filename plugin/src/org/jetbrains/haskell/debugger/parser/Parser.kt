@@ -5,8 +5,8 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Deque
 import org.jetbrains.haskell.debugger.frames
-import org.codehaus.jettison.json.JSONObject
 import org.json.simple.parser.JSONParser
+import org.json.simple.JSONObject
 
 /**
  * @author Habibullin Marat

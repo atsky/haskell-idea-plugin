@@ -13,7 +13,8 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
-import org.codehaus.jettison.json.JSONObject
+import org.jetbrains.haskell.debugger.parser.Parser
+import org.json.simple.JSONObject
 
 /**
  * Created by vlad on 7/30/14.
@@ -22,6 +23,7 @@ import org.codehaus.jettison.json.JSONObject
 public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
 
     private val queue: CommandQueue
+    private val handler: JSONHandler = JSONHandler()
     private val writeLock = Any();
 
     {
@@ -59,7 +61,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     override fun trace() {
         queue.addCommand(TraceCommand("main",
-                FlowCommand.StandardFlowCallback(debugProcess)))
+                null))
     }
 
     override fun setBreakpoint(module: String, line: Int) {
@@ -90,8 +92,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         throw UnsupportedOperationException()
     }
 
-    override fun prepareGHCi() {
-        throw UnsupportedOperationException()
+    override fun prepareDebugger() {
     }
 
     override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>?, topFrameInfo: HsTopStackFrameInfo) {
@@ -107,18 +108,21 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        throw UnsupportedOperationException()
+        handler.handle(Parser.parseJSONObject(text).json)
+        queue.setReadyForInput()
     }
 
     public inner class JSONHandler {
         public fun handle(result: JSONObject) {
-            val info = result.getString("info")
+            val info = result.get("info") as String?
             when (info) {
                 null -> {
                     throw RuntimeException("Missing data type")
                 }
                 "finished" -> {
                     debugProcess.getSession()!!.stop()
+                }
+                "connected to port" -> {
                 }
                 else -> {
                     throw RuntimeException("Unknown result")

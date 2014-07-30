@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.debugger.parser
 
 import java.util.ArrayList
-import org.codehaus.jettison.json.JSONObject
+import org.json.simple.JSONObject
 
 /**
  * This file contains data types for holding parsed information

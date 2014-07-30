@@ -140,7 +140,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         queue.addCommand(sequenceOfForwardsCommand)
     }
 
-    override fun prepareGHCi() {
+    override fun prepareDebugger() {
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
 
         val connectTo_host_port = "\\host port_ -> let port = toEnum port_ in " +

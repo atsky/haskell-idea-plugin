@@ -32,7 +32,7 @@ public trait ProcessDebugger {
 
     public fun resume()
 
-    public fun prepareGHCi()
+    public fun prepareDebugger()
 
     public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo)
 
