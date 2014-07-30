@@ -5,7 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.*
 
 public class CompilerID(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue {
-    public override fun availibleValues(): List<String> {
+    public override fun getAvailableValues(): List<String> {
         return COMPILER_VALS
     }
 }

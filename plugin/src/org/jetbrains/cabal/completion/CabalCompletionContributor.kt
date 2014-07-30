@@ -23,7 +23,8 @@ public open class CabalCompletionContributor() : CompletionContributor() {
         if (parameters?.getCompletionType() == CompletionType.BASIC) {
             var colonNeeded = false
             val values = ArrayList<String>()
-            val parent = parameters?.getPosition()?.getParent()
+            val current = parameters?.getPosition()
+            val parent = current?.getParent()
             if (parent == null) { return }
 
             when (parent) {
@@ -37,7 +38,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     values.addAll(parent.getAvailableFieldNames())
                 }
                 is RangedValue -> {
-                    values.addAll(parent.availibleValues())
+                    values.addAll(parent.getAvailableValues())
                 }
             }
 

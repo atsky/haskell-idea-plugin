@@ -16,14 +16,19 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
     }
 
     public override fun isValidValue(): String? {
-        if (getChildren().size != 1) {
-            if (getFirstChild()!!.getText() in VALID_TESTS_NAMES) {
-                return null
-            }
-            else {
-                return null                                                 //TODO: check whether there is such flag
-            }
+        if (isBool()) return null
+        if (getTestName() in VALID_TESTS_NAMES) {
+            return null
         }
-        return null
+        return "invalid test name"
+    }
+
+    public fun isBool(): Boolean {
+        return (getChildren().size == 0)
+    }
+
+    public fun getTestName(): String? {
+        if (isBool()) return null
+        return getFirstChild()!!.getText()
     }
 }

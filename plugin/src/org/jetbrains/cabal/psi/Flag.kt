@@ -11,4 +11,7 @@ public class Flag(node: ASTNode) : Section(node) {
     public override fun getAvailableFieldNames(): List<String> {
         return FLAG_FIELDS
     }
+
+    public fun getFlagName(): String = getAfterTypeNode()!!.getText()!!
+
 }

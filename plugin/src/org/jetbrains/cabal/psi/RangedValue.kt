@@ -6,10 +6,10 @@ import com.intellij.psi.PsiElement
 
 public trait RangedValue: Checkable, PsiElement {
 
-    public fun availibleValues(): List<String> { return listOf() }
+    public fun getAvailableValues(): List<String> { return listOf() }
 
     public override fun isValidValue(): String? {
-        if (getText()!! !in availibleValues()) return "invalid field value"
+        if (getText()!! !in getAvailableValues()) return "invalid field value"
         return null
     }
 

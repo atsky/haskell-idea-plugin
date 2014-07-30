@@ -6,7 +6,7 @@ import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.psi.PropertyValue
 
 public class TestSuiteType(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue, PropertyValue {
-    public override fun availibleValues(): List<String> {
+    public override fun getAvailableValues(): List<String> {
         return TS_TYPE_VALS
     }
 }

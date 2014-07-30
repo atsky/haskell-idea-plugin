@@ -33,17 +33,9 @@ public class SourceRepo(node: ASTNode) : Section(node) {
         if ((typeValue!!.getText() == "cvs") && !moduleFlag) {
             return "module field is required with CVS repository type"
         }
-        if (getAfterTypeValue().equals("this") && !tagFlag) return "tag field is required when repository kind is \"this\""
+        if (getRepoKind().equals("this") && !tagFlag) return "tag field is required when repository kind is \"this\""
         return null
     }
 
-//    public fun getRepoType(): String? {
-//        val nodes = getSectChildren()
-//        for (node in nodes) {
-//            if (node is  TypeField) {
-//                return node.getLastValue()
-//            }
-//        }
-//        return null
-//    }
+    public fun getRepoKind(): String = getAfterTypeNode()!!.getText()!!
 }

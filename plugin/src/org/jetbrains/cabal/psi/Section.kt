@@ -46,8 +46,6 @@ public open class Section(node: ASTNode): Field(node) {
         return null
     }
 
-    public fun getAfterTypeValue(): String? = getAfterTypeNode()?.getText()
-
     public fun getAfterTypeNode(): PsiElement? {
         if (this is Library) return null
         var node = getFirstChild()!!
