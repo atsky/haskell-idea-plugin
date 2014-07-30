@@ -46,6 +46,7 @@ public class HaskellUtils {
             return reader.returnName()
         }
 
+        public val HS_BOOLEAN_TYPENAME: String = "Bool"
         public val HS_BOOLEAN_TRUE: String = "True"
     }
 }
