@@ -51,7 +51,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      */
     public val hackSourcePosition: XSourcePosition? = XDebuggerUtil.getInstance()!!.createPosition(
                         LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition.filePath)),
-                        HaskellUtils.haskellLineNumberToZeroBased(filePosition.startLine))
+                        filePosition.normalizedStartLine)
 
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)
@@ -81,12 +81,12 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      */
     private fun setSourceSpan(component: ColoredTextContainer) {
         val srcSpan: String
-        if (filePosition.startLine != filePosition.endLine) {
-            srcSpan = ":(" + filePosition.startLine + "," + filePosition.startSymbol + ")-(" +
-                    filePosition.endLine + "," + filePosition.endSymbol + ")"
+        if (filePosition.rawStartLine != filePosition.rawEndLine) {
+            srcSpan = ":(" + filePosition.rawStartLine + "," + filePosition.rawStartSymbol + ")-(" +
+                    filePosition.rawEndLine + "," + filePosition.normalizedEndSymbol + ")"
         } else {
-            srcSpan = ":" + filePosition.startLine +
-                    ":" + filePosition.startSymbol + "-" + filePosition.endSymbol
+            srcSpan = ":" + filePosition.rawStartLine +
+                    ":" + filePosition.rawStartSymbol + "-" + filePosition.normalizedEndSymbol
         }
         component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }

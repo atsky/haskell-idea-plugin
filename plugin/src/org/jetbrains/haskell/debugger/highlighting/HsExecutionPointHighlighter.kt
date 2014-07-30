@@ -105,10 +105,10 @@ public class HsExecutionPointHighlighter(private val myProject: Project) {
     private fun addHighlighter() {
         if (filePosition != null) {
             val document = myEditor!!.getDocument()
-            val startLineOffset = document.getLineStartOffset(HaskellUtils.haskellLineNumberToZeroBased(filePosition!!.startLine))
-            val endLineOffset = document.getLineStartOffset(HaskellUtils.haskellLineNumberToZeroBased(filePosition!!.endLine))
-            val startOffset = startLineOffset + filePosition!!.startSymbol - 1
-            val endOffset = endLineOffset + filePosition!!.endSymbol
+            val startLineOffset = document.getLineStartOffset(filePosition!!.normalizedStartLine)
+            val endLineOffset = document.getLineStartOffset(filePosition!!.normalizedEndLine)
+            val startOffset = startLineOffset + filePosition!!.normalizedStartSymbol - 1
+            val endOffset = endLineOffset + filePosition!!.normalizedEndSymbol - 1
             if (myUseSelection) {
                 myEditor!!.getSelectionModel().setSelection(startOffset, endOffset)
                 return

@@ -14,10 +14,19 @@ public class BreakpointCommandResult(public val breakpointNumber: Int,
                                      public val position: HsFilePosition) : ParseResult()
 
 public class HsFilePosition(public val filePath: String,
-                          public val startLine: Int,
-                          public val startSymbol: Int,
-                          public val endLine: Int,
-                          public val endSymbol: Int) : ParseResult()
+                            public val rawStartLine: Int,
+                            public val rawStartSymbol: Int,
+                            public val rawEndLine: Int,
+                            public val rawEndSymbol: Int)
+: ParseResult() {
+    // zero based start line number
+    public val normalizedStartLine : Int= rawStartLine - 1
+    public val normalizedStartSymbol : Int= rawStartSymbol
+    // zero based end line number
+    public val normalizedEndLine : Int= rawEndLine - 1
+    // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
+    public val normalizedEndSymbol : Int= rawEndSymbol + 1
+}
 
 //public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
 //public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()

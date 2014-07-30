@@ -25,7 +25,7 @@ public class SetBreakpointCommand(val module: String,
                                                    : CommandCallback<BreakpointCommandResult?>() {
             override fun execAfterParsing(result: BreakpointCommandResult?) {
                 if (result != null) {
-                    debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, module, result.position.startLine)
+                    debugProcess.setBreakpointNumberAtLine(result.breakpointNumber, module, result.position.rawStartLine)
                 }
             }
         }
