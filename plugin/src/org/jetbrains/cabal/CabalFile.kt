@@ -12,6 +12,7 @@ import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.jetbrains.cabal.psi.Executable
 import org.jetbrains.cabal.psi.Flag
+import com.intellij.psi.PsiElement
 
 public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, CabalLanguage.INSTANCE) {
     public override fun getFileType(): FileType {

@@ -271,6 +271,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(level, "install-includes" , { parseDirectoryList(it) })
             || parseField(level, "c-sources"        , { parseDirectoryList(it) })
             || parseField(level, "hs-source-dirs"   , { parseDirectoryList(it) })
+            || parseField(level, "hs-source-dir"    , { parseDirectory() })
             || parseField(level, "extra-lib-dirs"   , { parseDirectoryList(it) })
             || parseField(level, "include-dirs"     , { parseDirectoryList(it) })
             || parseField(level, "frameworks"       , { parseTokenList(it) })

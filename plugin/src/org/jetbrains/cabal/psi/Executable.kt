@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 public class Executable(node: ASTNode) : Section(node) {
 
     public fun getExecutableName() : String {
-        return getChildren()[0].getText()!!
+        return getAfterTypeNode()!!.getText()!!
     }
 
     public override fun getRequiredFieldNames(): List<String> = listOf("main-is")

@@ -61,7 +61,7 @@ public trait CabalTokelTypes {
         val BUILDABLE              : IElementType = CabalCompositeElementType("BUILDABLE"                , ::BuildableField          )
         val EXTENSIONS             : IElementType = CabalCompositeElementType("EXTENSIONS"               , ::ExtensionsField         )
         val OTHER_MODULES          : IElementType = CabalCompositeElementType("OTHER_MODULES"            , ::OtherModulesField       )
-        val DIRECTORY_FIELD        : IElementType = CabalCompositeElementType("DIRECTORY_FIELD"          , ::DirectoryField          )
+        val DATA_DIR               : IElementType = CabalCompositeElementType("DATA_DIR"                 , ::DataDirField            )
         val BUILD_TYPE_FIELD       : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildTypeField          )
         val LICENSE                : IElementType = CabalCompositeElementType("LICENSE"                  , ::LicenseField            )
         val TESTED_WITH            : IElementType = CabalCompositeElementType("TESTED_WITH"              , ::TestedWithField         )

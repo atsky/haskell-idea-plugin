@@ -11,7 +11,7 @@ public val FIELD_TYPES: Map<String, IElementType> = mapOf(
          "tested-with"          to CabalTokelTypes.TESTED_WITH       ,
          "license-file"         to CabalTokelTypes.LICENSE_FILES     ,
          "license-files"        to CabalTokelTypes.LICENSE_FILES     ,
-         "data-dir"             to CabalTokelTypes.DIRECTORY_FIELD   ,
+         "data-dir"             to CabalTokelTypes.DATA_DIR          ,
          "main-is"              to CabalTokelTypes.MAIN_FILE         ,
          "build-depends"        to CabalTokelTypes.BUILD_DEPENDS     ,
          "pkgconfig-depends"    to CabalTokelTypes.PKG_CONFIG_DEPENDS,
