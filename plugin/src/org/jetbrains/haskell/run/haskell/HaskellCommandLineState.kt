@@ -39,7 +39,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
         val module = configuration.getModule()
         if (module == null) {
-            throw ExecutionException("Module not specified")
+            throw ExecutionException("Error while starting debug process: module not specified")
         }
         val cabalFile = tryGetCabalFile(module)
         if (cabalFile == null) {
@@ -53,18 +53,14 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         if(mainFileName == null) {
             throw ExecutionException("Error while starting debug process: no main file specified in executable section")
         }
-        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val srcDirPath = tryGetSrcDirFullPath(mainFileName, baseDir, exec)
+        val srcDirPath = tryGetSrcDirFullPath(mainFileName, module, exec)
         if(srcDirPath == null) {
             throw ExecutionException("Error while starting debug process: main file $mainFileName not found in source directories")
         }
-
-//        val srcDir = joinPath(baseDir, "src")
-//        val filePath = joinPath(baseDir, "src", "Main.hs")
         val filePath = joinPath(srcDirPath, mainFileName)
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
-        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDir)
+        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDirPath)
         return GHCiProcessHandler(process)
     }
 
@@ -139,7 +135,6 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val execs = cabalFile.getExecutables()
         val neededExecName = configuration.getMyExecutableName()
         for (exec in execs) {
-            val name = exec.getExecutableName()
             if (exec.getExecutableName() == neededExecName) {
                 return exec
             }
@@ -147,7 +142,8 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return null
     }
 
-    private fun tryGetSrcDirFullPath(mainFileName: String, baseDirPath: String, correspondingExec: Executable): String? {
+    private fun tryGetSrcDirFullPath(mainFileName: String, module: Module, correspondingExec: Executable): String? {
+        val baseDirPath = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
         val srcDirs: List<String> = correspondingExec.getHSSourceDirs().map { it.getText() }
         for(srcDir in srcDirs) {
             val path = joinPath(baseDirPath, srcDir, mainFileName)

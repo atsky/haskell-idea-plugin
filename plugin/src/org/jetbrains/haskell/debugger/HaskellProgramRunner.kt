@@ -54,27 +54,6 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
                            environment: ExecutionEnvironment): RunContentDescriptor?
     {
         try {
-//            val hsCommandLineState = state as HaskellCommandLineState
-//            val module = hsCommandLineState.configuration.getModule()
-//            if (module != null) {
-//                val cabalFile = CabalInterface.findCabal(module)
-
-//                if(cabalFile != null) {
-//                    val charset = cabalFile.getCharset()
-//                    val executableName = (environment.getRunProfile() as CabalRunConfiguration).getMyExecutableName()
-//                    if(charset != null && executableName != null) {
-//                        val contents = cabalFile.contentsToByteArray().toString(charset).split('\n')
-//                        val executablePattern = "executable\\s+(" + executableName + ")\\s*$"
-//                        val execSectionStartIndex: Int = findFirstMatchInsensitive(executablePattern, contents)
-//                        if(execSectionStartIndex != -1) {
-//                            val mainIsPattern = "\\s*main-is:\\s+(\\w+\\.hs)\\s*$"
-//                            val mainIsLineIndex = findFirstMatchInsensitive(mainIsPattern, contents, execSectionStartIndex)
-//                            val
-//                        }
-//                    }
-//                }
-//            }
-
             val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
             val processHandler = executionResult.getProcessHandler()!! as HaskellDebugProcessHandler
 
