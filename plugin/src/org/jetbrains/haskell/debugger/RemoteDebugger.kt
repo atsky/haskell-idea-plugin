@@ -27,6 +27,9 @@ import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
 import org.jetbrains.haskell.debugger.protocol.StepOverCommand
+import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 
 /**
  * Created by vlad on 7/30/14.
@@ -54,6 +57,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         synchronized(writeLock) {
             lastCommand = command
 
+            command.callback?.execBeforeSending()
+
             if (command !is HiddenCommand) {
                 debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
             }
@@ -72,36 +77,32 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         throw UnsupportedOperationException()
     }
 
-    override fun trace() {
-        queue.addCommand(TraceCommand("main", null))
-    }
+    override fun trace() =
+            queue.addCommand(TraceCommand("main", null))
 
-    override fun setBreakpoint(module: String, line: Int) {
-        queue.addCommand(SetBreakpointCommand(module, line, null))
-    }
+    override fun setBreakpoint(module: String, line: Int) =
+            queue.addCommand(SetBreakpointCommand(module, line, null))
 
-    override fun removeBreakpoint(module: String, breakpointNumber: Int) {
-    }
+    override fun removeBreakpoint(module: String, breakpointNumber: Int) =
+            queue.addCommand(RemoveBreakpointCommand(module, breakpointNumber, null))
 
-    override fun close() {
-        queue.stop()
-    }
+    override fun close() = queue.stop()
 
-    override fun stepInto() {
-        queue.addCommand(StepIntoCommand(null))
-    }
+    override fun stepInto() = queue.addCommand(StepIntoCommand(null))
 
-    override fun stepOver() {
-        queue.addCommand(StepOverCommand(null))
-    }
+    override fun stepOver() = queue.addCommand(StepOverCommand(null))
 
-    override fun runToPosition(module: String, line: Int) {
-        throw UnsupportedOperationException()
-    }
+    override fun runToPosition(module: String, line: Int) =
+            queue.addCommand(SetBreakpointCommand(module, line,
+                    object : CommandCallback<BreakpointCommandResult?>() {
+                        override fun execAfterParsing(result: BreakpointCommandResult?) {
+                        }
+                        override fun execBeforeSending() {
+                            handler.inRunToPosition = true
+                        }
+                    }))
 
-    override fun resume() {
-        queue.addCommand(ResumeCommand(null))
-    }
+    override fun resume() = queue.addCommand(ResumeCommand(null))
 
     override fun prepareDebugger() {
     }
@@ -112,22 +113,19 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         queue.addCommand(HistoryCommand(null))
     }
 
-    override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) {
-        throw UnsupportedOperationException()
-    }
+    override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
+            queue.addCommand(sequenceOfBacksCommand)
 
-    override fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) {
-        throw UnsupportedOperationException()
-    }
+    override fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
+            queue.addCommand(sequenceOfForwardsCommand)
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         handler.handle(Parser.parseJSONObject(text).json)
         queue.setReadyForInput()
     }
 
-    private fun breakpointList(module: String, lineToSet: Int? = null) {
-        queue.addCommand(BreakpointListCommand(module, lineToSet, null))
-    }
+    private fun breakpointList(module: String, lineToSet: Int? = null) =
+            queue.addCommand(BreakpointListCommand(module, lineToSet, null))
 
     public inner class JSONHandler {
         private val CONNECTED_MSG = "connected to port"
@@ -141,11 +139,18 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         private val BREAKPOINT_SET_MSG = "breakpoint was set"
         private val BREAKPOINT_NOT_SET_MSG = "breakpoint was not set"
 
+        private val BREAKPOINT_REMOVED_MSG = "breakpoint was removed"
+        private val BREAKPOINT_NOT_REMOVED_MSG = "breakpoint was not removed"
+
         private val HISTORY_MSG = "got history"
 
         // For history command
         public var breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>? = null
         public var topFrameInfo: HsTopStackFrameInfo? = null
+
+        // For runToPosition command combination
+        public var inRunToPosition: Boolean = false
+        public var tempBreakpointIndex: Int? = null
 
         public fun handle(result: JSONObject) {
             val info = result.get("info") as String?
@@ -165,11 +170,25 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                     paused(result)
                 FINISHED_MSG ->
                     debugProcess.getSession()!!.stop()
-                BREAKPOINT_SET_MSG ->
-                    debugProcess.setBreakpointNumberAtLine(result.getInt("index"),
-                            (lastCommand as SetBreakpointCommand).module, result.getObject("src_span").getInt("startline"))
+                BREAKPOINT_SET_MSG -> {
+                    if (!inRunToPosition) {
+                        debugProcess.setBreakpointNumberAtLine(result.getInt("index"),
+                                (lastCommand as SetBreakpointCommand).module, result.getObject("src_span").getInt("startline"))
+                    } else {
+                        queue.addCommand(ResumeCommand(null), true)
+                        queue.addCommand(RemoveBreakpointCommand((lastCommand as SetBreakpointCommand).module, result.getInt("index"), null), true)
+                    }
+                }
                 BREAKPOINT_NOT_SET_MSG ->
                     debugProcess.printToConsole("Breakpoint was not set: ${result.getString("add_info")}\n",
+                            ConsoleViewContentType.SYSTEM_OUTPUT)
+                BREAKPOINT_REMOVED_MSG -> {
+                    if (inRunToPosition) {
+                        inRunToPosition = false
+                    }
+                }
+                BREAKPOINT_NOT_REMOVED_MSG ->
+                    debugProcess.printToConsole("Breakpoint was not removed: ${result.getString("add_info")}\n",
                             ConsoleViewContentType.SYSTEM_OUTPUT)
                 HISTORY_MSG ->
                     gotHistory(result)

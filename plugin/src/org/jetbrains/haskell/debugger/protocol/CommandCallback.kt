@@ -8,4 +8,7 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 
 public abstract class CommandCallback<R: ParseResult?> {
     public abstract fun execAfterParsing(result: R)
+
+    public open fun execBeforeSending() {
+    }
 }

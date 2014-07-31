@@ -10,7 +10,7 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
  * Created by vlad on 7/10/14.
  */
 
-public abstract class AbstractCommand<R : ParseResult?>(private val callback: CommandCallback<R>?) {
+public abstract class AbstractCommand<R : ParseResult?>(public val callback: CommandCallback<R>?) {
 
     public abstract fun getBytes(): ByteArray
 
