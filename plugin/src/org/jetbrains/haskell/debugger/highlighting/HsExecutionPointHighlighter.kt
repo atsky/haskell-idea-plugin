@@ -20,18 +20,16 @@ import com.intellij.xdebugger.ui.DebuggerColors
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import org.jetbrains.haskell.run.haskell.HaskellCommandLineState
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import java.awt.font.TextAttribute
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.ui.Colors
 import com.intellij.openapi.editor.colors.EditorFontType
 import org.intellij.lang.annotations.JdkConstants.FontStyle
-import com.intellij.xdebugger.impl.XDebuggerManagerImpl
 
 /**
  * Modified copy of com.intellij.xdebugger.impl.ui.ExecutionPointHighlighter. Differences:
- * 1) Simplified (not all methods implemented)
+ * 1) Simplified (not all methods are implemented)
  * 2) Highlights code ranges, not just lines
  *
  * @author Habibullin Marat

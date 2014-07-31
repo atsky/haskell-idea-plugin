@@ -21,6 +21,11 @@ import org.jetbrains.haskell.debugger.GHCiProcessHandler
 import org.jetbrains.haskell.debugger.HaskellDebugProcessHandler
 import org.jetbrains.haskell.debugger.RemoteDebugStreamHandler
 import org.jetbrains.haskell.debugger.RemoteProcessHandler
+import org.jetbrains.cabal.CabalInterface
+import com.intellij.openapi.module.Module
+import org.jetbrains.cabal.CabalFile
+import org.jetbrains.cabal.psi.Executable
+import com.intellij.openapi.vfs.LocalFileSystem
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -36,10 +41,27 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         if (module == null) {
             throw ExecutionException("Module not specified")
         }
-
+        val cabalFile = tryGetCabalFile(module)
+        if (cabalFile == null) {
+            throw ExecutionException("Error while starting debug process: cabal file not found")
+        }
+        val exec = tryGetExecWithNameFromConfig(cabalFile)
+        if(exec == null) {
+            throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.getMyExecutableName()}")
+        }
+        val mainFileName: String? = exec.getMainFile()?.getText()
+        if(mainFileName == null) {
+            throw ExecutionException("Error while starting debug process: no main file specified in executable section")
+        }
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val srcDir = joinPath(baseDir, "src")
-        val filePath = joinPath(baseDir, "src", "Main.hs")
+        val srcDirPath = tryGetSrcDirFullPath(mainFileName, baseDir, exec)
+        if(srcDirPath == null) {
+            throw ExecutionException("Error while starting debug process: main file $mainFileName not found in source directories")
+        }
+
+//        val srcDir = joinPath(baseDir, "src")
+//        val filePath = joinPath(baseDir, "src", "Main.hs")
+        val filePath = joinPath(srcDirPath, mainFileName)
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
         val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDir)
@@ -98,6 +120,43 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             commandLine.getParametersList()!!.addParametersString(parameters)
         }
         return commandLine
+    }
+
+    private fun tryGetCabalFile(module: Module): CabalFile? {
+        val project = configuration.getProject()
+        if (project == null) {
+            return null
+        }
+        val cabalVirtualFile = CabalInterface.findCabal(module)
+        if (cabalVirtualFile == null) {
+            return null
+        }
+        val cabalInterface = CabalInterface(project)
+        return cabalInterface.getPsiFile(cabalVirtualFile)
+    }
+
+    private fun tryGetExecWithNameFromConfig(cabalFile: CabalFile): Executable? {
+        val execs = cabalFile.getExecutables()
+        val neededExecName = configuration.getMyExecutableName()
+        for (exec in execs) {
+            val name = exec.getExecutableName()
+            if (exec.getExecutableName() == neededExecName) {
+                return exec
+            }
+        }
+        return null
+    }
+
+    private fun tryGetSrcDirFullPath(mainFileName: String, baseDirPath: String, correspondingExec: Executable): String? {
+        val srcDirs: List<String> = correspondingExec.getHSSourceDirs().map { it.getText() }
+        for(srcDir in srcDirs) {
+            val path = joinPath(baseDirPath, srcDir, mainFileName)
+            val vFile = LocalFileSystem.getInstance()!!.findFileByIoFile(File(path))
+            if(vFile != null && vFile.exists()) {
+                return joinPath(baseDirPath, srcDir)
+            }
+        }
+        return null
     }
 
 }
