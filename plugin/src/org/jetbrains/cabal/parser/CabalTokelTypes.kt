@@ -91,7 +91,7 @@ public trait CabalTokelTypes {
 
         val URL                    : IElementType = CabalCompositeElementType("URL"                      , ::URL                     )
         val NAME                   : IElementType = CabalCompositeElementType("NAME"                     , ::Name                    )
-        val DIRECTORY              : IElementType = CabalCompositeElementType("DIRECTORY"                , ::Directory               )
+        val PATH                   : IElementType = CabalCompositeElementType("PATH"                     , ::Path                    )
         val FREE_FORM              : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                )
         val VERSION_VALUE          : IElementType = CabalCompositeElementType("VERSION_VALUE"            , ::VersionValue            )
         val IDENTIFIER             : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier              )

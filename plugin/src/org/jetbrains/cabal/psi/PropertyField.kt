@@ -6,6 +6,7 @@ import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import java.util.ArrayList
+import com.intellij.psi.util.PsiTreeUtil
 
 public open class PropertyField(node: ASTNode) : Field(node) {
 
@@ -26,16 +27,15 @@ public open class PropertyField(node: ASTNode) : Field(node) {
 
     public fun getLastValue(): PropertyValue = getLastChild()!! as PropertyValue
 
-    public fun getValues(): List<PropertyValue> {
-        var res = ArrayList<PropertyValue>()
-        var nodes = getChildren()
-        for (node in nodes) {
-            if (node is PropertyValue) {
-                res.add(node)
-            }
-        }
-        return res
+    public fun getKeyNode(): PsiElement = getFirstChild()!!
+
+    public fun getPropertyName(): String = getKeyNode().getText()!!
+
+    public fun getValue(): PropertyValue {
+        return PsiTreeUtil.findChildOfType(this, javaClass<PropertyValue>())!!
     }
 
-    public fun getKeyNode(): PsiElement = getFirstChild()!!
+    public fun getValues(): List<PropertyValue> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<PropertyValue>())
+    }
 }

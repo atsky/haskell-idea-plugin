@@ -4,7 +4,7 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import java.util.ArrayList
 
-public class Benchmark(node: ASTNode) : Section(node) {
+public class Benchmark(node: ASTNode) : BuildSection(node) {
 
     public override fun getRequiredFieldNames(): List<String> = listOf("type")
 

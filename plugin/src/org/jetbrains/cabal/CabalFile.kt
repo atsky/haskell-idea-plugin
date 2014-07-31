@@ -13,8 +13,11 @@ import org.json.simple.JSONObject
 import org.jetbrains.cabal.psi.Executable
 import org.jetbrains.cabal.psi.Flag
 import com.intellij.psi.PsiElement
+import com.intellij.openapi.vfs.VirtualFile
+
 
 public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, CabalLanguage.INSTANCE) {
+
     public override fun getFileType(): FileType {
         return CabalFileType.INSTANCE
     }
@@ -34,4 +37,6 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
         }
         return res
     }
+
+    public fun getCabalRootPath(): String? = getViewProvider().getVirtualFile().getParent()?.getPath()
 }

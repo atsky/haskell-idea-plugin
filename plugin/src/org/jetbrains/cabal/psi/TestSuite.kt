@@ -7,7 +7,7 @@ import java.util.ArrayList
 /**
  * @author Evgeny.Kurbatsky
  */
-public class TestSuite(node: ASTNode) : Section(node) {
+public class TestSuite(node: ASTNode) : BuildSection(node) {
 
     public override fun getRequiredFieldNames(): List<String> = listOf("type")
 

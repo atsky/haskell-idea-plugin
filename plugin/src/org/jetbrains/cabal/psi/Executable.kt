@@ -4,13 +4,16 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import java.util.ArrayList
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
+import java.lang.IllegalStateException
 
 /**
  * @author Evgeny.Kurbatsky
  */
-public class Executable(node: ASTNode) : Section(node) {
+public class Executable(node: ASTNode) : BuildSection(node) {
 
-    public fun getExecutableName() : String {
+    public fun getExecutableName(): String {
         return getAfterTypeNode()!!.getText()!!
     }
 
@@ -24,14 +27,5 @@ public class Executable(node: ASTNode) : Section(node) {
         return res
     }
 
-    public fun getMainFile(): Directory? = getField(CabalTokelTypes.MAIN_FILE)?.getLastValue() as Directory
-
-    public fun getHSSourceDirs(): List<Directory> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(getField(CabalTokelTypes.HS_SOURCE_DIRS), javaClass<Directory>())
-    }
-
-    public fun getBuildDepends(): MutableList<FullVersionConstraint> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(getField(CabalTokelTypes.BUILD_DEPENDS), javaClass<FullVersionConstraint>())
-    }
-
+    public fun getMainFile(): Path? = getField(javaClass<MainFileField>())?.getValue() as Path?
 }

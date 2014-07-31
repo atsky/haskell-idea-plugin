@@ -13,32 +13,21 @@ public class CabalAnnotator() : Annotator {
             holder.createInfoAnnotation(e, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
         }
 
-        if (element is Checkable) {
-            val errorMsg = element.isValidValue()
-            if (errorMsg != null) {
-                holder.createErrorAnnotation(element.getNode()!!, errorMsg)
+        fun maybeError(elem: PsiElement, msg: String?) {
+            if (msg != null) {
+                holder.createErrorAnnotation(elem, msg)
             }
         }
 
-        if ((element is PropertyField) && !(element.isUniqueOnThisLevel())) {
-            holder.createErrorAnnotation(element.getKeyNode(), "duplicated field")
-        }
+        if ((element is PropertyField) && !(element.isUniqueOnThisLevel()))  maybeError(element.getKeyNode(), "duplicated field")
+        if (element is DisallowedableField)                                  maybeError(element.getKeyNode(), element.isEnabled())
+        if (element is InvalidProperty)                                      maybeError(element, "invalid property")
+        if (element is Checkable)                                            maybeError(element, element.isValidValue())
+        if (element is Section)                                              maybeError(element.getSectTypeNode(), element.allRequiredFieldsExist())
 
-        if ((element is DisallowedableField)) {
-            val errorMsg = element.isEnabled()
-            if (errorMsg != null) {
-                holder.createErrorAnnotation(element.getKeyNode(), errorMsg)
-            }
-        }
-
-        if ((element is InvalidProperty)) {
-            holder.createErrorAnnotation(element, "invalid property")
-        }
-
-        if ((element is Section)) {
-            val errorMsg = element.allRequiredFieldsExist()
-            if (errorMsg != null) {
-                holder.createErrorAnnotation(element.getSectTypeNode(), errorMsg)
+        if (element is Path) {
+            if (!element.isValidPath()) {
+                holder.createWarningAnnotation(element, "invalid path")
             }
         }
 
@@ -46,5 +35,4 @@ public class CabalAnnotator() : Annotator {
             keyword(element)
         }
     }
-
 }

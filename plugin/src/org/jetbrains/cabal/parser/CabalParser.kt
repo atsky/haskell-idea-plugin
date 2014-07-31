@@ -112,7 +112,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseTokenValue(elemType: IElementType) = start(elemType, { parseFreeLine() })
 
-    fun parseDirectory() = parseTokenValue(CabalTokelTypes.DIRECTORY)
+    fun parsePath() = parseTokenValue(CabalTokelTypes.PATH)
 
     fun skipNewLines(level: Int = -1) {
         val nextIndent = nextLevel()
@@ -153,7 +153,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseOptionList(level: Int) = parseValueList(level, { parseIDValue(CabalTokelTypes.OPTION) }, { token(CabalTokelTypes.COMMA) || true }, false)
 
-    fun parseDirectoryList(prevLevel: Int) = parseValueList(prevLevel, { parseDirectory() }, { token(CabalTokelTypes.COMMA) || true }, false)
+    fun parsePathList(prevLevel: Int) = parseValueList(prevLevel, { parsePath() }, { token(CabalTokelTypes.COMMA) || true }, false)
 
     fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
         parseValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine, false)
@@ -242,15 +242,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(0, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
             || parseField(0, "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })
             || parseField(0, "tested-with"            , { parseCompilerList(it) })
-            || parseField(0, "license-file"           , { parseDirectory() })
-            || parseField(0, "license-files"          , { parseDirectoryList(it) })
-            || parseField(0, "data-dir"               , { parseDirectory() })
+            || parseField(0, "license-file"           , { parsePath() })
+            || parseField(0, "license-files"          , { parsePathList(it) })
+            || parseField(0, "data-dir"               , { parsePath() })
             || parseField(0, "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
             || parseFieldVariety(0, URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
-            || parseFieldVariety(0, TOP_FILE_LIST_FIELD_NAMES, { parseDirectoryList(it) })
+            || parseFieldVariety(0, TOP_FILE_LIST_FIELD_NAMES, { parsePathList(it) })
             || parseFieldVariety(0, FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
 
-    fun parseMainFile(level: Int) = parseField(level, "main-is", { parseDirectory() })
+    fun parseMainFile(level: Int) = parseField(level, "main-is", { parsePath() })
 
     fun parseRepoFields(level: Int) =
                parseField(level, "location"         , { parseTokenValue(CabalTokelTypes.URL) })
@@ -258,7 +258,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(level, "module"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
             || parseField(level, "branch"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
             || parseField(level, "tag"              , { parseTokenValue(CabalTokelTypes.TOKEN) })
-            || parseField(level, "subdir"           , { parseDirectory() })
+            || parseField(level, "subdir"           , { parsePath() })
 
     fun parseBuildInformation(level: Int) =
                parseField(level, "build-depends"    , { parseConstraintList(it) })
@@ -267,13 +267,13 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(level, "buildable"        , { parseBool() })
             || parseField(level, "extensions"       , { parseIDList(it) })
             || parseField(level, "other-modules"    , { parseIDList(it) })
-            || parseField(level, "includes"         , { parseDirectoryList(it) })
-            || parseField(level, "install-includes" , { parseDirectoryList(it) })
-            || parseField(level, "c-sources"        , { parseDirectoryList(it) })
-            || parseField(level, "hs-source-dirs"   , { parseDirectoryList(it) })
-            || parseField(level, "hs-source-dir"    , { parseDirectory() })
-            || parseField(level, "extra-lib-dirs"   , { parseDirectoryList(it) })
-            || parseField(level, "include-dirs"     , { parseDirectoryList(it) })
+            || parseField(level, "includes"         , { parsePathList(it) })
+            || parseField(level, "install-includes" , { parsePathList(it) })
+            || parseField(level, "c-sources"        , { parsePathList(it) })
+            || parseField(level, "hs-source-dirs"   , { parsePathList(it) })
+            || parseField(level, "hs-source-dir"    , { parsePath() })
+            || parseField(level, "extra-lib-dirs"   , { parsePathList(it) })
+            || parseField(level, "include-dirs"     , { parsePathList(it) })
             || parseField(level, "frameworks"       , { parseTokenList(it) })
             || parseField(level, "extra-libraries"  , { parseTokenList(it) })
             || parseFieldVariety(level, OPTIONS_FIELD_NAMES, { parseOptionList(it) })
