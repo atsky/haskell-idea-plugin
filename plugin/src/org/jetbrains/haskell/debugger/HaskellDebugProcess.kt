@@ -126,7 +126,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         val breakpointNumber: Int? = registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpointNumber
         if (breakpointNumber != null) {
             registeredBreakpoints.remove(BreakpointPosition(module, line))
-            debugger.removeBreakpoint(breakpointNumber)
+            debugger.removeBreakpoint(module, breakpointNumber)
         }
     }
 

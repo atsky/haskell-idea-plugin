@@ -36,9 +36,9 @@ public abstract class FlowCommand(callback: CommandCallback<HsTopStackFrameInfo?
                 if (result != null) {
                     val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
                             LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
-                    val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)!!
-                    val condition = breakpoint.getCondition()
-                    if (condition != null) {
+                    val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)
+                    val condition = breakpoint?.getCondition()
+                    if (breakpoint != null && condition != null) {
                         handleCondition(breakpoint, condition, result)
                     } else {
                         debugProcess.debugger.history(breakpoint, result)

@@ -20,7 +20,7 @@ public trait ProcessDebugger {
 
     public fun setBreakpoint(module: String, line: Int)
 
-    public fun removeBreakpoint(breakpointNumber: Int)
+    public fun removeBreakpoint(module: String, breakpointNumber: Int)
 
     public fun close()
 

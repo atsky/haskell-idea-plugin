@@ -24,6 +24,9 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import org.jetbrains.haskell.debugger.parser.History
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
+import org.jetbrains.haskell.debugger.protocol.ResumeCommand
+import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
+import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -77,7 +80,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         queue.addCommand(SetBreakpointCommand(module, line, null))
     }
 
-    override fun removeBreakpoint(breakpointNumber: Int) {
+    override fun removeBreakpoint(module: String, breakpointNumber: Int) {
     }
 
     override fun close() {
@@ -85,11 +88,11 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun stepInto() {
-        throw UnsupportedOperationException()
+        queue.addCommand(StepIntoCommand(null))
     }
 
     override fun stepOver() {
-        throw UnsupportedOperationException()
+        queue.addCommand(StepOverCommand(null))
     }
 
     override fun runToPosition(module: String, line: Int) {
@@ -97,7 +100,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun resume() {
-        throw UnsupportedOperationException()
+        queue.addCommand(ResumeCommand(null))
     }
 
     override fun prepareDebugger() {

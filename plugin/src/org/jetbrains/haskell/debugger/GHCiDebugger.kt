@@ -108,7 +108,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun setBreakpoint(module: String, line: Int) = queue.addCommand(SetBreakpointCommand(module, line,
             SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
 
-    override fun removeBreakpoint(breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(breakpointNumber, null))
+    override fun removeBreakpoint(module: String, breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
     override fun stepInto() {
         queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
@@ -228,7 +228,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
             if (result == null) {
                 throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
             }
-            queue.addCommand(RemoveBreakpointCommand(breakpointNumber, RemoveTempBreakCallback(result)), true)
+            queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, RemoveTempBreakCallback(result)), true)
         }
     }
 

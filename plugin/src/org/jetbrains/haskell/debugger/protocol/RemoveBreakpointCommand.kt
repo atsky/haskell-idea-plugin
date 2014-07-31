@@ -7,10 +7,10 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
  * @author Habibullin Marat
  */
 
-public class RemoveBreakpointCommand(val breakpointNumber: Int, callback: CommandCallback<ParseResult?>?)
+public class RemoveBreakpointCommand(val module: String?, val breakpointNumber: Int, callback: CommandCallback<ParseResult?>?)
 : RealTimeCommand<ParseResult?>(callback) {
 
-    override fun getBytes(): ByteArray = ":delete $breakpointNumber\n".toByteArray()
+    override fun getBytes(): ByteArray = ":delete ${module ?: ""} $breakpointNumber\n".toByteArray()
 
     override fun parseGHCiOutput(output: Deque<String?>): ParseResult? = null
 }
