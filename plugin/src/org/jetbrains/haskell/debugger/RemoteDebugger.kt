@@ -11,10 +11,19 @@ import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
-import org.jetbrains.haskell.debugger.protocol.FlowCommand
-import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.Parser
 import org.json.simple.JSONObject
+import com.intellij.execution.ui.ConsoleViewContentType
+import org.jetbrains.haskell.debugger.protocol.BreakpointListCommand
+import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import java.util.ArrayList
+import org.json.simple.JSONArray
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import org.jetbrains.haskell.debugger.parser.History
+import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
+import org.jetbrains.haskell.debugger.protocol.FlowCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -24,7 +33,9 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     private val queue: CommandQueue
     private val handler: JSONHandler = JSONHandler()
-    private val writeLock = Any();
+    private val writeLock = Any()
+
+    private var lastCommand: AbstractCommand<out ParseResult?>? = null;
 
     {
         queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })
@@ -38,11 +49,10 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         val bytes = command.getBytes()
 
         synchronized(writeLock) {
-            if (command !is HiddenCommand) {
-                debugProcess.printToConsole(String(bytes))
+            lastCommand = command
 
-                System.out.write(bytes)
-                System.out.flush()
+            if (command !is HiddenCommand) {
+                debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
             }
 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
@@ -60,16 +70,14 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun trace() {
-        queue.addCommand(TraceCommand("main",
-                null))
+        queue.addCommand(TraceCommand("main", null))
     }
 
     override fun setBreakpoint(module: String, line: Int) {
-        throw UnsupportedOperationException()
+        queue.addCommand(SetBreakpointCommand(module, line, null))
     }
 
     override fun removeBreakpoint(breakpointNumber: Int) {
-        throw UnsupportedOperationException()
     }
 
     override fun close() {
@@ -96,7 +104,9 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>?, topFrameInfo: HsTopStackFrameInfo) {
-        throw UnsupportedOperationException()
+        handler.breakpoint = breakpoint
+        handler.topFrameInfo = topFrameInfo
+        queue.addCommand(HistoryCommand(null))
     }
 
     override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) {
@@ -112,22 +122,94 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         queue.setReadyForInput()
     }
 
+    private fun breakpointList(module: String, lineToSet: Int? = null) {
+        queue.addCommand(BreakpointListCommand(module, lineToSet, null))
+    }
+
     public inner class JSONHandler {
+        private val CONNECTED_MSG = "connected to port"
+
+        private val WARNING_MSG = "warning"
+        private val EXCEPTION_MSG = "exception"
+
+        private val PAUSED_MSG = "paused"
+        private val FINISHED_MSG = "finished"
+
+        private val BREAKPOINT_SET_MSG = "breakpoint was set"
+        private val BREAKPOINT_NOT_SET_MSG = "breakpoint was not set"
+
+        private val HISTORY_MSG = "got history"
+
+        // For history command
+        public var breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>? = null
+        public var topFrameInfo: HsTopStackFrameInfo? = null
+
         public fun handle(result: JSONObject) {
             val info = result.get("info") as String?
             when (info) {
-                null -> {
+                null ->
                     throw RuntimeException("Missing data type")
-                }
-                "finished" -> {
+                CONNECTED_MSG ->
+                    debugProcess.printToConsole("Connected to port: ${result.get("port")}\n",
+                            ConsoleViewContentType.SYSTEM_OUTPUT)
+                WARNING_MSG ->
+                    debugProcess.printToConsole("WARNING: ${result.getString("message")}\n",
+                            ConsoleViewContentType.ERROR_OUTPUT)
+                EXCEPTION_MSG ->
+                    debugProcess.printToConsole("EXCEPTION: ${result.getString("message")}\n",
+                            ConsoleViewContentType.ERROR_OUTPUT)
+                PAUSED_MSG ->
+                    paused(result)
+                FINISHED_MSG ->
                     debugProcess.getSession()!!.stop()
-                }
-                "connected to port" -> {
-                }
-                else -> {
+                BREAKPOINT_SET_MSG ->
+                    debugProcess.setBreakpointNumberAtLine(result.getInt("index"),
+                            (lastCommand as SetBreakpointCommand).module, result.getObject("src_span").getInt("startline"))
+                BREAKPOINT_NOT_SET_MSG ->
+                    debugProcess.printToConsole("Breakpoint was not set: ${result.getString("add_info")}\n",
+                            ConsoleViewContentType.SYSTEM_OUTPUT)
+                HISTORY_MSG ->
+                    gotHistory(result)
+                else ->
                     throw RuntimeException("Unknown result")
-                }
             }
+        }
+
+        private fun paused(result_json: JSONObject) {
+            val srcSpan = result_json.getObject("src_span")
+            val result = HsTopStackFrameInfo(getFilePosition(srcSpan),
+                    ArrayList(result_json.getArray("names").toArray().map {(name) -> LocalBinding(name as String, null, null) }))
+            FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(result)
+        }
+
+        private fun gotHistory(result_json: JSONObject) {
+            val result = History(ArrayList(result_json.getArray("history").map {
+                (line) ->
+                with(line as JSONObject) {
+                    HsCommonStackFrameInfo(getInt("index"), getString("function"), getFilePosition(getObject("src_span")), null)
+                }
+            }))
+            HistoryCommand.StandardHistoryCallback(breakpoint, topFrameInfo!!, debugProcess).execAfterParsing(result)
+        }
+
+        private fun getFilePosition(srcSpan: JSONObject): HsFilePosition =
+                HsFilePosition(srcSpan.getString("file"), srcSpan.getInt("startline"), srcSpan.getInt("startcol"),
+                        srcSpan.getInt("endline"), srcSpan.getInt("endcol"))
+
+        private fun JSONObject.getInt(key: String): Int {
+            return (get(key) as Long).toInt()
+        }
+
+        private fun JSONObject.getString(key: String): String {
+            return get(key) as String
+        }
+
+        private fun JSONObject.getObject(key: String): JSONObject {
+            return get(key) as JSONObject
+        }
+
+        private fun JSONObject.getArray(key: String): JSONArray {
+            return get(key) as JSONArray
         }
     }
 

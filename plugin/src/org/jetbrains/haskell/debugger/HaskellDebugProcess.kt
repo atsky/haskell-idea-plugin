@@ -147,8 +147,18 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
 
-    public fun printToConsole(text: String) {
-        (executionConsole as ConsoleView).print(text, ConsoleViewContentType.NORMAL_OUTPUT)
+    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
+        when (contentType) {
+            ConsoleViewContentType.ERROR_OUTPUT -> {
+                System.err.print(text)
+                System.err.flush()
+            }
+            else -> {
+                System.out.print(text)
+                System.out.flush()
+            }
+        }
+        (executionConsole as ConsoleView).print(text, contentType)
     }
 
 
@@ -167,10 +177,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         val text = event?.getText()
         if (text != null) {
             print(text)
-            // temporary
-            if (debugger is RemoteDebugger) {
-                printToConsole(text)
-            }
             debugger.onTextAvailable(text, outputType)
         }
     }

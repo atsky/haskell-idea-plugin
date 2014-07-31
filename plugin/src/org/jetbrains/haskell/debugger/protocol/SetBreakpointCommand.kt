@@ -12,7 +12,7 @@ import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 
 public class SetBreakpointCommand(val module: String,
                                   val lineNumber: Int,
-                                  callback: CommandCallback<BreakpointCommandResult?>)
+                                  callback: CommandCallback<BreakpointCommandResult?>?)
 : RealTimeCommand<BreakpointCommandResult?>(callback) {
 
     override fun getBytes(): ByteArray = ":break $module $lineNumber\n".toByteArray()

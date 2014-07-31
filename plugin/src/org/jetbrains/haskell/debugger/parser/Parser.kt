@@ -212,8 +212,6 @@ public class Parser() {
         public fun parseJSONObject(string: String): JSONResult {
             val parser = JSONParser()
             return JSONResult(parser.parse(string) as JSONObject)
-
-
         }
     }
 }

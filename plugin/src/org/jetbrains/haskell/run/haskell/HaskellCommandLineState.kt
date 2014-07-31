@@ -76,7 +76,9 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
         val debuggerPath = joinPath(baseDir, "HaskellDebugger") // temporary location
 
-        val builder = ProcessBuilder(debuggerPath, "-p${streamHandler.getPort()}")
+        val filePath = joinPath(baseDir, "src", "Main.hs")
+
+        val builder = ProcessBuilder(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}")
                 .directory(File(baseDir))
 
         return RemoteProcessHandler(builder.start(), streamHandler)

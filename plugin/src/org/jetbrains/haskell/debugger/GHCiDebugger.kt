@@ -27,6 +27,7 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import com.intellij.execution.ui.ConsoleViewContentType
 
 /**
  * Created by vlad on 7/11/14.
@@ -88,7 +89,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
             lastCommand = command
 
             if (lastCommand !is HiddenCommand) {
-                debugProcess.printToConsole(String(bytes))
+                debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
 
                 System.out.write(bytes)
                 System.out.flush()

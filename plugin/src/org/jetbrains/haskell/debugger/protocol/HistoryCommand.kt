@@ -19,7 +19,7 @@ import org.jetbrains.haskell.debugger.parser.History
 
 public class HistoryCommand(callback: CommandCallback<History?>?) : RealTimeCommand<History?>(callback) {
     override fun getBytes(): ByteArray {
-        return ":hist\n".toByteArray()
+        return ":history\n".toByteArray()
     }
 
     override fun parseGHCiOutput(output: Deque<String?>): History? = Parser.parseHistory(output)
