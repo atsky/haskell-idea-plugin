@@ -30,6 +30,9 @@ import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
+import org.jetbrains.haskell.debugger.parser.ShowOutput
+import org.jetbrains.haskell.debugger.frames.HsDebugValue
 
 /**
  * Created by vlad on 7/30/14.
@@ -73,9 +76,14 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         }
     }
 
-    override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
-        throw UnsupportedOperationException()
-    }
+    override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) =
+            queue.addCommand(ShowExpressionCommand(expression, object : CommandCallback<ShowOutput?>() {
+                override fun execAfterParsing(result: ShowOutput?) {
+                }
+                override fun execBeforeSending() {
+                    handler.evaluateCallback = callback
+                }
+            }))
 
     override fun trace() =
             queue.addCommand(TraceCommand("main", null))
@@ -107,11 +115,15 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     override fun prepareDebugger() {
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>?, topFrameInfo: HsTopStackFrameInfo) {
-        handler.breakpoint = breakpoint
-        handler.topFrameInfo = topFrameInfo
-        queue.addCommand(HistoryCommand(null))
-    }
+    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>?, topFrameInfo: HsTopStackFrameInfo) =
+            queue.addCommand(HistoryCommand(object : CommandCallback<History?>() {
+                override fun execAfterParsing(result: History?) {
+                }
+                override fun execBeforeSending() {
+                    handler.breakpoint = breakpoint
+                    handler.topFrameInfo = topFrameInfo
+                }
+            }))
 
     override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
             queue.addCommand(sequenceOfBacksCommand)
@@ -144,6 +156,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
         private val HISTORY_MSG = "got history"
 
+        private val EVALUATED_MSG = "evaluated"
+
         // For history command
         public var breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>? = null
         public var topFrameInfo: HsTopStackFrameInfo? = null
@@ -152,17 +166,30 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         public var inRunToPosition: Boolean = false
         public var tempBreakpointIndex: Int? = null
 
+        // For evaluateExpression command
+        public var evaluateCallback: XDebuggerEvaluator.XEvaluationCallback? = null
+
         public fun handle(result: JSONObject) {
             val info = result.get("info") as String?
             when (info) {
                 null ->
                     throw RuntimeException("Missing data type")
                 CONNECTED_MSG ->
-                    debugProcess.printToConsole("Connected to port: ${result.get("port")}\n",
-                            ConsoleViewContentType.SYSTEM_OUTPUT)
+                    if (evaluateCallback != null) {
+                        evaluateCallback?.errorOccurred(result.getString("message"))
+                        evaluateCallback = null
+                    } else {
+                        debugProcess.printToConsole("Connected to port: ${result.get("port")}\n",
+                                ConsoleViewContentType.SYSTEM_OUTPUT)
+                    }
                 WARNING_MSG ->
-                    debugProcess.printToConsole("WARNING: ${result.getString("message")}\n",
-                            ConsoleViewContentType.ERROR_OUTPUT)
+                    if (evaluateCallback != null) {
+                        evaluateCallback?.errorOccurred(result.getString("message"))
+                        evaluateCallback = null
+                    } else {
+                        debugProcess.printToConsole("WARNING: ${result.getString("message")}\n",
+                                ConsoleViewContentType.ERROR_OUTPUT)
+                    }
                 EXCEPTION_MSG ->
                     debugProcess.printToConsole("EXCEPTION: ${result.getString("message")}\n",
                             ConsoleViewContentType.ERROR_OUTPUT)
@@ -192,6 +219,10 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                             ConsoleViewContentType.SYSTEM_OUTPUT)
                 HISTORY_MSG ->
                     gotHistory(result)
+                EVALUATED_MSG -> {
+                    evaluateCallback?.evaluated(HsDebugValue(LocalBinding(null, result.getString("type"), result.getString("value"))))
+                    evaluateCallback = null
+                }
                 else ->
                     throw RuntimeException("Unknown result")
             }
