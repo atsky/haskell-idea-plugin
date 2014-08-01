@@ -28,6 +28,7 @@ import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 import com.intellij.execution.ui.ConsoleViewContentType
+import org.jetbrains.haskell.debugger.protocol.ForceCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -137,6 +138,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) {
         queue.addCommand(sequenceOfForwardsCommand)
     }
+
+    override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
     override fun prepareDebugger() {
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))

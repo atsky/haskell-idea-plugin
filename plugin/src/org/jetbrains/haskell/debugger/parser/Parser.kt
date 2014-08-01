@@ -7,6 +7,7 @@ import java.util.Deque
 import org.jetbrains.haskell.debugger.frames
 import org.json.simple.parser.JSONParser
 import org.json.simple.JSONObject
+import java.util.regex.Matcher
 
 /**
  * @author Habibullin Marat
@@ -45,6 +46,8 @@ public class Parser() {
         val EXPRESSION_TYPE_PATTERN = "(.*) :: (.*)"
 
         val SHOW_RESULT_PATTERN = "\"(.*)\""
+
+        private val FORCE_OUTPUT_PATTERN = "^(\\w+)\\s=\\s(.*)$"
 
         public fun tryCreateFilePosition(line: String): HsFilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
@@ -212,6 +215,18 @@ public class Parser() {
         public fun parseJSONObject(string: String): JSONResult {
             val parser = JSONParser()
             return JSONResult(parser.parse(string) as JSONObject)
+        }
+
+        public fun tryParseForceCommandOutput(output: Deque<String?>): LocalBinding? {
+            for(line in output) {
+                if(line != null) {
+                    val matcher = Pattern.compile(FORCE_OUTPUT_PATTERN).matcher(line)
+                    if (matcher.matches()) {
+                        return LocalBinding(matcher.group(1), null, matcher.group(2))
+                    }
+                }
+            }
+            return null
         }
     }
 }

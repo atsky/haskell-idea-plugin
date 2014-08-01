@@ -30,6 +30,7 @@ import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.protocol.EvalCommand
 
@@ -129,6 +130,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     override fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
             queue.addCommand(sequenceOfForwardsCommand)
+
+    override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         handler.handle(Parser.parseJSONObject(text).json)

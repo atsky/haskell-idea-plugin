@@ -7,6 +7,7 @@ import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
+import org.jetbrains.haskell.debugger.protocol.ForceCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -39,6 +40,8 @@ public trait ProcessDebugger {
     public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand)
 
     public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand)
+
+    public fun force(forceCommand: ForceCommand)
 
     public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
 }

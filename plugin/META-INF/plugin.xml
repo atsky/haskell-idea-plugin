@@ -71,6 +71,12 @@
                 text="Execute Current Haskell Statement">
             <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
         </action>
+
+        <action class="org.jetbrains.haskell.debugger.frames.ForceEvaluationAction"
+                id="Haskell.Debugger.ForceEvaluation"
+                text="Force evaluation">
+            <add-to-group group-id="XDebugger.ValueGroup"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

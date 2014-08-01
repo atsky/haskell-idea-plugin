@@ -32,13 +32,9 @@ public class HsFilePosition(public val filePath: String,
 //public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
 //public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
-public class LocalBinding(val name: String?,
-                          val typeName: String?,
-                          val value: String?) : ParseResult() {
-    class object {
-        public val EMPTY_BINDING: LocalBinding = LocalBinding(null, null, null)
-    }
-}
+public class LocalBinding(var name: String?,
+                          var typeName: String?,
+                          var value: String?) : ParseResult()
 
 public open class HsTopStackFrameInfo(val filePosition: HsFilePosition,
                                       var bindings: ArrayList<LocalBinding>?) : ParseResult()

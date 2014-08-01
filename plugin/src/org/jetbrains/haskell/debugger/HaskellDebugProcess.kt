@@ -24,6 +24,9 @@ import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.highlighting.HsDebugSessionListener
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import java.util.concurrent.locks.ReentrantLock
+import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
 /**
@@ -140,6 +143,27 @@ public class HaskellDebugProcess(session: XDebugSession,
                                      frameHistoryIndex: Int) {
         debugger.backsSequence(SequenceOfBacksCommand(allHistFramesArray, syncObject, frameIsFilled, frameHistoryIndex,
                 debugProcess = this))
+    }
+
+    public fun forceSetValue(localBinding: LocalBinding) {
+        if(localBinding.name != null) {
+            val syncObject: Lock = ReentrantLock()
+            val bindingValueIsSet: Condition = syncObject.newCondition()
+            val syncLocalBinding: LocalBinding = LocalBinding(localBinding.name, "", null)
+            syncObject.lock()
+            try {
+                debugger.force(ForceCommand(localBinding.name!!,
+                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet)))
+                while (syncLocalBinding.value == null) {
+                    bindingValueIsSet.await()
+                }
+                if (syncLocalBinding.value?.isNotEmpty() ?: false) {
+                    localBinding.value = syncLocalBinding.value
+                }
+            } finally {
+                syncObject.unlock()
+            }
+        }
     }
 
     override fun sessionInitialized() {
