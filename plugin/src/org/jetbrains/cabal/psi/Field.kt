@@ -16,11 +16,7 @@ public open class Field(node: ASTNode) : ASTWrapperPsiElement(node) {
         return getFirstChild()!!.getText()!!.equalsIgnoreCase(name)
     }
 
-    public fun getToLowerCaseName(): String {
-        return getFirstChild()!!.getText()!!.toLowerCase()
-    }
-
     public fun getFieldName(): String {
-        return getFirstChild()!!.getText()!!
+        return getFirstChild()!!.getText()!!  .toLowerCase()
     }
 }

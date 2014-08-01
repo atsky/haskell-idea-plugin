@@ -237,7 +237,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseTopLevelField() =
                parseField(0, "version"                , { start(CabalTokelTypes.VERSION_VALUE, { parseVersion() }) })
-            || parseField(0, "cabal-version"          , { parseComplexVersionConstraint(0) })
+            || parseField(0, "cabal-version"          , { parseSimpleVersionConstraint() })
             || parseField(0, "name"                   , { parseIDValue(CabalTokelTypes.NAME) })
             || parseField(0, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
             || parseField(0, "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })

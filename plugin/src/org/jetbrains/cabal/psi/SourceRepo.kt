@@ -38,24 +38,18 @@ public class SourceRepo(node: ASTNode) : Section(node) {
         return null
     }
 
-    public fun getRepoKinds(): List<RepoKind> {
+    public fun getRepoKinds(): List<String> {
         var node = getFirstChild()!!
-        var res = ArrayList<RepoKind>()
+        var res = ArrayList<String>()
         while (node !is RepoKind) {
             node = node.getNextSibling()!!
         }
         while (node is RepoKind) {
-            res.add(node as RepoKind)
+            res.add((node as RepoKind).getText()!!)
             node = node.getNextSibling()!!
         }
         return res
     }
 
-    public fun isKind(kindName: String): Boolean {
-        val kinds = getRepoKinds()
-        for (kind in kinds) {
-            if (kind.getText()!! == kindName) return true
-        }
-        return false
-    }
+    public fun isKind(kindName: String): Boolean = kindName in getRepoKinds()
 }
