@@ -20,7 +20,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
     /*
      * 'show' may be hidden
      */
-    override fun getBytes(): ByteArray = (":eval (${expression.trim()})\n").toByteArray()
+    override fun getBytes(): ByteArray = ("Prelude.show (${expression.trim()})\n").toByteArray()
 
     override fun parseGHCiOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
 

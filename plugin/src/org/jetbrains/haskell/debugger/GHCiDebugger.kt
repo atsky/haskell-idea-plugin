@@ -167,8 +167,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 ":m +Control.Monad\n",
                 ":m +Control.Concurrent\n",
                 "let $HANDLE_NAME = ($connectTo_host_port) $host $port\n",
-                ":set stop $stop_cmd\n",
-                ":def eval (return . Prelude.show)\n"
+                ":set stop $stop_cmd\n"
         )
         for (cmd in commands) {
             queue.addCommand(HiddenCommand.createInstance(cmd), highPriority = true)

@@ -30,9 +30,9 @@ import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 import org.jetbrains.haskell.debugger.parser.ShowOutput
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
+import org.jetbrains.haskell.debugger.protocol.EvalCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -77,8 +77,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) =
-            queue.addCommand(ShowExpressionCommand(expression, object : CommandCallback<ShowOutput?>() {
-                override fun execAfterParsing(result: ShowOutput?) {
+            queue.addCommand(EvalCommand(expression, object : CommandCallback<ParseResult?>() {
+                override fun execAfterParsing(result: ParseResult?) {
                 }
                 override fun execBeforeSending() {
                     handler.evaluateCallback = callback
