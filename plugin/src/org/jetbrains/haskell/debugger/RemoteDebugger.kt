@@ -30,7 +30,6 @@ import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import org.jetbrains.haskell.debugger.parser.ShowOutput
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.protocol.EvalCommand
 
@@ -175,13 +174,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                 null ->
                     throw RuntimeException("Missing data type")
                 CONNECTED_MSG ->
-                    if (evaluateCallback != null) {
-                        evaluateCallback?.errorOccurred(result.getString("message"))
-                        evaluateCallback = null
-                    } else {
-                        debugProcess.printToConsole("Connected to port: ${result.get("port")}\n",
-                                ConsoleViewContentType.SYSTEM_OUTPUT)
-                    }
+                    debugProcess.printToConsole("Connected to port: ${result.get("port")}\n",
+                            ConsoleViewContentType.SYSTEM_OUTPUT)
                 WARNING_MSG ->
                     if (evaluateCallback != null) {
                         evaluateCallback?.errorOccurred(result.getString("message"))
@@ -191,8 +185,13 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                                 ConsoleViewContentType.ERROR_OUTPUT)
                     }
                 EXCEPTION_MSG ->
-                    debugProcess.printToConsole("EXCEPTION: ${result.getString("message")}\n",
-                            ConsoleViewContentType.ERROR_OUTPUT)
+                    if (evaluateCallback != null) {
+                        evaluateCallback?.errorOccurred(result.getString("message"))
+                        evaluateCallback = null
+                    } else {
+                        debugProcess.printToConsole("EXCEPTION: ${result.getString("message")}\n",
+                                ConsoleViewContentType.ERROR_OUTPUT)
+                    }
                 PAUSED_MSG ->
                     paused(result)
                 FINISHED_MSG ->
