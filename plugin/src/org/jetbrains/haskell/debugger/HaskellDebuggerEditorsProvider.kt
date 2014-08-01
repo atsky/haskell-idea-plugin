@@ -14,15 +14,16 @@ import org.jetbrains.haskell.fileType.HaskellFileViewProviderFactory
 import com.intellij.psi.PsiFileFactory
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.psi.impl.source.PsiExpressionCodeFragmentImpl
+import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
+import com.intellij.xdebugger.XSourcePosition
+import com.intellij.xdebugger.evaluation.EvaluationMode
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.EditorFactory
 
-public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProviderBase() {
+public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
 
-    override fun createExpressionCodeFragment(project: Project, text: String, context: PsiElement?, isPhysical: Boolean): PsiFile? {
-        if (context == null) {
-            return null
-        }
-        return PsiExpressionCodeFragmentImpl(project, isPhysical,
-                context.getContainingFile()!!.getVirtualFile()!!.getCanonicalPath()!!, text, null, context)
+    override fun createDocument(project: Project, text: String, sourcePosition: XSourcePosition?, mode: EvaluationMode): Document {
+        return EditorFactory.getInstance()!!.createDocument(text)
     }
 
     override fun getFileType(): FileType = HaskellFileType.INSTANCE
