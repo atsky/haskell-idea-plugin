@@ -17,6 +17,8 @@ import org.jetbrains.haskell.util.setConstraints
 import java.awt.GridBagConstraints
 import javax.swing.Box
 import javax.swing.JCheckBox
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 
 /**
  * Manages debugger settings. Creates additional section in IDEA Settings and tracks changes appeared there to obtain
@@ -34,6 +36,7 @@ public class DebuggerConfigurable() : Configurable {
         private val TRACE_CHECKBOX_LABEL = "Switch off ':trace' command"
     }
     private val selectDebuggerComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(ITEM_GHCI, ITEM_REMOTE)))
+    private val remoteDebuggerPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
     private val traceSwitchOffCheckBox: JCheckBox = JCheckBox(TRACE_CHECKBOX_LABEL, false)
 
     private var isModified = false
@@ -46,18 +49,29 @@ public class DebuggerConfigurable() : Configurable {
      * Creates UI for settings page
      */
     override fun createComponent(): JComponent? {
-        val listener = object : ItemListener {
+        remoteDebuggerPathField.addBrowseFolderListener(
+                "Select remote debugger executable",
+                null,
+                null,
+                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
+        val itemListener = object : ItemListener {
             override fun itemStateChanged(e: ItemEvent) {
-                println("DEBUG: item selected")
                 isModified = true
             }
         }
-        selectDebuggerComboBox.addItemListener(listener)
-        traceSwitchOffCheckBox.addItemListener(listener)
+        val docListener : DocumentAdapter = object : DocumentAdapter() {
+            override fun textChanged(e: DocumentEvent?) {
+                isModified = true;
+            }
+        };
+        selectDebuggerComboBox.addItemListener(itemListener)
+        remoteDebuggerPathField.getTextField()!!.getDocument()!!.addDocumentListener(docListener)
+        traceSwitchOffCheckBox.addItemListener(itemListener)
 
         val result = JPanel(GridBagLayout())
         addLabeledControl(result, 0, "Prefered debugger:     ", selectDebuggerComboBox)
-        addLabeledControl(result, 1, "Additional options:     ", traceSwitchOffCheckBox)
+        addLabeledControl(result, 1, "Remote debugger path:     ", remoteDebuggerPathField)
+        addLabeledControl(result, 2, "Additional options:     ", traceSwitchOffCheckBox)
         result.add(JPanel(), gridBagConstraints { gridx = 0; gridy = 5; weighty = 10.0 })
         return result
     }
@@ -70,7 +84,14 @@ public class DebuggerConfigurable() : Configurable {
      */
     override fun apply() {
         val ghciSelected = selectDebuggerComboBox.getSelectedIndex() == 0
+        val remotePath = remoteDebuggerPathField.getTextField()!!.getText()
         val traceSwitchedOff = traceSwitchOffCheckBox.isSelected()
+
+        val state = HaskellDebugSettings.getInstance().getState()
+        state.debuggerType = if (ghciSelected) HaskellDebugSettings.DebuggerType.GHCI else HaskellDebugSettings.DebuggerType.REMOTE
+        state.remoteDebuggerPath = remotePath
+        state.traceOff = traceSwitchedOff
+
         isModified = false
     }
 
@@ -79,6 +100,11 @@ public class DebuggerConfigurable() : Configurable {
      * debug settings object
      */
     override fun reset() {
+        val state = HaskellDebugSettings.getInstance().getState()
+        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == HaskellDebugSettings.DebuggerType.GHCI) 0 else 1)
+        traceSwitchOffCheckBox.setSelected(state.traceOff)
+        remoteDebuggerPathField.getTextField()!!.setText(state.remoteDebuggerPath)
+
         isModified = false
     }
 
