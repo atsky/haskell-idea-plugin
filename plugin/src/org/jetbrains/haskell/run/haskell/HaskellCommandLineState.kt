@@ -26,6 +26,7 @@ import com.intellij.openapi.module.Module
 import org.jetbrains.cabal.CabalFile
 import org.jetbrains.cabal.psi.Executable
 import com.intellij.openapi.vfs.LocalFileSystem
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -49,15 +50,15 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw ExecutionException("Error while starting debug process: cabal file not found")
         }
         val exec = tryGetExecWithNameFromConfig(cabalFile)
-        if(exec == null) {
+        if (exec == null) {
             throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.getMyExecutableName()}")
         }
         val mainFileName: String? = exec.getMainFile()?.getText()
-        if(mainFileName == null) {
+        if (mainFileName == null) {
             throw ExecutionException("Error while starting debug process: no main file specified in executable section")
         }
         val srcDirPath = tryGetSrcDirFullPath(mainFileName, module, exec)
-        if(srcDirPath == null) {
+        if (srcDirPath == null) {
             throw ExecutionException("Error while starting debug process: main file $mainFileName not found in source directories")
         }
         val filePath = joinPath(srcDirPath, mainFileName)
@@ -91,17 +92,27 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         streamHandler.start()
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val debuggerPath = joinPath(baseDir, "HaskellDebugger") // temporary location
+        val debuggerPath = HaskellDebugSettings.getInstance().getState().remoteDebuggerPath
+        if (debuggerPath == null) {
+            throw ExecutionException("Cannot run remote debugger: path not specified")
+        }
 
         val builder = ProcessBuilder(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}", "-i${srcDirPath}")
                 .directory(File(baseDir))
 
-        return RemoteProcessHandler(builder.start(), streamHandler)
+        try {
+            return RemoteProcessHandler(builder.start(), streamHandler)
+        } catch (ex: Exception) {
+            throw ExecutionException("Cannot run remote debugger in path " + debuggerPath)
+        }
     }
 
     public fun executeDebug(executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
-        val processHandler = startGHCiDebugProcess()
-//        val processHandler = startRemoteDebugProcess()
+        val processHandler =
+                if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.GHCI)
+                    startGHCiDebugProcess()
+                else
+                    startRemoteDebugProcess()
         val console = createConsole(executor)
         console?.attachToProcess(processHandler)
 
@@ -162,10 +173,10 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     private fun tryGetSrcDirFullPath(mainFileName: String, module: Module, correspondingExec: Executable): String? {
         val baseDirPath = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
         val srcDirs: List<String> = correspondingExec.getHSSourceDirs()!!.map { it.getText() }
-        for(srcDir in srcDirs) {
+        for (srcDir in srcDirs) {
             val path = joinPath(baseDirPath, srcDir, mainFileName)
             val vFile = LocalFileSystem.getInstance()!!.findFileByIoFile(File(path))
-            if(vFile != null && vFile.exists()) {
+            if (vFile != null && vFile.exists()) {
                 return joinPath(baseDirPath, srcDir)
             }
         }

@@ -24,6 +24,7 @@ import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
 import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.highlighting.HsDebugSessionListener
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
 /**
  * Created by vlad on 7/10/14.
@@ -39,8 +40,11 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     {
         debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-        debugger = GHCiDebugger(this)
-//        debugger = RemoteDebugger(this)
+        debugger =
+                if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.GHCI)
+                    GHCiDebugger(this)
+                else
+                    RemoteDebugger(this)
 
         myProcessHandler.setDebugProcessListener(this)
     }
