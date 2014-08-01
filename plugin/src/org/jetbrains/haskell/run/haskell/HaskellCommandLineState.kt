@@ -36,7 +36,10 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return JavaCommandLineStateUtil.startProcess(generalCommandLine)
     }
 
-    private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
+    /**
+     * Returns pair of main file path and path ro the sources directory
+     */
+    private fun getPaths(): Pair<String, String> {
         val module = configuration.getModule()
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
@@ -58,6 +61,17 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw ExecutionException("Error while starting debug process: main file $mainFileName not found in source directories")
         }
         val filePath = joinPath(srcDirPath, mainFileName)
+        return Pair(filePath, srcDirPath)
+    }
+
+    private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
+        val module = configuration.getModule()
+        if (module == null) {
+            throw ExecutionException("Error while starting debug process: module not specified")
+        }
+        val paths = getPaths()
+        val filePath = paths.first
+        val srcDirPath = paths.second
         val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
 
         val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDirPath)
@@ -67,8 +81,11 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     private fun startRemoteDebugProcess(): HaskellDebugProcessHandler {
         val module = configuration.getModule()
         if (module == null) {
-            throw ExecutionException("Module not specified")
+            throw ExecutionException("Error while starting debug process: module not specified")
         }
+        val paths = getPaths()
+        val filePath = paths.first
+        val srcDirPath = paths.second
 
         val streamHandler = RemoteDebugStreamHandler()
         streamHandler.start()
@@ -76,9 +93,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
         val debuggerPath = joinPath(baseDir, "HaskellDebugger") // temporary location
 
-        val filePath = joinPath(baseDir, "src", "Main.hs")
-
-        val builder = ProcessBuilder(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}")
+        val builder = ProcessBuilder(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}", "-i${srcDirPath}")
                 .directory(File(baseDir))
 
         return RemoteProcessHandler(builder.start(), streamHandler)

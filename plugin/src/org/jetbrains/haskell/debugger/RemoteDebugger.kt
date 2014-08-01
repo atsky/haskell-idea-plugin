@@ -200,7 +200,12 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         private fun paused(result_json: JSONObject) {
             val srcSpan = result_json.getObject("src_span")
             val result = HsTopStackFrameInfo(getFilePosition(srcSpan),
-                    ArrayList(result_json.getArray("names").toArray().map {(name) -> LocalBinding(name as String, null, null) }))
+                    ArrayList(result_json.getArray("vars").toArray().map {
+                        (variable) ->
+                        with (variable as JSONObject) {
+                            LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
+                        }
+                    }))
             FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(result)
         }
 
