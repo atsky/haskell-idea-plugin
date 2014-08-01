@@ -8,4 +8,9 @@ public class CompilerID(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue
     public override fun getAvailableValues(): List<String> {
         return COMPILER_VALS
     }
+
+    public override fun isValidValue(): String? {
+        if (getText()!!.toLowerCase() !in getAvailableValues()) return "invalid field value"
+        return null
+    }
 }

@@ -10,13 +10,13 @@ import com.intellij.psi.util.CachedValueProvider
 import java.util.ArrayList
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
-import org.jetbrains.cabal.psi.Executable
-import org.jetbrains.cabal.psi.Flag
+import org.jetbrains.cabal.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.vfs.VirtualFile
+import java.io.File
 
 
-public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, CabalLanguage.INSTANCE) {
+public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, CabalLanguage.INSTANCE), FieldContainer {
 
     public override fun getFileType(): FileType {
         return CabalFileType.INSTANCE
@@ -38,5 +38,11 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
         return res
     }
 
-    public fun getCabalRootPath(): String? = getViewProvider().getVirtualFile().getParent()?.getPath()
+    public fun gatDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
+
+    public fun getActualDataDir(): File {
+        val dataDir = gatDataDir()?.getFileFromRoot()
+        if (dataDir == null) return getCabalRootDir()
+        return dataDir
+    }
 }

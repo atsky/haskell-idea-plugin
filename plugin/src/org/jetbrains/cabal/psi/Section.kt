@@ -10,7 +10,7 @@ import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.util.PsiTreeUtil
 import java.util.ArrayList
 
-public open class Section(node: ASTNode): Field(node) {
+public open class Section(node: ASTNode): Field(node), FieldContainer {
 
     public open fun getRequiredFieldNames(): List<String> = listOf()
 
@@ -34,33 +34,6 @@ public open class Section(node: ASTNode): Field(node) {
             }
         }
         return false
-    }
-
-//    public fun getField(fieldType: IElementType): PropertyField? {
-//        var nodes = getSectChildren()
-//        for (node in nodes) {
-//            if ((node is PropertyField) && (node.getType() == fieldType)) {
-//                return node
-//            }
-//        }
-//        return null
-//    }
-
-    public fun <T : PsiElement> getField(fieldType: Class<T>): T? {
-        return PsiTreeUtil.findChildOfType(this, fieldType)
-    }
-
-    public fun <T : PsiElement> getFields(fieldType: Class<T>): List<T>? {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType)
-    }
-
-    public fun <T : PsiElement> getField(fieldType: Class<T>, fieldName: String): T? {
-        val fields = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType)
-        for (field in fields) {
-            if ((field is PropertyField) && (field.getPropertyName().equalsIgnoreCase(fieldName))) return field
-            if ((field is Section)       && (field.getSectType().equalsIgnoreCase(fieldName)))     return field
-        }
-        return null
     }
 
     public fun getAfterTypeNode(): PsiElement? {

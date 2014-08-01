@@ -28,6 +28,7 @@ public val FIELD_TYPES: Map<String, IElementType> = mapOf(
          "location"             to CabalTokelTypes.REPO_LOCATION     ,
          "hs-source-dirs"       to CabalTokelTypes.HS_SOURCE_DIRS    ,
          "hs-source-dir"        to CabalTokelTypes.HS_SOURCE_DIRS    ,
+         "include-dirs"         to CabalTokelTypes.INCLUDE_DIRS      ,
          "maintainer"           to CabalTokelTypes.PROPERTY          ,
          "package-url"          to CabalTokelTypes.PROPERTY          ,
          "homepage"             to CabalTokelTypes.PROPERTY          ,
@@ -58,7 +59,6 @@ public val FIELD_TYPES: Map<String, IElementType> = mapOf(
          "extra-libraries"      to CabalTokelTypes.PROPERTY          ,
          "subdir"               to CabalTokelTypes.PROPERTY          ,
          "extra-lib-dirs"       to CabalTokelTypes.PROPERTY          ,
-         "include-dirs"         to CabalTokelTypes.PROPERTY          ,
          "default"              to CabalTokelTypes.PROPERTY          ,
          "manual"               to CabalTokelTypes.PROPERTY
 )

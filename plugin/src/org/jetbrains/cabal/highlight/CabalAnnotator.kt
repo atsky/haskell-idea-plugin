@@ -26,8 +26,9 @@ public class CabalAnnotator() : Annotator {
         if (element is Section)                                              maybeError(element.getSectTypeNode(), element.allRequiredFieldsExist())
 
         if (element is Path) {
-            if (!element.isValidPath()) {
-                holder.createWarningAnnotation(element, "invalid path")
+            val warningMsg = element.isValidPath()
+            if (warningMsg != null) {
+                holder.createWarningAnnotation(element,  warningMsg)
             }
         }
 

@@ -171,7 +171,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             res = token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)
             if (res) {
                 when (testName) {
-                    "impl" -> res = parseFullVersionConstraint(level, CabalTokelTypes.IDENTIFIER, true)
+                    "impl" -> res = parseFullVersionConstraint(level, CabalTokelTypes.COMPILER, true)
                     "flag" -> res = parseIDValue(CabalTokelTypes.NAME)
                     else   -> res = parseIDValue(CabalTokelTypes.IDENTIFIER)
                 }

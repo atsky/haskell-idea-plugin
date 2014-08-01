@@ -21,7 +21,7 @@ public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Ra
 
     public override fun isValidValue(): String? {
         if (isFlagName()) {
-            if (getText() !in getAvailableValues()) {
+            if (getText().toLowerCase() !in getAvailableValues()) {
                 return "invalid flag name"
             }
             return null

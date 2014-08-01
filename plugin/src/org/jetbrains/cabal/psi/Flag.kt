@@ -12,6 +12,6 @@ public class Flag(node: ASTNode) : Section(node) {
         return FLAG_FIELDS
     }
 
-    public fun getFlagName(): String = getAfterTypeNode()!!.getText()!!
+    public fun getFlagName(): String = getAfterTypeNode()!!.getText()!!.toLowerCase()
 
 }
