@@ -21,15 +21,15 @@ public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Ra
 
     public override fun isValidValue(): String? {
         if (isFlagName()) {
-            if (getText().toLowerCase() !in getAvailableValues()) {
-                return "invalid flag name"
-            }
-            return null
+            if (getText().toLowerCase() in getAvailableValues()) return null
+            return "invalid flag name"
         }
-        if (!getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) {
-            return "invalid name"
+        if (getParent() is Section) {
+            if (getNode().getText()!!.matches("^[^ ]+$")) return null
+            return "invalid section name"
         }
-        return null
+        if (getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return null
+        return "invalid name"
     }
 
     private fun isFlagName(): Boolean {

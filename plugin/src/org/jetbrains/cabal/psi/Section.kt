@@ -36,14 +36,14 @@ public open class Section(node: ASTNode): Field(node), FieldContainer {
         return false
     }
 
-    public fun getAfterTypeNode(): PsiElement? {
-        if (this is Library) return null
-        var node = getFirstChild()!!
-        while ((node !is RepoKind) && (node !is Name)) {
-            node = node.getNextSibling()!!
-        }
-        return node
-    }
+//    public fun getAfterTypeNode(): PsiElement? {
+//        if (this is Library) return null
+//        var node = getFirstChild()!!
+//        while ((node !is RepoKind) && (node !is Name)) {
+//            node = node.getNextSibling()!!
+//        }
+//        return node
+//    }
 
     public fun getSectChildren(): ArrayList<PsiElement> {
         var res = ArrayList<PsiElement>()

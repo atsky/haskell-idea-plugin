@@ -12,6 +12,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, P
     public fun isValidPath(): String? {
         when ((getParent()!! as PropertyField).getPropertyName().toLowerCase()) {
             "data-dir"           -> return checkDataDir()
+            "hs-source-dirs"     -> return checkFromRootDir()
             "include-dirs"       -> return checkFromRootDir()
             "extra-lib-dirs"     -> return checkFromRootDir()
             "subdir"             -> return null

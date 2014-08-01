@@ -3,6 +3,7 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import com.intellij.psi.PsiElement
+import java.util.ArrayList
 
 public class SourceRepo(node: ASTNode) : Section(node) {
 
@@ -33,9 +34,28 @@ public class SourceRepo(node: ASTNode) : Section(node) {
         if ((typeValue!!.getText() == "cvs") && !moduleFlag) {
             return "module field is required with CVS repository type"
         }
-        if (getRepoKind().equals("this") && !tagFlag) return "tag field is required when repository kind is \"this\""
+        if (isKind("this") && !tagFlag) return "tag field is required when repository kind is \"this\""
         return null
     }
 
-    public fun getRepoKind(): String = getAfterTypeNode()!!.getText()!!
+    public fun getRepoKinds(): List<RepoKind> {
+        var node = getFirstChild()!!
+        var res = ArrayList<RepoKind>()
+        while (node !is RepoKind) {
+            node = node.getNextSibling()!!
+        }
+        while (node is RepoKind) {
+            res.add(node as RepoKind)
+            node = node.getNextSibling()!!
+        }
+        return res
+    }
+
+    public fun isKind(kindName: String): Boolean {
+        val kinds = getRepoKinds()
+        for (kind in kinds) {
+            if (kind.getText()!! == kindName) return true
+        }
+        return false
+    }
 }

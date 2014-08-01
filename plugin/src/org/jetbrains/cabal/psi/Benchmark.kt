@@ -2,6 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.psi.Name
 import java.util.ArrayList
 
 public class Benchmark(node: ASTNode) : BuildSection(node) {
@@ -36,5 +37,13 @@ public class Benchmark(node: ASTNode) : BuildSection(node) {
             return null
         }
         return null
+    }
+
+    public fun getBenchmarkName(): String {
+        var node = getFirstChild()!!
+        while (node !is Name) {
+            node = node.getNextSibling()!!
+        }
+        return (node as Name).getText()
     }
 }

@@ -6,4 +6,5 @@ public trait PropertyValue: ASTWrapperPsiElement {
 
     public override fun getText(): String = getNode().getText()!!
 
+
 }

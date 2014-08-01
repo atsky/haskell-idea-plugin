@@ -1,8 +1,9 @@
 package org.jetbrains.cabal.parser
 
 import com.intellij.psi.tree.IElementType
+import kotlin.Pair
 
-public val FIELD_TYPES: Map<String, IElementType> = mapOf(
+public val PROPERTY_FIELD_TYPES: Map<String, IElementType> = mapOf(
          "version"              to CabalTokelTypes.VERSION           ,
          "cabal-version"        to CabalTokelTypes.CABAL_VERSION     ,
          "name"                 to CabalTokelTypes.NAME_FIELD        ,
@@ -61,4 +62,15 @@ public val FIELD_TYPES: Map<String, IElementType> = mapOf(
          "extra-lib-dirs"       to CabalTokelTypes.PROPERTY          ,
          "default"              to CabalTokelTypes.PROPERTY          ,
          "manual"               to CabalTokelTypes.PROPERTY
+)
+
+public val SECTION_TYPES: Map<String, IElementType> = mapOf(
+        "flag"                  to CabalTokelTypes.FLAG          ,
+        "executable"            to CabalTokelTypes.EXECUTABLE    ,
+        "library"               to CabalTokelTypes.LIBRARY       ,
+        "test-suite"            to CabalTokelTypes.TEST_SUITE    ,
+        "benchmark"             to CabalTokelTypes.BENCHMARK     ,
+        "if"                    to CabalTokelTypes.IF_CONDITION  ,
+        "else"                  to CabalTokelTypes.ELSE_CONDITION,
+        "source-repository"     to CabalTokelTypes.SOURCE_REPO
 )
