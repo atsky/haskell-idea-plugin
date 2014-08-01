@@ -90,9 +90,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
             if (lastCommand !is HiddenCommand) {
                 debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
-
-                System.out.write(bytes)
-                System.out.flush()
             }
 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
