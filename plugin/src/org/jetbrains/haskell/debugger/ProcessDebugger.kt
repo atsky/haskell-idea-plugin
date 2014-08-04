@@ -37,6 +37,10 @@ public trait ProcessDebugger {
 
     public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo)
 
+    public fun back()
+
+    public fun forward()
+
     public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand)
 
     public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand)

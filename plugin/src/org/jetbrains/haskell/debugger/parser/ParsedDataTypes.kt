@@ -27,6 +27,18 @@ public class HsFilePosition(public val filePath: String,
     public val normalizedEndLine : Int= rawEndLine - 1
     // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
     public val normalizedEndSymbol : Int= rawEndSymbol + 1
+
+    override fun toString(): String {
+        if (rawStartLine == rawEndLine) {
+            if (rawStartSymbol == rawEndSymbol) {
+                return "$filePath:$rawStartLine:$rawStartSymbol"
+            } else {
+                return "$filePath:$rawStartLine:$rawStartSymbol-$rawEndSymbol"
+            }
+        } else {
+            return "$filePath:($rawStartLine,$rawStartSymbol)-($rawEndLine,$rawEndSymbol)"
+        }
+    }
 }
 
 //public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
@@ -52,5 +64,10 @@ public class ShowOutput(public val output: String) : ParseResult()
 public class History(public val list: ArrayList<HsCommonStackFrameInfo>) : ParseResult()
 
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
+
+public class MoveHistResult(public val filePosition: HsFilePosition,
+                            public val bindingList: LocalBindingList,
+                            public val topHist: Boolean,
+                            public val botHist: Boolean): ParseResult()
 
 public class JSONResult(public val json: JSONObject) : ParseResult()

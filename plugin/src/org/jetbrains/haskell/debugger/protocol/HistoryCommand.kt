@@ -23,23 +23,4 @@ public class HistoryCommand(callback: CommandCallback<History?>?) : RealTimeComm
     }
 
     override fun parseGHCiOutput(output: Deque<String?>): History? = Parser.parseHistory(output)
-
-    class object {
-        public class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
-                                          val topFrameInfo: HsTopStackFrameInfo,
-                                          val debugProcess: HaskellDebugProcess)
-        : CommandCallback<History?>() {
-            override fun execAfterParsing(result: History?) {
-                if (result != null && result is History) {
-                    val histFrames = result.list
-                    val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
-                    if (breakpoint != null) {
-                        debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-                    } else {
-                        debugProcess.getSession()!!.positionReached(context)
-                    }
-                }
-            }
-        }
-    }
 }

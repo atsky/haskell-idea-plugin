@@ -130,6 +130,25 @@ public class Parser() {
             return LocalBindingList(localBindings)
         }
 
+        public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult {
+            val line = output.pollFirst()!!
+            val matcher1 = Pattern.compile(STOPPED_AT_PATTERN).matcher(line.trim())
+            val matcher2 = Pattern.compile(LOGGED_BREAKPOINT_AT_PATTERN).matcher(line.trim())
+            var position: String
+            var top: Boolean
+            if (matcher1.matches()) {
+                position = matcher1.group(1)!!
+                top = true
+            } else if (matcher2.matches()) {
+                position = matcher2.group(1)!!
+                top = false
+            } else {
+                throw RuntimeException("Wrong GHCi output occured while handling MoveHist result result")
+            }
+            val list = tryParseLocalBindings(output)
+            return MoveHistResult(tryCreateFilePosition(position)!!, list, top, false)
+        }
+
         public fun parseHistory(output: Deque<String?>): History {
             val callStack = ArrayList<HsCommonStackFrameInfo>()
             for (line in output) {

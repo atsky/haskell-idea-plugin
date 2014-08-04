@@ -28,6 +28,18 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
+import com.intellij.xdebugger.ui.XDebugTabLayouter
+import com.intellij.execution.ui.RunnerLayoutUi
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.ui.content.Content
+import com.intellij.ui.content.impl.ContentImpl
+import javax.swing.JComponent
+import javax.swing.JLabel
+import javax.swing.JPanel
+import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import com.intellij.ui.AppUIUtil
 
 /**
  * Created by vlad on 7/10/14.
@@ -39,6 +51,18 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
+    private val backAction: AnAction = object : AnAction("back", "Move back along history", com.intellij.icons.AllIcons.Actions.Back) {
+        override fun actionPerformed(e: AnActionEvent?) {
+            debugger.back()
+        }
+    }
+    private val forwardAction: AnAction = object : AnAction("forward", "Move forward along history", com.intellij.icons.AllIcons.Actions.Forward) {
+        override fun actionPerformed(e: AnActionEvent?) {
+            debugger.forward()
+        }
+    }
+
+    public val historyPanel: HistoryPanel = HistoryPanel(this)
     public val debugger: ProcessDebugger;
 
     {
@@ -125,7 +149,6 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(null, breakpoint))
-        //        println(module)
         debugger.setBreakpoint(module, line)
     }
 
@@ -188,7 +211,30 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
         (executionConsole as ConsoleView).print(text, contentType)
     }
+    override fun createTabLayouter(): XDebugTabLayouter {
 
+        return object : XDebugTabLayouter() {
+
+            override fun registerAdditionalContent(ui: RunnerLayoutUi) {
+                val context = ui.createContent("history", historyPanel, "History", null, null)
+                ui.addContent(context)
+                ui.getContentManager()
+            }
+        }
+    }
+
+    override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
+        topToolbar.addSeparator()
+        topToolbar.add(backAction)
+        topToolbar.add(forwardAction)
+    }
+
+    public fun afterStopped(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
+        AppUIUtil.invokeLaterIfProjectAlive(getSession()!!.getProject(), Runnable({() ->
+            // need to enable/disable buttons
+            historyPanel.setCurrentSpan(position.toString())
+        }))
+    }
 
     // ProcessListener
 
@@ -205,6 +251,9 @@ public class HaskellDebugProcess(session: XDebugSession,
         val text = event?.getText()
         if (text != null) {
             print(text)
+            if (debugger is RemoteDebugger) {
+                (executionConsole as ConsoleView).print(text, ConsoleViewContentType.SYSTEM_OUTPUT)
+            }
             debugger.onTextAvailable(text, outputType)
         }
     }

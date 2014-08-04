@@ -33,6 +33,8 @@ import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.protocol.EvalCommand
+import org.jetbrains.haskell.debugger.frames.HsSuspendContext
+import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 
 /**
  * Created by vlad on 7/30/14.
@@ -124,6 +126,14 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                     handler.topFrameInfo = topFrameInfo
                 }
             }))
+
+    override fun back() {
+
+    }
+
+    override fun forward() {
+
+    }
 
     override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
             queue.addCommand(sequenceOfBacksCommand)
@@ -249,7 +259,14 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                     HsCommonStackFrameInfo(getInt("index"), getString("function"), getFilePosition(getObject("src_span")), null)
                 }
             }))
-            HistoryCommand.StandardHistoryCallback(breakpoint, topFrameInfo!!, debugProcess).execAfterParsing(result)
+            val histFrames = result.list
+            val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo!!, histFrames))
+            debugProcess.afterStopped(true, histFrames.empty, topFrameInfo!!.filePosition)
+            if (breakpoint != null) {
+                debugProcess.getSession()!!.breakpointReached(breakpoint!!, breakpoint!!.getLogExpression(), context)
+            } else {
+                debugProcess.getSession()!!.positionReached(context)
+            }
         }
 
         private fun getFilePosition(srcSpan: JSONObject): HsFilePosition =
