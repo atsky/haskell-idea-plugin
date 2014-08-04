@@ -51,12 +51,12 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
 
-    private val backAction: AnAction = object : AnAction("back", "Move back along history", com.intellij.icons.AllIcons.Actions.Back) {
+    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", com.intellij.icons.AllIcons.Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
             debugger.back()
         }
     }
-    private val forwardAction: AnAction = object : AnAction("forward", "Move forward along history", com.intellij.icons.AllIcons.Actions.Forward) {
+    private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history", com.intellij.icons.AllIcons.Actions.Forward) {
         override fun actionPerformed(e: AnActionEvent?) {
             debugger.forward()
         }
@@ -231,7 +231,8 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public fun afterStopped(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
         AppUIUtil.invokeLaterIfProjectAlive(getSession()!!.getProject(), Runnable({() ->
-            // need to enable/disable buttons
+            backAction.enabled = !bottomHistory
+            forwardAction.enabled = !topHistory
             historyPanel.setCurrentSpan(position.toString())
         }))
     }
