@@ -72,6 +72,8 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
         </action>
 
+        <!-- Debugger 'Force evaluation' action. Added to context menu of variables in 'Variables' window of current
+        frame under inspection-->
         <action class="org.jetbrains.haskell.debugger.frames.ForceEvaluationAction"
                 id="Haskell.Debugger.ForceEvaluation"
                 text="Force evaluation">

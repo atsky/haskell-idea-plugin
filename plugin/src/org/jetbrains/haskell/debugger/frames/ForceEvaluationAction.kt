@@ -10,33 +10,44 @@ import com.intellij.xdebugger.XDebuggerManager
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 
 /**
+ * Determines action performed when user select 'Force evaluation' in context menu of variable in current frame.
+ * This action is called by IDEA, so class is registered in plugin.xml
+ *
  * @author Habibullin Marat
  */
 public class ForceEvaluationAction(): XDebuggerTreeActionBase() {
-    override fun perform(node: XValueNodeImpl?, nodeName: String, e: AnActionEvent?) {
-        if(node == null || e == null) {
+    override fun perform(node: XValueNodeImpl?, nodeName: String, actionEvent: AnActionEvent?) {
+        if(node == null || actionEvent == null) {
             return
         }
-        val project = e.getProject()
-        if(project == null) {
+        val debugProcess = tryGetDebugProcess(actionEvent)
+        if(debugProcess == null) {
             return
+        }
+        forceSetValue(node, debugProcess)
+    }
+
+    private fun tryGetDebugProcess(actionEvent: AnActionEvent): HaskellDebugProcess? {
+        val project = actionEvent.getProject()
+        if(project == null) {
+            return null
         }
         val debuggerManager = XDebuggerManager.getInstance(project)
         if(debuggerManager == null) {
-            return
+            return null
         }
         val session = debuggerManager.getCurrentSession()
         if(session == null) {
-            return
+            return null
         }
-        val debugProcess = session.getDebugProcess() as HaskellDebugProcess
-        forceEvaluation(node, debugProcess)
-        println((node.getValueContainer() as HsDebugValue).binding.name + " = " + (node.getValueContainer() as HsDebugValue).binding.value)
-//      node?.setPresentation(null, XRegularValuePresentation("v", "t"), false)
+        return session.getDebugProcess() as HaskellDebugProcess
     }
 
-    private fun forceEvaluation(node: XValueNodeImpl, debugProcess: HaskellDebugProcess) {
+    private fun forceSetValue(node: XValueNodeImpl, debugProcess: HaskellDebugProcess) {
         val hsDebugValue = node.getValueContainer() as HsDebugValue
         debugProcess.forceSetValue(hsDebugValue.binding)
+        if(hsDebugValue.binding.value != null) {
+            node.setPresentation(null, XRegularValuePresentation(hsDebugValue.binding.value as String, hsDebugValue.binding.typeName), false)
+        }
     }
 }
