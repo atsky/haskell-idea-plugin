@@ -53,6 +53,9 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private val queue: CommandQueue
     private val writeLock = Any()
 
+    private var historySize = 0
+    private var historyIndex = 0
+
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
     private var lastCommand: AbstractCommand<out ParseResult?>? = null;
@@ -151,7 +154,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
         queue.addCommand(sequenceOfForwardsCommand)
-    }
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
