@@ -27,52 +27,29 @@ import com.intellij.ui.SimpleTextAttributes
 public class HsCommonStackFrame(debugProcess: HaskellDebugProcess,
                                 private val indexInHist: Int,
                                 private val allHistFramesArray: ArrayList<HsCommonStackFrameInfo>)
-                              : HsStackFrame(debugProcess, allHistFramesArray.get(indexInHist).filePosition) {
+: HsStackFrame(debugProcess, allHistFramesArray.get(indexInHist).filePosition, allHistFramesArray.get(indexInHist).bindings) {
 
     private val thisStackFrameInfo = allHistFramesArray.get(indexInHist)
-
-    /**
-     * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
-     * added HsDebugValue instances are shown in 'Variables' panel of 'Debug' tool window.
-     */
-    override fun computeChildren(node: XCompositeNode) {
-        if (node.isObsolete()) {
-            return
-        }
-        ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
-            override fun run() {
-                try {
-                    if(thisStackFrameInfo.bindings == null) {
-                        tryGetBindings()
-                    }
-                    if(thisStackFrameInfo.bindings != null) {
-                        setChildrenToNode(node, thisStackFrameInfo.bindings as ArrayList<LocalBinding>)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    node.setErrorMessage("Unable to display frame variables")
-                }
-
-            }
-        })
-    }
 
     override fun customizePresentation(component: ColoredTextContainer) {
         component.append(thisStackFrameInfo.functionName + " : ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
         super<HsStackFrame>.customizePresentation(component)
     }
 
-    private fun tryGetBindings() {
-        val syncObject: Lock = ReentrantLock()
-        val bindingsAreSet: Condition = syncObject.newCondition()
-        syncObject.lock()
-        try {
-            debugProcess.fillFramesFromHistory(allHistFramesArray, syncObject, bindingsAreSet, thisStackFrameInfo.index)
-            while (thisStackFrameInfo.bindings == null) {
-                bindingsAreSet.await()
+    override fun tryGetBindings() {
+        if(thisStackFrameInfo.bindings == null) {
+            val syncObject: Lock = ReentrantLock()
+            val bindingsAreSet: Condition = syncObject.newCondition()
+            syncObject.lock()
+            try {
+                debugProcess.fillFramesFromHistory(allHistFramesArray, syncObject, bindingsAreSet, thisStackFrameInfo.index)
+                while (thisStackFrameInfo.bindings == null) {
+                    bindingsAreSet.await()
+                }
+            } finally {
+                syncObject.unlock()
             }
-        } finally {
-            syncObject.unlock()
         }
+        setBindingsList(thisStackFrameInfo.bindings)
     }
 }

@@ -31,11 +31,26 @@ import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   val filePosition: HsFilePosition) : XStackFrame() {
+                                   val filePosition: HsFilePosition,
+                                   bindings: ArrayList<LocalBinding>?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
+
+    protected var bindingsList: XValueChildrenList? = null;
+    {
+        setBindingsList(bindings)
+    }
+
+    protected fun setBindingsList(bindings: ArrayList<LocalBinding>?) {
+        if(bindings != null) {
+            bindingsList = XValueChildrenList()
+            for (binding in bindings) {
+                bindingsList?.add(HsDebugValue(binding))
+            }
+        }
+    }
 
     /**
      * This method always returns null because we need to switch off default debug highlighting provided by
@@ -75,6 +90,34 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     }
 
     /**
+     * Creates HsDebugValue instances for local bindings in stackFrameInfo.bindings and adds them in passed node. These
+     * added HsDebugValue instances are shown in 'Variables' panel of 'Debug' tool window.
+     */
+    override fun computeChildren(node: XCompositeNode) {
+        if (node.isObsolete()) {
+            return
+        }
+        ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
+            override fun run() {
+                try {
+                    if(bindingsList == null) {
+                        tryGetBindings()
+                    }
+                    if(bindingsList != null) {
+                        node.addChildren(bindingsList as XValueChildrenList, true)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    node.setErrorMessage("Unable to display frame variables")
+                }
+
+            }
+        })
+    }
+
+    protected abstract fun tryGetBindings()
+
+    /**
      * Sets the bounds of code in source file this frame represents. Format is similar to one in ghci:
      * one line span: "<line number> : <start symbol number> - <end symbol number>"
      * multiline span: "(<start line number>,<start symbol number>) - (<end line number>,<end symbol number>)"
@@ -89,13 +132,5 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
                     ":" + filePosition.rawStartSymbol + "-" + filePosition.normalizedEndSymbol
         }
         component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    }
-
-    protected fun setChildrenToNode(node: XCompositeNode, bindings: ArrayList<LocalBinding>) {
-        val list = XValueChildrenList()
-        for (binding in bindings) {
-            list.add(HsDebugValue(binding))
-        }
-        node.addChildren(list, true)
     }
 }
