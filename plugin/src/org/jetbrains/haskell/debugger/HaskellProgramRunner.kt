@@ -8,24 +8,21 @@ import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.configurations.RunProfile
 import org.jetbrains.haskell.run.haskell.HaskellCommandLineState
-import com.intellij.execution.ExecutionResult
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.execution.executors.DefaultDebugExecutor
-import com.intellij.execution.process.ProcessListener
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.openapi.util.Key
 import org.jetbrains.haskell.run.haskell.CabalRunConfiguration
 import com.intellij.notification.Notification
 import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationType
-import org.jetbrains.cabal.CabalInterface
-import java.nio.charset.Charset
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import com.intellij.execution.ExecutionManager
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
+import java.io.File
+import com.intellij.notification.NotificationListener
+import javax.swing.event.HyperlinkEvent
+import com.intellij.openapi.options.ShowSettingsUtil
 
 /**
  * Class for starting debug session.
@@ -38,9 +35,10 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
 
         private val ERROR_TITLE = "Debug execution error"
         private fun GENERAL_ERROR_MSG(projName: String) = "Internal error occured while executing debug process for ${projName}"
-        private val MULTI_DEBUGGING_TITLE = "Can't start debugger"
+        private val GENERAL_DEBUGGING_TITLE = "Can't start debugger"
         private val MULTI_DEBUGGING_MSG = "Haskell plugin supports only single debugging mode and one debugging " +
-                                          "process is already in progress"
+                "process is already in progress"
+        private val WRONG_REMOTE_DEBUGGER_PATH_MSG = "Correct path to remote debugger was not set. See <a href=\"#\">Settings | Haskell Debugger</a>"
     }
 
     /**
@@ -58,26 +56,40 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
      * This method is executed when debug session is started (when you press "Debug" button)
      */
     override fun doExecute(project: Project, state: RunProfileState, contentToReuse: RunContentDescriptor?,
-                           environment: ExecutionEnvironment): RunContentDescriptor?
-    {
+                           environment: ExecutionEnvironment): RunContentDescriptor? {
+        val hyperlinkHandler = object : NotificationListener.Adapter() {
+            override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+                notification.expire()
+                if (!project.isDisposed()) {
+                    ShowSettingsUtil.getInstance()?.showSettingsDialog(project, "Haskell Debugger")
+                }
+            }
+        }
         val debuggerManager = XDebuggerManager.getInstance(project)
-        if(debuggerManager == null) {
+        if (debuggerManager == null) {
             Notifications.Bus.notify(Notification("", ERROR_TITLE, GENERAL_ERROR_MSG(project.getName()), NotificationType.ERROR))
             return null
         }
         try {
-            if(debuggerManager.getDebugSessions().size != 0) {
-                Notifications.Bus.notify(Notification("", MULTI_DEBUGGING_TITLE, MULTI_DEBUGGING_MSG, NotificationType.WARNING))
+            if (debuggerManager.getDebugSessions().size != 0) {
+                Notifications.Bus.notify(Notification("", GENERAL_DEBUGGING_TITLE, MULTI_DEBUGGING_MSG, NotificationType.WARNING))
                 focusDebugToolWindow(debuggerManager, project)
                 return null
+            }
+            val settingsState = HaskellDebugSettings.getInstance().getState()
+            if (settingsState.debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+                if (settingsState.remoteDebuggerPath == null || !File(settingsState.remoteDebuggerPath!!).exists()) {
+                    Notifications.Bus.notify(Notification("", GENERAL_DEBUGGING_TITLE, WRONG_REMOTE_DEBUGGER_PATH_MSG, NotificationType.WARNING, hyperlinkHandler))
+                    return null
+                }
             }
             val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
             val processHandler = executionResult.getProcessHandler()!! as HaskellDebugProcessHandler
 
             val session = debuggerManager.startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
-                        override fun start(session: XDebugSession): XDebugProcess =
-                                HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
-                    })
+                override fun start(session: XDebugSession): XDebugProcess =
+                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
+            })
             return session.getRunContentDescriptor()
         } catch (e: Exception) {
             val msg = GENERAL_ERROR_MSG(project.getName())
