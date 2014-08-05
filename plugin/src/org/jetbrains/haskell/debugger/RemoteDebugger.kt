@@ -261,7 +261,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
             }))
             val histFrames = result.list
             val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo!!, histFrames))
-            debugProcess.afterStopped(true, histFrames.empty, topFrameInfo!!.filePosition)
+            debugProcess.historyChanged(true, histFrames.empty, topFrameInfo!!.filePosition)
             if (breakpoint != null) {
                 debugProcess.getSession()!!.breakpointReached(breakpoint!!, breakpoint!!.getLogExpression(), context)
             } else {

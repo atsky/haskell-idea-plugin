@@ -262,7 +262,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
                 historySize = result.list.size + 1
                 historyIndex = 0
-                debugProcess.afterStopped(true, histFrames.empty, topFrameInfo.filePosition)
+                debugProcess.historyChanged(true, histFrames.empty, topFrameInfo.filePosition)
                 if (breakpoint != null) {
                     debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
                 } else {
@@ -275,7 +275,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private inner class StandardMoveHistCallback() : CommandCallback<MoveHistResult?>() {
         override fun execAfterParsing(result: MoveHistResult?) {
             if (result != null) {
-                debugProcess.afterStopped(result.topHist, result.botHist, result.filePosition)
+                debugProcess.historyChanged(result.topHist, result.botHist, result.filePosition)
             }
         }
 

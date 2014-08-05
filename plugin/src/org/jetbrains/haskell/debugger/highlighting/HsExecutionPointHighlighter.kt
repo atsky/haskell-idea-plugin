@@ -1,12 +1,8 @@
 package org.jetbrains.haskell.debugger.highlighting
 
-import com.intellij.xdebugger.XDebugSessionListener
-import com.intellij.xdebugger.XDebugSession
-import com.intellij.xdebugger.impl.ui.ExecutionPointHighlighter
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.Editor
-import com.intellij.xdebugger.XSourcePosition
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.Key
@@ -20,12 +16,6 @@ import com.intellij.xdebugger.ui.DebuggerColors
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
-import org.jetbrains.haskell.debugger.utils.HaskellUtils
-import java.awt.font.TextAttribute
-import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.ui.Colors
-import com.intellij.openapi.editor.colors.EditorFontType
-import org.intellij.lang.annotations.JdkConstants.FontStyle
 
 /**
  * Modified copy of com.intellij.xdebugger.impl.ui.ExecutionPointHighlighter. Differences:
@@ -34,7 +24,16 @@ import org.intellij.lang.annotations.JdkConstants.FontStyle
  *
  * @author Habibullin Marat
  */
-public class HsExecutionPointHighlighter(private val myProject: Project) {
+public class HsExecutionPointHighlighter(private val myProject: Project,
+                                         private val highlighterType: HsExecutionPointHighlighter.HighlighterType
+                                         = HsExecutionPointHighlighter.HighlighterType.STACK_FRAME) {
+    class object {
+        public enum class HighlighterType {
+            STACK_FRAME
+            HISTORY
+        }
+    }
+
     private var myRangeHighlighter: RangeHighlighter? = null
     private var myEditor: Editor? = null
     private var filePosition: HsFilePosition? = null
@@ -116,11 +115,11 @@ public class HsExecutionPointHighlighter(private val myProject: Project) {
 
             val scheme = EditorColorsManager.getInstance()!!.getGlobalScheme()
             myRangeHighlighter = myEditor!!.getMarkupModel().addRangeHighlighter(
-                                                        startOffset,
-                                                        endOffset,
-                                                        DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER,
-                                                        scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES),
-                                                        HighlighterTargetArea.EXACT_RANGE)
+                    startOffset,
+                    endOffset,
+                    DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER,
+                    scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES),
+                    HighlighterTargetArea.EXACT_RANGE)
             myRangeHighlighter!!.putUserData(EXECUTION_POINT_HIGHLIGHTER_KEY!!, true)
             myRangeHighlighter!!.setGutterIconRenderer(myGutterIconRenderer)
         }

@@ -1,12 +1,8 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.actions
 
+import javax.swing.Icon
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import javax.swing.Icon
-
-/**
- * Created by vlad on 8/4/14.
- */
 
 public abstract class SwitchableAction(text: String?, description: String?, icon: Icon?) : AnAction(text, description, icon) {
 

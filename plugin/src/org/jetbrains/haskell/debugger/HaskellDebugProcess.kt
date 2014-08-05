@@ -40,6 +40,11 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.ui.AppUIUtil
+import org.jetbrains.haskell.debugger.actions.SwitchableAction
+import org.jetbrains.haskell.debugger.highlighting.HsExecutionPointHighlighter
+import org.jetbrains.haskell.debugger.frames.HsStackFrame
+import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 
 /**
  * Created by vlad on 7/10/14.
@@ -61,6 +66,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             debugger.forward()
         }
     }
+    private val historyHighlighter = HsExecutionPointHighlighter(session.getProject(), HsExecutionPointHighlighter.HighlighterType.HISTORY)
 
     public val historyPanel: HistoryPanel = HistoryPanel(this)
     public val debugger: ProcessDebugger;
@@ -229,11 +235,15 @@ public class HaskellDebugProcess(session: XDebugSession,
         topToolbar.add(forwardAction)
     }
 
-    public fun afterStopped(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
+    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
         AppUIUtil.invokeLaterIfProjectAlive(getSession()!!.getProject(), Runnable({() ->
             backAction.enabled = !bottomHistory
             forwardAction.enabled = !topHistory
             historyPanel.setCurrentSpan(position.toString())
+            historyHighlighter.show(object : HsStackFrame(this, position, null) {
+                override fun tryGetBindings() {
+                }
+            }, true, null)
         }))
     }
 
