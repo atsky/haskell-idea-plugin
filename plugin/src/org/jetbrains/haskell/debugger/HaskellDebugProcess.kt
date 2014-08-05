@@ -55,20 +55,8 @@ public class HaskellDebugProcess(session: XDebugSession,
                                  val myProcessHandler: HaskellDebugProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
+    private val historyManager: HistoryManager = HistoryManager(this)
 
-    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", com.intellij.icons.AllIcons.Actions.Back) {
-        override fun actionPerformed(e: AnActionEvent?) {
-            debugger.back()
-        }
-    }
-    private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history", com.intellij.icons.AllIcons.Actions.Forward) {
-        override fun actionPerformed(e: AnActionEvent?) {
-            debugger.forward()
-        }
-    }
-    private val historyHighlighter = HsExecutionPointHighlighter(session.getProject(), HsExecutionPointHighlighter.HighlighterType.HISTORY)
-
-    public val historyPanel: HistoryPanel = HistoryPanel(this)
     public val debugger: ProcessDebugger;
 
     {
@@ -218,33 +206,15 @@ public class HaskellDebugProcess(session: XDebugSession,
         (executionConsole as ConsoleView).print(text, contentType)
     }
     override fun createTabLayouter(): XDebugTabLayouter {
-
-        return object : XDebugTabLayouter() {
-
-            override fun registerAdditionalContent(ui: RunnerLayoutUi) {
-                val context = ui.createContent("history", historyPanel, "History", null, null)
-                ui.addContent(context)
-                ui.getContentManager()
-            }
-        }
+        return historyManager
     }
 
     override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
-        topToolbar.addSeparator()
-        topToolbar.add(backAction)
-        topToolbar.add(forwardAction)
+        historyManager.registerActions(leftToolbar, topToolbar)
     }
 
     public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
-        AppUIUtil.invokeLaterIfProjectAlive(getSession()!!.getProject(), Runnable({() ->
-            backAction.enabled = !bottomHistory
-            forwardAction.enabled = !topHistory
-            historyPanel.setCurrentSpan(position.toString())
-            historyHighlighter.show(object : HsStackFrame(this, position, null) {
-                override fun tryGetBindings() {
-                }
-            }, true, null)
-        }))
+        historyManager.historyChanged(topHistory, bottomHistory, position)
     }
 
     // ProcessListener
