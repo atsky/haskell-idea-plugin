@@ -14,15 +14,18 @@ import org.jetbrains.haskell.debugger.parser.HsFilePosition
  * Created by vlad on 8/5/14.
  */
 
-public class HistoryManager(private val debugProcess: HaskellDebugProcess): XDebugTabLayouter() {
+public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDebugTabLayouter() {
     private val historyPanel: HistoryPanel = HistoryPanel(debugProcess)
-    private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(), HsExecutionPointHighlighter.HighlighterType.HISTORY)
-    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", com.intellij.icons.AllIcons.Actions.Back) {
+    private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
+            HsExecutionPointHighlighter.HighlighterType.HISTORY)
+    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
+            com.intellij.icons.AllIcons.Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
             debugProcess.debugger.back()
         }
     }
-    private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history", com.intellij.icons.AllIcons.Actions.Forward) {
+    private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history",
+            com.intellij.icons.AllIcons.Actions.Forward) {
         override fun actionPerformed(e: AnActionEvent?) {
             debugProcess.debugger.forward()
         }
@@ -47,7 +50,16 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess): XDeb
             historyHighlighter.show(object : HsStackFrame(debugProcess, position, null) {
                 override fun tryGetBindings() {
                 }
-            }, true, null)
+            }, false, null)
+        }))
+    }
+
+    public fun clean() {
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
+            backAction.enabled = false
+            forwardAction.enabled = false
+            historyPanel.setCurrentSpan("")
+            historyHighlighter.hide()
         }))
     }
 }

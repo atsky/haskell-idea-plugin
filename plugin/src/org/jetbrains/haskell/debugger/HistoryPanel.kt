@@ -13,7 +13,7 @@ import com.intellij.ui.AppUIUtil
  * Created by vlad on 8/4/14.
  */
 
-class HistoryPanel(process: HaskellDebugProcess) : JPanel() {
+public class HistoryPanel(process: HaskellDebugProcess) : JPanel() {
 
     private val debugSession = process.getSession()!!
 

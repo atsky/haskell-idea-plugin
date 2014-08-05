@@ -16,6 +16,9 @@ import com.intellij.xdebugger.ui.DebuggerColors
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
+import com.intellij.openapi.editor.markup.TextAttributes
+import java.awt.Color
+import com.intellij.openapi.editor.markup.HighlighterLayer
 
 /**
  * Modified copy of com.intellij.xdebugger.impl.ui.ExecutionPointHighlighter. Differences:
@@ -113,15 +116,61 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
 
             if (myRangeHighlighter != null) return
 
-            val scheme = EditorColorsManager.getInstance()!!.getGlobalScheme()
             myRangeHighlighter = myEditor!!.getMarkupModel().addRangeHighlighter(
                     startOffset,
                     endOffset,
-                    DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER,
-                    scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES),
+                    getHighlightLayer(),
+                    getTextAttributes(),
                     HighlighterTargetArea.EXACT_RANGE)
             myRangeHighlighter!!.putUserData(EXECUTION_POINT_HIGHLIGHTER_KEY!!, true)
             myRangeHighlighter!!.setGutterIconRenderer(myGutterIconRenderer)
         }
+    }
+
+    /**
+     * Returns needed color scheme, based on current highlighter type and on the current global scheme,
+     * so that highlighters with different types have different colors.
+     */
+    private fun getTextAttributes(): TextAttributes? {
+        when (highlighterType) {
+            HsExecutionPointHighlighter.HighlighterType.STACK_FRAME ->
+                return EditorColorsManager.getInstance()!!.getGlobalScheme().getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
+            HsExecutionPointHighlighter.HighlighterType.HISTORY -> {
+                val scheme = EditorColorsManager.getInstance()!!.getGlobalScheme()
+                val attr1 = scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
+                val attr2 = scheme.getAttributes(DebuggerColors.BREAKPOINT_ATTRIBUTES)
+                if (attr1 == null) {
+                    return null
+                }
+                return TextAttributes(mix(attr1.getForegroundColor(), attr2?.getForegroundColor()),
+                        mix(attr1.getBackgroundColor(), attr2?.getBackgroundColor()),
+                        mix(attr1.getEffectColor(), attr2?.getEffectColor()),
+                        attr1.getEffectType(),
+                        attr1.getFontType())
+            }
+            else -> return null
+        }
+    }
+
+    private fun getHighlightLayer(): Int {
+        when (highlighterType) {
+            HsExecutionPointHighlighter.HighlighterType.STACK_FRAME ->
+                return DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER
+            HsExecutionPointHighlighter.HighlighterType.HISTORY ->
+                return DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER - 1
+            else ->
+                return HighlighterLayer.SELECTION
+        }
+    }
+
+    private fun mix(a: Color?, b: Color?): Color? {
+        if (a == null) {
+            return b
+        }
+        if (b == null) {
+            return a
+        }
+        return Color((a.getRed() + b.getRed()) / 2, (a.getGreen() + b.getGreen()) / 2, (a.getBlue() + b.getBlue()) / 2,
+                (a.getAlpha() + b.getAlpha()) / 2)
     }
 }

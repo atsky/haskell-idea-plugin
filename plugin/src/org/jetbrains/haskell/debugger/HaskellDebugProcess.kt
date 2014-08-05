@@ -29,22 +29,8 @@ import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 import com.intellij.xdebugger.ui.XDebugTabLayouter
-import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.ui.content.Content
-import com.intellij.ui.content.impl.ContentImpl
-import javax.swing.JComponent
-import javax.swing.JLabel
-import javax.swing.JPanel
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
-import com.intellij.ui.AppUIUtil
-import org.jetbrains.haskell.debugger.actions.SwitchableAction
-import org.jetbrains.haskell.debugger.highlighting.HsExecutionPointHighlighter
-import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
-import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 
 /**
  * Created by vlad on 7/10/14.
@@ -128,6 +114,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
+        historyManager.clean()
         debugger.close()
     }
 
@@ -163,7 +150,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun forceSetValue(localBinding: LocalBinding) {
-        if(localBinding.name != null) {
+        if (localBinding.name != null) {
             val syncObject: Lock = ReentrantLock()
             val bindingValueIsSet: Condition = syncObject.newCondition()
             val syncLocalBinding: LocalBinding = LocalBinding(localBinding.name, "", null)
