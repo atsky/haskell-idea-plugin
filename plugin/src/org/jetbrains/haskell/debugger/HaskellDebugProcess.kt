@@ -20,8 +20,6 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
-import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.highlighting.HsDebugSessionListener
 import org.jetbrains.haskell.debugger.parser.LocalBinding
@@ -143,14 +141,6 @@ public class HaskellDebugProcess(session: XDebugSession,
             registeredBreakpoints.remove(BreakpointPosition(module, line))
             debugger.removeBreakpoint(module, breakpointNumber)
         }
-    }
-
-    public fun fillFramesFromHistory(allHistFramesArray: ArrayList<HsCommonStackFrameInfo>,
-                                     syncObject: Lock,
-                                     frameIsFilled: Condition,
-                                     frameHistoryIndex: Int) {
-        debugger.backsSequence(SequenceOfBacksCommand(allHistFramesArray, syncObject, frameIsFilled, frameHistoryIndex,
-                debugProcess = this))
     }
 
     public fun forceSetValue(localBinding: LocalBinding) {

@@ -3,12 +3,11 @@ package org.jetbrains.haskell.debugger
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.openapi.util.Key
-import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
-import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import org.jetbrains.haskell.debugger.protocol.PrintCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -36,15 +35,11 @@ public trait ProcessDebugger {
 
     public fun prepareDebugger()
 
-    public fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo)
-
     public fun back()
 
     public fun forward()
 
-    public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand)
-
-    public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand)
+    public fun print(printCommand: PrintCommand)
 
     public fun force(forceCommand: ForceCommand)
 

@@ -8,16 +8,13 @@ import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
 import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
-import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
 import java.util.concurrent.atomic.AtomicBoolean
-import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
-import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
@@ -31,12 +28,14 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
-import org.jetbrains.haskell.debugger.parser.History
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.jetbrains.haskell.debugger.protocol.PrintCommand
+import java.util.ArrayList
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 
 /**
  * Created by vlad on 7/11/14.
@@ -55,8 +54,9 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private val queue: CommandQueue
     private val writeLock = Any()
 
-    private var historySize = 0
     private var historyIndex = 0
+    private var allFramesCollected = false
+    private val historyFrames: ArrayList<HsHistoryFrame> = ArrayList()
 
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
@@ -134,11 +134,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun resume() =
             queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo) =
-            queue.addCommand(HistoryCommand(StandardHistoryCallback(breakpoint, topFrameInfo)))
-
     override fun back() {
-        if (historyIndex + 1 < historySize) {
+        if (!allFramesCollected || historyIndex + 1 < historyFrames.size) {
             ++historyIndex
             queue.addCommand(BackCommand(StandardMoveHistCallback()))
         }
@@ -151,16 +148,12 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
-    override public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
-            queue.addCommand(sequenceOfBacksCommand)
-
-    override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
-            queue.addCommand(sequenceOfForwardsCommand)
+    override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
     override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
-        for(i in 0..length) {
+        for (i in 0..length) {
             queue.addCommand(command)
         }
     }
@@ -247,8 +240,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
-    private inner class RunToPositionCallback(val breakpointNumber: Int) : CommandCallback<HsTopStackFrameInfo?>() {
-        override fun execAfterParsing(result: HsTopStackFrameInfo?) {
+    private inner class RunToPositionCallback(val breakpointNumber: Int) : CommandCallback<HsStackFrameInfo?>() {
+        override fun execAfterParsing(result: HsStackFrameInfo?) {
             if (result == null) {
                 throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
             }
@@ -256,28 +249,9 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
     }
 
-    private inner class RemoveTempBreakCallback(val flowResult: HsTopStackFrameInfo)
+    private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo)
     : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) = history(null, flowResult)
-    }
-
-    private inner class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
-                                                val topFrameInfo: HsTopStackFrameInfo)
-    : CommandCallback<History?>() {
-        override fun execAfterParsing(result: History?) {
-            if (result != null && result is History) {
-                val histFrames = result.list
-                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
-                historySize = result.list.size + 1
-                historyIndex = 0
-                debugProcess.historyChanged(true, histFrames.empty, HsTopStackFrame(debugProcess, topFrameInfo))
-                if (breakpoint != null) {
-                    debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-                } else {
-                    debugProcess.getSession()!!.positionReached(context)
-                }
-            }
-        }
+        override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
 
     private inner class StandardMoveHistCallback() : CommandCallback<MoveHistResult?>() {
@@ -289,6 +263,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                             }
 
                         })
+            } else {
+                allFramesCollected = true
             }
         }
 

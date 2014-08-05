@@ -1,12 +1,12 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 
 /**
  * Created by vlad on 7/10/14.
  */
 
-public class TraceCommand(val function: String = "main", callback: CommandCallback<HsTopStackFrameInfo?>?, vararg val params: String)
+public class TraceCommand(val function: String = "main", callback: CommandCallback<HsStackFrameInfo?>?, vararg val params: String)
 : FlowCommand(callback) {
 
     override fun getText(): String {

@@ -24,7 +24,7 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantLock
 import java.util.concurrent.locks.Condition
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.icons.AllIcons
@@ -36,6 +36,9 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
+
+    public var obsolete: Boolean = true
+
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
 
     protected var bindingsList: XValueChildrenList? = null;
@@ -100,7 +103,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    if(bindingsList == null) {
+                    if(bindingsList == null || obsolete) {
                         tryGetBindings()
                     }
                     if(bindingsList != null) {

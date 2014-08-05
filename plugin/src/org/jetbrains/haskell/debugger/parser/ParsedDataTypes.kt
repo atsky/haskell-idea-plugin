@@ -48,20 +48,13 @@ public class LocalBinding(var name: String?,
                           var typeName: String?,
                           var value: String?) : ParseResult()
 
-public open class HsTopStackFrameInfo(val filePosition: HsFilePosition,
+public open class HsStackFrameInfo(val filePosition: HsFilePosition,
                                       var bindings: ArrayList<LocalBinding>?) : ParseResult()
-
-public class HsCommonStackFrameInfo(val index: Int,
-                                    val functionName: String,
-                                    filePosition: HsFilePosition,
-                                    bindings: ArrayList<LocalBinding>?) : HsTopStackFrameInfo(filePosition, bindings)
 
 public class ExpressionType(public val expression: String,
                             public val expressionType: String) : ParseResult()
 
 public class ShowOutput(public val output: String) : ParseResult()
-
-public class History(public val list: ArrayList<HsCommonStackFrameInfo>) : ParseResult()
 
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
 

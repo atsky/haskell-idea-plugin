@@ -10,7 +10,6 @@ import com.intellij.ui.AppUIUtil
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.parser.LocalBinding
-import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
 import java.util.ArrayList
 
 /**

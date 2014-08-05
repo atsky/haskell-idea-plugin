@@ -3,9 +3,7 @@ package org.jetbrains.haskell.debugger
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.SequenceOfBacksCommand
-import org.jetbrains.haskell.debugger.protocol.SequenceOfForwardsCommand
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import com.intellij.openapi.util.Key
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.parser.ParseResult
@@ -20,9 +18,6 @@ import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.ArrayList
 import org.json.simple.JSONArray
-import org.jetbrains.haskell.debugger.protocol.HistoryCommand
-import org.jetbrains.haskell.debugger.parser.History
-import org.jetbrains.haskell.debugger.parser.HsCommonStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
@@ -36,6 +31,7 @@ import org.jetbrains.haskell.debugger.protocol.EvalCommand
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.jetbrains.haskell.debugger.protocol.PrintCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -118,16 +114,6 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     override fun prepareDebugger() {
     }
 
-    override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>?, topFrameInfo: HsTopStackFrameInfo) =
-            queue.addCommand(HistoryCommand(object : CommandCallback<History?>() {
-                override fun execAfterParsing(result: History?) {
-                }
-                override fun execBeforeSending() {
-                    handler.breakpoint = breakpoint
-                    handler.topFrameInfo = topFrameInfo
-                }
-            }))
-
     override fun back() {
 
     }
@@ -136,13 +122,9 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     }
 
-    override fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
-            queue.addCommand(sequenceOfBacksCommand)
-
-    override fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
-            queue.addCommand(sequenceOfForwardsCommand)
-
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
+
+    override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 
     override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
         for(i in 0..length) {
@@ -173,13 +155,11 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         private val BREAKPOINT_REMOVED_MSG = "breakpoint was removed"
         private val BREAKPOINT_NOT_REMOVED_MSG = "breakpoint was not removed"
 
-        private val HISTORY_MSG = "got history"
-
         private val EVALUATED_MSG = "evaluated"
 
         // For history command
         public var breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>? = null
-        public var topFrameInfo: HsTopStackFrameInfo? = null
+        public var topFrameInfo: HsStackFrameInfo? = null
 
         // For runToPosition command combination
         public var inRunToPosition: Boolean = false
@@ -236,8 +216,6 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                 BREAKPOINT_NOT_REMOVED_MSG ->
                     debugProcess.printToConsole("Breakpoint was not removed: ${result.getString("add_info")}\n",
                             ConsoleViewContentType.SYSTEM_OUTPUT)
-                HISTORY_MSG ->
-                    gotHistory(result)
                 EVALUATED_MSG -> {
                     evaluateCallback?.evaluated(HsDebugValue(LocalBinding(null, result.getString("type"), result.getString("value"))))
                     evaluateCallback = null
@@ -249,7 +227,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
         private fun paused(result_json: JSONObject) {
             val srcSpan = result_json.getObject("src_span")
-            val result = HsTopStackFrameInfo(getFilePosition(srcSpan),
+            val result = HsStackFrameInfo(getFilePosition(srcSpan),
                     ArrayList(result_json.getArray("vars").toArray().map {
                         (variable) ->
                         with (variable as JSONObject) {
@@ -257,23 +235,6 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                         }
                     }))
             FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(result)
-        }
-
-        private fun gotHistory(result_json: JSONObject) {
-            val result = History(ArrayList(result_json.getArray("history").map {
-                (line) ->
-                with(line as JSONObject) {
-                    HsCommonStackFrameInfo(getInt("index"), getString("function"), getFilePosition(getObject("src_span")), null)
-                }
-            }))
-            val histFrames = result.list
-            val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo!!, histFrames))
-            debugProcess.historyChanged(true, histFrames.empty, HsTopStackFrame(debugProcess, topFrameInfo!!))
-            if (breakpoint != null) {
-                debugProcess.getSession()!!.breakpointReached(breakpoint!!, breakpoint!!.getLogExpression(), context)
-            } else {
-                debugProcess.getSession()!!.positionReached(context)
-            }
         }
 
         private fun getFilePosition(srcSpan: JSONObject): HsFilePosition =
