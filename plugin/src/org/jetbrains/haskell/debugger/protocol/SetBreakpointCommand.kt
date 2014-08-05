@@ -15,7 +15,7 @@ public class SetBreakpointCommand(val module: String,
                                   callback: CommandCallback<BreakpointCommandResult?>?)
 : RealTimeCommand<BreakpointCommandResult?>(callback) {
 
-    override fun getBytes(): ByteArray = ":break $module $lineNumber\n".toByteArray()
+    override fun getText(): String = ":break $module $lineNumber\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): BreakpointCommandResult? = Parser.parseSetBreakpointCommandResult(output)
 

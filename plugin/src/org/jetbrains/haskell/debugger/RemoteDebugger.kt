@@ -58,7 +58,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         private set
 
     private fun execute(command: AbstractCommand<out ParseResult?>) {
-        val bytes = command.getBytes()
+        val text = command.getText()
 
         synchronized(writeLock) {
             lastCommand = command
@@ -66,11 +66,11 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
             command.callback?.execBeforeSending()
 
             if (command !is HiddenCommand) {
-                debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
+                debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
             }
 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
-            os.write(bytes)
+            os.write(text.toByteArray())
             os.flush()
 
             if (command is TraceCommand) {

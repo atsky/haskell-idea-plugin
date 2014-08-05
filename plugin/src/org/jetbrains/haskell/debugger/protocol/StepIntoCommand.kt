@@ -8,5 +8,5 @@ import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
 
 public class StepIntoCommand(callback: CommandCallback<HsTopStackFrameInfo?>?) : StepCommand(callback) {
 
-    override fun getBytes(): ByteArray = ":step\n".toByteArray()
+    override fun getText(): String = ":step\n"
 }

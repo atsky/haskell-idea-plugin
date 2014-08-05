@@ -12,6 +12,6 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
  */
 
 public class BackCommand(callback: CommandCallback<MoveHistResult?>) : RealTimeCommand<MoveHistResult?>(callback) {
-    override fun getBytes(): ByteArray = ":back\n".toByteArray()
+    override fun getText(): String = ":back\n"
     override fun parseGHCiOutput(output: Deque<String?>): MoveHistResult? = Parser.parseMoveHistResult(output)
 }

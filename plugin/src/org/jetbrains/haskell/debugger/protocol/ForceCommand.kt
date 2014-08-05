@@ -14,7 +14,7 @@ import java.util.concurrent.locks.Condition
  */
 public class ForceCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>)
 : RealTimeCommand<LocalBinding?>(callback) {
-    override fun getBytes(): ByteArray = ":force $bindingName\n".toByteArray()
+    override fun getText(): String = ":force $bindingName\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = Parser.tryParseForceCommandOutput(output)
 

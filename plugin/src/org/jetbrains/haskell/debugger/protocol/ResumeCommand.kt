@@ -9,5 +9,5 @@ import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
  */
 
 public class ResumeCommand(callback: CommandCallback<HsTopStackFrameInfo?>?) : FlowCommand(callback) {
-    override fun getBytes(): ByteArray = ":continue\n".toByteArray()
+    override fun getText(): String = ":continue\n"
 }

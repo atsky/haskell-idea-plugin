@@ -12,9 +12,7 @@ import org.jetbrains.haskell.debugger.parser.ExpressionType
 
 public class ExpressionTypeCommand(val expression: String, callback: CommandCallback<ExpressionType?>?)
 : RealTimeCommand<ExpressionType?>(callback) {
-    override fun getBytes(): ByteArray {
-        return ":type $expression\n".toByteArray()
-    }
+    override fun getText(): String = ":type $expression\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): ExpressionType? = Parser.parseExpressionType(output.getFirst()!!)
 }

@@ -13,7 +13,7 @@ public abstract class HiddenCommand
     class object {
         public fun createInstance(command: String): HiddenCommand {
             return object : HiddenCommand() {
-                override fun getBytes(): ByteArray = command.toByteArray()
+                override fun getText(): String = command
             }
         }
     }

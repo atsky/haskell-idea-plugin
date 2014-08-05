@@ -10,9 +10,7 @@ import java.util.Deque
 public class BreakpointListCommand(val module: String, val lineToSet: Int? = null,
                                    callback: CommandCallback<ParseResult?>?) : RealTimeCommand<ParseResult?>(callback) {
 
-    override fun getBytes(): ByteArray {
-        return ":breaklist ${module}\n".getBytes()
-    }
+    override fun getText(): String = ":breaklist ${module}\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): ParseResult? {
         throw RuntimeException("Not supported in ghci")

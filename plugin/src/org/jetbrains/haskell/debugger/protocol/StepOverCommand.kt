@@ -7,5 +7,5 @@ import org.jetbrains.haskell.debugger.parser.HsTopStackFrameInfo
  */
 
 public class StepOverCommand(callback: CommandCallback<HsTopStackFrameInfo?>?) : StepCommand(callback) {
-    override fun getBytes(): ByteArray = ":steplocal\n".toByteArray()
+    override fun getText(): String = ":steplocal\n"
 }

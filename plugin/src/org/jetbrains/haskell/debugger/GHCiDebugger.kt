@@ -93,17 +93,17 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
      * Executes command immediately
      */
     private fun execute(command: AbstractCommand<out ParseResult?>) {
-        val bytes = command.getBytes()
+        val text = command.getText()
 
         synchronized(writeLock) {
             lastCommand = command
 
             if (lastCommand !is HiddenCommand) {
-                debugProcess.printToConsole(String(bytes), ConsoleViewContentType.SYSTEM_OUTPUT)
+                debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
             }
 
             val os = debugProcess.getProcessHandler().getProcessInput()!!
-            os.write(bytes)
+            os.write(text.toByteArray())
             os.flush()
 
             if (lastCommand is TraceCommand) {

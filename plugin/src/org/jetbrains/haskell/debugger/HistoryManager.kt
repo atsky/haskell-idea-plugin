@@ -24,12 +24,20 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
             com.intellij.icons.AllIcons.Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
+            enabled = false
+            forwardAction.enabled = false
+            update(e)
+            forwardAction.update(e)
             debugProcess.debugger.back()
         }
     }
     private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history",
             com.intellij.icons.AllIcons.Actions.Forward) {
         override fun actionPerformed(e: AnActionEvent?) {
+            enabled = false
+            backAction.enabled = false
+            update(e)
+            backAction.update(e)
             debugProcess.debugger.forward()
         }
     }

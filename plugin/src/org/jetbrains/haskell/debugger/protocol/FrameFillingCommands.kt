@@ -28,7 +28,7 @@ public class SequenceOfBacksCommand(val allHistFramesArray: ArrayList<HsCommonSt
                                     sequenceLength,
                                     currentStep,
                                     debugProcess)) {
-    override fun getBytes(): ByteArray = ":back\n".toByteArray()
+    override fun getText(): String = ":back\n"
     override fun parseGHCiOutput(output: Deque<String?>): LocalBindingList? = Parser.tryParseLocalBindings(output)
 
     class object {
@@ -94,7 +94,7 @@ public class SequenceOfForwardsCommand(val frameBindingsAreSet: Condition,
                                 sequenceLength,
                                 currentStep,
                                 debugProcess)) {
-    override fun getBytes(): ByteArray = ":forward\n".toByteArray()
+    override fun getText(): String = ":forward\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): ParseResult? = null
 

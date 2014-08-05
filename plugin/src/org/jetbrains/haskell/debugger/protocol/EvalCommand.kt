@@ -14,7 +14,7 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 public class EvalCommand(val expression: String, callback: CommandCallback<ParseResult?>)
 : RealTimeCommand<ParseResult?>(callback) {
 
-    override fun getBytes(): ByteArray = (":eval ${expression.trim()}\n").toByteArray()
+    override fun getText(): String = ":eval ${expression.trim()}\n"
 
     override fun parseGHCiOutput(output: Deque<String?>) = null
 }

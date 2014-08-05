@@ -12,7 +12,7 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 
 public abstract class AbstractCommand<R : ParseResult?>(public val callback: CommandCallback<R>?) {
 
-    public abstract fun getBytes(): ByteArray
+    public abstract fun getText(): String
 
     protected abstract fun parseGHCiOutput(output: Deque<String?>): R
 
