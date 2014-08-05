@@ -31,7 +31,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   val filePosition: HsFilePosition,
+                                   public val filePosition: HsFilePosition,
                                    bindings: ArrayList<LocalBinding>?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()

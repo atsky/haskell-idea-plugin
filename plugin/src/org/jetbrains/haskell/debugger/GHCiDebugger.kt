@@ -35,6 +35,8 @@ import org.jetbrains.haskell.debugger.parser.History
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
+import org.jetbrains.haskell.debugger.frames.HsStackFrame
+import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 
 /**
  * Created by vlad on 7/11/14.
@@ -85,7 +87,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun trace() =
-        queue.addCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
+            queue.addCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
 
     /**
      * Executes command immediately
@@ -116,10 +118,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun removeBreakpoint(module: String, breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
     override fun stepInto() =
-        queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
+            queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun stepOver() =
-        queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
+            queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
@@ -130,10 +132,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun resume() =
-        queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
+            queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun history(breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?, topFrameInfo: HsTopStackFrameInfo) =
-        queue.addCommand(HistoryCommand(StandardHistoryCallback(breakpoint, topFrameInfo)))
+            queue.addCommand(HistoryCommand(StandardHistoryCallback(breakpoint, topFrameInfo)))
 
     override fun back() {
         if (historyIndex + 1 < historySize) {
@@ -150,10 +152,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override public fun backsSequence(sequenceOfBacksCommand: SequenceOfBacksCommand) =
-        queue.addCommand(sequenceOfBacksCommand)
+            queue.addCommand(sequenceOfBacksCommand)
 
     override public fun forwardsSequence(sequenceOfForwardsCommand: SequenceOfForwardsCommand) =
-        queue.addCommand(sequenceOfForwardsCommand)
+            queue.addCommand(sequenceOfForwardsCommand)
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
@@ -260,7 +262,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     private inner class StandardHistoryCallback(val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?,
-                                         val topFrameInfo: HsTopStackFrameInfo)
+                                                val topFrameInfo: HsTopStackFrameInfo)
     : CommandCallback<History?>() {
         override fun execAfterParsing(result: History?) {
             if (result != null && result is History) {
@@ -268,7 +270,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo, histFrames))
                 historySize = result.list.size + 1
                 historyIndex = 0
-                debugProcess.historyChanged(true, histFrames.empty, topFrameInfo.filePosition)
+                debugProcess.historyChanged(true, histFrames.empty, HsTopStackFrame(debugProcess, topFrameInfo))
                 if (breakpoint != null) {
                     debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
                 } else {
@@ -281,7 +283,12 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private inner class StandardMoveHistCallback() : CommandCallback<MoveHistResult?>() {
         override fun execAfterParsing(result: MoveHistResult?) {
             if (result != null) {
-                debugProcess.historyChanged(result.topHist, result.botHist, result.filePosition)
+                debugProcess.historyChanged(result.topHist, result.botHist,
+                        object : HsStackFrame(debugProcess, result.filePosition, result.bindingList.list) {
+                            override fun tryGetBindings() {
+                            }
+
+                        })
             }
         }
 

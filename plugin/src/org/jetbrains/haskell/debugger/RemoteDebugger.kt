@@ -35,6 +35,7 @@ import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.protocol.EvalCommand
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
+import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 
 /**
  * Created by vlad on 7/30/14.
@@ -267,7 +268,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
             }))
             val histFrames = result.list
             val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", topFrameInfo!!, histFrames))
-            debugProcess.historyChanged(true, histFrames.empty, topFrameInfo!!.filePosition)
+            debugProcess.historyChanged(true, histFrames.empty, HsTopStackFrame(debugProcess, topFrameInfo!!))
             if (breakpoint != null) {
                 debugProcess.getSession()!!.breakpointReached(breakpoint!!, breakpoint!!.getLogExpression(), context)
             } else {

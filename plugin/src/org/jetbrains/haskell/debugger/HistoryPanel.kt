@@ -8,12 +8,15 @@ import com.intellij.debugger.impl.DebuggerStateManager
 import com.intellij.debugger.impl.DebuggerContextImpl
 import javax.swing.SpringLayout
 import com.intellij.ui.AppUIUtil
+import com.intellij.debugger.DebuggerManagerEx
+import org.jetbrains.haskell.debugger.frames.HsStackFrame
+import com.intellij.xdebugger.frame.XStackFrame
 
 /**
  * Created by vlad on 8/4/14.
  */
 
-public class HistoryPanel(process: HaskellDebugProcess) : JPanel() {
+public class HistoryPanel(private val process: HaskellDebugProcess) : JPanel() {
 
     private val debugSession = process.getSession()!!
 
@@ -63,16 +66,16 @@ public class HistoryPanel(process: HaskellDebugProcess) : JPanel() {
                 SpringLayout.WEST, this)
     }
 
-    public fun setCurrentSpan(s: String) {
-        currentSpanTextField.setText(s)
+    public fun stackChanged(stackFrame: HsStackFrame?) {
+        currentSpanTextField.setText(if (stackFrame != null) stackFrame.filePosition.toString() else "")
+        variablesPanel.stackChanged(stackFrame)
+
     }
 
     private inner class MyDebuggerStateManager() : DebuggerStateManager() {
         override fun setState(context: DebuggerContextImpl?, state: Int, event: Int, description: String?) {
-            //            debugSession.getContextManager().setState(context, state, event, description)
         }
         override fun getContext(): DebuggerContextImpl {
-            //            return debugSession!!.getContextManager().getContext()
             return DebuggerContextImpl.EMPTY_CONTEXT
         }
     }

@@ -34,6 +34,7 @@ import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import org.jetbrains.haskell.debugger.frames.HsStackFrame
 
 /**
  * Created by vlad on 7/10/14.
@@ -230,8 +231,8 @@ public class HaskellDebugProcess(session: XDebugSession,
         historyManager.registerActions(leftToolbar, topToolbar)
     }
 
-    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
-        historyManager.historyChanged(topHistory, bottomHistory, position)
+    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, stackFrame: HsStackFrame?) {
+        historyManager.historyChanged(topHistory, bottomHistory, stackFrame)
     }
 
     // ProcessListener

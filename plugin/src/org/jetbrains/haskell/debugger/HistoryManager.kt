@@ -9,6 +9,9 @@ import org.jetbrains.haskell.debugger.highlighting.HsExecutionPointHighlighter
 import com.intellij.ui.AppUIUtil
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import org.jetbrains.haskell.debugger.frames.HsCommonStackFrame
+import java.util.ArrayList
 
 /**
  * Created by vlad on 8/5/14.
@@ -42,15 +45,16 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         topToolbar.add(forwardAction)
     }
 
-    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, position: HsFilePosition) {
+    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, stackFrame: HsStackFrame?) {
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
             backAction.enabled = !bottomHistory
             forwardAction.enabled = !topHistory
-            historyPanel.setCurrentSpan(position.toString())
-            historyHighlighter.show(object : HsStackFrame(debugProcess, position, null) {
-                override fun tryGetBindings() {
-                }
-            }, false, null)
+            historyPanel.stackChanged(stackFrame)
+            if (stackFrame != null) {
+                historyHighlighter.show(stackFrame, false, null)
+            } else {
+                historyHighlighter.hide()
+            }
         }))
     }
 
@@ -58,7 +62,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
             backAction.enabled = false
             forwardAction.enabled = false
-            historyPanel.setCurrentSpan("")
+            historyPanel.stackChanged(null)
             historyHighlighter.hide()
         }))
     }
