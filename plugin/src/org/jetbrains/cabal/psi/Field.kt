@@ -8,8 +8,6 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 
 public open class Field(node: ASTNode) : ASTWrapperPsiElement(node) {
 
-    public override fun getParent() = super<ASTWrapperPsiElement>.getParent()    //!! -> exeption O_o
-
     public fun getType(): IElementType = getNode().getElementType()!!
 
     public fun hasName(name: String): Boolean {
@@ -17,6 +15,6 @@ public open class Field(node: ASTNode) : ASTWrapperPsiElement(node) {
     }
 
     public fun getFieldName(): String {
-        return getFirstChild()!!.getText()!!  .toLowerCase()
+        return getFirstChild()!!.getText()!!.toLowerCase()
     }
 }

@@ -11,6 +11,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.psi.BoolField
+import org.jetbrains.cabal.psi.InvalidValue
 import org.jetbrains.cabal.psi.RangedValue
 import org.jetbrains.cabal.psi.Section
 import java.util.*
@@ -32,13 +34,20 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     colonNeeded = true
                     values.addAll(PKG_DESCR_FIELD_DESCRS)
                     values.addAll(TOP_SECTIONS)
+                    result?.caseInsensitive()
                 }
                 is Section -> {
                     colonNeeded = true
                     values.addAll(parent.getAvailableFieldNames())
+                    result?.caseInsensitive()
                 }
                 is RangedValue -> {
                     values.addAll(parent.getAvailableValues())
+                }
+                is InvalidValue -> {
+                    if (parent.getParent() is BoolField) {
+                        values.addAll(BOOL_VALS)
+                    }
                 }
             }
 

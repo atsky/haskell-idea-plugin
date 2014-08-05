@@ -14,7 +14,7 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public override fun isValidValue(): String? {
         val version = getVersion()
-        if (getParent() is CabalVersionField) {
+        if (getParent()!! is CabalVersionField) {
             if ((getComparator() == ">=") && (version.matches("[0-9]+\\.[0-9]+"))) return null
             return "invalid cabal version constraint"
         }

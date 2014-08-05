@@ -75,6 +75,7 @@ public trait CabalTokelTypes {
         val REPO_TAG               : IElementType = CabalCompositeElementType("REPO_TAG"                 , ::RepoTagField            )
         val HS_SOURCE_DIRS         : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HSSourceDirsField       )
         val INCLUDE_DIRS           : IElementType = CabalCompositeElementType("INCLUDE_DIRS"             , ::IncludeDirsField        )
+        val BOOL_FIELD             : IElementType = CabalCompositeElementType("BOOL_FIELD"               , ::BoolField               )
 
         val MAIN_FILE              : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 

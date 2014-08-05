@@ -87,15 +87,16 @@ public val FLAG_FIELDS: List<String> = listOf(
 )
 
 public val TOP_SECTIONS: List<String> = listOf(
-                            "executable",
-                            "library",
-                            "benchmark",
-                            "test-suite",
-                            "source-repository"
+        "executable",
+        "library",
+        "benchmark",
+        "test-suite",
+        "source-repository",
+        "flag"
 )
 
 public val BENCH_TYPE_VALS: List<String> = listOf(
-                            "exitcode-stdio-1.0"
+        "exitcode-stdio-1.0"
 )
 
 public val BUILD_TYPE_VALS : List<String> = listOf(
@@ -103,6 +104,13 @@ public val BUILD_TYPE_VALS : List<String> = listOf(
         "Configure",
         "Custom",
         "Make"
+)
+
+public val BOOL_VALS : List<String> = listOf(
+        "true",
+        "True",
+        "false",
+        "False"
 )
 
 public val COMPILER_VALS : List<String> = listOf(

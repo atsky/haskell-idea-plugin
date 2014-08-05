@@ -60,8 +60,8 @@ public val PROPERTY_FIELD_TYPES: Map<String, IElementType> = mapOf(
          "extra-libraries"      to CabalTokelTypes.PROPERTY          ,
          "subdir"               to CabalTokelTypes.PROPERTY          ,
          "extra-lib-dirs"       to CabalTokelTypes.PROPERTY          ,
-         "default"              to CabalTokelTypes.PROPERTY          ,
-         "manual"               to CabalTokelTypes.PROPERTY
+         "default"              to CabalTokelTypes.BOOL_FIELD        ,
+         "manual"               to CabalTokelTypes.BOOL_FIELD
 )
 
 public val SECTION_TYPES: Map<String, IElementType> = mapOf(

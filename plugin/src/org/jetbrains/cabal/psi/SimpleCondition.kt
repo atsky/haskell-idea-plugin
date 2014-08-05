@@ -11,7 +11,11 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
                 "os",
                 "arch",
                 "impl",
-                "flag"
+                "flag",
+                "true",
+                "false",
+                "True",
+                "False"
         )
     }
 
