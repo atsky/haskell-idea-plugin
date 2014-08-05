@@ -5,7 +5,7 @@
     <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="135.480"/>
+    <idea-version since-build="135.909"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.xdebugger</depends>
