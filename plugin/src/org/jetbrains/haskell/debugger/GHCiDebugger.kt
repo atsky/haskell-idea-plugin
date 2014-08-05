@@ -157,6 +157,12 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
+    override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
+        for(i in 0..length) {
+            queue.addCommand(command)
+        }
+    }
+
     override fun prepareDebugger() {
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
 

@@ -28,6 +28,9 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
@@ -167,6 +170,33 @@ public class HaskellDebugProcess(session: XDebugSession,
             } finally {
                 syncObject.unlock()
             }
+        }
+    }
+
+    public fun sequenceCommand(command: AbstractCommand<*>,
+                               length: Int,
+                               beforeFirstCommand: () -> Unit = {},
+                               afterLastCommand: () -> Unit = {}) {
+        beforeFirstCommand()
+        debugger.sequenceCommand(command, length)
+        afterLastCommand()
+    }
+
+    public fun syncSequenceCommand(command: AbstractCommand<*>,
+                                   length: Int,
+                                   syncObject: Lock,
+                                   condition: Condition,
+                                   predicate: () -> Boolean,
+                                   beforeFirstCommand: () -> Unit = {},
+                                   afterLastCommand: () -> Unit = {}) {
+        syncObject.lock()
+        try {
+            sequenceCommand(command, length, beforeFirstCommand, afterLastCommand)
+            while (!predicate()) {
+                condition.await()
+            }
+        } finally {
+            syncObject.unlock()
         }
     }
 

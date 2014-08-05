@@ -143,6 +143,12 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
+    override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
+        for(i in 0..length) {
+            queue.addCommand(command)
+        }
+    }
+
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         handler.handle(Parser.parseJSONObject(text).json)
         queue.setReadyForInput()
