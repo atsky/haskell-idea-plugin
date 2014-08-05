@@ -8,8 +8,6 @@ import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
 import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
@@ -28,14 +26,14 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
-import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.Condition
 
 /**
  * Created by vlad on 7/11/14.
@@ -152,6 +150,26 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
 
+    override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
+        lock.lock()
+        queue.addCommand(ExpressionTypeCommand(binding.name!!, object : CommandCallback<ExpressionType?>() {
+            override fun execAfterParsing(result: ExpressionType?) {
+                lock.lock()
+                binding.typeName = result?.expressionType
+                queue.addCommand(PrintCommand(binding.name!!, object : CommandCallback<LocalBinding?>() {
+                    override fun execAfterParsing(result: LocalBinding?) {
+                        lock.lock()
+                        binding.value = result?.value
+                        condition.signalAll()
+                        lock.unlock()
+                    }
+                }))
+                lock.unlock()
+            }
+        }))
+        lock.unlock()
+    }
+
     override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
         for (i in 0..length) {
             queue.addCommand(command)
@@ -258,11 +276,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         override fun execAfterParsing(result: MoveHistResult?) {
             if (result != null) {
                 debugProcess.historyChanged(result.topHist, result.botHist,
-                        object : HsStackFrame(debugProcess, result.filePosition, result.bindingList.list) {
-                            override fun tryGetBindings() {
-                            }
-
-                        })
+                        HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list)))
             } else {
                 allFramesCollected = true
             }

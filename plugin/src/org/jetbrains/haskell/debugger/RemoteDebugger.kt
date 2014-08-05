@@ -32,12 +32,17 @@ import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.Condition
 
 /**
  * Created by vlad on 7/30/14.
  */
 
 public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
+    override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
+        throw UnsupportedOperationException()
+    }
 
     private val queue: CommandQueue
     private val handler: JSONHandler = JSONHandler()

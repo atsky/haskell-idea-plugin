@@ -105,6 +105,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
                 try {
                     if(bindingsList == null || obsolete) {
                         tryGetBindings()
+                        obsolete = false
                     }
                     if(bindingsList != null) {
                         node.addChildren(bindingsList as XValueChildrenList, true)

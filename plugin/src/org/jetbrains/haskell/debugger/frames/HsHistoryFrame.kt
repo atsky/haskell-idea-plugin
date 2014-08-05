@@ -17,23 +17,18 @@ public class HsHistoryFrame(debugProcess: HaskellDebugProcess, val stackFrameInf
         if (stackFrameInfo.bindings == null) {
             return
         }
-        for (bind in stackFrameInfo.bindings!!) {
-            if (bind.typeName == null) {
-
-            }
-        }
         val syncObject: Lock = ReentrantLock()
         val bindingsAreSet: Condition = syncObject.newCondition()
         syncObject.lock()
         try {
-            while (stackFrameInfo.bindings == null) {
+            for (bind in stackFrameInfo.bindings!!) {
+                debugProcess.debugger.updateBinding(bind, syncObject, bindingsAreSet)
                 bindingsAreSet.await()
             }
         } finally {
             syncObject.unlock()
         }
         setBindingsList(stackFrameInfo.bindings)
-        obsolete = false
     }
 
 }

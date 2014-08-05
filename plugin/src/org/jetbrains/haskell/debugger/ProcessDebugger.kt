@@ -8,6 +8,9 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import java.util.concurrent.locks.Lock
+import java.util.concurrent.locks.Condition
 
 /**
  * Created by vlad on 7/11/14.
@@ -42,6 +45,8 @@ public trait ProcessDebugger {
     public fun print(printCommand: PrintCommand)
 
     public fun force(forceCommand: ForceCommand)
+
+    public fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition)
 
     public fun sequenceCommand(command: AbstractCommand<*>, length: Int)
 
