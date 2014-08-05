@@ -20,16 +20,4 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
     override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? {
         return Parser.tryParseStoppedAt(output)
     }
-
-    class object {
-        public class StandardStepCallback(val debugProcess: HaskellDebugProcess) : CommandCallback<HsStackFrameInfo?>() {
-            override fun execAfterParsing(result: HsStackFrameInfo?) {
-                if (result != null && result is HsStackFrameInfo) {
-                    val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                    debugProcess.historyChanged(true, false, HsTopStackFrame(debugProcess, result))
-                    debugProcess.getSession()!!.positionReached(context)
-                }
-            }
-        }
-    }
 }

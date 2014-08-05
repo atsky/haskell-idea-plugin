@@ -131,11 +131,13 @@ public class Parser() {
         }
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
-            val line = output.pollFirst()!!
-            val matcher0 = Pattern.compile(NO_MORE_BREAKPOINTS_PATTERN).matcher(line.trim())
-            if (matcher0.matches()) {
-                return null
+            for (line in output) {
+                val matcher0 = Pattern.compile(NO_MORE_BREAKPOINTS_PATTERN).matcher(line!!.trim())
+                if (matcher0.matches()) {
+                    return null
+                }
             }
+            val line = output.pollFirst()!!
             val matcher1 = Pattern.compile(STOPPED_AT_PATTERN).matcher(line.trim())
             val matcher2 = Pattern.compile(LOGGED_BREAKPOINT_AT_PATTERN).matcher(line.trim())
             var position: String

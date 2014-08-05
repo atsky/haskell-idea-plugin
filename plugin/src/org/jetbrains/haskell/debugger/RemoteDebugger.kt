@@ -34,6 +34,14 @@ import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.notification.Notifications
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import org.jetbrains.haskell.debugger.frames.HsDebuggerEvaluator
+import com.intellij.xdebugger.frame.XValue
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 
 /**
  * Created by vlad on 7/30/14.
@@ -239,7 +247,47 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                             LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
                         }
                     }))
-            FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(result)
+            val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
+                    LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
+            val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)
+            val condition = breakpoint?.getCondition()
+            if (breakpoint != null && condition != null) {
+                handleCondition(breakpoint, condition, result)
+            } else if (breakpoint != null) {
+                setContext(result, breakpoint)
+            } else {
+                Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", "No breakpoint in line", NotificationType.WARNING))
+                debugProcess.getSession()!!.stop()
+            }
+        }
+
+        private fun handleCondition(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, condition: String, result: HsStackFrameInfo) {
+            val evaluator = HsDebuggerEvaluator(debugProcess.debugger)
+            evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
+                override fun errorOccurred(errorMessage: String) {
+                    val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.getLine()}" +
+                            "cannot be evaluated, reason: $errorMessage"
+                    Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
+                    setContext(result, breakpoint)
+                }
+                override fun evaluated(evalResult: XValue) {
+                    if (evalResult is HsDebugValue &&
+                            evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
+                            (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
+                        setContext(result, breakpoint)
+                    } else {
+                        debugProcess.debugger.resume()
+                    }
+                }
+
+            }, null)
+        }
+
+        private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
+            val stackFrame = HsHistoryFrame(debugProcess, result)
+            val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
+            debugProcess.historyChanged(true, false, stackFrame)
+            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         }
 
         private fun getFilePosition(srcSpan: JSONObject): HsFilePosition =
