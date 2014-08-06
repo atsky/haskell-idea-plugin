@@ -15,7 +15,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import java.util.ArrayList
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
 import java.util.concurrent.locks.Lock
@@ -26,13 +25,11 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
-import org.jetbrains.haskell.debugger.protocol.CommandCallback
-import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 
 /**
  * Created by vlad on 7/10/14.
@@ -151,7 +148,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             syncObject.lock()
             try {
                 debugger.force(ForceCommand(localBinding.name!!,
-                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, debugger)))
+                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this)))
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
                 }
@@ -223,6 +220,18 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, stackFrame: HsStackFrame?) {
         historyManager.historyChanged(topHistory, bottomHistory, stackFrame)
+    }
+
+    public fun historyFrameAppeared(frame: HsHistoryFrame) {
+        historyManager.historyStack.addFrame(frame)
+    }
+
+    public fun resetHistory() {
+        historyManager.historyStack.clear()
+    }
+
+    public fun markHistoryFramesAsObsolete() {
+        historyManager.historyStack.markFramesAsObsolete()
     }
 
     // ProcessListener

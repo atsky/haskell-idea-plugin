@@ -11,6 +11,7 @@ import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
+import org.jetbrains.haskell.debugger.protocol.BackCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -38,7 +39,7 @@ public trait ProcessDebugger {
 
     public fun prepareDebugger()
 
-    public fun back()
+    public fun back(backCommand: BackCommand)
 
     public fun forward()
 

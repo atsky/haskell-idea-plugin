@@ -4,12 +4,8 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.Deque
 import org.jetbrains.haskell.debugger.parser.Parser
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
-import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.ProcessDebugger
-import org.jetbrains.haskell.debugger.GHCiDebugger
 
 /**
  * @author Habibullin Marat
@@ -22,19 +18,17 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
 
     class object {
         public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
-                                           val debugger: ProcessDebugger)
+                                           val debugProcess: HaskellDebugProcess)
         : CommandCallback<LocalBinding?>() {
             override fun execAfterParsing(result: LocalBinding?) {
                 syncObject.lock()
                 try {
-                    if(result != null && result.name != null && result.name == localBinding.name) {
+                    if (result != null && result.name != null && result.name == localBinding.name) {
                         localBinding.value = result.value
                     } else {
                         localBinding.value = ""
                     }
-                    if (debugger is GHCiDebugger) {
-                        debugger.markFramesAsObsolete()
-                    }
+                    debugProcess.markHistoryFramesAsObsolete()
                     bindingValueIsSet.signal()
                 } finally {
                     syncObject.unlock()

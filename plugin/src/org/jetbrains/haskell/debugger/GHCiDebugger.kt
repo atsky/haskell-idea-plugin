@@ -13,8 +13,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.execution.process.ProcessOutputTypes
 import java.util.concurrent.atomic.AtomicBoolean
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.FlowCommand
-import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.protocol.ExpressionTypeCommand
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
@@ -25,11 +23,8 @@ import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.BackCommand
-import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
-import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
-import java.util.ArrayList
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
@@ -46,7 +41,7 @@ import com.intellij.xdebugger.frame.XValue
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
-import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -64,10 +59,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private var collectedOutput: StringBuilder = StringBuilder()
     private val queue: CommandQueue
     private val writeLock = Any()
-
-    private var historyIndex = 0
-    private var allFramesCollected = false
-    private val historyFrames: ArrayList<HsHistoryFrame> = ArrayList()
 
     public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
@@ -145,21 +136,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun resume() =
             queue.addCommand(ResumeCommand(StandardFlowCallback()))
 
-    override fun back() {
-        if (historyIndex + 1 < historyFrames.size) {
-            ++historyIndex
-            debugProcess.historyChanged(false, allFramesCollected && historyIndex + 1 == historyFrames.size, historyFrames.get(historyIndex))
-        } else if (!allFramesCollected) {
-            queue.addCommand(BackCommand(StandardBackCallback()))
-        }
-    }
+    override fun back(backCommand: BackCommand) =
+            queue.addCommand(backCommand)
 
-    override fun forward() {
-        if (historyIndex > 0) {
-            --historyIndex
-            debugProcess.historyChanged(historyIndex == 0, false, historyFrames.get(historyIndex))
-        }
-    }
+    override fun forward() =
+            queue.addCommand(ForwardCommand(null))
 
     override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 
@@ -287,26 +268,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         override fun execAfterParsing(result: ParseResult?) = StandardFlowCallback().execAfterParsing(flowResult)
     }
 
-    private inner class StandardBackCallback() : CommandCallback<MoveHistResult?>() {
-        override fun execAfterParsing(result: MoveHistResult?) {
-            if (result != null) {
-                val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list))
-                historyFrames.add(frame)
-                ++historyIndex
-                debugProcess.historyChanged(result.topHist, result.botHist, frame)
-            } else {
-                allFramesCollected = true
-                debugProcess.historyChanged(historyIndex == 0, true, historyFrames.get(historyIndex))
-            }
-        }
-
-    }
-
     private inner class StandardFlowCallback() : CommandCallback<HsStackFrameInfo?>() {
 
         override fun execBeforeSending() {
-            resetHistory()
-            debugProcess.historyChanged(true, true, null)
+            debugProcess.resetHistory()
+            debugProcess.historyChanged(false, false, null)
         }
 
         override fun execAfterParsing(result: HsStackFrameInfo?) {
@@ -352,8 +318,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
             val frame = HsHistoryFrame(debugProcess, result)
             frame.obsolete = false
             val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-            historyFrames.add(frame)
-            debugProcess.historyChanged(true, false, frame)
+            debugProcess.historyFrameAppeared(frame)
+            debugProcess.historyChanged(false, true, frame)
             debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         }
     }
@@ -361,8 +327,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     private inner class StandardStepCallback() : CommandCallback<HsStackFrameInfo?>() {
 
         override fun execBeforeSending() {
-            resetHistory()
-            debugProcess.historyChanged(true, true, null)
+            debugProcess.resetHistory()
+            debugProcess.historyChanged(false, false, null)
         }
 
         override fun execAfterParsing(result: HsStackFrameInfo?) {
@@ -370,22 +336,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 val frame = HsHistoryFrame(debugProcess, result)
                 frame.obsolete = false
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                historyFrames.add(frame)
-                debugProcess.historyChanged(true, false, frame)
+                debugProcess.historyFrameAppeared(frame)
+                debugProcess.historyChanged(false, true, frame)
                 debugProcess.getSession()!!.positionReached(context)
             }
-        }
-    }
-
-    private fun resetHistory() {
-        historyFrames.clear()
-        historyIndex = 0
-        allFramesCollected = false
-    }
-
-    public fun markFramesAsObsolete() {
-        for (frame in historyFrames) {
-            frame.obsolete = true
         }
     }
 }

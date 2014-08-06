@@ -42,16 +42,13 @@ import com.intellij.notification.NotificationType
 import org.jetbrains.haskell.debugger.frames.HsDebuggerEvaluator
 import com.intellij.xdebugger.frame.XValue
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.protocol.BackCommand
 
 /**
  * Created by vlad on 7/30/14.
  */
 
 public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
-    override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
-        throw UnsupportedOperationException()
-    }
-
     private val queue: CommandQueue
     private val handler: JSONHandler = JSONHandler()
     private val writeLock = Any()
@@ -127,12 +124,15 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     override fun prepareDebugger() {
     }
 
-    override fun back() {
-
+    override fun back(backCommand: BackCommand) {
     }
 
     override fun forward() {
 
+    }
+
+    override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
+        throw UnsupportedOperationException()
     }
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
@@ -286,7 +286,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
             val stackFrame = HsHistoryFrame(debugProcess, result)
             val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-            debugProcess.historyChanged(true, false, stackFrame)
+            debugProcess.historyChanged(false, true, stackFrame)
             debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         }
 

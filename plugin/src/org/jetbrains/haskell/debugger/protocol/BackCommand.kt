@@ -11,7 +11,7 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
  * Created by vlad on 8/4/14.
  */
 
-public class BackCommand(callback: CommandCallback<MoveHistResult?>) : RealTimeCommand<MoveHistResult?>(callback) {
+public class BackCommand(callback: CommandCallback<MoveHistResult?>?) : RealTimeCommand<MoveHistResult?>(callback) {
     override fun getText(): String = ":back\n"
     override fun parseGHCiOutput(output: Deque<String?>): MoveHistResult? = Parser.parseMoveHistResult(output)
 }
