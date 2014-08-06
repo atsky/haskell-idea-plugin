@@ -12,6 +12,12 @@ import org.jetbrains.haskell.debugger.HaskellDebuggerEditorsProvider
 import org.jetbrains.haskell.fileType.HaskellFileType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.xdebugger.XDebuggerUtil
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import com.intellij.xdebugger.breakpoints.XLineBreakpoint
+import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
+import com.intellij.openapi.project.ProjectManager
+import com.intellij.debugger.DebuggerManager
 
 public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
@@ -20,6 +26,9 @@ public class HaskellLineBreakpointType():
         public val ID: String = "haskell-line-breakpoint"
         private val TITLE: String = "Haskell breakpoints"
     }
+
+    private var customPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? = null
+
     /**
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
      */
@@ -40,5 +49,15 @@ public class HaskellLineBreakpointType():
             }
         }
         return canStopAtLine
+    }
+
+    override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
+//        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+            if(customPropertiesPanel == null) {
+                customPropertiesPanel = HsBreakpointPropertiesPanel()
+            }
+            return customPropertiesPanel
+//        }
+//        return null
     }
 }

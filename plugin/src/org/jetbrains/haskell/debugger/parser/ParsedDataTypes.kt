@@ -50,6 +50,8 @@ public class LocalBinding(var name: String?,
                           var typeName: String?,
                           var value: String?) : ParseResult()
 
+public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
+
 public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
                                    var bindings: ArrayList<LocalBinding>?) : ParseResult()
 
@@ -64,8 +66,6 @@ public class EvalResult(public val expressionType: String,
                         public val expressionValue: String) : ParseResult()
 
 public class ShowOutput(public val output: String) : ParseResult()
-
-public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
 
 public class MoveHistResult(public val filePosition: HsFilePosition?,
                             public val bindingList: LocalBindingList) : ParseResult()

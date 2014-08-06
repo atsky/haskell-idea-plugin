@@ -30,6 +30,8 @@ import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.protocol.SyncCommand
+import org.jetbrains.haskell.debugger.utils.SyncObject
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointHandler
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
 
@@ -178,32 +180,55 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun sequenceCommand(command: AbstractCommand<*>,
-                               length: Int,
-                               beforeFirstCommand: () -> Unit = {},
-                               afterLastCommand: () -> Unit = {}) {
-        beforeFirstCommand()
-        debugger.sequenceCommand(command, length)
-        afterLastCommand()
+    public fun breakListForLine(moduleName: String, lineNumber: Int): ArrayList<HsFilePosition> {
+        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+            val resultArray: ArrayList<HsFilePosition> = ArrayList()
+            // create BreakListForLineCommand
+//            syncCommand(command, syncObject)
+            return resultArray
+        }
+        return ArrayList()
     }
 
-    public fun syncSequenceCommand(command: AbstractCommand<*>,
-                                   length: Int,
-                                   syncObject: Lock,
-                                   condition: Condition,
-                                   predicate: () -> Boolean,
-                                   beforeFirstCommand: () -> Unit = {},
-                                   afterLastCommand: () -> Unit = {}) {
+    private fun syncCommand(command: SyncCommand<*>,
+                            syncObject: SyncObject) {
         syncObject.lock()
         try {
-            sequenceCommand(command, length, beforeFirstCommand, afterLastCommand)
-            while (!predicate()) {
-                condition.await()
+            debugger.enqueueCommand(command)
+            while (!syncObject.signaled()) {
+                syncObject.await()
             }
         } finally {
             syncObject.unlock()
         }
     }
+
+//    public fun sequenceCommand(command: AbstractCommand<*>,
+//                               length: Int,
+//                               beforeFirstCommand: () -> Unit = {},
+//                               afterLastCommand: () -> Unit = {}) {
+//        beforeFirstCommand()
+//        debugger.sequenceCommand(command, length)
+//        afterLastCommand()
+//    }
+//
+//    public fun syncSequenceCommand(command: AbstractCommand<*>,
+//                                   length: Int,
+//                                   syncObject: Lock,
+//                                   condition: Condition,
+//                                   predicate: () -> Boolean,
+//                                   beforeFirstCommand: () -> Unit = {},
+//                                   afterLastCommand: () -> Unit = {}) {
+//        syncObject.lock()
+//        try {
+//            sequenceCommand(command, length, beforeFirstCommand, afterLastCommand)
+//            while (!predicate()) {
+//                condition.await()
+//            }
+//        } finally {
+//            syncObject.unlock()
+//        }
+//    }
 
     override fun sessionInitialized() {
         super<XDebugProcess>.sessionInitialized()

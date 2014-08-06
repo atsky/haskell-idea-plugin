@@ -10,11 +10,19 @@ import com.intellij.openapi.project.Project
 import com.intellij.notification.Notifications
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.util.Key
+import java.util.ArrayList
+import org.jetbrains.haskell.debugger.parser.HsFilePosition
 
 public class HaskellLineBreakpointHandler(val project: Project,
                                           breakpointTypeClass: Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
                                           val debugProcess: HaskellDebugProcess)
 : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass) {
+    class object {
+        public val PROJECT_KEY: Key<Project> = Key("org.jetbrains.haskell.debugger.breakpoints.ProjectForBreakpoint")
+        public val BREAKS_LIST_KEY: Key<ArrayList<HsFilePosition>> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")
+        public val INDEX_IN_BREAKS_LIST_KEY: Key<Int> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListIndexForBreakpoint")
+    }
     /**
      * Called when new breakpoint is added
      *
@@ -32,6 +40,8 @@ public class HaskellLineBreakpointHandler(val project: Project,
                 Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
                 throw e
             }
+            val breaksList = debugProcess.breakListForLine(modName, breakpointLineNumber)
+            addUserData(breakpoint, breaksList)
             debugProcess.addBreakpoint(modName, breakpointLineNumber, breakpoint)
         }
     }
@@ -55,5 +65,11 @@ public class HaskellLineBreakpointHandler(val project: Project,
             return HaskellUtils.zeroBasedToHaskellLineNumber(lineNum)
         }
         return null
+    }
+
+    private fun addUserData(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, breaksList: ArrayList<HsFilePosition>) {
+        breakpoint.putUserData(PROJECT_KEY, project)
+        breakpoint.putUserData(BREAKS_LIST_KEY, breaksList)
+        breakpoint.putUserData(INDEX_IN_BREAKS_LIST_KEY, 0)
     }
 }

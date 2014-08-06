@@ -137,11 +137,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 
-    override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
-        for (i in 0..length) {
-            queue.addCommand(command)
-        }
-    }
+    override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         lastCommand?.handleJSONOutput(text)

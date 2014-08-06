@@ -58,7 +58,7 @@ public trait ProcessDebugger {
 
     public fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition)
 
-    public fun sequenceCommand(command: AbstractCommand<*>, length: Int)
+    public fun enqueueCommand(command: AbstractCommand<*>)
 
     public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
 }
