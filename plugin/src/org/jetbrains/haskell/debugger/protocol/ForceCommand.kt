@@ -2,11 +2,12 @@ package org.jetbrains.haskell.debugger.protocol
 
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.Deque
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.json.simple.JSONObject
+import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
  * @author Habibullin Marat
@@ -15,10 +16,10 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
 : RealTimeCommand<LocalBinding?>(callback) {
     override fun getText(): String = ":force $bindingName\n"
 
-    override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = Parser.tryParseAnyPrintCommandOutput(output)
+    override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = GHCiParser.tryParseAnyPrintCommandOutput(output)
 
     override fun parseJSONOutput(output: JSONObject): LocalBinding? {
-        val res = Parser.evalResultFromJSON(output)
+        val res = JSONConverter.evalResultFromJSON(output)
         return LocalBinding(bindingName, res.expressionType, res.expressionValue)
     }
 

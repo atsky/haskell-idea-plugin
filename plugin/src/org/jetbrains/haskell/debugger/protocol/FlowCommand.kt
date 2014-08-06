@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.debugger.protocol
 
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
 import java.util.Deque
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
@@ -21,6 +21,7 @@ import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 import org.json.simple.JSONObject
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
  * Base class for commands that continue program execution until reaching breakpoint or finish
@@ -32,10 +33,10 @@ import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 : AbstractCommand<HsStackFrameInfo?>(callback) {
 
-    override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = Parser.tryParseStoppedAt(output)
+    override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = GHCiParser.tryParseStoppedAt(output)
 
     override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
-            Parser.stoppedAtFromJSON(output)
+            JSONConverter.stoppedAtFromJSON(output)
 
     class object {
 

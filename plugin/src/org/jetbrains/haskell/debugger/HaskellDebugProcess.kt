@@ -190,6 +190,11 @@ public class HaskellDebugProcess(session: XDebugSession,
             return resultArray
         }
         return ArrayList()
+        //temporary
+//        val tmpArray = ArrayList<HsFilePosition>()
+//        tmpArray.add(HsFilePosition("b1", 0, 0, 0, 0))
+//        tmpArray.add(HsFilePosition("b2", 0, 0, 0, 0))
+//        return  tmpArray
     }
 
     private fun syncCommand(command: SyncCommand<*>,

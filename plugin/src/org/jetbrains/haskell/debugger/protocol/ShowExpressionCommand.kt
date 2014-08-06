@@ -7,7 +7,7 @@ import com.intellij.xdebugger.frame.XNamedValue
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import org.jetbrains.haskell.debugger.parser.ParseResult
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.jetbrains.haskell.debugger.parser.ShowOutput
 import org.json.simple.JSONObject
 
@@ -23,7 +23,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
      */
     override fun getText(): String = "Prelude.show (${expression.trim()})\n"
 
-    override fun parseGHCiOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
+    override fun parseGHCiOutput(output: Deque<String?>): ShowOutput? = GHCiParser.tryParseShowOutput(output)
 
     override fun parseJSONOutput(output: JSONObject): ShowOutput? {
         throw RuntimeException("Unused in remote debugger")

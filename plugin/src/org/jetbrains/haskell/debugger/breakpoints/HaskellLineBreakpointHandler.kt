@@ -31,18 +31,10 @@ public class HaskellLineBreakpointHandler(val project: Project,
     override fun registerBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         val breakpointLineNumber: Int? = getHaskellBreakpointLineNumber(breakpoint)
         if (breakpointLineNumber != null) {
-            val file = breakpoint.getSourcePosition()!!.getFile()
-            val modName: String
-            try {
-                modName = HaskellUtils.getModuleName(project, file)
-            } catch (e: Exception) {
-                val msg =  "Module name is not spesified in file: ${file.getCanonicalPath()}"
-                Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
-                throw e
-            }
-            val breaksList = debugProcess.breakListForLine(modName, breakpointLineNumber)
+            val moduleName = getModuleName(breakpoint)
+            val breaksList = debugProcess.breakListForLine(moduleName, breakpointLineNumber)
             addUserData(breakpoint, breaksList)
-            debugProcess.addBreakpoint(modName, breakpointLineNumber, breakpoint)
+            debugProcess.addBreakpoint(moduleName, breakpointLineNumber, breakpoint)
         }
     }
 
@@ -56,6 +48,17 @@ public class HaskellLineBreakpointHandler(val project: Project,
         if (breakpointLineNumber != null) {
             debugProcess.removeBreakpoint(HaskellUtils.getModuleName(project, breakpoint.getSourcePosition()!!.getFile()),
                     breakpointLineNumber)
+        }
+    }
+
+    private fun getModuleName(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>): String {
+        val file = breakpoint.getSourcePosition()!!.getFile()
+        try {
+            return HaskellUtils.getModuleName(project, file)
+        } catch (e: Exception) {
+            val msg = "Module name is not spesified in file: ${file.getCanonicalPath()}"
+            Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
+            throw e
         }
     }
 

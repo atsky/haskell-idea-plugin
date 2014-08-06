@@ -52,12 +52,12 @@ public class HaskellLineBreakpointType():
     }
 
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
-//        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             if(customPropertiesPanel == null) {
                 customPropertiesPanel = HsBreakpointPropertiesPanel()
             }
             return customPropertiesPanel
-//        }
-//        return null
+        }
+        return null
     }
 }

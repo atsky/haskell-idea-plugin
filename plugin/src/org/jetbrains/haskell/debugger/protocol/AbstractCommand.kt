@@ -2,8 +2,9 @@ package org.jetbrains.haskell.debugger.protocol
 
 import java.util.Deque
 import org.jetbrains.haskell.debugger.parser.ParseResult
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.json.simple.JSONObject
+import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
  * Base class for any command. Commands are used to communicate with ghci. Type parameter R is a type of parsing result
@@ -26,7 +27,7 @@ public abstract class AbstractCommand<R : ParseResult?>(public val callback: Com
     }
 
     public open fun handleJSONOutput(output: String) {
-        val result = parseJSONOutput(Parser.parseJSONObject(output).json)
+        val result = parseJSONOutput(JSONConverter.parseJSONObject(output).json)
         callback?.execAfterParsing(result)
     }
 }

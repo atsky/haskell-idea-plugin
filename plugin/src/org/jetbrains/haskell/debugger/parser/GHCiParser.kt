@@ -12,7 +12,7 @@ import org.json.simple.JSONArray
  * @author Habibullin Marat
  */
 
-public class Parser() {
+public class GHCiParser() {
     // we can put here functions to parse some known things like 'parseSetBreakpointResult' ect...
     class object {
         // the strings above are used as patterns for regexps
@@ -170,18 +170,6 @@ public class Parser() {
             return null
         }
 
-        public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? {
-            val info = json.getString("info")
-            if (info.equals(FINISHED_MSG)) {
-                return null
-            } else if (info.equals(PAUSED_MSG)) {
-                return HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
-                        localBindingListFromJSONArray(json.getArray("vars")).list)
-            } else {
-                throw RuntimeException("Wrong json output occured while handling flow command result")
-            }
-        }
-
         /**
          * Parses ghci output trying to find local bindings in it
          */
@@ -196,14 +184,6 @@ public class Parser() {
             }
             return LocalBindingList(localBindings)
         }
-
-        public fun localBindingListFromJSONArray(json: JSONArray): LocalBindingList =
-                LocalBindingList(ArrayList(json.toArray().map {
-                    (variable) ->
-                    with (variable as JSONObject) {
-                        LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
-                    }
-                }))
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
             for (line in output) {
@@ -228,15 +208,6 @@ public class Parser() {
             }
             val list = tryParseLocalBindings(output)
             return MoveHistResult(tryCreateFilePosition(position), list)
-        }
-
-        public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? {
-            val info = json.getString("info")
-            if (info.equals(BACK_MSG) || info.equals(FORWARD_MSG)) {
-                return MoveHistResult(filePositionFromJSON(json.getObject("src_span")),
-                        localBindingListFromJSONArray(json.getArray("vars")))
-            }
-            throw RuntimeException("Wrong json output occured while handling move hist command result")
         }
 
         private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {
@@ -285,24 +256,6 @@ public class Parser() {
                 return ExpressionType(matcher.group(1)!!, matcher.group(2)!!)
             }
             return null
-        }
-
-        public fun expressionTypeFromJSON(json: JSONObject): ExpressionType {
-            val info = json.getString("info")
-            if (info.equals(EXPRESSION_TYPE_MSG)) {
-                return ExpressionType("<unknown>", json.getString("type"))
-            } else {
-                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
-            }
-        }
-
-        public fun evalResultFromJSON(json: JSONObject): EvalResult {
-            val info = json.getString("info")
-            if (info.equals(EVALUATED_MSG)) {
-                return EvalResult(json.getString("type"), json.getString("value"))
-            } else {
-                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
-            }
         }
 
         public fun tryParseShowOutput(output: Deque<String?>): ShowOutput? {
@@ -362,22 +315,6 @@ public class Parser() {
                 }
             }
             return null
-        }
-
-        private fun JSONObject.getInt(key: String): Int {
-            return (get(key) as Long).toInt()
-        }
-
-        private fun JSONObject.getString(key: String): String {
-            return get(key) as String
-        }
-
-        private fun JSONObject.getObject(key: String): JSONObject {
-            return get(key) as JSONObject
-        }
-
-        private fun JSONObject.getArray(key: String): JSONArray {
-            return get(key) as JSONArray
         }
     }
 }

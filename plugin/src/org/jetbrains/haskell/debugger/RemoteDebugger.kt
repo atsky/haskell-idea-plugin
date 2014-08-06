@@ -143,8 +143,4 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
         lastCommand?.handleJSONOutput(text)
         queue.setReadyForInput()
     }
-
-    private fun breakpointList(module: String, lineToSet: Int? = null) =
-            queue.addCommand(BreakpointListCommand(module, lineToSet, null))
-
 }

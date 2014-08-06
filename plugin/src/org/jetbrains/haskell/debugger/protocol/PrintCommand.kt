@@ -2,7 +2,7 @@ package org.jetbrains.haskell.debugger.protocol
 
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.Deque
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.json.simple.JSONObject
@@ -15,7 +15,7 @@ public class PrintCommand(private val bindingName: String, callback: CommandCall
 : RealTimeCommand<LocalBinding?>(callback) {
     override fun getText(): String = ":sprint $bindingName\n"
 
-    override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = Parser.tryParseAnyPrintCommandOutput(output)
+    override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = GHCiParser.tryParseAnyPrintCommandOutput(output)
 
     override fun parseJSONOutput(output: JSONObject): LocalBinding? {
         throw RuntimeException("Not used in remote debugger")

@@ -5,7 +5,8 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import java.util.Deque
 import org.jetbrains.haskell.debugger.utils.SyncObject
-import org.jetbrains.haskell.debugger.parser.Parser
+import org.jetbrains.haskell.debugger.parser.GHCiParser
+import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
  * @author Habibullin Marat
@@ -17,7 +18,7 @@ public abstract class SyncCommand<T : ParseResult?>(callback: SyncCommandCallbac
     }
 
     override fun handleJSONOutput(output: String) {
-        val result = parseJSONOutput(Parser.parseJSONObject(output).json)
+        val result = parseJSONOutput(JSONConverter.parseJSONObject(output).json)
         syncExecAfterParsing(result)
     }
 
