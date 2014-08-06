@@ -7,7 +7,6 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
 import com.intellij.execution.ui.ConsoleViewContentType
-import org.jetbrains.haskell.debugger.protocol.BreakpointListCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import org.jetbrains.haskell.debugger.protocol.ResumeCommand

@@ -31,6 +31,10 @@ public class JSONConverter {
 
         private val EVALUATED_MSG = "evaluated"
 
+        private val BREAK_LIST_FOR_LINE_INFO = "break list for line"
+        private val BREAKS_TAG = "breaks"
+        private val SRC_SPAN_TAG = "src_span"
+
         public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
             if (WARNING_MSG.equals(json.get("info")) || EXCEPTION_MSG.equals(json.get("info"))) {
                 return ExceptionResult(json.getString("message"))
@@ -97,6 +101,17 @@ public class JSONConverter {
             val info = json.getString("info")
             if (info.equals(EVALUATED_MSG)) {
                 return EvalResult(json.getString("type"), json.getString("value"))
+            } else {
+                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
+            }
+        }
+
+        public fun breaksListFromJSON(json: JSONObject): FilePositionList {
+            val info = json.getString("info")
+            if(info.equals(BREAK_LIST_FOR_LINE_INFO)) {
+                val indexSpanArray = json.getArray(BREAKS_TAG)
+                val lambda = {(p: Any?) -> filePositionFromJSON((p as JSONObject).get(SRC_SPAN_TAG) as JSONObject)}
+                return FilePositionList(ArrayList(indexSpanArray.toArray().map(lambda)))
             } else {
                 throw RuntimeException("Wrong JSON output occured while handling expression type command result")
             }

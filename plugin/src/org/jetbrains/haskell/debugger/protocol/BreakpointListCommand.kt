@@ -8,6 +8,7 @@ import org.jetbrains.haskell.debugger.parser.FilePositionList
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
  * Created by vlad on 7/31/14.
@@ -29,9 +30,7 @@ public class BreakpointListCommand(val module: String,
         throw RuntimeException("BreakpointListCommand.parseGHCiOutput: not supported in ghci")
     }
 
-    override fun parseJSONOutput(output: JSONObject): FilePositionList? {
-        throw NotImplementedException()
-    }
+    override fun parseJSONOutput(output: JSONObject): FilePositionList? = JSONConverter.breaksListFromJSON(output)
 
     class object {
         public class DefaultCallback(syncObject: SyncObject, private val resultList: ArrayList<HsFilePosition>)
