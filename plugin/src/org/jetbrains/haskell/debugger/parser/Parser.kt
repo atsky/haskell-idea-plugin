@@ -66,6 +66,9 @@ public class Parser() {
         private val BREAKPOINT_REMOVED_MSG = "breakpoint was removed"
         private val BREAKPOINT_NOT_REMOVED_MSG = "breakpoint was not removed"
 
+        private val BACK_MSG = "stepped back"
+        private val FORWARD_MSG = "stepped forward"
+
         private val EXPRESSION_TYPE_MSG = "expression type"
 
         private val EVALUATED_MSG = "evaluated"
@@ -166,12 +169,7 @@ public class Parser() {
                 return null
             } else if (info.equals(PAUSED_MSG)) {
                 return HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
-                        ArrayList(json.getArray("vars").toArray().map {
-                            (variable) ->
-                            with (variable as JSONObject) {
-                                LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
-                            }
-                        }))
+                        localBindingListFromJSONArray(json.getArray("vars")).list)
             } else {
                 throw RuntimeException("Wrong json output occured while handling flow command result")
             }
@@ -192,9 +190,13 @@ public class Parser() {
             return LocalBindingList(localBindings)
         }
 
-        public fun localBindingListFromJSON(json: JSONObject): LocalBindingList {
-            throw NotImplementedException()
-        }
+        public fun localBindingListFromJSONArray(json: JSONArray): LocalBindingList =
+                LocalBindingList(ArrayList(json.toArray().map {
+                    (variable) ->
+                    with (variable as JSONObject) {
+                        LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
+                    }
+                }))
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
             for (line in output) {
@@ -207,22 +209,27 @@ public class Parser() {
             val matcher1 = Pattern.compile(STOPPED_AT_PATTERN).matcher(line.trim())
             val matcher2 = Pattern.compile(LOGGED_BREAKPOINT_AT_PATTERN).matcher(line.trim())
             var position: String
-            var top: Boolean
+            //var top: Boolean
             if (matcher1.matches()) {
                 position = matcher1.group(1)!!
-                top = true
+                //top = true
             } else if (matcher2.matches()) {
                 position = matcher2.group(1)!!
-                top = false
+                //top = false
             } else {
                 throw RuntimeException("Wrong GHCi output occured while handling MoveHist command result")
             }
             val list = tryParseLocalBindings(output)
-            return MoveHistResult(tryCreateFilePosition(position)!!, list, top, false)
+            return MoveHistResult(tryCreateFilePosition(position)!!, list)
         }
 
         public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? {
-            throw NotImplementedException()
+            val info = json.getString("info")
+            if (info.equals(BACK_MSG) || info.equals(FORWARD_MSG)) {
+                return MoveHistResult(filePositionFromJSON(json.getObject("src_span")),
+                        localBindingListFromJSONArray(json.getArray("vars")))
+            }
+            throw RuntimeException("Wrong json output occured while handling move hist command result")
         }
 
         private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {

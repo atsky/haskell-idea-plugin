@@ -64,8 +64,6 @@ public class ShowOutput(public val output: String) : ParseResult()
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
 
 public class MoveHistResult(public val filePosition: HsFilePosition,
-                            public val bindingList: LocalBindingList,
-                            public val topHist: Boolean,
-                            public val botHist: Boolean) : ParseResult()
+                            public val bindingList: LocalBindingList) : ParseResult()
 
 public class JSONResult(public val json: JSONObject) : ParseResult()

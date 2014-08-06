@@ -27,6 +27,7 @@ import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.parser.EvalResult
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
+import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -70,7 +71,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) =
-            queue.addCommand(EvalCommand(expression, object : CommandCallback<EvalResult?>() {
+            queue.addCommand(EvalCommand(false, expression, object : CommandCallback<EvalResult?>() {
                 override fun execAfterParsing(result: EvalResult?) {
                     callback.evaluated(HsDebugValue(LocalBinding(null, result?.expressionType, result?.expressionValue)))
                 }
@@ -104,15 +105,22 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     override fun prepareDebugger() {
     }
 
-    override fun back(backCommand: BackCommand) {
-    }
+    override fun back(backCommand: BackCommand) = queue.addCommand(backCommand)
 
-    override fun forward() {
-
-    }
+    override fun forward() = queue.addCommand(ForwardCommand(null))
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
-        throw UnsupportedOperationException()
+        lock.lock()
+        queue.addCommand(EvalCommand(false, binding.name!!, object : CommandCallback<EvalResult?>() {
+            override fun execAfterParsing(result: EvalResult?) {
+                lock.lock()
+                binding.typeName = result?.expressionType
+                binding.value = result?.expressionValue
+                condition.signalAll()
+                lock.unlock()
+            }
+        }))
+        lock.unlock()
     }
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
