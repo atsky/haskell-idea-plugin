@@ -380,4 +380,10 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         historyIndex = 0
         allFramesCollected = false
     }
+
+    public fun markFramesAsObsolete() {
+        for (frame in historyFrames) {
+            frame.obsolete = true
+        }
+    }
 }

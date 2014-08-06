@@ -151,7 +151,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             syncObject.lock()
             try {
                 debugger.force(ForceCommand(localBinding.name!!,
-                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet)))
+                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, debugger)))
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
                 }
