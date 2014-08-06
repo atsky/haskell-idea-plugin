@@ -5,13 +5,23 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import java.util.Deque
 import org.jetbrains.haskell.debugger.utils.SyncObject
+import org.jetbrains.haskell.debugger.parser.Parser
 
 /**
  * @author Habibullin Marat
  */
 public abstract class SyncCommand<T : ParseResult?>(callback: SyncCommandCallback<T>) : AbstractCommand<T>(callback) {
-    override fun handleOutput(output: Deque<String?>) {
+    override fun handleGHCiOutput(output: Deque<String?>) {
         val result = parseGHCiOutput(output)
+        syncExecAfterParsing(result)
+    }
+
+    override fun handleJSONOutput(output: String) {
+        val result = parseJSONOutput(Parser.parseJSONObject(output).json)
+        syncExecAfterParsing(result)
+    }
+
+    private fun syncExecAfterParsing(result: T) {
         (callback as SyncCommandCallback).syncObject.lock()
         try {
             callback?.execAfterParsing(result)

@@ -34,6 +34,8 @@ import org.jetbrains.haskell.debugger.protocol.SyncCommand
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointHandler
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
+import java.util.ArrayList
+import org.jetbrains.haskell.debugger.parser.HsFilePosition
 
 /**
  * Created by vlad on 7/10/14.

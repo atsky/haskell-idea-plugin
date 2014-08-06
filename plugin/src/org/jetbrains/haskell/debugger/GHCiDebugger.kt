@@ -181,11 +181,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         lock.unlock()
     }
 
-    override fun sequenceCommand(command: AbstractCommand<*>, length: Int) {
-        for (i in 0..length) {
-            queue.addCommand(command)
-        }
-    }
     override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
 
     override fun prepareDebugger() {
