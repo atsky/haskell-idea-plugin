@@ -5,33 +5,21 @@ import com.intellij.xdebugger.frame.XStackFrame
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XCompositeNode
-import org.jetbrains.debugger.VariableView
-import org.jetbrains.debugger.VariableContextBase
-import org.jetbrains.debugger.EvaluateContext
-import org.jetbrains.debugger.DebuggerViewSupport
-import org.jetbrains.debugger.values.PrimitiveValue
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.xdebugger.frame.XValueChildrenList
-import org.jetbrains.debugger.VariableImpl
-import org.jetbrains.debugger.values.ValueType
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
-import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.LocalBinding
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
-import java.util.concurrent.locks.Condition
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   public val filePosition: HsFilePosition,
+                                   public val filePosition: HsFilePosition?,
                                    bindings: ArrayList<LocalBinding>?) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
@@ -47,7 +35,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     }
 
     protected fun setBindingsList(bindings: ArrayList<LocalBinding>?) {
-        if(bindings != null) {
+        if (bindings != null) {
             bindingsList = XValueChildrenList()
             for (binding in bindings) {
                 bindingsList?.add(HsDebugValue(binding))
@@ -67,9 +55,10 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     /**
      * This property holds XSourcePosition value. Use it instead of getSourcePosition()
      */
-    public val hackSourcePosition: XSourcePosition? = XDebuggerUtil.getInstance()!!.createPosition(
-                        LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition.filePath)),
-                        filePosition.normalizedStartLine)
+    public val hackSourcePosition: XSourcePosition? = if (filePosition == null) null else
+        XDebuggerUtil.getInstance()!!.createPosition(
+                LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition!!.filePath)),
+                filePosition!!.normalizedStartLine)
 
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)
@@ -88,7 +77,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
             component.setIcon(AllIcons.Debugger.StackFrame);
         } else {
             component.append(XDebuggerBundle.message("invalid.frame") ?: "<invalid frame>",
-                                                     SimpleTextAttributes.ERROR_ATTRIBUTES);
+                    SimpleTextAttributes.ERROR_ATTRIBUTES);
         }
     }
 
@@ -103,11 +92,11 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
         ApplicationManager.getApplication()!!.executeOnPooledThread(object : Runnable {
             override fun run() {
                 try {
-                    if(bindingsList == null || obsolete) {
+                    if (bindingsList == null || obsolete) {
                         tryGetBindings()
                         obsolete = false
                     }
-                    if(bindingsList != null) {
+                    if (bindingsList != null) {
                         node.addChildren(bindingsList as XValueChildrenList, true)
                     }
                 } catch (e: Exception) {
@@ -128,12 +117,16 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
      */
     private fun setSourceSpan(component: ColoredTextContainer) {
         val srcSpan: String
-        if (filePosition.rawStartLine != filePosition.rawEndLine) {
-            srcSpan = ":(" + filePosition.rawStartLine + "," + filePosition.rawStartSymbol + ")-(" +
-                    filePosition.rawEndLine + "," + filePosition.normalizedEndSymbol + ")"
+        if (filePosition != null) {
+            if (filePosition!!.rawStartLine != filePosition!!.rawEndLine) {
+                srcSpan = ":(" + filePosition!!.rawStartLine + "," + filePosition!!.rawStartSymbol + ")-(" +
+                        filePosition!!.rawEndLine + "," + filePosition!!.normalizedEndSymbol + ")"
+            } else {
+                srcSpan = ":" + filePosition!!.rawStartLine +
+                        ":" + filePosition!!.rawStartSymbol + "-" + filePosition!!.normalizedEndSymbol
+            }
         } else {
-            srcSpan = ":" + filePosition.rawStartLine +
-                    ":" + filePosition.rawStartSymbol + "-" + filePosition.normalizedEndSymbol
+            srcSpan = "<exception thrown>"
         }
         component.append(srcSpan, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }

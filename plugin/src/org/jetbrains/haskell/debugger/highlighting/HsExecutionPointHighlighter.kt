@@ -49,6 +49,9 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
 
     public fun show(stackFrame: HsStackFrame, useSelection: Boolean, gutterIconRenderer: GutterIconRenderer?) {
         updateRequested.set(false)
+        if (stackFrame.hackSourcePosition == null) {
+            return
+        }
         AppUIUtil.invokeLaterIfProjectAlive(myProject, object : Runnable {
             override fun run() {
                 updateRequested.set(false)

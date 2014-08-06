@@ -28,6 +28,9 @@ import org.jetbrains.haskell.debugger.parser.EvalResult
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
+import com.intellij.notification.Notifications
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notification
 
 /**
  * Created by vlad on 7/30/14.
@@ -85,6 +88,14 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) =
             queue.addCommand(RemoveBreakpointCommand(module, breakpointNumber, null))
+
+    override fun setExceptionBreakpoint(uncaughtOnly: Boolean) {
+        Notifications.Bus.notify(Notification("", "Remote debugger exception", "Exception breakpoints were not implemented" +
+                " in remote debugger yet", NotificationType.ERROR))
+    }
+
+    override fun removeExceptionBreakpoint() {
+    }
 
     override fun close() = queue.stop()
 

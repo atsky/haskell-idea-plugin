@@ -122,6 +122,14 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun removeBreakpoint(module: String, breakpointNumber: Int) =
             queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
+    override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
+        queue.addCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
+
+    override fun removeExceptionBreakpoint() {
+        queue.addCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
+        queue.addCommand(HiddenCommand.createInstance(":unset -fbreak-on-exceptoion\n"))
+    }
+
     override fun stepInto() =
             queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 

@@ -35,11 +35,15 @@ public class HaskellExceptionBreakpointPropertiesPanel :
     }
 
     override fun saveTo(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
-        breakpoint.getProperties()!!.getState().exceptionType =
-                if (selectDebuggerComboBox.getSelectedIndex() == 0)
-                    HaskellExceptionBreakpointProperties.ExceptionType.EXCEPTION
-                else
-                    HaskellExceptionBreakpointProperties.ExceptionType.ERROR
+        val old = breakpoint.getProperties()!!.getState().exceptionType
+        val new =
+                if (selectDebuggerComboBox.getSelectedIndex() == 0) HaskellExceptionBreakpointProperties.ExceptionType.EXCEPTION
+                else HaskellExceptionBreakpointProperties.ExceptionType.ERROR
+        breakpoint.getProperties()!!.getState().exceptionType = new
+        if (old != new) {
+            breakpoint.setEnabled(false)
+            breakpoint.setEnabled(true)
+        }
     }
 
     override fun loadFrom(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {

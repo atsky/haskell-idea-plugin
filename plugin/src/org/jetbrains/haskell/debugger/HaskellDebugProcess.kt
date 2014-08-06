@@ -66,12 +66,18 @@ public class HaskellDebugProcess(session: XDebugSession,
         return _breakpointHandlers
     }
 
-    public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+    public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
+        private set
 
+    public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+        exceptionBreakpoint = breakpoint
+        debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
+                HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
-
+        exceptionBreakpoint = null
+        debugger.removeExceptionBreakpoint()
     }
 
     private class BreakpointPosition(val module: String, val line: Int) {

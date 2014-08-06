@@ -48,6 +48,10 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {
                 if (result != null) {
+                    if (result.filePosition == null) {
+                        setExceptionContext(result)
+                        return
+                    }
                     val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
                             LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
                     val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)
@@ -83,6 +87,20 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                     }
 
                 }, null)
+            }
+
+            private fun setExceptionContext(result: HsStackFrameInfo) {
+                val frame = HsHistoryFrame(debugProcess, result)
+                frame.obsolete = false
+                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
+                debugProcess.historyFrameAppeared(frame)
+                debugProcess.historyChanged(false, true, frame)
+                val breakpoint = debugProcess.exceptionBreakpoint
+                if (breakpoint == null) {
+                    debugProcess.getSession()!!.positionReached(context)
+                } else {
+                    debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                }
             }
 
             private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {

@@ -27,6 +27,10 @@ public trait ProcessDebugger {
 
     public fun removeBreakpoint(module: String, breakpointNumber: Int)
 
+    public fun setExceptionBreakpoint(uncaughtOnly: Boolean)
+
+    public fun removeExceptionBreakpoint()
+
     public fun close()
 
     public fun stepInto()

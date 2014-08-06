@@ -21,6 +21,7 @@ public class Parser() {
         // the strings above are used as patterns for regexps
         private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d+) activated at (.*)"
         private val BREAKPOINT_NOT_ACTIVATED_PATTERN = "No breakpoints found at that location."
+        private val EXCEPTION_BREAKPOINT_PATTERN = "Stopped at <exception thrown>"
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
         private val LOGGED_BREAKPOINT_AT_PATTERN = "Logged breakpoint\\sat\\s(.*)"
@@ -144,18 +145,21 @@ public class Parser() {
          * :trace, :step, :steplocal).
          */
         public fun tryParseStoppedAt(output: Deque<String?>): HsStackFrameInfo? {
-            //            tryParseOutputWithFrameInfo(output, STOPPED_AT_PATTERN)
             val it = output.descendingIterator()
             var filePosition: HsFilePosition?
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             while (it.hasNext()) {
                 val currentLine = it.next()
-                filePosition = tryParseFilePosition(currentLine?.trim(), STOPPED_AT_PATTERN)
+                val matcher0 = Pattern.compile("(.*)" + EXCEPTION_BREAKPOINT_PATTERN).matcher(currentLine!!.trim())
+                if (matcher0.matches()) {
+                    return HsStackFrameInfo(null, localBindings)
+                }
+                filePosition = tryParseFilePosition(currentLine.trim(), STOPPED_AT_PATTERN)
                 if (filePosition != null) {
                     return HsStackFrameInfo(filePosition as HsFilePosition, localBindings)
                 }
-                res = tryParseLocalBinding(currentLine?.trim())
+                res = tryParseLocalBinding(currentLine.trim())
                 if (res != null) {
                     localBindings.add(res as LocalBinding)
                 }
@@ -220,7 +224,7 @@ public class Parser() {
                 throw RuntimeException("Wrong GHCi output occured while handling MoveHist command result")
             }
             val list = tryParseLocalBindings(output)
-            return MoveHistResult(tryCreateFilePosition(position)!!, list)
+            return MoveHistResult(tryCreateFilePosition(position), list)
         }
 
         public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? {
