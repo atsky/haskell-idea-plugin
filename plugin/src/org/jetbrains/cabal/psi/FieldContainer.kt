@@ -5,6 +5,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.cabal.CabalFile
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
 
 public trait FieldContainer: PsiElement {
 
@@ -29,7 +30,9 @@ public trait FieldContainer: PsiElement {
 
     public fun getCabalVirtualFile(): VirtualFile? = getCabalFile().getVirtualFile()
 
-    public fun getCabalRootPath(): String = getCabalVirtualFile()?.getParent()!!.getPath()
+    public fun getCabalRootPath(): String? = getCabalRootFile()?.getPath()
 
-    //public fun getCabalRootDir(): File = File(getCabalRootPath())
+    public fun getCabalRootFile(): VirtualFile? = getCabalVirtualFile()?.getParent()
+
+    public fun getFileSystem(): VirtualFileSystem? = getCabalVirtualFile()?.getFileSystem()
 }

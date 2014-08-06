@@ -12,6 +12,8 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.psi.BoolField
+import org.jetbrains.cabal.psi.Path
+import org.jetbrains.cabal.psi.PathsField
 import org.jetbrains.cabal.psi.InvalidValue
 import org.jetbrains.cabal.psi.RangedValue
 import org.jetbrains.cabal.psi.Section
@@ -48,6 +50,9 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     if (parent.getParent() is BoolField) {
                         values.addAll(BOOL_VALS)
                     }
+                }
+                is Path -> {
+                    values.addAll((parent.getParent() as PathsField).getNextAvailableFile(parent, parameters!!.getOriginalFile().getVirtualFile()!!))
                 }
             }
 

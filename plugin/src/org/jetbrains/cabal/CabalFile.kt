@@ -42,7 +42,7 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
 
     public fun getActualDataDir(): VirtualFile {
         val dataDir = getDataDir()?.getFileFromRoot()
-        if (dataDir == null) return getCabalVirtualFile()?.getParent()!!
+        if (dataDir == null) return getCabalVirtualFile()!!.getParent()!!
         return dataDir
     }
 }

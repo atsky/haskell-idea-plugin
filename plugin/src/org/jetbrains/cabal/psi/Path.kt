@@ -12,7 +12,11 @@ import java.io.FilenameFilter
 import java.util.ArrayList
 
 public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue {
-    
+
+    public fun getFile(): File = File(getText())
+
+    public fun getFilename(): String = getFile().getName()
+
     public fun isValidPath(): String? {
         when (getParent()) {
             is DataDirField      -> return checkDataDir()
@@ -37,10 +41,6 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         }
     }
 
-    public fun getFile(): File = File(getText())
-
-    public fun getFilename(): String = getFile().getName()
-
     private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile>? {
         val ext = getFile().getName().replaceAll("^\\*(\\..+)$", "$1")
         return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$") }
@@ -52,13 +52,16 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     private fun getFileSystem(): VirtualFileSystem? = getCabalFile().getVirtualFile()?.getFileSystem()
 
-    private fun isAbsolute(): Boolean = getFile().isAbsolute()
+    public fun isAbsolute(): Boolean = getFile().isAbsolute()
 
-    private fun getFileWithParent(parent: VirtualFile): VirtualFile? = parent.findFileByRelativePath(getText().replace(File.separatorChar, '/'))
+    public fun getFileWithParent(parent: VirtualFile): VirtualFile? {
+        if (isAbsolute()) return getAbsoluteFile()
+        return parent.findFileByRelativePath(getText().replace(File.separatorChar, '/'))
+    }
 
     private fun getAbsoluteFile(): VirtualFile? = getFileSystem()?.findFileByPath(getText().replace(File.separatorChar, '/'))
 
-    private fun getAbsoluteFile(path: String): VirtualFile? = getFileSystem()?.findFileByPath(path.replace(File.separatorChar, '/'))
+    public fun getAbsoluteFile(path: String): VirtualFile? = getFileSystem()?.findFileByPath(path.replace(File.separatorChar, '/'))
 
     public fun getFileFromRoot(): VirtualFile? {
         if (isAbsolute()) return getAbsoluteFile()
@@ -90,7 +93,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         return null
     }
 
-    private fun getParentBuildSection(): BuildSection? {
+    public fun getParentBuildSection(): BuildSection? {
         var parent = getParent()
         while (parent != null) {
             if (parent is BuildSection) return (parent as BuildSection)
@@ -115,7 +118,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
     }
 
     private fun checkMainFile(): String? {
-        if (isAbsolute()) return "this path should be absolute"
+        if (isAbsolute()) return "this path should be relative"
         val res = findFileInDirs({ getParentBuildSection()?.getHSSourceDirs() })
         if (res == null)  return "invalid path"
         val ext = res.getExtension()
