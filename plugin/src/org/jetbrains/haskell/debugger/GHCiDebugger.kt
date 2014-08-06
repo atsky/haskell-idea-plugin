@@ -349,10 +349,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }
 
         private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
-            val stackFrame = HsHistoryFrame(debugProcess, result)
+            val frame = HsHistoryFrame(debugProcess, result)
+            frame.obsolete = false
             val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-            historyFrames.add(stackFrame)
-            debugProcess.historyChanged(true, false, stackFrame)
+            historyFrames.add(frame)
+            debugProcess.historyChanged(true, false, frame)
             debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         }
     }
@@ -366,10 +367,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
         override fun execAfterParsing(result: HsStackFrameInfo?) {
             if (result != null && result is HsStackFrameInfo) {
-                val stackFrame = HsHistoryFrame(debugProcess, result)
+                val frame = HsHistoryFrame(debugProcess, result)
+                frame.obsolete = false
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                historyFrames.add(stackFrame)
-                debugProcess.historyChanged(true, false, stackFrame)
+                historyFrames.add(frame)
+                debugProcess.historyChanged(true, false, frame)
                 debugProcess.getSession()!!.positionReached(context)
             }
         }
