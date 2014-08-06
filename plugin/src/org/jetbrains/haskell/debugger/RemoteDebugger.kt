@@ -35,7 +35,6 @@ import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 
 public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
     private val queue: CommandQueue
-    //    private val handler: JSONHandler = JSONHandler()
     private val writeLock = Any()
 
     private var lastCommand: AbstractCommand<out ParseResult?>? = null;

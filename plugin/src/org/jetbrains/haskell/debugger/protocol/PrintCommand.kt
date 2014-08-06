@@ -18,7 +18,7 @@ public class PrintCommand(private val bindingName: String, callback: CommandCall
     override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = Parser.tryParseAnyPrintCommandOutput(output)
 
     override fun parseJSONOutput(output: JSONObject): LocalBinding? {
-        throw UnsupportedOperationException()
+        throw RuntimeException("Not used in remote debugger")
     }
 
     class object {

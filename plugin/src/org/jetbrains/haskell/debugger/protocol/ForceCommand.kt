@@ -18,7 +18,8 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
     override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = Parser.tryParseAnyPrintCommandOutput(output)
 
     override fun parseJSONOutput(output: JSONObject): LocalBinding? {
-        throw UnsupportedOperationException()
+        val res = Parser.evalResultFromJSON(output)
+        return LocalBinding(bindingName, res.expressionType, res.expressionValue)
     }
 
     class object {
