@@ -42,6 +42,8 @@ import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
+import org.jetbrains.haskell.debugger.protocol.FlowCommand
+import org.jetbrains.haskell.debugger.protocol.StepCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -89,7 +91,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun trace() =
-            queue.addCommand(TraceCommand(TRACE_CMD, StandardFlowCallback()))
+            queue.addCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
 
     /**
      * Executes command immediately
@@ -117,13 +119,14 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun setBreakpoint(module: String, line: Int) = queue.addCommand(SetBreakpointCommand(module, line,
             SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
 
-    override fun removeBreakpoint(module: String, breakpointNumber: Int) = queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
+    override fun removeBreakpoint(module: String, breakpointNumber: Int) =
+            queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
     override fun stepInto() =
-            queue.addCommand(StepIntoCommand(StandardStepCallback()))
+            queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun stepOver() =
-            queue.addCommand(StepOverCommand(StandardStepCallback()))
+            queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
@@ -134,7 +137,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun resume() =
-            queue.addCommand(ResumeCommand(StandardFlowCallback()))
+            queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun back(backCommand: BackCommand) =
             queue.addCommand(backCommand)
@@ -265,81 +268,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo)
     : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) = StandardFlowCallback().execAfterParsing(flowResult)
-    }
-
-    private inner class StandardFlowCallback() : CommandCallback<HsStackFrameInfo?>() {
-
-        override fun execBeforeSending() {
-            debugProcess.resetHistory()
-            debugProcess.historyChanged(false, false, null)
-        }
-
-        override fun execAfterParsing(result: HsStackFrameInfo?) {
-            if (result != null) {
-                val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
-                        LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
-                val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)
-                val condition = breakpoint?.getCondition()
-                if (breakpoint != null && condition != null) {
-                    handleCondition(breakpoint, condition, result)
-                } else if (breakpoint != null) {
-                    setContext(result, breakpoint)
-                } else {
-                    Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", "No breakpoint in line", NotificationType.WARNING))
-                    debugProcess.getSession()!!.stop()
-                }
-            }
-        }
-
-        private fun handleCondition(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, condition: String, result: HsStackFrameInfo) {
-            val evaluator = HsDebuggerEvaluator(debugProcess.debugger)
-            evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
-                override fun errorOccurred(errorMessage: String) {
-                    val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.getLine()}" +
-                            "cannot be evaluated, reason: $errorMessage"
-                    Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
-                    setContext(result, breakpoint)
-                }
-                override fun evaluated(evalResult: XValue) {
-                    if (evalResult is HsDebugValue &&
-                            evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
-                            (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
-                        setContext(result, breakpoint)
-                    } else {
-                        debugProcess.debugger.resume()
-                    }
-                }
-
-            }, null)
-        }
-
-        private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
-            val frame = HsHistoryFrame(debugProcess, result)
-            frame.obsolete = false
-            val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-            debugProcess.historyFrameAppeared(frame)
-            debugProcess.historyChanged(false, true, frame)
-            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
-        }
-    }
-
-    private inner class StandardStepCallback() : CommandCallback<HsStackFrameInfo?>() {
-
-        override fun execBeforeSending() {
-            debugProcess.resetHistory()
-            debugProcess.historyChanged(false, false, null)
-        }
-
-        override fun execAfterParsing(result: HsStackFrameInfo?) {
-            if (result != null && result is HsStackFrameInfo) {
-                val frame = HsHistoryFrame(debugProcess, result)
-                frame.obsolete = false
-                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                debugProcess.historyFrameAppeared(frame)
-                debugProcess.historyChanged(false, true, frame)
-                debugProcess.getSession()!!.positionReached(context)
-            }
-        }
+        override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
 }

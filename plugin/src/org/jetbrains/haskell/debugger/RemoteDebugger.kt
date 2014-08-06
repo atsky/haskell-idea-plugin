@@ -25,6 +25,8 @@ import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.parser.EvalResult
+import org.jetbrains.haskell.debugger.protocol.FlowCommand
+import org.jetbrains.haskell.debugger.protocol.StepCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -75,19 +77,20 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
             }))
 
     override fun trace() =
-            queue.addCommand(TraceCommand("main", null))
+            queue.addCommand(TraceCommand("main", FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun setBreakpoint(module: String, line: Int) =
-            queue.addCommand(SetBreakpointCommand(module, line, null))
+            queue.addCommand(SetBreakpointCommand(module, line,
+                    SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) =
             queue.addCommand(RemoveBreakpointCommand(module, breakpointNumber, null))
 
     override fun close() = queue.stop()
 
-    override fun stepInto() = queue.addCommand(StepIntoCommand(null))
+    override fun stepInto() = queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
-    override fun stepOver() = queue.addCommand(StepOverCommand(null))
+    override fun stepOver() = queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun runToPosition(module: String, line: Int) =
             queue.addCommand(SetBreakpointCommand(module, line,
@@ -96,7 +99,7 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
                         }
                     }))
 
-    override fun resume() = queue.addCommand(ResumeCommand(null))
+    override fun resume() = queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun prepareDebugger() {
     }
