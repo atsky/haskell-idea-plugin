@@ -30,6 +30,8 @@ import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointHandler
+import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
 
 /**
  * Created by vlad on 7/10/14.
@@ -56,11 +58,20 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
-            HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this)
+            HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
+            HaskellExceptionBreakpointHandler(this)
     )
 
     override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
         return _breakpointHandlers
+    }
+
+    public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+
+    }
+
+    public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+
     }
 
     private class BreakpointPosition(val module: String, val line: Int) {
