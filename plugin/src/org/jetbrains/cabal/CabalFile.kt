@@ -38,11 +38,11 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
         return res
     }
 
-    public fun gatDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
+    public fun getDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
 
-    public fun getActualDataDir(): File {
-        val dataDir = gatDataDir()?.getFileFromRoot()
-        if (dataDir == null) return getCabalRootDir()
+    public fun getActualDataDir(): VirtualFile {
+        val dataDir = getDataDir()?.getFileFromRoot()
+        if (dataDir == null) return getCabalVirtualFile()?.getParent()!!
         return dataDir
     }
 }
