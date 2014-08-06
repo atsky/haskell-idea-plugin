@@ -9,6 +9,7 @@ import org.jetbrains.haskell.debugger.parser.ShowOutput
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.json.simple.JSONObject
 
 /**
  * Created by vlad on 7/17/14.
@@ -17,7 +18,8 @@ import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 : AbstractCommand<HsStackFrameInfo?>(callback) {
 
-    override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? {
-        return Parser.tryParseStoppedAt(output)
-    }
+    override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = Parser.tryParseStoppedAt(output)
+
+    override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
+            Parser.stoppedAtFromJSON(output)
 }

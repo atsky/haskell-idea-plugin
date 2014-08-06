@@ -21,12 +21,12 @@ public class HsFilePosition(public val filePath: String,
                             public val rawEndSymbol: Int)
 : ParseResult() {
     // zero based start line number
-    public val normalizedStartLine : Int= rawStartLine - 1
-    public val normalizedStartSymbol : Int= rawStartSymbol
+    public val normalizedStartLine: Int = rawStartLine - 1
+    public val normalizedStartSymbol: Int = rawStartSymbol
     // zero based end line number
-    public val normalizedEndLine : Int= rawEndLine - 1
+    public val normalizedEndLine: Int = rawEndLine - 1
     // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
-    public val normalizedEndSymbol : Int= rawEndSymbol + 1
+    public val normalizedEndSymbol: Int = rawEndSymbol + 1
 
     override fun toString(): String {
         if (rawStartLine == rawEndLine) {
@@ -41,6 +41,8 @@ public class HsFilePosition(public val filePath: String,
     }
 }
 
+public class ExceptionResult(public val message: String) : ParseResult()
+
 //public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
 //public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
@@ -49,10 +51,13 @@ public class LocalBinding(var name: String?,
                           var value: String?) : ParseResult()
 
 public open class HsStackFrameInfo(val filePosition: HsFilePosition,
-                                      var bindings: ArrayList<LocalBinding>?) : ParseResult()
+                                   var bindings: ArrayList<LocalBinding>?) : ParseResult()
 
 public class ExpressionType(public val expression: String,
                             public val expressionType: String) : ParseResult()
+
+public class EvalResult(public val expressionType: String,
+                        public val expressionValue: String) : ParseResult()
 
 public class ShowOutput(public val output: String) : ParseResult()
 
@@ -61,6 +66,6 @@ public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseR
 public class MoveHistResult(public val filePosition: HsFilePosition,
                             public val bindingList: LocalBindingList,
                             public val topHist: Boolean,
-                            public val botHist: Boolean): ParseResult()
+                            public val botHist: Boolean) : ParseResult()
 
 public class JSONResult(public val json: JSONObject) : ParseResult()

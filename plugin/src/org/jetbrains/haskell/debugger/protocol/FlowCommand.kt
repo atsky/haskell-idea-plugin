@@ -19,6 +19,7 @@ import com.intellij.notification.NotificationType
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
+import org.json.simple.JSONObject
 
 /**
  * Base class for commands that continue program execution until reaching breakpoint or finish
@@ -31,4 +32,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 : AbstractCommand<HsStackFrameInfo?>(callback) {
 
     override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = Parser.tryParseStoppedAt(output)
+
+    override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
+            Parser.stoppedAtFromJSON(output)
 }

@@ -8,6 +8,8 @@ import org.jetbrains.haskell.debugger.frames
 import org.json.simple.parser.JSONParser
 import org.json.simple.JSONObject
 import java.util.regex.Matcher
+import org.json.simple.JSONArray
+import org.apache.commons.lang.NotImplementedException
 
 /**
  * @author Habibullin Marat
@@ -49,6 +51,33 @@ public class Parser() {
 
         private val FORCE_OUTPUT_PATTERN = "^(\\w+)\\s=\\s(.*)$"
 
+        // JSON main strings
+        private val CONNECTED_MSG = "connected to port"
+
+        private val WARNING_MSG = "warning"
+        private val EXCEPTION_MSG = "exception"
+
+        private val PAUSED_MSG = "paused"
+        private val FINISHED_MSG = "finished"
+
+        private val BREAKPOINT_SET_MSG = "breakpoint was set"
+        private val BREAKPOINT_NOT_SET_MSG = "breakpoint was not set"
+
+        private val BREAKPOINT_REMOVED_MSG = "breakpoint was removed"
+        private val BREAKPOINT_NOT_REMOVED_MSG = "breakpoint was not removed"
+
+        private val EXPRESSION_TYPE_MSG = "expression type"
+
+        private val EVALUATED_MSG = "evaluated"
+
+        public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
+            if (WARNING_MSG.equals(json.get("info")) || EXCEPTION_MSG.equals(json.get("info"))) {
+                return ExceptionResult(json.getString("message"))
+            } else {
+                return null
+            }
+        }
+
         public fun tryCreateFilePosition(line: String): HsFilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
@@ -66,6 +95,11 @@ public class Parser() {
                 }
             }
             return null;
+        }
+
+        public fun filePositionFromJSON(json: JSONObject): HsFilePosition {
+            return HsFilePosition(json.getString("file"), json.getInt("startline"), json.getInt("startcol"),
+                    json.getInt("endline"), json.getInt("endcol"))
         }
 
         /**
@@ -89,6 +123,17 @@ public class Parser() {
                 }
             }
             throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
+        }
+
+        public fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? {
+            val info = json.getString("info")
+            if (info.equals(BREAKPOINT_NOT_SET_MSG)) {
+                return null
+            } else if (info.equals(BREAKPOINT_SET_MSG)) {
+                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span")))
+            } else {
+                throw RuntimeException("Wrong json output occured while handling SetBreakpointCommand result")
+            }
         }
 
         /**
@@ -115,6 +160,23 @@ public class Parser() {
             return null
         }
 
+        public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? {
+            val info = json.getString("info")
+            if (info.equals(FINISHED_MSG)) {
+                return null
+            } else if (info.equals(PAUSED_MSG)) {
+                return HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
+                        ArrayList(json.getArray("vars").toArray().map {
+                            (variable) ->
+                            with (variable as JSONObject) {
+                                LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
+                            }
+                        }))
+            } else {
+                throw RuntimeException("Wrong json output occured while handling flow command result")
+            }
+        }
+
         /**
          * Parses ghci output trying to find local bindings in it
          */
@@ -128,6 +190,10 @@ public class Parser() {
                 }
             }
             return LocalBindingList(localBindings)
+        }
+
+        public fun localBindingListFromJSON(json: JSONObject): LocalBindingList {
+            throw NotImplementedException()
         }
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
@@ -149,10 +215,14 @@ public class Parser() {
                 position = matcher2.group(1)!!
                 top = false
             } else {
-                throw RuntimeException("Wrong GHCi output occured while handling MoveHist result result")
+                throw RuntimeException("Wrong GHCi output occured while handling MoveHist command result")
             }
             val list = tryParseLocalBindings(output)
             return MoveHistResult(tryCreateFilePosition(position)!!, list, top, false)
+        }
+
+        public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? {
+            throw NotImplementedException()
         }
 
         private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {
@@ -203,6 +273,24 @@ public class Parser() {
             return null
         }
 
+        public fun expressionTypeFromJSON(json: JSONObject): ExpressionType {
+            val info = json.getString("info")
+            if (info.equals(EXPRESSION_TYPE_MSG)) {
+                return ExpressionType("<unknown>", json.getString("type"))
+            } else {
+                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
+            }
+        }
+
+        public fun evalResultFromJSON(json: JSONObject): EvalResult {
+            val info = json.getString("info")
+            if (info.equals(EVALUATED_MSG)) {
+                return EvalResult(json.getString("type"), json.getString("value"))
+            } else {
+                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
+            }
+        }
+
         public fun tryParseShowOutput(output: Deque<String?>): ShowOutput? {
             val line = output.firstOrNull()
             if (line != null) {
@@ -229,6 +317,22 @@ public class Parser() {
                 }
             }
             return null
+        }
+
+        private fun JSONObject.getInt(key: String): Int {
+            return (get(key) as Long).toInt()
+        }
+
+        private fun JSONObject.getString(key: String): String {
+            return get(key) as String
+        }
+
+        private fun JSONObject.getObject(key: String): JSONObject {
+            return get(key) as JSONObject
+        }
+
+        private fun JSONObject.getArray(key: String): JSONArray {
+            return get(key) as JSONArray
         }
     }
 }

@@ -9,6 +9,7 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.Parser
 import org.jetbrains.haskell.debugger.parser.ShowOutput
+import org.json.simple.JSONObject
 
 /**
  * Created by vlad on 7/23/14.
@@ -23,6 +24,10 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
     override fun getText(): String = "Prelude.show (${expression.trim()})\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): ShowOutput? = Parser.tryParseShowOutput(output)
+
+    override fun parseJSONOutput(output: JSONObject): ShowOutput? {
+        throw RuntimeException("Unused in remote debugger")
+    }
 
     class object {
         public class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)

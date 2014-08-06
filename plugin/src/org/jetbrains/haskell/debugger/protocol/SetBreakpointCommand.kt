@@ -5,6 +5,7 @@ import org.jetbrains.haskell.debugger.parser.Parser
 import java.util.Deque
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import org.json.simple.JSONObject
 
 /**
  * @author Habibullin Marat
@@ -18,6 +19,9 @@ public class SetBreakpointCommand(val module: String,
     override fun getText(): String = ":break $module $lineNumber\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): BreakpointCommandResult? = Parser.parseSetBreakpointCommandResult(output)
+
+    override fun parseJSONOutput(output: JSONObject): BreakpointCommandResult? =
+            if (Parser.checkExceptionFromJSON(output) == null) Parser.breakpointCommandResultFromJSON(output) else null
 
     class object {
         public class StandardSetBreakpointCallback(val module: String,

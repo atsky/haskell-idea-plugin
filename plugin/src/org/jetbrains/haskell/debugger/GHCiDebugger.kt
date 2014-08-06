@@ -227,7 +227,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     private fun handleOutput() {
-        lastCommand?.handleOutput(collectedOutput.toString().split('\n').toLinkedList())
+        lastCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
         collectedOutput = StringBuilder()
     }
 
