@@ -29,6 +29,8 @@ public class HsFilePosition(public val filePath: String,
     // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
     public val normalizedEndSymbol: Int = rawEndSymbol + 1
 
+    public val simplePath: String = filePath.substring(if (filePath.contains("/")) filePath.lastIndexOf('/') + 1 else 0)
+
     public fun spanToString(): String {
         if (rawStartLine == rawEndLine) {
             if (rawStartSymbol == rawEndSymbol) {
@@ -42,7 +44,7 @@ public class HsFilePosition(public val filePath: String,
     }
     public fun getFileName(): String = File(filePath).getName()
 
-    override fun toString(): String = "$filePath:${spanToString()}"
+    override fun toString(): String = "${getFileName()}:${spanToString()}"
 }
 
 public class BreakInfo(public val breakIndex: Int, public val srcSpan: HsFilePosition) : ParseResult()
@@ -65,7 +67,12 @@ public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
 
 public class HsHistoryFrameInfo(public val index: Int,
                                 public val function: String?,
-                                public val filePosition: HsFilePosition?) : ParseResult()
+                                public val filePosition: HsFilePosition?) : ParseResult() {
+
+    override fun toString(): String {
+        return "$function : $filePosition"
+    }
+}
 
 public class ExpressionType(public val expression: String,
                             public val expressionType: String) : ParseResult()

@@ -7,6 +7,7 @@ import java.util.Deque
 import org.json.simple.parser.JSONParser
 import org.json.simple.JSONObject
 import org.json.simple.JSONArray
+import org.jetbrains.haskell.debugger.GHCiDebugger
 
 /**
  * @author Habibullin Marat
@@ -135,7 +136,10 @@ public class GHCiParser() {
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
             for (line in output) {
-                val matcher0 = Pattern.compile(NO_MORE_BREAKPOINTS_PATTERN).matcher(line!!.trim())
+                if (line!!.trim().equals(GHCiDebugger.PROMPT_LINE.trim())) {
+                    continue
+                }
+                val matcher0 = Pattern.compile(NO_MORE_BREAKPOINTS_PATTERN).matcher(line.trim())
                 if (matcher0.matches()) {
                     return null
                 }
@@ -221,7 +225,7 @@ public class GHCiParser() {
             var full = false
             val list = ArrayList<HsHistoryFrameInfo>()
             for (line in output) {
-                if (line!!.trim().equals("<end of history>")) {
+                if (line!!.trim().equals("<end of history>") || line.trim().equals("Empty history. Perhaps you forgot to use :trace?")) {
                     full = true
                     break
                 }

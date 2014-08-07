@@ -104,6 +104,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         synchronized(writeLock) {
             lastCommand = command
 
+            command.callback?.execBeforeSending()
+
             if (lastCommand !is HiddenCommand) {
                 debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
             }

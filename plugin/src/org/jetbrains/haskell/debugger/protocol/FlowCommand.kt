@@ -104,13 +104,14 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 }
             }
 
-            private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
+            private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
                 val frame = HsHistoryFrame(debugProcess, result)
                 frame.obsolete = false
-                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                debugProcess.historyFrameAppeared(frame)
-                debugProcess.historyChanged(false, true, frame)
-                debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                debugProcess.debugger.history(HistoryCommand.DefaultHistoryCallback(debugProcess, frame, breakpoint))
+//                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
+//                debugProcess.historyFrameAppeared(frame)
+//                debugProcess.historyChanged(false, true, frame)
+//                debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
             }
         }
     }

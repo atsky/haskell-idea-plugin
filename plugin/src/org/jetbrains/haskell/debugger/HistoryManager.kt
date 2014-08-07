@@ -14,6 +14,7 @@ import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 
 /**
  * Created by vlad on 8/5/14.
@@ -22,7 +23,12 @@ import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDebugTabLayouter() {
     public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
-    private val historyPanel: HistoryPanel = HistoryPanel(debugProcess)
+    private val historyPanel: HistoryPanel = object : HistoryPanel(debugProcess) {
+        override fun indexSelected(index: Int) {
+            historyStack.moveTo(index)
+        }
+    }
+
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
@@ -32,7 +38,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             forwardAction.enabled = false
             update(e)
             forwardAction.update(e)
-            historyStack.moveBack()
+            historyPanel.shiftBack()
         }
     }
     private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history",
@@ -42,8 +48,17 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             backAction.enabled = false
             update(e)
             backAction.update(e)
-            historyStack.moveForward()
+            historyPanel.shiftForward()
         }
+    }
+
+    public fun setHistoryFrameInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
+            historyPanel.addInfo(initial.toString())
+            for (info in others) {
+                historyPanel.addInfo(info.toString())
+            }
+        }))
     }
 
     override fun registerAdditionalContent(ui: RunnerLayoutUi) {
@@ -105,6 +120,23 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
 
         public fun currentFrame(): HsHistoryFrame? {
             return if (historyIndex < historyFrames.size) historyFrames.get(historyIndex) else null
+        }
+
+        public fun moveTo(index: Int) {
+            if (index == -1 || index == historyIndex) {
+                return
+            }
+            if (index < historyIndex) {
+                val it = historyIndex - index
+                for (i in 1..it) {
+                    moveForward()
+                }
+            } else {
+                val it = index - historyIndex
+                for (i in 1..it) {
+                    moveBack()
+                }
+            }
         }
 
         public fun moveForward() {

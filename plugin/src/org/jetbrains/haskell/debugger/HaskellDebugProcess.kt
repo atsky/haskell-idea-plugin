@@ -40,6 +40,7 @@ import org.jetbrains.haskell.debugger.protocol.BreakpointListCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointByIndexCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.parser.BreakInfo
+import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 
 /**
  * Created by vlad on 7/10/14.
@@ -270,6 +271,10 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public fun markHistoryFramesAsObsolete() {
         historyManager.historyStack.markFramesAsObsolete()
+    }
+
+    public fun setHistoryFrameInfo(initial: HsHistoryFrameInfo, other: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
+        historyManager.setHistoryFrameInfo(initial, other, full)
     }
 
     // ProcessListener
