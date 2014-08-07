@@ -9,6 +9,14 @@ import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 /**
+ * Command that is used to make synchronous requests to debugger. Takes special SyncCommandCallback as a parameter,
+ * that contains SyncObject. Before parsed result is handled (execAfterParsing method of callback is called)
+ * SyncObject in SyncCommandCallback is locked and after handling SyncObject sends notification and unlocks itself.
+ * So command caller can wait a signal on passed SyncObject and understand that command has been finished by getting
+ * the signal
+ *
+ * @see org.jetbrains.haskell.debugger.utils.SyncObject
+ *
  * @author Habibullin Marat
  */
 public abstract class SyncCommand<T : ParseResult?>(callback: SyncCommandCallback<T>) : AbstractCommand<T>(callback) {

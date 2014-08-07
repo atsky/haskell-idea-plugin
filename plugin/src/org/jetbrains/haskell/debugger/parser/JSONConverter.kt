@@ -6,6 +6,8 @@ import org.json.simple.parser.JSONParser
 import java.util.ArrayList
 
 /**
+ * Converts Json objects to appropriate types to use then in commands
+ *
  * @author Habibullin Marat
  */
 public class JSONConverter {

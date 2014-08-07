@@ -27,7 +27,7 @@ public class HaskellLineBreakpointType():
         private val TITLE: String = "Haskell breakpoints"
     }
 
-    private var customPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? = null
+    private var selectBreakpointPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? = null
 
     /**
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
@@ -51,12 +51,15 @@ public class HaskellLineBreakpointType():
         return canStopAtLine
     }
 
+    /**
+     * Creates panel in breakpoint's context menu with list of available breakpoints to set on the line
+     */
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
         if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
-            if(customPropertiesPanel == null) {
-                customPropertiesPanel = HsBreakpointPropertiesPanel()
+            if(selectBreakpointPanel == null) {
+                selectBreakpointPanel = SelectBreakPropertiesPanel()
             }
-            return customPropertiesPanel
+            return selectBreakpointPanel
         }
         return null
     }

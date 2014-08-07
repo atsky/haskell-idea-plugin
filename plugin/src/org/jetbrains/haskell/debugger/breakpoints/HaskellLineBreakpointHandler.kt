@@ -71,6 +71,9 @@ public class HaskellLineBreakpointHandler(val project: Project,
         return null
     }
 
+    /**
+     * Adds some data that will be used in select breakpoint mechanism
+     */
     private fun addUserData(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, breaksList: ArrayList<BreakInfo>) {
         breakpoint.putUserData(PROJECT_KEY, project)
         breakpoint.putUserData(BREAKS_LIST_KEY, breaksList)

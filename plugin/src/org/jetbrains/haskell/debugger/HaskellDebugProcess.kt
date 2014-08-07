@@ -209,6 +209,11 @@ public class HaskellDebugProcess(session: XDebugSession,
         return ArrayList()
     }
 
+    /**
+     * Used to make synchronous requests to debugger.
+     *
+     * @see org.jetbrains.haskell.debugger.utils.SyncObject
+     */
     private fun syncCommand(command: SyncCommand<*>, syncObject: SyncObject) {
         syncObject.lock()
         try {

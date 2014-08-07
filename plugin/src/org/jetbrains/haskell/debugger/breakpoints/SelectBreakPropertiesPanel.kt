@@ -28,7 +28,7 @@ import org.jetbrains.haskell.debugger.parser.BreakInfo
  *
  * @author Habibullin Marat
  */
-public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
+public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
     private val PANEL_LABEL: String = "Select breakpoint:"
     private val DEBUG_NOT_STARTED_ITEM: String = "select remote debugger and start debug process to enable"
     private val breaksComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(DEBUG_NOT_STARTED_ITEM)))
@@ -46,6 +46,9 @@ public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLine
 
     override fun getComponent(): JComponent = mainPanel
 
+    /**
+     * Called when one press 'Done' button in breakpoint's context menu. Saves user selection and resets breakpoint if needed
+     */
     override fun saveTo(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         if(debuggingInProgress()) {
             val selectedIndex = breaksComboBox.getSelectedIndex()
@@ -58,6 +61,9 @@ public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLine
         }
     }
 
+    /**
+     * Called on every right click on breakpoint. Fills combo box with available breaks info
+     */
     override fun loadFrom(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         getUserData(breakpoint)
         fillComboBox()
