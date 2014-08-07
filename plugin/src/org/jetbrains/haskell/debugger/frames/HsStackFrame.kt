@@ -17,10 +17,10 @@ import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 
 public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
-                                   public val filePosition: HsFilePosition?,
-                                   bindings: ArrayList<LocalBinding>?) : XStackFrame() {
+                                   public val stackFrameInfo: HsStackFrameInfo) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
@@ -31,7 +31,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
 
     protected var bindingsList: XValueChildrenList? = null;
     {
-        setBindingsList(bindings)
+        setBindingsList(stackFrameInfo.bindings)
     }
 
     protected fun setBindingsList(bindings: ArrayList<LocalBinding>?) {
@@ -55,10 +55,10 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     /**
      * This property holds XSourcePosition value. Use it instead of getSourcePosition()
      */
-    public val hackSourcePosition: XSourcePosition? = if (filePosition == null) null else
+    public val hackSourcePosition: XSourcePosition? = if (stackFrameInfo.filePosition == null) null else
         XDebuggerUtil.getInstance()!!.createPosition(
-                LocalFileSystem.getInstance()?.findFileByIoFile(File(filePosition!!.filePath)),
-                filePosition!!.normalizedStartLine)
+                LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition!!.filePath)),
+                stackFrameInfo.filePosition!!.normalizedStartLine)
 
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)
@@ -72,9 +72,16 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     override fun customizePresentation(component: ColoredTextContainer) {
         val position = hackSourcePosition
         if (position != null) {
-            component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            if(stackFrameInfo.functionName != null) {
+                component.append(stackFrameInfo.functionName as String, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+                component.append(" (", SimpleTextAttributes.REGULAR_ATTRIBUTES)
+            }
+            component.append(position.getFile().getName() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES)
             setSourceSpan(component)
-            component.setIcon(AllIcons.Debugger.StackFrame);
+            if(stackFrameInfo.functionName != null) {
+                component.append(")", SimpleTextAttributes.REGULAR_ATTRIBUTES)
+            }
+            component.setIcon(AllIcons.Debugger.StackFrame)
         } else {
             component.append(XDebuggerBundle.message("invalid.frame") ?: "<invalid frame>",
                     SimpleTextAttributes.ERROR_ATTRIBUTES);
@@ -111,20 +118,12 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     protected abstract fun tryGetBindings()
 
     /**
-     * Sets the bounds of code in source file this frame represents. Format is similar to one in ghci:
-     * one line span: "<line number> : <start symbol number> - <end symbol number>"
-     * multiline span: "(<start line number>,<start symbol number>) - (<end line number>,<end symbol number>)"
+     * Sets the bounds of code in source file this frame represents"
      */
     private fun setSourceSpan(component: ColoredTextContainer) {
         val srcSpan: String
-        if (filePosition != null) {
-            if (filePosition!!.rawStartLine != filePosition!!.rawEndLine) {
-                srcSpan = ":(" + filePosition!!.rawStartLine + "," + filePosition!!.rawStartSymbol + ")-(" +
-                        filePosition!!.rawEndLine + "," + filePosition!!.normalizedEndSymbol + ")"
-            } else {
-                srcSpan = ":" + filePosition!!.rawStartLine +
-                        ":" + filePosition!!.rawStartSymbol + "-" + filePosition!!.normalizedEndSymbol
-            }
+        if (stackFrameInfo.filePosition != null) {
+            srcSpan = stackFrameInfo.filePosition!!.spanToString()
         } else {
             srcSpan = "<exception thrown>"
         }

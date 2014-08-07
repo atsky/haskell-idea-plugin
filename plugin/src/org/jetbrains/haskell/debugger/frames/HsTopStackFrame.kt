@@ -13,7 +13,7 @@ import com.intellij.xdebugger.frame.XValueChildrenList
  */
 public class HsTopStackFrame(debugProcess: HaskellDebugProcess,
                              stackFrameInfo: HsStackFrameInfo)
-                           : HsStackFrame(debugProcess, stackFrameInfo.filePosition, stackFrameInfo.bindings) {
+                           : HsStackFrame(debugProcess, stackFrameInfo) {
 
     override fun tryGetBindings() {
         // does nothing, because there is no way to get bindings if they are not set

@@ -126,7 +126,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                 debugProcess.debugger.back(BackCommand(object : CommandCallback<MoveHistResult?>() {
                     override fun execAfterParsing(result: MoveHistResult?) {
                         if (result != null) {
-                            val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list))
+                            val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
                             addFrame(frame)
                             ++historyIndex
                         } else {

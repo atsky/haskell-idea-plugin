@@ -57,7 +57,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
             override fun run() {
                 updateRequested.set(false)
 
-                filePosition = stackFrame.filePosition
+                filePosition = stackFrame.stackFrameInfo.filePosition
 
                 myOpenFileDescriptor = XSourcePositionImpl.createOpenFileDescriptor(myProject, stackFrame.hackSourcePosition!!)
                 myOpenFileDescriptor!!.setUseCurrentWindow(true)

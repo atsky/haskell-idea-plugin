@@ -24,6 +24,7 @@ public class JSONConverter {
 
         private val PAUSED_MSG = "paused"
         private val FINISHED_MSG = "finished"
+        private val STOPPED_AT_FUNC_TAG = "function"
 
         private val BREAKPOINT_SET_MSG = "breakpoint was set"
         private val BREAKPOINT_NOT_SET_MSG = "breakpoint was not set"
@@ -74,7 +75,8 @@ public class JSONConverter {
                 return null
             } else if (info.equals(PAUSED_MSG)) {
                 return HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
-                        localBindingListFromJSONArray(json.getArray("vars")).list)
+                        localBindingListFromJSONArray(json.getArray("vars")).list,
+                        json.getString(STOPPED_AT_FUNC_TAG))
             } else {
                 throw RuntimeException("Wrong json output occured while handling flow command result")
             }

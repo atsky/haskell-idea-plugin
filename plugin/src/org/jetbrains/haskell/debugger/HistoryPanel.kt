@@ -80,7 +80,7 @@ public class HistoryPanel(private val process: HaskellDebugProcess) : JPanel() {
     }
 
     public fun stackChanged(stackFrame: HsStackFrame?) {
-        currentSpanTextField.setText(if (stackFrame != null) stackFrame.filePosition.toString() else "")
+        currentSpanTextField.setText(if (stackFrame != null) stackFrame.stackFrameInfo.filePosition.toString() else "")
         variablesPanel.stackChanged(stackFrame)
 
     }

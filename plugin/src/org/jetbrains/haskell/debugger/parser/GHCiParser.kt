@@ -104,11 +104,11 @@ public class GHCiParser() {
                 val currentLine = it.next()
                 val matcher0 = Pattern.compile("(.*)" + EXCEPTION_BREAKPOINT_PATTERN).matcher(currentLine!!.trim())
                 if (matcher0.matches()) {
-                    return HsStackFrameInfo(null, localBindings)
+                    return HsStackFrameInfo(null, localBindings, null)
                 }
                 filePosition = tryParseFilePosition(currentLine.trim(), STOPPED_AT_PATTERN)
                 if (filePosition != null) {
-                    return HsStackFrameInfo(filePosition as HsFilePosition, localBindings)
+                    return HsStackFrameInfo(filePosition as HsFilePosition, localBindings, null)
                 }
                 res = tryParseLocalBinding(currentLine.trim())
                 if (res != null) {

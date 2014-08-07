@@ -10,8 +10,8 @@ import java.util.concurrent.locks.Condition
  * Created by vlad on 8/5/14.
  */
 
-public class HsHistoryFrame(debugProcess: HaskellDebugProcess, val stackFrameInfo: HsStackFrameInfo) :
-        HsStackFrame(debugProcess, stackFrameInfo.filePosition, stackFrameInfo.bindings) {
+public class HsHistoryFrame(debugProcess: HaskellDebugProcess, stackFrameInfo: HsStackFrameInfo) :
+        HsStackFrame(debugProcess, stackFrameInfo) {
 
     override fun tryGetBindings() {
         if (stackFrameInfo.bindings == null) {

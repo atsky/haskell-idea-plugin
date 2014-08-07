@@ -87,7 +87,7 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
         breaksComboBox.removeAllItems()
         if(debuggingInProgress() && (breaksList as ArrayList<BreakInfo>).notEmpty) {
             for (breakEntry in breaksList as ArrayList<BreakInfo>) {
-                breaksComboBox.addItem(breakEntry.srcSpan.toString())
+                breaksComboBox.addItem(breakEntry.srcSpan.spanToString())
             }
             breaksComboBox.setSelectedIndex(lastSelectedIndex as Int)
             breaksComboBox.setEnabled(true)

@@ -2,6 +2,7 @@ package org.jetbrains.haskell.debugger.parser
 
 import java.util.ArrayList
 import org.json.simple.JSONObject
+import java.io.File
 
 /**
  * This file contains data types for holding parsed information
@@ -28,17 +29,20 @@ public class HsFilePosition(public val filePath: String,
     // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
     public val normalizedEndSymbol: Int = rawEndSymbol + 1
 
-    override fun toString(): String {
+    public fun spanToString(): String {
         if (rawStartLine == rawEndLine) {
             if (rawStartSymbol == rawEndSymbol) {
-                return "$filePath:$rawStartLine:$rawStartSymbol"
+                return "$rawStartLine:$rawStartSymbol"
             } else {
-                return "$filePath:$rawStartLine:$rawStartSymbol-$rawEndSymbol"
+                return "$rawStartLine:$rawStartSymbol-$rawEndSymbol"
             }
         } else {
-            return "$filePath:($rawStartLine,$rawStartSymbol)-($rawEndLine,$rawEndSymbol)"
+            return "($rawStartLine,$rawStartSymbol)-($rawEndLine,$rawEndSymbol)"
         }
     }
+    public fun getFileName(): String = File(filePath).getName()
+
+    override fun toString(): String = "$filePath:${spanToString()}"
 }
 
 public class BreakInfo(public val breakIndex: Int, public val srcSpan: HsFilePosition) : ParseResult()
@@ -56,7 +60,8 @@ public class LocalBinding(var name: String?,
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult()
 
 public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
-                                   var bindings: ArrayList<LocalBinding>?) : ParseResult()
+                                   var bindings: ArrayList<LocalBinding>?,
+                                   val functionName: String?) : ParseResult()
 
 public class HsHistoryFrameInfo(public val index: Int,
                                 public val function: String?,
