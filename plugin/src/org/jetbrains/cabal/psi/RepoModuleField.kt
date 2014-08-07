@@ -4,9 +4,10 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.DisallowedableField
+import org.jetbrains.cabal.psi.PropertyField
 import org.jetbrains.cabal.parser.CabalTokelTypes
 
-public class RepoModuleField(node: ASTNode) : DisallowedableField(node) {
+public class RepoModuleField(node: ASTNode) : PropertyField(node), DisallowedableField {
 
     public override fun isEnabled(): String? {
         val parent = getParent() as SourceRepo

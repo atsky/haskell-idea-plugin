@@ -52,7 +52,10 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     }
                 }
                 is Path -> {
-                    values.addAll((parent.getParent() as PathsField).getNextAvailableFile(parent, parameters!!.getOriginalFile().getVirtualFile()!!))
+                    val grandParent = parent.getParent()
+                    if (grandParent is PathsField) {
+                        values.addAll(grandParent.getNextAvailableFile(parent, parameters!!.getOriginalFile().getVirtualFile()!!.getParent()!!))
+                    }
                 }
             }
 

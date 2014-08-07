@@ -12,26 +12,25 @@ import java.io.FilenameFilter
 import java.util.ArrayList
 import com.intellij.psi.PsiFile
 
-public trait PathsField {
+public open class PathsField(node: ASTNode): PropertyField(node) {
 
-    public fun getNextAvailableFile(prefixPath: Path, originalFile: VirtualFile): List<String> {
-        val parentDirs = getParentDirs(prefixPath, originalFile)
+    public fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
+        val parentDirs = getParentDirs(prefixPath, originalRootDir)
         var res = ArrayList<String>()
         for (parentDir in parentDirs) {
             if (parentDir.isDirectory()) {
-                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName() })
+                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName().concat(if (it.isDirectory()) "/" else "") })
             }
         }
        return res
     }
 
-    public fun isValidFile(file: VirtualFile): Boolean = true
+    public open fun isValidFile(file: VirtualFile): Boolean = true
 
-    public fun getParentDirs(prefixPath: Path, originalFile: VirtualFile): List<VirtualFile> {
-        val path = File(prefixPath.getPathWithParent(originalFile.getParent()!!)).getParent()
-        if (path == null) return listOf()
-        val dir = originalFile.getFileSystem().findFileByPath(path)
-        if (dir == null) return listOf()
-        return listOf(dir)
+    public open fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
+        val dirPath = File(prefixPath.getPathWithParent(originalRootDir)).getParent()
+        val dirFile = if (dirPath == null) null else originalRootDir.getFileSystem().findFileByPath(dirPath)
+        if (dirFile == null) return listOf()
+        return listOf(dirFile)
     }
 }

@@ -6,12 +6,12 @@ import org.jetbrains.cabal.psi.PathsField
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
-public class DataDirField(node: ASTNode) : PropertyField(node), PathsField {
+public class DataDirField(node: ASTNode) : PathsField(node) {
 
     public override fun isValidFile(file: VirtualFile): Boolean = file.isDirectory()
 
-    public override fun getParentDirs(prefixPath: Path, originalFile: VirtualFile): List<VirtualFile> {
+    public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
         if (prefixPath.isAbsolute()) return listOf()
-        return super<PathsField>.getParentDirs(prefixPath, originalFile)
+        return super<PathsField>.getParentDirs(prefixPath, originalRootDir)
     }
 }

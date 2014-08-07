@@ -76,6 +76,7 @@ public trait CabalTokelTypes {
         val HS_SOURCE_DIRS         : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HSSourceDirsField       )
         val INCLUDE_DIRS           : IElementType = CabalCompositeElementType("INCLUDE_DIRS"             , ::IncludeDirsField        )
         val BOOL_FIELD             : IElementType = CabalCompositeElementType("BOOL_FIELD"               , ::BoolField               )
+        val PATHS_FIELD            : IElementType = CabalCompositeElementType("PATHS_FIELD"              , ::PathsField              )
 
         val MAIN_FILE              : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField           )
 
