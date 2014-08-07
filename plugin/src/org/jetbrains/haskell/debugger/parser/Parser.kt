@@ -4,12 +4,9 @@ import java.util.regex.Pattern
 import java.io.File
 import java.util.ArrayList
 import java.util.Deque
-import org.jetbrains.haskell.debugger.frames
 import org.json.simple.parser.JSONParser
 import org.json.simple.JSONObject
-import java.util.regex.Matcher
 import org.json.simple.JSONArray
-import org.apache.commons.lang.NotImplementedException
 
 /**
  * @author Habibullin Marat
@@ -101,9 +98,14 @@ public class Parser() {
             return null;
         }
 
-        public fun filePositionFromJSON(json: JSONObject): HsFilePosition {
-            return HsFilePosition(json.getString("file"), json.getInt("startline"), json.getInt("startcol"),
-                    json.getInt("endline"), json.getInt("endcol"))
+        public fun filePositionFromJSON(json: JSONObject): HsFilePosition? {
+            val file = json.get("file")
+            if (file != null) {
+                return HsFilePosition(file as String, json.getInt("startline"), json.getInt("startcol"),
+                        json.getInt("endline"), json.getInt("endcol"))
+            } else {
+                return null
+            }
         }
 
         /**
@@ -134,7 +136,7 @@ public class Parser() {
             if (info.equals(BREAKPOINT_NOT_SET_MSG)) {
                 return null
             } else if (info.equals(BREAKPOINT_SET_MSG)) {
-                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span")))
+                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!)
             } else {
                 throw RuntimeException("Wrong json output occured while handling SetBreakpointCommand result")
             }
@@ -185,7 +187,7 @@ public class Parser() {
         public fun tryParseLocalBindings(output: Deque<String?>): LocalBindingList {
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
-            for(currentLine in output) {
+            for (currentLine in output) {
                 res = tryParseLocalBinding(currentLine?.trim())
                 if (res != null) {
                     localBindings.add(res as LocalBinding)
@@ -237,7 +239,7 @@ public class Parser() {
         }
 
         private fun tryParseFilePosition(string: String?, pattern: String): HsFilePosition? {
-            if(string != null) {
+            if (string != null) {
                 val matcher = Pattern.compile("(.*)" + pattern).matcher(string)
                 if (matcher.matches()) {
                     val str = matcher.group(2)!!
@@ -260,14 +262,14 @@ public class Parser() {
         }
 
         private fun tryParseLocalBinding(string: String?): LocalBinding? {
-            if(string != null) {
+            if (string != null) {
                 val matcher = Pattern.compile(LOCAL_BINDING_PATTERN).matcher(string)
                 if (matcher.matches()) {
                     val name = matcher.group(BINDING_NAME_GROUP)
                     val typeName = matcher.group(BINDING_TYPE_GROUP)
                     val substrWithValue = matcher.group(BINDING_VALUE_CONTAINING_GROUP)
                     var value: String? = null
-                    if(substrWithValue != null && !substrWithValue.isEmpty()) {
+                    if (substrWithValue != null && !substrWithValue.isEmpty()) {
                         value = substrWithValue.substring(substrWithValue.indexOf(BINDING_VALUE_PRECEDING_SUBSTR) + 1).trim()
                     }
                     return LocalBinding(name, typeName, value)
@@ -319,8 +321,8 @@ public class Parser() {
         }
 
         public fun tryParseAnyPrintCommandOutput(output: Deque<String?>): LocalBinding? {
-            for(line in output) {
-                if(line != null) {
+            for (line in output) {
+                if (line != null) {
                     val matcher = Pattern.compile(FORCE_OUTPUT_PATTERN).matcher(line)
                     if (matcher.matches()) {
                         return LocalBinding(matcher.group(1), null, matcher.group(2))
