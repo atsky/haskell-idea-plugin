@@ -37,6 +37,9 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProp
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.protocol.BreakpointListCommand
+import org.jetbrains.haskell.debugger.protocol.SetBreakpointByIndexCommand
+import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
+import org.jetbrains.haskell.debugger.parser.BreakInfo
 
 /**
  * Created by vlad on 7/10/14.
@@ -154,6 +157,17 @@ public class HaskellDebugProcess(session: XDebugSession,
         debugger.setBreakpoint(module, line)
     }
 
+    public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+            registeredBreakpoints.put(BreakpointPosition(module, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())),
+                                      BreakpointEntry(index, breakpoint))
+            val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, this))
+            debugger.enqueueCommand(command)
+        } else {
+            throw RuntimeException("Only remote debugger supports breakpoint setting by index")
+        }
+    }
+
     public fun removeBreakpoint(module: String, line: Int) {
         val breakpointNumber: Int? = registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpointNumber
         if (breakpointNumber != null) {
@@ -183,10 +197,10 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun breakListForLine(moduleName: String, lineNumber: Int): ArrayList<HsFilePosition> {
+    public fun breakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
         if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             val syncObject = SyncObject()
-            val resultArray: ArrayList<HsFilePosition> = ArrayList()
+            val resultArray: ArrayList<BreakInfo> = ArrayList()
             val callback = BreakpointListCommand.DefaultCallback(syncObject, resultArray)
             val command = BreakpointListCommand(moduleName, lineNumber, callback)
             syncCommand(command, syncObject)

@@ -20,6 +20,8 @@ import java.util.ArrayList
 //import org.jetbrains.haskell.debugger.protocol.BreakListForLineCommand
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import com.intellij.xdebugger.XDebuggerManager
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import org.jetbrains.haskell.debugger.parser.BreakInfo
 
 /**
  * Panel with additional breakpoint settings (make right click on breakpoint to see it)
@@ -39,7 +41,7 @@ public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLine
 
     private var debugManager: XDebuggerManager? = null
     private var debugProcess: HaskellDebugProcess? = null
-    private var breaksList: ArrayList<HsFilePosition>? = ArrayList()
+    private var breaksList: ArrayList<BreakInfo>? = ArrayList()
     private var lastSelectedIndex: Int? = null
 
     override fun getComponent(): JComponent = mainPanel
@@ -47,10 +49,11 @@ public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLine
     override fun saveTo(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         if(debuggingInProgress()) {
             val selectedIndex = breaksComboBox.getSelectedIndex()
-            if (selectedIndex != lastSelectedIndex) {
+            if (selectedIndex != lastSelectedIndex && debugProcess != null) {
                 breakpoint.putUserData(HaskellLineBreakpointHandler.INDEX_IN_BREAKS_LIST_KEY, selectedIndex)
-                // temporary
-                println("remove and set new break called")
+                val moduleName = HaskellUtils.getModuleName(debugManager!!.getCurrentSession()!!.getProject(), breakpoint.getSourcePosition()!!.getFile())
+                debugProcess?.removeBreakpoint(moduleName, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine()))
+                debugProcess?.addBreakpointByIndex(moduleName, breaksList!!.get(selectedIndex).breakIndex, breakpoint)
             }
         }
     }
@@ -77,9 +80,9 @@ public class HsBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLine
 
     private fun fillComboBox() {
         breaksComboBox.removeAllItems()
-        if(debuggingInProgress() && (breaksList as ArrayList<HsFilePosition>).notEmpty) {
-            for (breakEntry in breaksList as ArrayList<HsFilePosition>) {
-                breaksComboBox.addItem(breakEntry.toString())
+        if(debuggingInProgress() && (breaksList as ArrayList<BreakInfo>).notEmpty) {
+            for (breakEntry in breaksList as ArrayList<BreakInfo>) {
+                breaksComboBox.addItem(breakEntry.srcSpan.toString())
             }
             breaksComboBox.setSelectedIndex(lastSelectedIndex as Int)
             breaksComboBox.setEnabled(true)

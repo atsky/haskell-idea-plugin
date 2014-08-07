@@ -13,6 +13,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.util.Key
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
+import org.jetbrains.haskell.debugger.parser.BreakInfo
 
 public class HaskellLineBreakpointHandler(val project: Project,
                                           breakpointTypeClass: Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
@@ -20,7 +21,7 @@ public class HaskellLineBreakpointHandler(val project: Project,
 : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass) {
     class object {
         public val PROJECT_KEY: Key<Project> = Key("org.jetbrains.haskell.debugger.breakpoints.ProjectForBreakpoint")
-        public val BREAKS_LIST_KEY: Key<ArrayList<HsFilePosition>> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")
+        public val BREAKS_LIST_KEY: Key<ArrayList<BreakInfo>> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")
         public val INDEX_IN_BREAKS_LIST_KEY: Key<Int> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListIndexForBreakpoint")
     }
     /**
@@ -70,7 +71,7 @@ public class HaskellLineBreakpointHandler(val project: Project,
         return null
     }
 
-    private fun addUserData(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, breaksList: ArrayList<HsFilePosition>) {
+    private fun addUserData(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, breaksList: ArrayList<BreakInfo>) {
         breakpoint.putUserData(PROJECT_KEY, project)
         breakpoint.putUserData(BREAKS_LIST_KEY, breaksList)
         breakpoint.putUserData(INDEX_IN_BREAKS_LIST_KEY, 0)

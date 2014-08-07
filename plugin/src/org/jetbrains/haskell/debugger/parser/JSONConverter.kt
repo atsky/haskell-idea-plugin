@@ -33,6 +33,7 @@ public class JSONConverter {
 
         private val BREAK_LIST_FOR_LINE_INFO = "break list for line"
         private val BREAKS_TAG = "breaks"
+        private val BREAK_INDEX_TAG = "index"
         private val SRC_SPAN_TAG = "src_span"
 
         public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
@@ -106,12 +107,15 @@ public class JSONConverter {
             }
         }
 
-        public fun breaksListFromJSON(json: JSONObject): FilePositionList {
+        public fun breaksListFromJSON(json: JSONObject): BreakInfoList {
             val info = json.getString("info")
             if(info.equals(BREAK_LIST_FOR_LINE_INFO)) {
                 val indexSpanArray = json.getArray(BREAKS_TAG)
-                val lambda = {(p: Any?) -> filePositionFromJSON((p as JSONObject).get(SRC_SPAN_TAG) as JSONObject)}
-                return FilePositionList(ArrayList(indexSpanArray.toArray().map(lambda)))
+                val lambda = {(p: Any?) -> BreakInfo(
+                                           (p as JSONObject).getInt(BREAK_INDEX_TAG),
+                                           filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG))
+                                           )}
+                return BreakInfoList(ArrayList(indexSpanArray.toArray().map(lambda)))
             } else {
                 throw RuntimeException("Wrong JSON output occured while handling expression type command result")
             }

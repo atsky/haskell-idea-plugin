@@ -4,11 +4,12 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 import java.util.Deque
 import org.json.simple.JSONObject
 import org.apache.commons.lang.NotImplementedException
-import org.jetbrains.haskell.debugger.parser.FilePositionList
+import org.jetbrains.haskell.debugger.parser.BreakInfoList
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.parser.JSONConverter
+import org.jetbrains.haskell.debugger.parser.BreakInfo
 
 /**
  * Created by vlad on 7/31/14.
@@ -16,8 +17,8 @@ import org.jetbrains.haskell.debugger.parser.JSONConverter
 
 public class BreakpointListCommand(val module: String,
                                    val lineNumber: Int? = null,
-                                   callback: SyncCommandCallback<FilePositionList?>)
-: SyncCommand<FilePositionList?>(callback) {
+                                   callback: SyncCommandCallback<BreakInfoList?>)
+: SyncCommand<BreakInfoList?>(callback) {
 
     override fun getText(): String {
         if(lineNumber == null) {
@@ -26,16 +27,16 @@ public class BreakpointListCommand(val module: String,
         return ":breaklist $module $lineNumber\n"
     }
 
-    override fun parseGHCiOutput(output: Deque<String?>): FilePositionList? {
+    override fun parseGHCiOutput(output: Deque<String?>): BreakInfoList? {
         throw RuntimeException("BreakpointListCommand.parseGHCiOutput: not supported in ghci")
     }
 
-    override fun parseJSONOutput(output: JSONObject): FilePositionList? = JSONConverter.breaksListFromJSON(output)
+    override fun parseJSONOutput(output: JSONObject): BreakInfoList? = JSONConverter.breaksListFromJSON(output)
 
     class object {
-        public class DefaultCallback(syncObject: SyncObject, private val resultList: ArrayList<HsFilePosition>)
-        : SyncCommandCallback<FilePositionList?>(syncObject) {
-            override fun execAfterParsing(result: FilePositionList?) {
+        public class DefaultCallback(syncObject: SyncObject, private val resultList: ArrayList<BreakInfo>)
+        : SyncCommandCallback<BreakInfoList?>(syncObject) {
+            override fun execAfterParsing(result: BreakInfoList?) {
                 if(result != null) {
                     for (filePos in result.list) {
                         resultList.add(filePos)

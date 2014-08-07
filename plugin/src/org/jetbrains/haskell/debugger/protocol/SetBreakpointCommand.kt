@@ -36,3 +36,22 @@ public class SetBreakpointCommand(val module: String,
         }
     }
 }
+
+public class SetBreakpointByIndexCommand(val module: String,
+                                         val breakIndex: Int,
+                                         callback: CommandCallback<BreakpointCommandResult?>?)
+: RealTimeCommand<BreakpointCommandResult?>(callback) {
+
+    override fun getText(): String = ":breakindex $module $breakIndex\n"
+
+    override fun parseGHCiOutput(output: Deque<String?>): BreakpointCommandResult? {
+        throw RuntimeException("Not supported by GHCi")
+    }
+
+    override fun parseJSONOutput(output: JSONObject): BreakpointCommandResult? =
+            if (JSONConverter.checkExceptionFromJSON(output) == null) {
+                JSONConverter.breakpointCommandResultFromJSON(output)
+            } else {
+                null
+            }
+}

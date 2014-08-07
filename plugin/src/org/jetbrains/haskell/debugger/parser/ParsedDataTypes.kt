@@ -41,7 +41,8 @@ public class HsFilePosition(public val filePath: String,
     }
 }
 
-public class FilePositionList(public val list: ArrayList<HsFilePosition>) : ParseResult()
+public class BreakInfo(public val breakIndex: Int, public val srcSpan: HsFilePosition) : ParseResult()
+public class BreakInfoList(public val list: ArrayList<BreakInfo>) : ParseResult()
 
 public class ExceptionResult(public val message: String) : ParseResult()
 
