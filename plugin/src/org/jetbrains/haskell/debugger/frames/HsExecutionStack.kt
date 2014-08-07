@@ -23,5 +23,6 @@ public class HsExecutionStack(private val debugProcess: HaskellDebugProcess,
     override fun getTopFrame(): XStackFrame? = topFrame
 
     override fun computeStackFrames(firstFrameIndex: Int, container: XExecutionStack.XStackFrameContainer?) {
+        container?.addStackFrames(LinkedList<XStackFrame>(), true)
     }
 }
