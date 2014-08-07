@@ -27,6 +27,8 @@ import org.jetbrains.haskell.debugger.parser.EvalResult
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
+import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 
 /**
  * Created by vlad on 7/30/14.
@@ -130,6 +132,8 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     }
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
+
+    override fun history(callback: CommandCallback<HistoryResult?>) = queue.addCommand(HistoryCommand(callback))
 
     override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 

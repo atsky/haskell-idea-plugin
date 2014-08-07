@@ -11,6 +11,7 @@ import com.intellij.ui.AppUIUtil
 import com.intellij.debugger.DebuggerManagerEx
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import com.intellij.xdebugger.frame.XStackFrame
+import com.intellij.debugger.ui.FramesPanel
 
 /**
  * Created by vlad on 8/4/14.
@@ -19,11 +20,12 @@ import com.intellij.xdebugger.frame.XStackFrame
 public class HistoryPanel(private val process: HaskellDebugProcess) : JPanel() {
 
     private val debugSession = process.getSession()!!
+    private val debuggerStateManager: DebuggerStateManager = MyDebuggerStateManager()
 
     private val currentSpanLabel: JLabel = JLabel("Current source span")
     private val currentSpanTextField: JTextField = JTextField()
-    private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), MyDebuggerStateManager(), null);
-
+    private val framesPanel: FramesPanel = FramesPanel(debugSession.getProject(), debuggerStateManager)
+    private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), debuggerStateManager, null);
 
     {
         val layout = SpringLayout()
@@ -33,6 +35,7 @@ public class HistoryPanel(private val process: HaskellDebugProcess) : JPanel() {
 
         this.add(currentSpanLabel)
         this.add(currentSpanTextField)
+        this.add(framesPanel)
         this.add(variablesPanel)
 
         layout.putConstraint(SpringLayout.WEST, currentSpanLabel,
@@ -52,18 +55,28 @@ public class HistoryPanel(private val process: HaskellDebugProcess) : JPanel() {
                 -5,
                 SpringLayout.EAST, this)
 
+        layout.putConstraint(SpringLayout.NORTH, framesPanel,
+                5,
+                SpringLayout.SOUTH, currentSpanTextField)
+        layout.putConstraint(SpringLayout.SOUTH, framesPanel,
+                -5,
+                SpringLayout.SOUTH, this)
+        layout.putConstraint(SpringLayout.WEST, framesPanel,
+                5,
+                SpringLayout.WEST, this)
+
         layout.putConstraint(SpringLayout.NORTH, variablesPanel,
                 5,
-                SpringLayout.SOUTH, currentSpanLabel)
+                SpringLayout.SOUTH, currentSpanTextField)
         layout.putConstraint(SpringLayout.SOUTH, variablesPanel,
                 -5,
                 SpringLayout.SOUTH, this)
+        layout.putConstraint(SpringLayout.WEST, variablesPanel,
+                5,
+                SpringLayout.EAST, framesPanel)
         layout.putConstraint(SpringLayout.EAST, variablesPanel,
                 -5,
                 SpringLayout.EAST, this)
-        layout.putConstraint(SpringLayout.WEST, variablesPanel,
-                5,
-                SpringLayout.WEST, this)
     }
 
     public fun stackChanged(stackFrame: HsStackFrame?) {

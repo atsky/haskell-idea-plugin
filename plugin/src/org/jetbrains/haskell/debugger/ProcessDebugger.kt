@@ -12,6 +12,9 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
 import org.jetbrains.haskell.debugger.protocol.BackCommand
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import org.codehaus.groovy.tools.shell.commands.HistoryCommand
+import org.jetbrains.haskell.debugger.parser.HistoryResult
 
 /**
  * Created by vlad on 7/11/14.
@@ -50,6 +53,8 @@ public trait ProcessDebugger {
     public fun print(printCommand: PrintCommand)
 
     public fun force(forceCommand: ForceCommand)
+
+    public fun history(callback: CommandCallback<HistoryResult?>)
 
     public fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition)
 

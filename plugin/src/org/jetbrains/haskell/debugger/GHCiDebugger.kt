@@ -44,6 +44,8 @@ import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
+import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 
 /**
  * Created by vlad on 7/11/14.
@@ -156,6 +158,8 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 
     override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
+
+    override fun history(callback: CommandCallback<HistoryResult?>) = queue.addCommand(HistoryCommand(callback))
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()

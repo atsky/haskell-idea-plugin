@@ -66,6 +66,7 @@ public class Parser() {
 
         private val BACK_MSG = "stepped back"
         private val FORWARD_MSG = "stepped forward"
+        private val HISTORY_MSG = "got history"
 
         private val EXPRESSION_TYPE_MSG = "expression type"
 
@@ -313,6 +314,37 @@ public class Parser() {
                 }
             }
             return null;
+        }
+
+        public fun parseHistoryResult(output: Deque<String?>): HistoryResult {
+            var full = false
+            val list = ArrayList<HsHistoryFrameInfo>()
+            for (line in output) {
+                if (line!!.trim().equals("<end of history>")) {
+                    full = true
+                    break
+                }
+                val matcher = Pattern.compile(CALL_INFO_PATTERN).matcher(line.trim())
+                if (matcher.matches()) {
+                    list.add(HsHistoryFrameInfo(-matcher.group(1)!!.toInt(), removeBoldModifier(matcher.group(2)!!),
+                            tryCreateFilePosition(matcher.group(3)!!)))
+                }
+            }
+            return HistoryResult(list, full)
+        }
+
+        public fun historyResultFromJSON(json: JSONObject): HistoryResult {
+            val info = json.getString("info")
+            if (info.equals(HISTORY_MSG)) {
+                return HistoryResult(ArrayList(json.getArray("history").toArray().map {
+                    (callInfo) ->
+                    with (callInfo as JSONObject) {
+                        HsHistoryFrameInfo(getInt("index"), getString("function"), filePositionFromJSON(getObject("src_span")))
+                    }
+                }), json.get("end_reached") as Boolean)
+            } else {
+                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
+            }
         }
 
         public fun parseJSONObject(string: String): JSONResult {
