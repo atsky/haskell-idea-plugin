@@ -17,23 +17,27 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun getFilename(): String = getFile().getName()
 
+    public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
+
+    public fun isAbsolute(): Boolean = getFile().isAbsolute()
+
     public fun isValidPath(): String? {
         when (getParent()) {
-            is DataDirField      -> return checkDataDir()
-            is HSSourceDirsField -> return checkFromRootIf({ it -> it.isDirectory() })
-            is IncludeDirsField  -> return checkFromRootIf({ it -> it.isDirectory() })
-            is MainFileField     -> return checkMainFile()
-            is LicenseFilesField -> return checkFromRootIf({ it -> !it.isDirectory() })
+            is DataDirField         -> return checkDataDir()
+            is HSSourceDirsField    -> return checkFromRootIf({ it -> it.isDirectory() })
+            is IncludeDirsField     -> return checkFromRootIf({ it -> it.isDirectory() })
+            is ExtraLibDirsField    -> return checkFromRootIf({ it -> it.isDirectory() })
+            is RepoSubdirField      -> return null
+            is MainFileField        -> return checkMainFile()
+            is LicenseFilesField    -> return checkFromRootIf({ it -> !it.isDirectory() })
+            is DataFilesField       -> return checkFileOrWildcard(getPathWithParent(getCabalFile().getActualDataDir()))
+            is IncludesField        -> return checkFileFromIncludes()
+            is InstallIncludesField -> return checkFileFromIncludes()
             else -> {
                 when ((getParent() as PropertyField).getPropertyName().toLowerCase()) {
-                    "extra-lib-dirs"     -> return checkFromRootIf({ it -> it.isDirectory() })
-                    "subdir"             -> return null
                     "extra-doc-files"    -> return checkFileOrWildcard(getPathFromRoot())
                     "extra-source-files" -> return checkFileOrWildcard(getPathFromRoot())
                     "extra-tmp-files"    -> return checkFromRootIf({ true })
-                    "data-files"         -> return checkFileOrWildcard(getPathWithParent(getCabalFile().getActualDataDir()))
-                    "includes"           -> return checkFileFromIncludes()
-                    "install-includes"   -> return checkFileFromIncludes()
                     "c-sources"          -> return checkFromRootIf({ it -> !it.isDirectory() })
                     else -> return "unchecked"
                 }
@@ -46,13 +50,9 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$") }
     }
 
-    private fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
-
     private fun getCabalRootFile(): VirtualFile? = getCabalFile().getVirtualFile()?.getParent()
 
     private fun getFileSystem(): VirtualFileSystem? = getCabalFile().getVirtualFile()?.getFileSystem()
-
-    public fun isAbsolute(): Boolean = getFile().isAbsolute()
 
     public fun getFileWithParent(parent: VirtualFile): VirtualFile? {
         if (isAbsolute()) return getAbsoluteFile()
@@ -61,7 +61,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     private fun getAbsoluteFile(): VirtualFile? = getFileSystem()?.findFileByPath(getText().replace(File.separatorChar, '/'))
 
-    public fun getAbsoluteFile(path: String): VirtualFile? = getFileSystem()?.findFileByPath(path.replace(File.separatorChar, '/'))
+    private fun getAbsoluteFile(path: String): VirtualFile? = getFileSystem()?.findFileByPath(path.replace(File.separatorChar, '/'))
 
     public fun getFileFromRoot(): VirtualFile? {
         if (isAbsolute()) return getAbsoluteFile()

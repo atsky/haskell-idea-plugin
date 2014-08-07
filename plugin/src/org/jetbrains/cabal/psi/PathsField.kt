@@ -4,6 +4,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.Path
+import org.jetbrains.cabal.psi.BuildSection
 import org.jetbrains.cabal.CabalFile
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
@@ -14,12 +15,12 @@ import com.intellij.psi.PsiFile
 
 public open class PathsField(node: ASTNode): PropertyField(node) {
 
-    public fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
+    public open fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
         val parentDirs = getParentDirs(prefixPath, originalRootDir)
         var res = ArrayList<String>()
         for (parentDir in parentDirs) {
             if (parentDir.isDirectory()) {
-                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName().concat(if (it.isDirectory()) "/" else "") })
+                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName()/*.concat(if (it.isDirectory()) "/" else "")*/ })
             }
         }
        return res
@@ -28,9 +29,28 @@ public open class PathsField(node: ASTNode): PropertyField(node) {
     public open fun isValidFile(file: VirtualFile): Boolean = true
 
     public open fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
+        val dir = getParentDirFromRoot(prefixPath, originalRootDir)
+        if (dir == null) return listOf()
+        return listOf(dir)
+    }
+
+    public fun getParentDirFromRoot(prefixPath: Path, originalRootDir: VirtualFile): VirtualFile? {
         val dirPath = File(prefixPath.getPathWithParent(originalRootDir)).getParent()
         val dirFile = if (dirPath == null) null else originalRootDir.getFileSystem().findFileByPath(dirPath)
-        if (dirFile == null) return listOf()
-        return listOf(dirFile)
+        return dirFile
+    }
+
+    public fun getParentDirsFromSourceDirs(prefixPath: Path, originalRootDir: VirtualFile, getSourceDirs: BuildSection.() -> List<Path>?): List<VirtualFile> {
+        var res = ArrayList<VirtualFile>()
+        val sourceDirs = prefixPath.getParentBuildSection()?.getSourceDirs()
+        if (sourceDirs == null) return res
+        for (sourceDir in sourceDirs) {
+            val sourceDirFile = sourceDir.getFileWithParent(originalRootDir)
+            val dirPath    = if (sourceDirFile == null) null else File(prefixPath.getPathWithParent(sourceDirFile)).getParent()
+            val dirFile    = if (dirPath == null)       null else originalRootDir.getFileSystem().findFileByPath(dirPath)
+            if (dirFile == null) continue
+            res.add(dirFile)
+        }
+        return res
     }
 }

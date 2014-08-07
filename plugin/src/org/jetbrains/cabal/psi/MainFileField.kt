@@ -31,16 +31,11 @@ public class MainFileField(node: ASTNode) : PathsField(node), DisallowedableFiel
     public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
         if (prefixPath.isAbsolute()) return listOf()
         var res = ArrayList<VirtualFile>()
-        res.addAll(super<PathsField>.getParentDirs(prefixPath, originalRootDir))
-        val sourceDirs = prefixPath.getParentBuildSection()?.getHSSourceDirs()
-        if (sourceDirs == null) return res
-        for (sourceDir in sourceDirs) {
-            val sourceDirFile = sourceDir.getFileWithParent(originalRootDir)
-            val dirPath    = if (sourceDirFile == null) null else File(prefixPath.getPathWithParent(sourceDirFile)).getParent()
-            val dirFile    = if (dirPath == null)       null else originalRootDir.getFileSystem().findFileByPath(dirPath)
-            if (dirFile == null) continue
-            res.add(dirFile)
-        }
+
+        val fromRootDir = getParentDirFromRoot(prefixPath, originalRootDir)
+        if (fromRootDir != null) res.add(fromRootDir)
+        res.addAll(getParentDirsFromSourceDirs(prefixPath, originalRootDir, { getHSSourceDirs() }))
+
         return res
     }
 }
