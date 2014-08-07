@@ -30,12 +30,11 @@ import org.jetbrains.haskell.debugger.parser.BreakInfo
  */
 public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
     private val PANEL_LABEL: String = "Select breakpoint:"
-    private val DEBUG_NOT_STARTED_ITEM: String = "select remote debugger and start debug process to enable"
+    private val DEBUG_NOT_STARTED_ITEM: String = "start debug process to enable"
     private val breaksComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(DEBUG_NOT_STARTED_ITEM)))
     private val mainPanel: JPanel = JPanel(GridLayout(1, 0));
     {
-        mainPanel.add(JLabel(PANEL_LABEL))
-        mainPanel.add(breaksComboBox)
+        HaskellUtils.addLabeledControl(mainPanel, 0, PANEL_LABEL, breaksComboBox)
         breaksComboBox.setEnabled(false)
     }
 

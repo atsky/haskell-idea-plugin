@@ -6,6 +6,14 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.haskell.fileType.HaskellFile
 import com.intellij.openapi.application.ApplicationManager
 import java.util.concurrent.locks.ReentrantLock
+import javax.swing.JPanel
+import javax.swing.JComponent
+import org.jetbrains.haskell.util.gridBagConstraints
+import java.awt.Insets
+import javax.swing.JLabel
+import org.jetbrains.haskell.util.setConstraints
+import java.awt.GridBagConstraints
+import javax.swing.Box
 
 public class HaskellUtils {
     class object {
@@ -44,6 +52,26 @@ public class HaskellUtils {
             val reader = NameReader(project, file)
             ApplicationManager.getApplication()!!.runReadAction(reader)
             return reader.returnName()
+        }
+
+        public fun addLabeledControl(panel: JPanel, row: Int, label: String, component: JComponent) {
+            val base = gridBagConstraints { insets = Insets(2, 0, 2, 3) }
+            panel.add(JLabel(label), base.setConstraints {
+                anchor = GridBagConstraints.LINE_START
+                gridx = 0;
+                gridy = row;
+            })
+            panel.add(component, base.setConstraints {
+                gridx = 1;
+                gridy = row;
+                fill = GridBagConstraints.HORIZONTAL
+                weightx = 1.0
+            })
+            panel.add(Box.createHorizontalStrut(1), base.setConstraints {
+                gridx = 2;
+                gridy = row;
+                weightx = 0.1
+            })
         }
 
         public val HS_BOOLEAN_TYPENAME: String = "Bool"

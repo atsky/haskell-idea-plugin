@@ -19,6 +19,7 @@ import javax.swing.Box
 import javax.swing.JCheckBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
+import org.jetbrains.haskell.debugger.utils.HaskellUtils
 
 /**
  * Manages debugger settings. Creates additional section in IDEA Settings and tracks changes appeared there to obtain
@@ -69,9 +70,9 @@ public class DebuggerConfigurable() : Configurable {
         traceSwitchOffCheckBox.addItemListener(itemListener)
 
         val result = JPanel(GridBagLayout())
-        addLabeledControl(result, 0, "Prefered debugger:     ", selectDebuggerComboBox)
-        addLabeledControl(result, 1, "Remote debugger path:     ", remoteDebuggerPathField)
-        addLabeledControl(result, 2, "Additional options:     ", traceSwitchOffCheckBox)
+        HaskellUtils.addLabeledControl(result, 0, "Prefered debugger:     ", selectDebuggerComboBox)
+        HaskellUtils.addLabeledControl(result, 1, "Remote debugger path:     ", remoteDebuggerPathField)
+        HaskellUtils.addLabeledControl(result, 2, "Additional options:     ", traceSwitchOffCheckBox)
         result.add(JPanel(), gridBagConstraints { gridx = 0; gridy = 5; weighty = 10.0 })
         return result
     }
@@ -109,24 +110,4 @@ public class DebuggerConfigurable() : Configurable {
     }
 
     override fun disposeUIResources() {}
-
-    private fun addLabeledControl(panel: JPanel, row : Int, label : String, component : JComponent) {
-        val base = gridBagConstraints { insets = Insets(2, 0, 2, 3) }
-        panel.add(JLabel(label), base.setConstraints {
-            anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridy = row;
-        })
-        panel.add(component, base.setConstraints {
-            gridx = 1;
-            gridy = row;
-            fill = GridBagConstraints.HORIZONTAL
-            weightx = 1.0
-        })
-        panel.add(Box.createHorizontalStrut(1), base.setConstraints {
-            gridx = 2;
-            gridy = row;
-            weightx = 0.1
-        })
-    }
 }
