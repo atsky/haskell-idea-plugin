@@ -49,37 +49,6 @@ public class GHCiParser() {
 
         private val FORCE_OUTPUT_PATTERN = "^(\\w+)\\s=\\s(.*)$"
 
-        // JSON main strings
-        private val CONNECTED_MSG = "connected to port"
-
-        private val WARNING_MSG = "warning"
-        private val EXCEPTION_MSG = "exception"
-
-        private val PAUSED_MSG = "paused"
-        private val FINISHED_MSG = "finished"
-
-        private val BREAKPOINT_SET_MSG = "breakpoint was set"
-        private val BREAKPOINT_NOT_SET_MSG = "breakpoint was not set"
-
-        private val BREAKPOINT_REMOVED_MSG = "breakpoint was removed"
-        private val BREAKPOINT_NOT_REMOVED_MSG = "breakpoint was not removed"
-
-        private val BACK_MSG = "stepped back"
-        private val FORWARD_MSG = "stepped forward"
-        private val HISTORY_MSG = "got history"
-
-        private val EXPRESSION_TYPE_MSG = "expression type"
-
-        private val EVALUATED_MSG = "evaluated"
-
-        public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
-            if (WARNING_MSG.equals(json.get("info")) || EXCEPTION_MSG.equals(json.get("info"))) {
-                return ExceptionResult(json.getString("message"))
-            } else {
-                return null
-            }
-        }
-
         public fun tryCreateFilePosition(line: String): HsFilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
@@ -97,16 +66,6 @@ public class GHCiParser() {
                 }
             }
             return null;
-        }
-
-        public fun filePositionFromJSON(json: JSONObject): HsFilePosition? {
-            val file = json.get("file")
-            if (file != null) {
-                return HsFilePosition(file as String, json.getInt("startline"), json.getInt("startcol"),
-                        json.getInt("endline"), json.getInt("endcol"))
-            } else {
-                return null
-            }
         }
 
         /**
@@ -130,17 +89,6 @@ public class GHCiParser() {
                 }
             }
             throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
-        }
-
-        public fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? {
-            val info = json.getString("info")
-            if (info.equals(BREAKPOINT_NOT_SET_MSG)) {
-                return null
-            } else if (info.equals(BREAKPOINT_SET_MSG)) {
-                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!)
-            } else {
-                throw RuntimeException("Wrong json output occured while handling SetBreakpointCommand result")
-            }
         }
 
         /**
@@ -284,25 +232,6 @@ public class GHCiParser() {
                 }
             }
             return HistoryResult(list, full)
-        }
-
-        public fun historyResultFromJSON(json: JSONObject): HistoryResult {
-            val info = json.getString("info")
-            if (info.equals(HISTORY_MSG)) {
-                return HistoryResult(ArrayList(json.getArray("history").toArray().map {
-                    (callInfo) ->
-                    with (callInfo as JSONObject) {
-                        HsHistoryFrameInfo(getInt("index"), getString("function"), filePositionFromJSON(getObject("src_span")))
-                    }
-                }), json.get("end_reached") as Boolean)
-            } else {
-                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
-            }
-        }
-
-        public fun parseJSONObject(string: String): JSONResult {
-            val parser = JSONParser()
-            return JSONResult(parser.parse(string) as JSONObject)
         }
 
         public fun tryParseAnyPrintCommandOutput(output: Deque<String?>): LocalBinding? {

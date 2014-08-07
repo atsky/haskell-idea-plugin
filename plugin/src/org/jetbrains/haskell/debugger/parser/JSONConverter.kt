@@ -12,6 +12,11 @@ import java.util.ArrayList
  */
 public class JSONConverter {
     class object {
+        private val BREAK_LIST_FOR_LINE_INFO = "break list for line"
+        private val BREAKS_TAG = "breaks"
+        private val BREAK_INDEX_TAG = "index"
+        private val SRC_SPAN_TAG = "src_span"
+
         private val CONNECTED_MSG = "connected to port"
 
         private val WARNING_MSG = "warning"
@@ -28,15 +33,11 @@ public class JSONConverter {
 
         private val BACK_MSG = "stepped back"
         private val FORWARD_MSG = "stepped forward"
+        private val HISTORY_MSG = "got history"
 
         private val EXPRESSION_TYPE_MSG = "expression type"
 
         private val EVALUATED_MSG = "evaluated"
-
-        private val BREAK_LIST_FOR_LINE_INFO = "break list for line"
-        private val BREAKS_TAG = "breaks"
-        private val BREAK_INDEX_TAG = "index"
-        private val SRC_SPAN_TAG = "src_span"
 
         public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
             if (WARNING_MSG.equals(json.get("info")) || EXCEPTION_MSG.equals(json.get("info"))) {
@@ -51,15 +52,20 @@ public class JSONConverter {
             if (info.equals(BREAKPOINT_NOT_SET_MSG)) {
                 return null
             } else if (info.equals(BREAKPOINT_SET_MSG)) {
-                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span")))
+                return BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!)
             } else {
                 throw RuntimeException("Wrong json output occured while handling SetBreakpointCommand result")
             }
         }
 
-        public fun filePositionFromJSON(json: JSONObject): HsFilePosition {
-            return HsFilePosition(json.getString("file"), json.getInt("startline"), json.getInt("startcol"),
-                    json.getInt("endline"), json.getInt("endcol"))
+        public fun filePositionFromJSON(json: JSONObject): HsFilePosition? {
+            val file = json.get("file")
+            if (file != null) {
+                return HsFilePosition(file as String, json.getInt("startline"), json.getInt("startcol"),
+                        json.getInt("endline"), json.getInt("endcol"))
+            } else {
+                return null
+            }
         }
 
         public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? {
@@ -115,9 +121,24 @@ public class JSONConverter {
                 val indexSpanArray = json.getArray(BREAKS_TAG)
                 val lambda = {(p: Any?) -> BreakInfo(
                                            (p as JSONObject).getInt(BREAK_INDEX_TAG),
-                                           filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG))
+                                           filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG)) as HsFilePosition
                                            )}
                 return BreakInfoList(ArrayList(indexSpanArray.toArray().map(lambda)))
+            } else {
+                throw RuntimeException("Wrong JSON output occured while handling expression type command result")
+            }
+        }
+
+
+        public fun historyResultFromJSON(json: JSONObject): HistoryResult {
+            val info = json.getString("info")
+            if (info.equals(HISTORY_MSG)) {
+                return HistoryResult(ArrayList(json.getArray("history").toArray().map {
+                    (callInfo) ->
+                    with (callInfo as JSONObject) {
+                        HsHistoryFrameInfo(getInt("index"), getString("function"), filePositionFromJSON(getObject("src_span")))
+                    }
+                }), json.get("end_reached") as Boolean)
             } else {
                 throw RuntimeException("Wrong JSON output occured while handling expression type command result")
             }
