@@ -32,12 +32,17 @@ import groovy.swing.factory.ScrollPaneFactory
 import com.intellij.ui.components.JBScrollPane
 import javax.swing.event.ListSelectionEvent
 import javax.swing.DefaultListSelectionModel
+import com.intellij.xdebugger.impl.frame.DebuggerFramesList
+import javax.swing.ListCellRenderer
+import com.intellij.debugger.ui.impl.FramesList
+import com.intellij.ui.components.JBList
 
 /**
  * Created by vlad on 8/4/14.
  */
 
-public abstract class HistoryPanel(private val process: HaskellDebugProcess) : JSplitPane(JSplitPane.HORIZONTAL_SPLIT) {
+public class HistoryPanel(private val process: HaskellDebugProcess,
+                                   private val manager: HistoryManager) : JSplitPane(JSplitPane.HORIZONTAL_SPLIT) {
 
     private val debugSession = process.getSession()!!
     private val debuggerStateManager: DebuggerStateManager = MyDebuggerStateManager()
@@ -58,7 +63,7 @@ public abstract class HistoryPanel(private val process: HaskellDebugProcess) : J
         variablesPanel.stackChanged(stackFrame)
     }
 
-    public fun addInfo(line: String) {
+    public fun addHistoryLine(line: String) {
         framesPanel.addElement(line)
     }
 
@@ -66,6 +71,8 @@ public abstract class HistoryPanel(private val process: HaskellDebugProcess) : J
         val index = framesPanel.getSelectedIndex()
         if (index != -1 && index + 1 < framesPanel.getIndexCount()) {
             framesPanel.setSelectedIndex(index + 1)
+        } else {
+            manager.indexSelected(index)
         }
     }
 
@@ -73,21 +80,20 @@ public abstract class HistoryPanel(private val process: HaskellDebugProcess) : J
         val index = framesPanel.getSelectedIndex()
         if (index > 0) {
             framesPanel.setSelectedIndex(index - 1)
+        } else {
+            manager.indexSelected(index)
         }
     }
 
-    abstract fun indexSelected(index: Int)
-
-    private inner class FramesPanel : JList() {
+    private inner class FramesPanel : JBList() {
         private val listModel = DefaultListModel();
 
         {
             setModel(listModel)
-            setPreferredSize(Dimension(150, -1))
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
             setValueIsAdjusting(true)
             addListSelectionListener {(event: ListSelectionEvent) ->
-                indexSelected(getSelectedIndex())
+                manager.indexSelected(getSelectedIndex())
             }
         }
 
@@ -104,6 +110,13 @@ public abstract class HistoryPanel(private val process: HaskellDebugProcess) : J
 
         public fun getIndexCount(): Int {
             return listModel.size()
+        }
+
+        public fun isFrameUnknown(): Boolean {
+            if (getSelectedIndex() < 0) {
+                return true
+            }
+            return listModel.get(getSelectedIndex()).equals("...")
         }
     }
 

@@ -21,14 +21,13 @@ import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
  */
 
 public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDebugTabLayouter() {
-    public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
-
-    private val historyPanel: HistoryPanel = object : HistoryPanel(debugProcess) {
-        override fun indexSelected(index: Int) {
-            historyStack.moveTo(index)
-        }
+    class object {
+        public val HISTORY_SIZE: Int = 20
     }
+    public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
+    private val realHistIndex: Int = 0
 
+    private val historyPanel: HistoryPanel = HistoryPanel(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
@@ -38,7 +37,11 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             forwardAction.enabled = false
             update(e)
             forwardAction.update(e)
-            historyPanel.shiftBack()
+            if (historyStack.historyIndex - 1 > HISTORY_SIZE) {
+                historyStack.moveTo(historyStack.historyIndex + 1)
+            } else {
+                historyPanel.shiftBack()
+            }
         }
     }
     private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history",
@@ -48,15 +51,26 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             backAction.enabled = false
             update(e)
             backAction.update(e)
-            historyPanel.shiftForward()
+            if (historyStack.historyIndex > HISTORY_SIZE) {
+                historyStack.moveTo(historyStack.historyIndex - 1)
+            } else {
+                historyPanel.shiftForward()
+            }
         }
+    }
+
+    public fun indexSelected(index: Int) {
+        historyStack.moveTo(index)
     }
 
     public fun setHistoryFrameInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
-            historyPanel.addInfo(initial.toString())
+            historyPanel.addHistoryLine(initial.toString())
             for (info in others) {
-                historyPanel.addInfo(info.toString())
+                historyPanel.addHistoryLine(info.toString())
+            }
+            if (!full) {
+                historyPanel.addHistoryLine("...")
             }
         }))
     }
@@ -95,7 +109,8 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     }
 
     public inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
-        private var historyIndex = 0
+        public var historyIndex: Int = 0
+            private set
         private var allFramesCollected = false
         private val historyFrames: ArrayList<HsHistoryFrame> = ArrayList()
 
@@ -124,9 +139,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
 
         public fun moveTo(index: Int) {
             if (index == -1 || index == historyIndex) {
-                return
-            }
-            if (index < historyIndex) {
+            } else if (index < historyIndex) {
                 val it = historyIndex - index
                 for (i in 1..it) {
                     moveForward()
@@ -137,23 +150,21 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                     moveBack()
                 }
             }
+            updateHistory()
         }
 
-        public fun moveForward() {
+        private fun moveForward() {
             if (historyIndex > 0) {
                 --historyIndex
                 debugProcess.debugger.forward()
             }
-            updateHistory()
         }
 
-        public fun moveBack() {
+        private fun moveBack() {
             if (historyIndex + 1 < historyFrames.size) {
                 ++historyIndex
                 debugProcess.debugger.back(BackCommand(null))
-                updateHistory()
             } else if (allFramesCollected) {
-                updateHistory()
             } else {
                 debugProcess.debugger.back(BackCommand(object : CommandCallback<MoveHistResult?>() {
                     override fun execAfterParsing(result: MoveHistResult?) {
@@ -164,7 +175,6 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                         } else {
                             allFramesCollected = true
                         }
-                        updateHistory()
                     }
                 }))
             }
