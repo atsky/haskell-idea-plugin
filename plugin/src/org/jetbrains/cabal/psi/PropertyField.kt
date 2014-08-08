@@ -25,14 +25,12 @@ public open class PropertyField(node: ASTNode) : Field(node) {
         return true
     }
 
-    public fun getLastValue(): PropertyValue = getLastChild()!! as PropertyValue
-
     public fun getKeyNode(): PsiElement = getFirstChild()!!
 
     public fun getPropertyName(): String = getKeyNode().getText()!!
 
-    public fun getValue(): PropertyValue {
-        return PsiTreeUtil.findChildOfType(this, javaClass<PropertyValue>())!!
+    public fun getValue(): PropertyValue? {
+        return PsiTreeUtil.findChildOfType(this, javaClass<PropertyValue>())
     }
 
     public fun <T : PsiElement> getValues(valueType: Class<T>): List<T> {

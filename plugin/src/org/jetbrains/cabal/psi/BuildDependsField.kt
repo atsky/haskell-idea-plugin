@@ -22,18 +22,18 @@ public class BuildDependsField(node: ASTNode) : PropertyField(node) {
             val constrName = constraint.getBaseName()
             val sameConstraints = getConstraintsWithName(constraint.getBaseName())
             if (sameConstraints.size != 1) {
-                sameConstraints forEach { res.add(ErrorMessage(it, "dublicate package")) }
+                sameConstraints forEach { res.add(ErrorMessage(it, "dublicate package", "warning")) }
                 continue
             }
             val installed = installedPackages firstOrNull { it.name == constrName }
             if (installed == null) {
-                res.add(ErrorMessage(constraint, "this package is not installed"))
+                res.add(ErrorMessage(constraint, "this package is not installed", "warning"))
                 continue
             }
             val versionConstr = constraint.getConstraint()
             if (versionConstr == null) continue
             if (!(installed.availableVersions map { versionConstr.satisfyConstraint(it) } reduce { (curr, next) -> curr || next })) {
-                res.add(ErrorMessage(versionConstr, "installed package's version does not satisfy this constraint"))
+                res.add(ErrorMessage(versionConstr, "installed package's version does not satisfy this constraint", "warning"))
             }
         }
         return res

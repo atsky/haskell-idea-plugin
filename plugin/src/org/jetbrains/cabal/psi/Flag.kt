@@ -7,18 +7,13 @@ import org.jetbrains.cabal.psi.Section
 
 public class Flag(node: ASTNode) : Section(node) {
 
-    public override fun getRequiredFieldNames(): List<String> = listOf()
-
     public override fun getAvailableFieldNames(): List<String> {
         return FLAG_FIELDS
     }
 
     public fun getFlagName(): String {
-        var node = getFirstChild()!!
-        while (node !is Name) {
-            node = node.getNextSibling()!!
-        }
-        return (node as Name).getText().toLowerCase()
+        val res = getSectName()
+        if (res == null) throw IllegalStateException()
+        return res
     }
-
 }

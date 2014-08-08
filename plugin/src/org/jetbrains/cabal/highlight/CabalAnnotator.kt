@@ -20,15 +20,17 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
-        fun error(errMsg: ErrorMessage) = holder.createErrorAnnotation(errMsg.place, errMsg.text)
+        fun handle(errMsg: ErrorMessage) {
+            if (errMsg.severity == "error")   holder.createErrorAnnotation(errMsg.place, errMsg.text)
+            if (errMsg.severity == "warning") holder.createWarningAnnotation(errMsg.place, errMsg.text)
+        }
 
         if ((element is PropertyField) && !(element.isUniqueOnThisLevel()))  maybeError(element.getKeyNode(), "duplicated field")
-        if (element is DisallowedableField)                                  maybeError(element.getKeyNode(), element.isEnabled())
         if (element is InvalidProperty)                                      maybeError(element, "invalid property")
         if (element is Checkable)                                            maybeError(element, element.isValidValue())
-        if (element is Section)                                              maybeError(element.getSectTypeNode(), element.allRequiredFieldsExist())
-        if (element is BuildDependsField)   element.checkPackageVersions() forEach { error(it) }
+        if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
 
+        if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }
         if (element is Path) {
             val warningMsg = element.isValidPath()
             if (warningMsg != null) {

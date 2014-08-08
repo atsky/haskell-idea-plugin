@@ -2,6 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.highlight.ErrorMessage
 import java.util.ArrayList
 import org.jetbrains.cabal.psi.Name
 
@@ -9,8 +10,6 @@ import org.jetbrains.cabal.psi.Name
  * @author Evgeny.Kurbatsky
  */
 public class TestSuite(node: ASTNode) : BuildSection(node) {
-
-    public override fun getRequiredFieldNames(): List<String> = listOf("type")
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
@@ -20,37 +19,30 @@ public class TestSuite(node: ASTNode) : BuildSection(node) {
         return res
     }
 
-    public override fun allRequiredFieldsExist(): String? {
-        val nodes = getSectChildren()
+    public override fun checkFieldsPresence(): List<ErrorMessage> {
+        val res = ArrayList<ErrorMessage>()
 
-        var typeValue: PropertyValue? = null
-        var mainIsFlag = false
-        var testModFlag = false
+        val typeField    = getField(javaClass<TypeField>())
+        val mainIsField  = getField(javaClass<MainFileField>())
+        val testModField = getField(javaClass<TestModuleField>())
 
-        for (node in nodes) {
-            when (node) {
-                is TypeField       -> typeValue = node.getLastValue()
-                is MainFileField   -> mainIsFlag = true
-                is TestModuleField -> testModFlag = true
-            }
+        if (typeField == null) {
+            res.add(ErrorMessage(getSectTypeNode(), "type field is required", "error"))
         }
-        if (typeValue == null) return "type field is required"
-        if (typeValue!!.getText() == "exitcode-stdio-1.0") {
-            if (!mainIsFlag) return "main-is field is required"
-            return null
+        if (typeField?.getValue()?.getText() == "exitcode-stdio-1.0") {
+            if (mainIsField  == null) res.add(ErrorMessage(getSectTypeNode(), "main-is field is required with such test suite type", "error"))
+            if (testModField != null) res.add(ErrorMessage(testModField.getKeyNode(), "test-module field is disallowed with such test suite type", "error"))
         }
-        if (typeValue!!.getText() == "detailed-1.0") {
-            if (!testModFlag) return "test-module field is required"
-            return null
+        if (typeField?.getValue()?.getText() == "detailed-1.0") {
+            if (mainIsField  != null) res.add(ErrorMessage(mainIsField.getKeyNode(), "main-is field is disallowed with such test suite type", "error"))
+            if (testModField == null) res.add(ErrorMessage(getSectTypeNode(), "test-module field is required with such test suite type", "error"))
         }
-        return null
+        return res
     }
 
     public fun getTestSuiteName(): String {
-        var node = getFirstChild()!!
-        while (node !is Name) {
-            node = node.getNextSibling()!!
-        }
-        return (node as Name).getText()
+        val res = getSectName()
+        if (res == null) throw IllegalStateException()
+        return res
     }
 }

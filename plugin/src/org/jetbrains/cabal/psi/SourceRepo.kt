@@ -2,51 +2,45 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.highlight.ErrorMessage
 import com.intellij.psi.PsiElement
 import java.util.ArrayList
 
 public class SourceRepo(node: ASTNode) : Section(node) {
 
-    public override fun getRequiredFieldNames(): List<String> = listOf("type", "location")
-
     public override fun getAvailableFieldNames(): List<String> {
         return REPO_SOURCE_FIELDS
     }
 
-    public override fun allRequiredFieldsExist(): String? {
-        val nodes = getSectChildren()
+    public override fun checkFieldsPresence(): List<ErrorMessage> {
+        val res = ArrayList<ErrorMessage>()
 
-        var typeValue: PropertyValue? = null
-        var locationFlag = false
-        var moduleFlag = false
-        var tagFlag = false
+        val typeField   = getField(javaClass<TypeField>())
+        val locationField = getField(javaClass<RepoLocationField>())
+        val moduleField = getField(javaClass<RepoModuleField>())
+        val tagField = getField(javaClass<RepoTagField>())
 
-        for (node in nodes) {
-            when (node) {
-                is TypeField         -> typeValue = node.getLastValue()
-                is RepoLocationField -> locationFlag = true
-                is RepoModuleField   -> moduleFlag = true
-                is RepoTagField      -> tagFlag = true
-            }
+        if (typeField == null)     res.add(ErrorMessage(getSectTypeNode(), "type field is required", "error"))
+        if (locationField == null) res.add(ErrorMessage(getSectTypeNode(), "location field is required", "error"))
+        if ((typeField?.getValue()?.getText() == "cvs") && (moduleField == null)) {
+            res.add(ErrorMessage(getSectTypeNode(), "module field is required with CVS repository type", "error"))
         }
-        if (typeValue == null) return "type field is required"
-        if (!locationFlag)     return "location field is required"
-        if ((typeValue!!.getText() == "cvs") && !moduleFlag) {
-            return "module field is required with CVS repository type"
+        if ((typeField?.getValue()?.getText() != "cvs") && (moduleField != null)) {
+            res.add(ErrorMessage(moduleField.getKeyNode(), "module field is disallowed when repository type isn't CVS", "error"))
         }
-        if (isKind("this") && !tagFlag) return "tag field is required when repository kind is \"this\""
-        return null
+        if (isKind("this") && (tagField == null)) res.add(ErrorMessage(getSectTypeNode(), "tag field is required when repository kind is \"this\"", "error"))
+        return res
     }
 
     public fun getRepoKinds(): List<String> {
-        var node = getFirstChild()!!
+        var node = getFirstChild()
         var res = ArrayList<String>()
-        while (node !is RepoKind) {
-            node = node.getNextSibling()!!
+        while ((node != null) && (node !is RepoKind)) {
+            node = node!!.getNextSibling()
         }
         while (node is RepoKind) {
             res.add((node as RepoKind).getText()!!)
-            node = node.getNextSibling()!!
+            node = node!!.getNextSibling()
         }
         return res
     }

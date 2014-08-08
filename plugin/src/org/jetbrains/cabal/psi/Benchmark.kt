@@ -4,10 +4,10 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.psi.Name
 import java.util.ArrayList
+import org.jetbrains.cabal.highlight.ErrorMessage
+import java.lang.IllegalStateException
 
 public class Benchmark(node: ASTNode) : BuildSection(node) {
-
-    public override fun getRequiredFieldNames(): List<String> = listOf("type")
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
@@ -17,33 +17,24 @@ public class Benchmark(node: ASTNode) : BuildSection(node) {
         return res
     }
 
-    public override fun allRequiredFieldsExist(): String? {
-        val nodes = getSectChildren()
+    public override fun checkFieldsPresence(): List<ErrorMessage> {
+        val res = ArrayList<ErrorMessage>()
 
-        var typeValue: String? = null
-        var mainIsFlag = false
+        val typeField   = getField(javaClass<TypeField>())
+        val mainIsField = getField(javaClass<MainFileField>())
 
-        for (node in nodes) {
-            if (node is TypeField) {
-                typeValue = node.getLastValue().getText()
-            }
-            if (node is MainFileField) {
-                mainIsFlag = true
-            }
+        if (typeField == null) {
+            res.add(ErrorMessage(getSectTypeNode(), "type field is required", "error"))
         }
-        if (typeValue == null) return "type field is required"
-        if (typeValue == "exitcode-stdio-1.0") {
-            if (!mainIsFlag) return "main-is field is required"
-            return null
+        if ((typeField?.getValue()?.getText() == "exitcode-stdio-1.0") && (mainIsField == null)) {
+            res.add(ErrorMessage(getSectTypeNode(), "main-is field is required", "error"))
         }
-        return null
+        return res
     }
 
     public fun getBenchmarkName(): String {
-        var node = getFirstChild()!!
-        while (node !is Name) {
-            node = node.getNextSibling()!!
-        }
-        return (node as Name).getText()
+        val res = getSectName()
+        if (res == null) throw IllegalStateException()
+        return res
     }
 }

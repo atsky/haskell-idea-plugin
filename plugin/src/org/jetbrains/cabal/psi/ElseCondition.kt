@@ -3,14 +3,13 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import java.util.ArrayList
 import org.jetbrains.cabal.parser.CabalTokelTypes
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class ElseCondition(node: ASTNode) : Section(node) {
 
-    public override fun getRequiredFieldNames(): List<String> = listOf()
-
-    public override fun allRequiredFieldsExist(): String? {
-        if (getSectChildren().size == 0) return "empty else section is not allowed"
-        return null
+    public override fun checkFieldsPresence(): List<ErrorMessage> {
+        if (getSectChildren().size == 0) listOf(ErrorMessage(getSectTypeNode(), "empty else section is not allowed", "error"))
+        return listOf()
     }
 
     public override fun getAvailableFieldNames(): List<String> {
@@ -20,4 +19,6 @@ public class ElseCondition(node: ASTNode) : Section(node) {
         res.remove("else")
         return res
     }
+
+    protected override fun getSectName(): String? = null
 }

@@ -6,8 +6,6 @@ import java.util.ArrayList
 
 public class Library(node: ASTNode) : BuildSection(node) {
 
-    public override fun getRequiredFieldNames(): List<String> = listOf("exposed-modules")
-
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
         res.addAll(LIBRARY_FIELDS)
@@ -15,4 +13,6 @@ public class Library(node: ASTNode) : BuildSection(node) {
         res.addAll(listOf("is", "else"))
         return res
     }
+
+    protected override fun getSectName(): String? = null
 }
