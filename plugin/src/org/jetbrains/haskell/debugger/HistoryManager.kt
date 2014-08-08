@@ -57,8 +57,8 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }
     }
 
-    public fun updateRealFrame() {
-        historyStack.updateRealFrame()
+    public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
+        historyStack.withRealFrameUpdate(finalCallback)
     }
 
     public fun indexSelected(index: Int) {
@@ -168,7 +168,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                 ++historyIndex
             } else if (allFramesCollected) {
             } else {
-                updateRealFrame()
+                withRealFrameUpdate(null)
                 // todo: set as last callback of an update
                 debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
                     override fun execAfterParsing(result: MoveHistResult?) {
@@ -195,30 +195,46 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             }
         }
 
-        public fun updateRealFrame() {
-            //todo: continuous commands should run with high priority flag
+        public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
             if (realHistIndex == historyIndex) {
+                if (finalCallback != null) {
+                    finalCallback(null)
+                }
                 return
             }
             if (realHistIndex < historyIndex) {
-                for (i in 1..(historyIndex - realHistIndex)) {
-                    debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
-                        override fun execAfterParsing(result: MoveHistResult?) {
-                            if (result != null) {
-                                ++realHistIndex
-                            }
-                        }
-                    })
-                }
+                debugProcess.debugger.back(SequentialBackCallback(historyIndex - realHistIndex, finalCallback))
             } else {
-                for (i in 1..(realHistIndex - historyIndex)) {
-                    debugProcess.debugger.forward(object : CommandCallback<MoveHistResult?>() {
-                        override fun execAfterParsing(result: MoveHistResult?) {
-                            if (result != null) {
-                                --realHistIndex
-                            }
-                        }
-                    })
+                debugProcess.debugger.forward(SequentialForwardCallback(realHistIndex - historyIndex, finalCallback))
+            }
+        }
+
+        private inner class SequentialBackCallback(var toGo: Int,
+                                                   val finalCallback: ((MoveHistResult?) -> Unit)?): CommandCallback<MoveHistResult?>() {
+            override fun execAfterParsing(result: MoveHistResult?) {
+                if (toGo == 1 || result == null) {
+                    if (finalCallback != null) {
+                        finalCallback!!(null)
+                    }
+                } else {
+                    --toGo
+                    ++realHistIndex
+                    debugProcess.debugger.back(this)
+                }
+            }
+        }
+
+        private inner class SequentialForwardCallback(var toGo: Int,
+                                                   val finalCallback: ((MoveHistResult?) -> Unit)?): CommandCallback<MoveHistResult?>() {
+            override fun execAfterParsing(result: MoveHistResult?) {
+                if (toGo == 1 || result == null) {
+                    if (finalCallback != null) {
+                        finalCallback!!(null)
+                    }
+                } else {
+                    --toGo
+                    --realHistIndex
+                    debugProcess.debugger.forward(this)
                 }
             }
         }

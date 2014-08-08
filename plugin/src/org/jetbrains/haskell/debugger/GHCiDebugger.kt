@@ -25,22 +25,9 @@ import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
-import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.utils.HaskellUtils
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.notification.Notifications
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.frames.HsDebuggerEvaluator
-import com.intellij.xdebugger.frame.XValue
-import org.jetbrains.haskell.debugger.frames.HsDebugValue
-import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
@@ -127,7 +114,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
             queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
-        queue.addCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
+            queue.addCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
 
     override fun removeExceptionBreakpoint() {
         queue.addCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))

@@ -21,6 +21,8 @@ public abstract class AbstractCommand<R : ParseResult?>(public val callback: Com
 
     protected abstract fun parseJSONOutput(output: JSONObject): R
 
+//    public abstract fun clone(callback: CommandCallback<R>):
+
     public open fun handleGHCiOutput(output: Deque<String?>) {
         val result = parseGHCiOutput(output)
         callback?.execAfterParsing(result)
