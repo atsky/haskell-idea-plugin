@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.*
 import org.jetbrains.haskell.highlight.HaskellHighlighter
 import org.jetbrains.cabal.parser.*
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class CabalAnnotator() : Annotator {
 
@@ -19,11 +20,14 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
+        fun error(errMsg: ErrorMessage) = holder.createErrorAnnotation(errMsg.place, errMsg.text)
+
         if ((element is PropertyField) && !(element.isUniqueOnThisLevel()))  maybeError(element.getKeyNode(), "duplicated field")
         if (element is DisallowedableField)                                  maybeError(element.getKeyNode(), element.isEnabled())
         if (element is InvalidProperty)                                      maybeError(element, "invalid property")
         if (element is Checkable)                                            maybeError(element, element.isValidValue())
         if (element is Section)                                              maybeError(element.getSectTypeNode(), element.allRequiredFieldsExist())
+        if (element is BuildDependsField)   element.checkPackageVersions() forEach { error(it) }
 
         if (element is Path) {
             val warningMsg = element.isValidPath()

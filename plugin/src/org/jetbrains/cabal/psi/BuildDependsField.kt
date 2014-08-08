@@ -2,6 +2,40 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.psi.PropertyField
+import org.jetbrains.cabal.psi.FullVersionConstraint
+import org.jetbrains.cabal.psi.ComplexVersionConstraint
+import org.jetbrains.cabal.CabalInterface
+import org.jetbrains.cabal.highlight.ErrorMessage
+import java.util.ArrayList
 
 public class BuildDependsField(node: ASTNode) : PropertyField(node) {
+
+    public fun getPackageNames(): List<String> = getValues(javaClass<FullVersionConstraint>()) map { it.getBaseName() }
+
+    public fun getConstraintsWithName(name: String): List<FullVersionConstraint> = getValues(javaClass<FullVersionConstraint>()) filter { it.getBaseName().equals(name) }
+
+    public fun checkPackageVersions(): List<ErrorMessage> {
+        val packageConstraints = getValues(javaClass<FullVersionConstraint>())
+        val installedPackages  = CabalInterface(getProject()).getInstalledPackagesList()
+        var res = ArrayList<ErrorMessage>()
+        for (constraint in packageConstraints) {
+            val constrName = constraint.getBaseName()
+            val sameConstraints = getConstraintsWithName(constraint.getBaseName())
+            if (sameConstraints.size != 1) {
+                sameConstraints forEach { res.add(ErrorMessage(it, "dublicate package")) }
+                continue
+            }
+            val installed = installedPackages firstOrNull { it.name == constrName }
+            if (installed == null) {
+                res.add(ErrorMessage(constraint, "this package is not installed"))
+                continue
+            }
+            val versionConstr = constraint.getConstraint()
+            if (versionConstr == null) continue
+            if (!(installed.availableVersions map { versionConstr.satisfyConstraint(it) } reduce { (curr, next) -> curr || next })) {
+                res.add(ErrorMessage(versionConstr, "installed package's version does not satisfy this constraint"))
+            }
+        }
+        return res
+    }
 }

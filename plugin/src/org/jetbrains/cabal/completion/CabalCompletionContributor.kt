@@ -25,23 +25,21 @@ public open class CabalCompletionContributor() : CompletionContributor() {
 
     public override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?): Unit {
         if (parameters?.getCompletionType() == CompletionType.BASIC) {
-            var colonNeeded = false
             val values = ArrayList<String>()
             val current = parameters?.getPosition()
             val parent = current?.getParent()
             if (parent == null) { return }
+            var caseSensitivity = true
 
             when (parent) {
                 is PsiFile -> {
-                    colonNeeded = true
-                    values.addAll(PKG_DESCR_FIELD_DESCRS)
-                    values.addAll(TOP_SECTIONS)
-                    result?.caseInsensitive()
+                    values.addAll(PKG_DESCR_FIELD_DESCRS map {it.concat(":")})
+                    values.addAll(TOP_SECTIONS map {it.concat(":")})
+                    caseSensitivity = false
                 }
                 is Section -> {
-                    colonNeeded = true
-                    values.addAll(parent.getAvailableFieldNames())
-                    result?.caseInsensitive()
+                    values.addAll(parent.getAvailableFieldNames() map {it.concat(":")})
+                    caseSensitivity = false
                 }
                 is RangedValue -> {
                     values.addAll(parent.getAvailableValues())
@@ -60,12 +58,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             }
 
             for (value in values) {
-                if (colonNeeded) {
-                    result?.addElement(LookupElementBuilder.create(value + ": ")!!)
-                }
-                else {
-                    result?.addElement(LookupElementBuilder.create(value)!!)
-                }
+                result?.addElement(LookupElementBuilder.create(value)!!.withCaseSensitivity(caseSensitivity)!!)
             }
         }
     }

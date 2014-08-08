@@ -134,13 +134,23 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, tillEnd: Boolean = true) : Boolean {
         var res = parseValue()
         while ((!builder.eof()) && res) {
-            if (!onOneLine && isLastOnThisLevel(prevLevel)) break
+
+            val mark = builder.mark()!!
+            if (!onOneLine) {
+                if (isLastOnThisLevel(prevLevel)) {
+                    mark.rollbackTo()
+                    break
+                }
+            }
 
             res = parseSeparator()
             if (!tillEnd && !res) {
                 res = true
+                mark.rollbackTo()
                 break
             }
+            mark.drop()
+
             res = res && (onOneLine || !isLastOnThisLevel(prevLevel))
             res = res && parseValue()
         }
