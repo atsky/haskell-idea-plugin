@@ -6,6 +6,7 @@ import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.psi.RangedValue
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import org.jetbrains.cabal.CabalFile
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 /**
  * Created by atsky on 13/12/13.
@@ -13,26 +14,26 @@ import org.jetbrains.cabal.CabalFile
 public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, RangedValue {
 
     public override fun getAvailableValues(): List<String> {
-        if (isFlagName()) {
+        if (isFlagNameInCondition()) {
             return (getContainingFile() as CabalFile).getFlagNames()
         }
         return listOf()
     }
 
-    public override fun isValidValue(): String? {
-        if (isFlagName()) {
-            if (getText().toLowerCase() in getAvailableValues()) return null
-            return "invalid flag name"
+    public override fun checkValue(): List<ErrorMessage> {
+        if (isFlagNameInCondition()) {
+            if (getText().toLowerCase() in (getContainingFile() as CabalFile).getFlagNames()) return listOf()
+            return listOf(ErrorMessage(this, "invalid flag name", "error"))
         }
         if (getParent() is Section) {
-            if (getNode().getText()!!.matches("^[^ ]+$")) return null
-            return "invalid section name"
+            if (getNode().getText()!!.matches("^[^ ]+$")) return listOf()
+            return listOf(ErrorMessage(this, "invalid section name", "error"))
         }
-        if (getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return null
-        return "invalid name"
+        if (getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return listOf()
+        return listOf(ErrorMessage(this, "invalid name", "error"))
     }
 
-    private fun isFlagName(): Boolean {
+    public fun isFlagNameInCondition(): Boolean {
         val parent = getParent()!!
         if ((parent is SimpleCondition) && (parent.getTestName() == "flag")) return true
         if (parent is InvalidConditionPart) {

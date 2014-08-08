@@ -1,5 +1,7 @@
 package org.jetbrains.cabal.psi
 
+import org.jetbrains.cabal.highlight.ErrorMessage
+
 public trait Checkable {
-    fun isValidValue(): String? = null
+    fun checkValue(): List<ErrorMessage> = listOf()
 }

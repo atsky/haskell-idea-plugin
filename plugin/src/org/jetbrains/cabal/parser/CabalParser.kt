@@ -192,9 +192,9 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     }
 
     fun parseInvalidConditionPart() = start(CabalTokelTypes.INVALID_CONDITION_PART) {
-        while (!builder.eof() && ((builder.getTokenType() == CabalTokelTypes.ID)
-                                        || (builder.getTokenType() == CabalTokelTypes.OPEN_PAREN)
-                                        || (builder.getTokenType() == CabalTokelTypes.COMPARATOR))) {
+        while (!builder.eof() && (builder.getTokenType() != CabalTokelTypes.LOGIC)
+                                        && (builder.getTokenType() != CabalTokelTypes.CLOSE_PAREN)
+                                        && (builder.getTokenType() != TokenType.NEW_LINE_INDENT)) {
             if ((builder.getTokenText() == "flag") && token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)) {
                 parseIDValue(CabalTokelTypes.NAME)
             }
@@ -203,15 +203,23 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         true
     }
 
-    fun parseConditionPart(level: Int): Boolean {
-        if (token(CabalTokelTypes.NEGATION)) return parseConditionPart(level)
-        if (token(CabalTokelTypes.OPEN_PAREN)) {
-            return (parseCondition(level) && (token(CabalTokelTypes.CLOSE_PAREN) || true))
+    fun parseConditionPart(level: Int): Boolean = start(CabalTokelTypes.CONDITION_PART) {
+        if (token(CabalTokelTypes.NEGATION)) {
+            parseConditionPart(level)
         }
-        return parseSimpleCondition(level) || parseInvalidConditionPart()
+        else if (token(CabalTokelTypes.OPEN_PAREN)) {
+            parseCondition(level) && (token(CabalTokelTypes.CLOSE_PAREN) || true)
+        }
+        else {
+            parseSimpleCondition(level) || parseInvalidConditionPart()
+        }
     }
 
-    fun parseCondition(level: Int) = parseValueList(level, { parseConditionPart(level) }, { token(CabalTokelTypes.LOGIC) }, true, false)
+    fun parseCondition(level: Int) = parseValueList(level,
+                                                    { parseConditionPart(level) },
+                                                    { token(CabalTokelTypes.LOGIC) || (parseInvalidConditionPart() && token(CabalTokelTypes.LOGIC)) },
+                                                    true,
+                                                    false)
 
     fun parseCompilerList(level: Int) = parseConstraintList(level, CabalTokelTypes.COMPILER)
 

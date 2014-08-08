@@ -95,7 +95,10 @@ public trait CabalTokelTypes {
         val VERSION_CONSTRAINT     : IElementType = CabalCompositeElementType("VERSION_CONSTRAINT"       , ::VersionConstraint        )
         val COMPLEX_CONSTRAINT     : IElementType = CabalCompositeElementType("COMPLEX_CONSTRAINT"       , ::ComplexVersionConstraint )
         val FULL_CONSTRAINT        : IElementType = CabalCompositeElementType("FULL_CONSTRAINT"          , ::FullVersionConstraint    )
+
+        val FULL_CONDITION         : IElementType = CabalCompositeElementType("FULL_CONDITION"           , ::FullCondition            )
         val SIMPLE_CONDITION       : IElementType = CabalCompositeElementType("SIMPLE_CONDITION"         , ::SimpleCondition          )
+        val CONDITION_PART         : IElementType = CabalCompositeElementType("CONDITION_PART"           , ::ConditionPart            )
 
         val URL                    : IElementType = CabalCompositeElementType("URL"                      , ::URL                      )
         val NAME                   : IElementType = CabalCompositeElementType("NAME"                     , ::Name                     )
@@ -106,8 +109,6 @@ public trait CabalTokelTypes {
         val E_MAIL                 : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                   )
         val TOKEN                  : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                    )
         val OPTION                 : IElementType = CabalCompositeElementType("OPTION"                   , ::Option                   )
-
-        val FULL_CONDITION         : IElementType = CabalCompositeElementType("FULL_CONDITION"           , ::FullCondition            )
 
         val INVALID_VALUE          : IElementType = CabalCompositeElementType("INVALID_VALUE"            , ::InvalidValue             )
         val INVALID_CONDITION_PART : IElementType = CabalCompositeElementType("INVALID_CONDITION_PART"   , ::InvalidConditionPart     )

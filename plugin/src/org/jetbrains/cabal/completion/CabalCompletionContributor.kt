@@ -15,6 +15,7 @@ import org.jetbrains.cabal.psi.BoolField
 import org.jetbrains.cabal.psi.Path
 import org.jetbrains.cabal.psi.PathsField
 import org.jetbrains.cabal.psi.InvalidValue
+import org.jetbrains.cabal.psi.Name
 import org.jetbrains.cabal.psi.RangedValue
 import org.jetbrains.cabal.psi.Section
 import java.util.*
@@ -42,7 +43,11 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     caseSensitivity = false
                 }
                 is RangedValue -> {
-                    values.addAll(parent.getAvailableValues())
+                    if ((parent is Name) && (parent.isFlagNameInCondition())) {
+                        values.addAll(parent.getAvailableValues() map { it + ")" })
+                        caseSensitivity = false
+                    }
+                    else values.addAll(parent.getAvailableValues())
                 }
                 is InvalidValue -> {
                     if (parent.getParent() is BoolField) {
@@ -62,6 +67,4 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             }
         }
     }
-
-
 }

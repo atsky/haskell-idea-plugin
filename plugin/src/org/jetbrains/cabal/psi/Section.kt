@@ -13,18 +13,9 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public open class Section(node: ASTNode): Field(node), FieldContainer {
 
-//    public open fun getRequiredFieldNames(): List<String> = listOf()
-
     public open fun getAvailableFieldNames(): List<String> = listOf()
 
     public open fun checkFieldsPresence(): List<ErrorMessage> = listOf()
-
-//    public open fun allRequiredFieldsExist(): String? {
-//        for (fieldName in getRequiredFieldNames()) {
-//            if (!fieldExists(fieldName)) return fieldName + " field is required"
-//        }
-//        return null
-//    }
 
     public fun getSectChildren(): List<PsiElement> = getChildren() filter { it is Field }
 

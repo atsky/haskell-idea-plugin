@@ -3,6 +3,7 @@ package org.jetbrains.cabal.psi
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.Checkable
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
@@ -19,12 +20,12 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
         )
     }
 
-    public override fun isValidValue(): String? {
-        if (isBool()) return null
+    public override fun checkValue(): List<ErrorMessage> {
+        if (isBool()) return listOf()
         if (getTestName() in VALID_TESTS_NAMES) {
-            return null
+            return listOf()
         }
-        return "invalid test name"
+        return listOf(ErrorMessage(this, "invalid test name", "error"))
     }
 
     public fun isBool(): Boolean {

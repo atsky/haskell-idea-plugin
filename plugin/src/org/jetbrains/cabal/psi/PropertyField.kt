@@ -2,6 +2,7 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.psi.Field
+import org.jetbrains.cabal.highlight.ErrorMessage
 import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
@@ -10,19 +11,10 @@ import com.intellij.psi.util.PsiTreeUtil
 
 public open class PropertyField(node: ASTNode) : Field(node) {
 
-    public fun isUniqueOnThisLevel(): Boolean {
-        val siblings = getParent()!!.getChildren()
-        var foundOne = false
-        val ownName = getFieldName()
-        for (s in siblings) {
-            if ((s is PropertyField) && (s.hasName(ownName))) {
-                if (!foundOne) {
-                    foundOne = true
-                }
-                else return false
-            }
-        }
-        return true
+    public fun checkUniqueness(): ErrorMessage? {
+        if ((getParent()!!.getChildren() filter { (it is PropertyField) && (it.hasName(getFieldName())) }).size > 1)
+                return ErrorMessage(getKeyNode(), "duplicate field", "error")
+        return null
     }
 
     public fun getKeyNode(): PsiElement = getFirstChild()!!

@@ -5,11 +5,12 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.Checkable
 import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.PropertyValue
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class VersionValue(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
-    public override fun isValidValue(): String? {
-        if (!(this : PsiElement).getText()!!.matches("([0-9]+(\\-[0-9a-zA_Z]+)*\\.)*([0-9]+(\\-[0-9a-zA_Z]+)*)")) return "invalid version"
-        return null
+    public override fun checkValue(): List<ErrorMessage> {
+        if (!(this : PsiElement).getText()!!.matches("([0-9]+(\\-[0-9a-zA_Z]+)*\\.)*([0-9]+(\\-[0-9a-zA_Z]+)*)")) return listOf(ErrorMessage(this, "invalid version", "error"))
+        return listOf()
     }
 }

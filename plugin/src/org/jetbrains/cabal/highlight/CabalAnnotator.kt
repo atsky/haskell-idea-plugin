@@ -20,14 +20,15 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
-        fun handle(errMsg: ErrorMessage) {
+        fun handle(errMsg: ErrorMessage?) {
+            if (errMsg == null) return
             if (errMsg.severity == "error")   holder.createErrorAnnotation(errMsg.place, errMsg.text)
             if (errMsg.severity == "warning") holder.createWarningAnnotation(errMsg.place, errMsg.text)
         }
 
-        if ((element is PropertyField) && !(element.isUniqueOnThisLevel()))  maybeError(element.getKeyNode(), "duplicated field")
-        if (element is InvalidProperty)                                      maybeError(element, "invalid property")
-        if (element is Checkable)                                            maybeError(element, element.isValidValue())
+        if (element is PropertyField)       handle(element.checkUniqueness())
+        if (element is InvalidProperty)     handle(ErrorMessage(element, "invalid property", "error"))
+        if (element is Checkable)           element.checkValue()           forEach { handle(it) }
         if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
 
         if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }

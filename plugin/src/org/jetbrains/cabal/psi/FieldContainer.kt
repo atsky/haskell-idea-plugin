@@ -9,22 +9,19 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 
 public trait FieldContainer: PsiElement {
 
-    public fun <T : PsiElement> getField(fieldType: Class<T>): T? {
+    public fun <T : Field> getField(fieldType: Class<T>): T? {
         return PsiTreeUtil.findChildOfType(this, fieldType)
     }
 
-    public fun <T : PsiElement> getFields(fieldType: Class<T>): List<T>? {
+    public fun <T : Field> getFields(fieldType: Class<T>): List<T> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType)
     }
 
-    public fun <T : PsiElement> getField(fieldType: Class<T>, fieldName: String): T? {
-        val fields = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType)
-        for (field in fields) {
-            if ((field is PropertyField) && (field.getPropertyName().equalsIgnoreCase(fieldName))) return field
-            if ((field is Section)       && (field.getSectType().equalsIgnoreCase(fieldName)))     return field
-        }
-        return null
-    }
+    public fun <T : Field> getField(fieldType: Class<T>, fieldName: String): T?
+            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType) firstOrNull { it.hasName(fieldName) }
+
+    public fun <T : Field> getFields(fieldType: Class<T>, fieldName: String): List<T>
+            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType) filter { it.hasName(fieldName) }
 
     public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
 

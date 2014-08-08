@@ -12,7 +12,7 @@ public class Flag(node: ASTNode) : Section(node) {
     }
 
     public fun getFlagName(): String {
-        val res = getSectName()
+        val res = getSectName()?.toLowerCase()
         if (res == null) throw IllegalStateException()
         return res
     }
