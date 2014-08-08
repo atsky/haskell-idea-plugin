@@ -10,7 +10,6 @@ import com.intellij.ui.AppUIUtil
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
-import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
@@ -25,7 +24,6 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         public val HISTORY_SIZE: Int = 20
     }
     public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
-    private val realHistIndex: Int = 0
 
     private val historyPanel: HistoryPanel = HistoryPanel(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
@@ -57,6 +55,10 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                 historyPanel.shiftForward()
             }
         }
+    }
+
+    public fun updateRealFrame() {
+        historyStack.updateRealFrame()
     }
 
     public fun indexSelected(index: Int) {
@@ -111,6 +113,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     public inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
         public var historyIndex: Int = 0
             private set
+        private var realHistIndex: Int = 0
         private var allFramesCollected = false
         private val historyFrames: ArrayList<HsHistoryFrame> = ArrayList()
 
@@ -120,6 +123,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
 
         public fun clear() {
             historyIndex = 0
+            realHistIndex = 0
             allFramesCollected = false
             historyFrames.clear()
             updateHistory()
@@ -156,27 +160,28 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         private fun moveForward() {
             if (historyIndex > 0) {
                 --historyIndex
-                debugProcess.debugger.forward()
             }
         }
 
         private fun moveBack() {
             if (historyIndex + 1 < historyFrames.size) {
                 ++historyIndex
-                debugProcess.debugger.back(BackCommand(null))
             } else if (allFramesCollected) {
             } else {
-                debugProcess.debugger.back(BackCommand(object : CommandCallback<MoveHistResult?>() {
+                updateRealFrame()
+                // todo: set as last callback of an update
+                debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
                     override fun execAfterParsing(result: MoveHistResult?) {
                         if (result != null) {
                             val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
                             addFrame(frame)
                             ++historyIndex
+                            ++realHistIndex
                         } else {
                             allFramesCollected = true
                         }
                     }
-                }))
+                })
             }
         }
 
@@ -187,6 +192,34 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         public fun markFramesAsObsolete() {
             for (frame in historyFrames) {
                 frame.obsolete = true
+            }
+        }
+
+        public fun updateRealFrame() {
+            //todo: continuous commands should run with high priority flag
+            if (realHistIndex == historyIndex) {
+                return
+            }
+            if (realHistIndex < historyIndex) {
+                for (i in 1..(historyIndex - realHistIndex)) {
+                    debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
+                        override fun execAfterParsing(result: MoveHistResult?) {
+                            if (result != null) {
+                                ++realHistIndex
+                            }
+                        }
+                    })
+                }
+            } else {
+                for (i in 1..(realHistIndex - historyIndex)) {
+                    debugProcess.debugger.forward(object : CommandCallback<MoveHistResult?>() {
+                        override fun execAfterParsing(result: MoveHistResult?) {
+                            if (result != null) {
+                                --realHistIndex
+                            }
+                        }
+                    })
+                }
             }
         }
     }

@@ -28,6 +28,7 @@ import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import org.jetbrains.haskell.debugger.parser.MoveHistResult
 
 /**
  * Created by vlad on 7/30/14.
@@ -112,9 +113,11 @@ public class RemoteDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebu
     override fun prepareDebugger() {
     }
 
-    override fun back(backCommand: BackCommand) = queue.addCommand(backCommand)
+    override fun back(callback: CommandCallback<MoveHistResult?>?) =
+            queue.addCommand(BackCommand(callback))
 
-    override fun forward() = queue.addCommand(ForwardCommand(null))
+    override fun forward(callback: CommandCallback<MoveHistResult?>?) =
+            queue.addCommand(ForwardCommand(callback))
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()

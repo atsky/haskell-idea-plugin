@@ -151,11 +151,11 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     override fun resume() =
             queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
-    override fun back(backCommand: BackCommand) =
-            queue.addCommand(backCommand)
+    override fun back(callback: CommandCallback<MoveHistResult?>?) =
+            queue.addCommand(BackCommand(callback))
 
-    override fun forward() =
-            queue.addCommand(ForwardCommand(null))
+    override fun forward(callback: CommandCallback<MoveHistResult?>?) =
+            queue.addCommand(ForwardCommand(callback))
 
     override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
 

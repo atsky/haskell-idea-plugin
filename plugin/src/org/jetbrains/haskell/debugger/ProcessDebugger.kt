@@ -15,6 +15,7 @@ import org.jetbrains.haskell.debugger.protocol.BackCommand
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.codehaus.groovy.tools.shell.commands.HistoryCommand
 import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.parser.MoveHistResult
 
 /**
  * Created by vlad on 7/11/14.
@@ -46,9 +47,9 @@ public trait ProcessDebugger {
 
     public fun prepareDebugger()
 
-    public fun back(backCommand: BackCommand)
+    public fun back(callback: CommandCallback<MoveHistResult?>?)
 
-    public fun forward()
+    public fun forward(callback: CommandCallback<MoveHistResult?>?)
 
     public fun print(printCommand: PrintCommand)
 

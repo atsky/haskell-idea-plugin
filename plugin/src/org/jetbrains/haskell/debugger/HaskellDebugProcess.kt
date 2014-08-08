@@ -51,7 +51,7 @@ public class HaskellDebugProcess(session: XDebugSession,
                                  val myProcessHandler: HaskellDebugProcessHandler) : XDebugProcess(session), ProcessListener {
 
     private val debuggerEditorsProvider: XDebuggerEditorsProvider
-    private val historyManager: HistoryManager = HistoryManager(this)
+    public val historyManager: HistoryManager = HistoryManager(this)
 
     public val debugger: ProcessDebugger;
 

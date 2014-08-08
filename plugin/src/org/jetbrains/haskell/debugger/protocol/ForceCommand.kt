@@ -27,6 +27,10 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
         public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
                                            val debugProcess: HaskellDebugProcess)
         : CommandCallback<LocalBinding?>() {
+            override fun execBeforeSending() {
+                debugProcess.historyManager.updateRealFrame()
+            }
+
             override fun execAfterParsing(result: LocalBinding?) {
                 syncObject.lock()
                 try {
