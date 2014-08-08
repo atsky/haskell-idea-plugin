@@ -38,7 +38,7 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugger {
+public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(debugProcess) {
 
     class object {
         private val HANDLE_NAME = "handle"
@@ -48,31 +48,22 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
 
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
-    private val queue: CommandQueue
-    private val writeLock = Any()
 
-    public val processStopped: AtomicBoolean = AtomicBoolean(false)
-
-    private var lastCommand: AbstractCommand<out ParseResult?>? = null;
+    public val processStopped: AtomicBoolean = AtomicBoolean(false);
 
     {
-        queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })
-        queue.start()
-
         inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
         inputReadinessChecker.start()
     }
-    public var debugStarted: Boolean = false
-        private set
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
-        queue.addCommand(ExpressionTypeCommand(expression, object : CommandCallback<ExpressionType?>() {
+        enqueueCommand(ExpressionTypeCommand(expression, object : CommandCallback<ExpressionType?>() {
             override fun execAfterParsing(result: ExpressionType?) {
                 if (result == null) {
                     callback.errorOccurred("Unknown expression")
                 } else {
                     val expType = result.expressionType
-                    queue.addCommand(ShowExpressionCommand(expression,
+                    enqueueCommand(ShowExpressionCommand(expression,
                             ShowExpressionCommand.StandardShowExpressionCallback(expType, callback)))
                 }
             }
@@ -80,83 +71,59 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun trace() =
-            queue.addCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
+            enqueueCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
 
-    /**
-     * Executes command immediately
-     */
-    private fun execute(command: AbstractCommand<out ParseResult?>) {
-        val text = command.getText()
 
-        synchronized(writeLock) {
-            lastCommand = command
-
-            command.callback?.execBeforeSending()
-
-            if (lastCommand !is HiddenCommand) {
-                debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
-            }
-
-            val os = debugProcess.getProcessHandler().getProcessInput()!!
-            os.write(text.toByteArray())
-            os.flush()
-
-            if (lastCommand is TraceCommand) {
-                debugStarted = true
-            }
-        }
-    }
-
-    override fun setBreakpoint(module: String, line: Int) = queue.addCommand(SetBreakpointCommand(module, line,
+    override fun setBreakpoint(module: String, line: Int) = enqueueCommand(SetBreakpointCommand(module, line,
             SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) =
-            queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
+            enqueueCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
-            queue.addCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
+            enqueueCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
 
     override fun removeExceptionBreakpoint() {
-        queue.addCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
-        queue.addCommand(HiddenCommand.createInstance(":unset -fbreak-on-exceptoion\n"))
+        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
+        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-exceptoion\n"))
     }
 
     override fun stepInto() =
-            queue.addCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
+            enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun stepOver() =
-            queue.addCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
+            enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            queue.addCommand(SetBreakpointCommand(module, line, SetTempBreakCallback()))
+            enqueueCommand(SetBreakpointCommand(module, line, SetTempBreakCallback()))
         } else {
             if (debugStarted) resume() else trace()
         }
     }
 
     override fun resume() =
-            queue.addCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
+            enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun back(callback: CommandCallback<MoveHistResult?>?) =
-            queue.addCommand(BackCommand(callback))
+            enqueueCommand(BackCommand(callback))
 
     override fun forward(callback: CommandCallback<MoveHistResult?>?) =
-            queue.addCommand(ForwardCommand(callback))
+            enqueueCommand(ForwardCommand(callback))
 
-    override fun print(printCommand: PrintCommand) = queue.addCommand(printCommand)
+    override fun print(printCommand: PrintCommand) = enqueueCommand(printCommand)
 
-    override fun force(forceCommand: ForceCommand) = queue.addCommand(forceCommand)
+    override fun force(forceCommand: ForceCommand) = enqueueCommand(forceCommand)
 
-    override fun history(callback: CommandCallback<HistoryResult?>) = queue.addCommand(HistoryCommand(callback))
+    override fun history(callback: CommandCallback<HistoryResult?>) = enqueueCommand(HistoryCommand(callback))
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()
-        queue.addCommand(ExpressionTypeCommand(binding.name!!, object : CommandCallback<ExpressionType?>() {
+        enqueueCommand(ExpressionTypeCommand(binding.name!!, object : CommandCallback<ExpressionType?>() {
             override fun execAfterParsing(result: ExpressionType?) {
                 lock.lock()
                 binding.typeName = result?.expressionType
-                queue.addCommand(PrintCommand(binding.name!!, object : CommandCallback<LocalBinding?>() {
+                enqueueCommand(PrintCommand(binding.name!!, object : CommandCallback<LocalBinding?>() {
                     override fun execAfterParsing(result: LocalBinding?) {
                         lock.lock()
                         binding.value = result?.value
@@ -169,8 +136,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
         }))
         lock.unlock()
     }
-
-    override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
 
     override fun prepareDebugger() {
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
@@ -201,13 +166,13 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 ":set stop $stop_cmd\n"
         )
         for (cmd in commands) {
-            queue.addCommand(HiddenCommand.createInstance(cmd), highPriority = true)
+            enqueueCommandWithPriority(HiddenCommand.createInstance(cmd))
         }
     }
 
     override fun close() {
+        super.close()
         inputReadinessChecker.stop()
-        queue.stop()
     }
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
@@ -220,10 +185,6 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 setReadyForInput()
             }
         }
-    }
-
-    private fun setReadyForInput() {
-        queue.setReadyForInput()
     }
 
     private fun handleOutput() {
@@ -247,9 +208,9 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
                 return
             }
             if (debugStarted) {
-                queue.addCommand(ResumeCommand(RunToPositionCallback(result.breakpointNumber)), true)
+                enqueueCommandWithPriority(ResumeCommand(RunToPositionCallback(result.breakpointNumber)))
             } else {
-                queue.addCommand(TraceCommand(TRACE_CMD, RunToPositionCallback(result.breakpointNumber)), true)
+                enqueueCommandWithPriority(TraceCommand(TRACE_CMD, RunToPositionCallback(result.breakpointNumber)))
             }
         }
     }
@@ -259,7 +220,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
             if (result == null) {
                 throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
             }
-            queue.addCommand(RemoveBreakpointCommand(null, breakpointNumber, RemoveTempBreakCallback(result)), true)
+            enqueueCommandWithPriority(RemoveBreakpointCommand(null, breakpointNumber, RemoveTempBreakCallback(result)))
         }
     }
 
