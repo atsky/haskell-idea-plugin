@@ -59,11 +59,8 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                     val condition = breakpoint?.getCondition()
                     if (breakpoint != null && condition != null) {
                         handleCondition(breakpoint, condition, result)
-                    } else if (breakpoint != null) {
-                        setContext(result, breakpoint)
                     } else {
-                        Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", "No breakpoint in line", NotificationType.WARNING))
-                        debugProcess.getSession()!!.stop()
+                        setContext(result, breakpoint)
                     }
                 }
             }
@@ -104,14 +101,10 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 }
             }
 
-            private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+            private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) {
                 val frame = HsHistoryFrame(debugProcess, result)
                 frame.obsolete = false
                 debugProcess.debugger.history(HistoryCommand.DefaultHistoryCallback(debugProcess, frame, breakpoint))
-//                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-//                debugProcess.historyFrameAppeared(frame)
-//                debugProcess.historyChanged(false, true, frame)
-//                debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
             }
         }
     }

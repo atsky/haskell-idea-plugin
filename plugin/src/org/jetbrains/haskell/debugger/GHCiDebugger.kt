@@ -85,7 +85,7 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(deb
 
     override fun removeExceptionBreakpoint() {
         enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
-        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-exceptoion\n"))
+        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-exception\n"))
     }
 
     override fun stepInto() =
@@ -96,7 +96,7 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(deb
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            enqueueCommand(SetBreakpointCommand(module, line, SetTempBreakCallback()))
+            enqueueCommand(SetBreakpointCommand(module, line, super.SetTempBreakForRunCallback(TRACE_CMD, null)))
         } else {
             if (debugStarted) resume() else trace()
         }
@@ -170,8 +170,7 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(deb
         }
     }
 
-    override fun close() {
-        super.close()
+    override fun doClose() {
         inputReadinessChecker.stop()
     }
 
@@ -200,32 +199,5 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(deb
 
     private fun onStopSignal() {
         debugProcess.getSession()?.stop()
-    }
-
-    private inner class SetTempBreakCallback() : CommandCallback<BreakpointCommandResult?>() {
-        override fun execAfterParsing(result: BreakpointCommandResult?) {
-            if (result == null) {
-                return
-            }
-            if (debugStarted) {
-                enqueueCommandWithPriority(ResumeCommand(RunToPositionCallback(result.breakpointNumber)))
-            } else {
-                enqueueCommandWithPriority(TraceCommand(TRACE_CMD, RunToPositionCallback(result.breakpointNumber)))
-            }
-        }
-    }
-
-    private inner class RunToPositionCallback(val breakpointNumber: Int) : CommandCallback<HsStackFrameInfo?>() {
-        override fun execAfterParsing(result: HsStackFrameInfo?) {
-            if (result == null) {
-                throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
-            }
-            enqueueCommandWithPriority(RemoveBreakpointCommand(null, breakpointNumber, RemoveTempBreakCallback(result)))
-        }
-    }
-
-    private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo)
-    : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
 }

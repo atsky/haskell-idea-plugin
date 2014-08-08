@@ -62,12 +62,13 @@ public class RemoteDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(d
 
     override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
-    override fun runToPosition(module: String, line: Int) =
-            enqueueCommand(SetBreakpointCommand(module, line,
-                    object : CommandCallback<BreakpointCommandResult?>() {
-                        override fun execAfterParsing(result: BreakpointCommandResult?) {
-                        }
-                    }))
+    override fun runToPosition(module: String, line: Int) {
+        if (debugProcess.getBreakpointAtPosition(module, line) == null) {
+            enqueueCommand(SetBreakpointCommand(module, line, super.SetTempBreakForRunCallback("main\n", module)))
+        } else {
+            if (debugStarted) resume() else trace()
+        }
+    }
 
     override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
