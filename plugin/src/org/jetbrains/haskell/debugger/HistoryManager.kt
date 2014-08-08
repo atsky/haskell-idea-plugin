@@ -159,29 +159,55 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
 
         private fun moveForward() {
             if (historyIndex > 0) {
-                --historyIndex
+                if (historyFrames[historyIndex - 1].obsolete) {
+                    withRealFrameUpdate {
+                        debugProcess.debugger.forward(object : CommandCallback<MoveHistResult?>() {
+                            override fun execAfterParsing(result: MoveHistResult?) {
+                                if (result != null) {
+                                    --historyIndex
+                                    --realHistIndex
+                                }
+                            }
+                        })
+                    }
+                } else {
+                    --historyIndex
+                }
             }
         }
 
         private fun moveBack() {
             if (historyIndex + 1 < historyFrames.size) {
-                ++historyIndex
+                if (historyFrames[historyIndex + 1].obsolete) {
+                    withRealFrameUpdate {
+                        debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
+                            override fun execAfterParsing(result: MoveHistResult?) {
+                                if (result != null) {
+                                    ++historyIndex
+                                    ++realHistIndex
+                                }
+                            }
+                        })
+                    }
+                } else {
+                    ++historyIndex
+                }
             } else if (allFramesCollected) {
             } else {
-                withRealFrameUpdate(null)
-                // todo: set as last callback of an update
-                debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
-                    override fun execAfterParsing(result: MoveHistResult?) {
-                        if (result != null) {
-                            val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
-                            addFrame(frame)
-                            ++historyIndex
-                            ++realHistIndex
-                        } else {
-                            allFramesCollected = true
+                withRealFrameUpdate {(_) ->
+                    debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
+                        override fun execAfterParsing(result: MoveHistResult?) {
+                            if (result != null) {
+                                val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
+                                addFrame(frame)
+                                ++historyIndex
+                                ++realHistIndex
+                            } else {
+                                allFramesCollected = true
+                            }
                         }
-                    }
-                })
+                    })
+                }
             }
         }
 
@@ -210,30 +236,30 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }
 
         private inner class SequentialBackCallback(var toGo: Int,
-                                                   val finalCallback: ((MoveHistResult?) -> Unit)?): CommandCallback<MoveHistResult?>() {
+                                                   val finalCallback: ((MoveHistResult?) -> Unit)?) : CommandCallback<MoveHistResult?>() {
             override fun execAfterParsing(result: MoveHistResult?) {
-                if (toGo == 1 || result == null) {
+                --toGo
+                ++realHistIndex
+                if (toGo == 0 || result == null) {
                     if (finalCallback != null) {
                         finalCallback!!(null)
                     }
                 } else {
-                    --toGo
-                    ++realHistIndex
                     debugProcess.debugger.back(this)
                 }
             }
         }
 
         private inner class SequentialForwardCallback(var toGo: Int,
-                                                   val finalCallback: ((MoveHistResult?) -> Unit)?): CommandCallback<MoveHistResult?>() {
+                                                      val finalCallback: ((MoveHistResult?) -> Unit)?) : CommandCallback<MoveHistResult?>() {
             override fun execAfterParsing(result: MoveHistResult?) {
-                if (toGo == 1 || result == null) {
+                --toGo
+                --realHistIndex
+                if (toGo == 0 || result == null) {
                     if (finalCallback != null) {
                         finalCallback!!(null)
                     }
                 } else {
-                    --toGo
-                    --realHistIndex
                     debugProcess.debugger.forward(this)
                 }
             }

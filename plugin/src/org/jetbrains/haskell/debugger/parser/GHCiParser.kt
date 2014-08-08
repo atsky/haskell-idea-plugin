@@ -4,10 +4,6 @@ import java.util.regex.Pattern
 import java.io.File
 import java.util.ArrayList
 import java.util.Deque
-import org.json.simple.parser.JSONParser
-import org.json.simple.JSONObject
-import org.json.simple.JSONArray
-import org.jetbrains.haskell.debugger.GHCiDebugger
 
 /**
  * @author Habibullin Marat
@@ -135,28 +131,16 @@ public class GHCiParser() {
         }
 
         public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
-            for (line in output) {
-                if (line!!.trim().equals(GHCiDebugger.PROMPT_LINE.trim())) {
-                    continue
-                }
-                val matcher0 = Pattern.compile(NO_MORE_BREAKPOINTS_PATTERN).matcher(line.trim())
-                if (matcher0.matches()) {
-                    return null
-                }
-            }
+            var position: String
             val line = output.pollFirst()!!
             val matcher1 = Pattern.compile(STOPPED_AT_PATTERN).matcher(line.trim())
             val matcher2 = Pattern.compile(LOGGED_BREAKPOINT_AT_PATTERN).matcher(line.trim())
-            var position: String
-            //var top: Boolean
             if (matcher1.matches()) {
                 position = matcher1.group(1)!!
-                //top = true
             } else if (matcher2.matches()) {
                 position = matcher2.group(1)!!
-                //top = false
             } else {
-                throw RuntimeException("Wrong GHCi output occured while handling MoveHist command result")
+                return null
             }
             val list = tryParseLocalBindings(output)
             return MoveHistResult(tryCreateFilePosition(position), list)

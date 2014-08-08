@@ -211,7 +211,7 @@ public class GHCiDebugger(val debugProcess: HaskellDebugProcess) : ProcessDebugg
     }
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        if (outputType != ProcessOutputTypes.SYSTEM) {
+        if (outputType == ProcessOutputTypes.STDOUT) {
             collectedOutput.append(text)
             if (simpleReadinessCheck() &&
                     (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
