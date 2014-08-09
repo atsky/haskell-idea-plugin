@@ -31,10 +31,9 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
     public static class State {
         public String ghcModPath;
         public String ghcModiPath;
-        public String buildWrapperPath;
-        public String scionBrowserPath;
         public String cabalPath;
         public String cabalDataPath;
+        public Boolean useGhcMod;
     }
 
     State myState = new State();
@@ -44,29 +43,22 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
             myState.cabalPath = "cabal";
         }
 
+        OsUtil os = UtilPackage.getOS();
+
         if (myState.cabalDataPath == null) {
-            OsUtil os = UtilPackage.getOS();
             myState.cabalDataPath = os.getCabalData();
         }
 
         if (myState.ghcModPath == null) {
-            OsUtil os = UtilPackage.getOS();
             myState.ghcModPath = os.getDefaultCabalBin() + File.separator + "ghc-mod" + os.getExe();
         }
 
         if (myState.ghcModiPath == null) {
-            OsUtil os = UtilPackage.getOS();
             myState.ghcModiPath = os.getDefaultCabalBin() + File.separator + "ghc-modi" + os.getExe();
         }
 
-        if (myState.buildWrapperPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            myState.buildWrapperPath = os.getDefaultCabalBin() + File.separator + "buildwrapper" + os.getExe();
-        }
-
-        if (myState.scionBrowserPath == null) {
-            OsUtil os = UtilPackage.getOS();
-            myState.scionBrowserPath = os.getDefaultCabalBin() + File.separator + "scion-browser" + os.getExe();
+        if (myState.useGhcMod == null) {
+            myState.useGhcMod = true;
         }
     }
 
