@@ -22,6 +22,6 @@ val VALUE_BODY              = HaskellCompositeElementType("Value body" , ::Value
 val MODULE_NAME             = HaskellCompositeElementType("Module name", ::ModuleName)
 val MODULE_EXPORTS          = HaskellCompositeElementType("Module exports", ::ModuleExports)
 val MODULE                  = HaskellCompositeElementType("Module", ::Module)
-val MODULE_HEADER           = HaskellCompositeElementType("Module header")
+val MODULE_HEADER           = HaskellCompositeElementType("Module header", ::ModuleHeader)
 val TYPE_TOKEN              = HaskellCompositeElementType("Type")
 val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")
