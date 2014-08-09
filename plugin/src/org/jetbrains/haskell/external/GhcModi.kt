@@ -26,18 +26,7 @@ import org.jetbrains.haskell.util.ProcessRunner
 public class GhcModi(val project: Project, val settings: HaskellSettings) : ProjectComponent {
     var process: Process? = null;
 
-    override fun projectOpened() {
-        startProcess()
-    }
-
-    fun startProcess() {
-        assert(process == null)
-        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()))
-    }
-
-    fun getPath(): String {
-        return settings.getState().ghcModiPath!!
-    }
+    override fun projectOpened() {}
 
     override fun projectClosed() {
         val process = process
@@ -54,6 +43,16 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
             this.process = null
         }
     }
+
+    fun startProcess() {
+        assert(process == null)
+        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()))
+    }
+
+    fun getPath(): String {
+        return settings.getState().ghcModiPath!!
+    }
+
 
     override fun initComponent() {
 
@@ -75,6 +74,9 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
     }
 
     fun runCommand(command: String): List<String> {
+        if (process == null) {
+            startProcess()
+        }
         return synchronized(process!!) {
             if (isStopped()) {
                 val inStream = process!!.getInputStream()!!
