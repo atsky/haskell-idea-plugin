@@ -36,7 +36,7 @@ class BuildWrapper(val moduleRoot: String,
         }
 
         fun getProgramPath(): String {
-            return HaskellSettings.getInstance().getState().buildWrapperPath!!
+            throw UnsupportedOperationException()
         }
 
         public fun check() : Boolean {

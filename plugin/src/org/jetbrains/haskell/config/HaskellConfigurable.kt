@@ -13,6 +13,9 @@ import java.awt.Insets
 import java.awt.GridBagLayout
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.ui.components.JBCheckBox
+import javax.swing.event.ChangeListener
+import javax.swing.event.ChangeEvent
 
 public class HaskellConfigurable() : Configurable {
     private var isModified = false
@@ -20,8 +23,7 @@ public class HaskellConfigurable() : Configurable {
     private val cabalDataPathField = TextFieldWithBrowseButton()
     private val ghcMod = TextFieldWithBrowseButton()
     private val ghcModi = TextFieldWithBrowseButton()
-    private val buildWrapper = TextFieldWithBrowseButton()
-
+    private val useGhcMod = JBCheckBox("Use ghc-mod automatic check (turn off if you have problems with ghc-mod)")
 
 
     override fun getDisplayName(): String {
@@ -50,13 +52,6 @@ public class HaskellConfigurable() : Configurable {
                 null,
                 FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
 
-        buildWrapper.addBrowseFolderListener(
-                "Select build-wrapper execurtable",
-                null,
-                null,
-                FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
-
-
         val result = JPanel(GridBagLayout())
 
         val listener : DocumentAdapter = object : DocumentAdapter() {
@@ -70,7 +65,6 @@ public class HaskellConfigurable() : Configurable {
         cabalPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
         cabalDataPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
         ghcMod.getTextField()!!.getDocument()!!.addDocumentListener(listener)
-        buildWrapper.getTextField()!!.getDocument()!!.addDocumentListener(listener)
 
         val base = gridBagConstraints {
             insets = Insets(2, 0, 2, 3)
@@ -102,15 +96,26 @@ public class HaskellConfigurable() : Configurable {
         addLabeledControl(1, "cabal data path", cabalDataPathField);
         addLabeledControl(2, "ghc-mod executable", ghcMod)
         addLabeledControl(3, "ghc-modi executable", ghcModi)
-        addLabeledControl(4, "buildwrapper executable", buildWrapper)
 
 
-        result.add(JPanel(), gridBagConstraints {
-            gridx = 0
-            gridy = 5
-            weighty = 10.0
-
+        useGhcMod.addChangeListener(object : ChangeListener {
+            override fun stateChanged(p0: ChangeEvent) {
+                isModified = true;
+            }
         })
+        result.add(useGhcMod, base.setConstraints {
+            anchor = GridBagConstraints.LINE_START
+            gridx = 0;
+            gridwidth = 2;
+            gridy = 4;
+        })
+
+
+        result.add(Box.createVerticalStrut(1), base.setConstraints {
+            gridy = 5;
+            weighty = 2.0;
+        })
+
 
         return result
     }
@@ -125,8 +130,7 @@ public class HaskellConfigurable() : Configurable {
         state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
         state.ghcModPath = ghcMod.getTextField()!!.getText()
         state.ghcModiPath = ghcModi.getTextField()!!.getText()
-
-        state.buildWrapperPath = buildWrapper.getTextField()!!.getText()
+        state.useGhcMod = useGhcMod.isSelected()
 
         isModified = false
     }
@@ -142,8 +146,7 @@ public class HaskellConfigurable() : Configurable {
         cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
         ghcModi.getTextField()!!.setText(state.ghcModiPath ?: "")
-
-        buildWrapper.getTextField()!!.setText(state.buildWrapperPath ?: "")
+        useGhcMod.setSelected(state.useGhcMod!!);
 
         isModified = false
     }

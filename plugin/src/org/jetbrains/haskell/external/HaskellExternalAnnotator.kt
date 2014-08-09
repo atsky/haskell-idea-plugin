@@ -27,6 +27,7 @@ import org.jetbrains.haskell.util.getRelativePath
 import com.intellij.openapi.application.ModalityState
 import java.util.regex.Pattern
 import java.util.ArrayList
+import org.jetbrains.haskell.config.HaskellSettings
 
 public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
@@ -154,6 +155,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
             return listOf()
         }
 
+        if (!(HaskellSettings.getInstance().getState().useGhcMod!!)) {
+            return listOf();
+        }
         return getResultFromGhcModi(psiFile, baseDir, file)
     }
 
