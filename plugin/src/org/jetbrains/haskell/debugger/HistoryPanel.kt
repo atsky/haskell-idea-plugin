@@ -28,7 +28,6 @@ import java.util.Vector
 import javax.swing.JComponent
 import java.awt.Component
 import javax.swing.ListSelectionModel
-import groovy.swing.factory.ScrollPaneFactory
 import com.intellij.ui.components.JBScrollPane
 import javax.swing.event.ListSelectionEvent
 import javax.swing.DefaultListSelectionModel
