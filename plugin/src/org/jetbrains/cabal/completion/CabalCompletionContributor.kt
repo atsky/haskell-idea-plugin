@@ -11,21 +11,16 @@ import com.intellij.psi.PsiFile
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.*
 import org.jetbrains.cabal.parser.*
-import org.jetbrains.cabal.psi.BoolField
-import org.jetbrains.cabal.psi.Path
-import org.jetbrains.cabal.psi.PathsField
-import org.jetbrains.cabal.psi.InvalidValue
-import org.jetbrains.cabal.psi.Name
-import org.jetbrains.cabal.psi.RangedValue
-import org.jetbrains.cabal.psi.Section
+import org.jetbrains.cabal.psi.*
+import org.jetbrains.cabal.CabalInterface
+import org.jetbrains.cabal.CabalFile
 import java.util.*
-
-
 
 public open class CabalCompletionContributor() : CompletionContributor() {
 
     public override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?): Unit {
         if (parameters?.getCompletionType() == CompletionType.BASIC) {
+
             val values = ArrayList<String>()
             val current = parameters?.getPosition()
             val parent = current?.getParent()
@@ -33,7 +28,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             var caseSensitivity = true
 
             when (parent) {
-                is PsiFile -> {
+                is CabalFile -> {
                     values.addAll(PKG_DESCR_FIELD_DESCRS map {it.concat(":")})
                     values.addAll(TOP_SECTIONS map {it.concat(":")})
                     caseSensitivity = false
@@ -58,6 +53,15 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     val grandParent = parent.getParent()
                     if (grandParent is PathsField) {
                         values.addAll(grandParent.getNextAvailableFile(parent, parameters!!.getOriginalFile().getVirtualFile()!!.getParent()!!))
+                    }
+                }
+                is Identifier -> {
+                    var parentField = parent
+                    while ((parentField !is Field) && (parentField !is CabalFile) && (parentField != null)) {
+                        parentField = parentField?.getParent()
+                    }
+                    if (parentField is BuildDependsField) {
+                        values.addAll(CabalInterface(current!!.getProject()).getInstalledPackagesList() map { it.name })
                     }
                 }
             }
