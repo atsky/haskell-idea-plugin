@@ -85,14 +85,11 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
     private inner class RunToPositionCallback(val breakpointNumber: Int,
                                               val module: String?) : CommandCallback<HsStackFrameInfo?>() {
         override fun execAfterParsing(result: HsStackFrameInfo?) {
-            if (result == null) {
-                throw RuntimeException("Wrong result obtained while running to the temporary breakpoint")
-            }
             enqueueCommandWithPriority(RemoveBreakpointCommand(module, breakpointNumber, RemoveTempBreakCallback(result)))
         }
     }
 
-    private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo)
+    private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
     : CommandCallback<ParseResult?>() {
         override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
