@@ -29,8 +29,7 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
         public class StandardStepCallback(val debugProcess: HaskellDebugProcess) : CommandCallback<HsStackFrameInfo?>() {
 
             override fun execBeforeSending() {
-                debugProcess.resetHistory()
-                debugProcess.historyChanged(false, false, null)
+                debugProcess.historyManager.resetHistoryStack()
             }
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {

@@ -23,7 +23,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     class object {
         public val HISTORY_SIZE: Int = 20
     }
-    public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
+    private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
     private val historyPanel: HistoryTab = HistoryTab(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
@@ -57,15 +57,12 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }
     }
 
-    public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
-        historyStack.withRealFrameUpdate(finalCallback)
-    }
+    public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?): Unit =
+            historyStack.withRealFrameUpdate(finalCallback)
 
-    public fun indexSelected(index: Int) {
-        historyStack.moveTo(index)
-    }
+    public fun indexSelected(index: Int): Unit = historyStack.moveTo(index)
 
-    public fun setHistoryFrameInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
+    public fun setHistoryFramesInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
             historyPanel.addHistoryLine(initial.toString())
             for (info in others) {
@@ -101,14 +98,13 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }))
     }
 
-    public fun clean() {
-        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
-            backAction.enabled = false
-            forwardAction.enabled = false
-            historyPanel.stackChanged(null)
-            historyHighlighter.hide()
-        }))
-    }
+    public fun clean(): Unit = historyChanged(false, false, null)
+
+    public fun historyFrameAppeared(frame: HsHistoryFrame): Unit = historyStack.addFrame(frame)
+
+    public fun resetHistoryStack(): Unit = historyStack.clear()
+
+    public fun markHistoryFramesAsObsolete(): Unit = historyStack.markFramesAsObsolete()
 
     public inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
         public var historyIndex: Int = 0
@@ -129,17 +125,12 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             updateHistory()
         }
 
-        public fun hasNext(): Boolean {
-            return historyIndex > 0
-        }
+        public fun hasNext(): Boolean = historyIndex > 0
 
-        public fun hasPrevious(): Boolean {
-            return !allFramesCollected || historyIndex + 1 < historyFrames.size
-        }
+        public fun hasPrevious(): Boolean = !allFramesCollected || historyIndex + 1 < historyFrames.size
 
-        public fun currentFrame(): HsHistoryFrame? {
-            return if (historyIndex < historyFrames.size) historyFrames.get(historyIndex) else null
-        }
+        public fun currentFrame(): HsHistoryFrame? =
+                if (historyIndex < historyFrames.size) historyFrames.get(historyIndex) else null
 
         public fun moveTo(index: Int) {
             if (index == -1 || index == historyIndex) {
@@ -211,9 +202,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             }
         }
 
-        private fun updateHistory() {
-            historyChanged(hasNext(), hasPrevious(), currentFrame())
-        }
+        private fun updateHistory() = historyChanged(hasNext(), hasPrevious(), currentFrame())
 
         public fun markFramesAsObsolete() {
             for (frame in historyFrames) {

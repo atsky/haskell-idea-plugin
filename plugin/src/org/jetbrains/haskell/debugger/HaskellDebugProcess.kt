@@ -252,32 +252,13 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
         (executionConsole as ConsoleView).print(text, contentType)
     }
+
     override fun createTabLayouter(): XDebugTabLayouter {
         return historyManager
     }
 
     override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
         historyManager.registerActions(leftToolbar, topToolbar)
-    }
-
-    public fun historyChanged(topHistory: Boolean, bottomHistory: Boolean, stackFrame: HsStackFrame?) {
-        historyManager.historyChanged(topHistory, bottomHistory, stackFrame)
-    }
-
-    public fun historyFrameAppeared(frame: HsHistoryFrame) {
-        historyManager.historyStack.addFrame(frame)
-    }
-
-    public fun resetHistory() {
-        historyManager.historyStack.clear()
-    }
-
-    public fun markHistoryFramesAsObsolete() {
-        historyManager.historyStack.markFramesAsObsolete()
-    }
-
-    public fun setHistoryFrameInfo(initial: HsHistoryFrameInfo, other: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
-        historyManager.setHistoryFrameInfo(initial, other, full)
     }
 
     // ProcessListener

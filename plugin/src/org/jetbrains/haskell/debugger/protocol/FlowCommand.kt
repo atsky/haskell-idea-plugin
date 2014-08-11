@@ -43,8 +43,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
         public class StandardFlowCallback(val debugProcess: HaskellDebugProcess) : CommandCallback<HsStackFrameInfo?>() {
 
             override fun execBeforeSending() {
-                debugProcess.resetHistory()
-                debugProcess.historyChanged(false, false, null)
+                debugProcess.historyManager.resetHistoryStack()
             }
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {
@@ -91,8 +90,8 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 val frame = HsHistoryFrame(debugProcess, result)
                 frame.obsolete = false
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                debugProcess.historyFrameAppeared(frame)
-                debugProcess.historyChanged(false, true, frame)
+                debugProcess.historyManager.historyFrameAppeared(frame)
+                debugProcess.historyManager.historyChanged(false, true, frame)
                 val breakpoint = debugProcess.exceptionBreakpoint
                 if (breakpoint == null) {
                     debugProcess.getSession()!!.positionReached(context)

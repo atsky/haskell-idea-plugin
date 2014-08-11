@@ -11,7 +11,6 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
-import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 
 /**
@@ -33,11 +32,12 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
 
             override fun execAfterParsing(result: HistoryResult?) {
                 val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
-                debugProcess.historyFrameAppeared(historyFrame)
+                debugProcess.historyManager.historyFrameAppeared(historyFrame)
                 if (result != null) {
-                    debugProcess.setHistoryFrameInfo(HsHistoryFrameInfo(0, null, historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
+                    debugProcess.historyManager.
+                            setHistoryFramesInfo(HsHistoryFrameInfo(0, null, historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
                 }
-                debugProcess.historyChanged(false, true, historyFrame)
+                debugProcess.historyManager.historyChanged(false, true, historyFrame)
                 if (breakpoint != null) {
                     debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
                 } else {

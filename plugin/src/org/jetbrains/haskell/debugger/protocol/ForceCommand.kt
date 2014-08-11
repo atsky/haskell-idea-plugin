@@ -35,7 +35,7 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
                     } else {
                         localBinding.value = ""
                     }
-                    debugProcess.markHistoryFramesAsObsolete()
+                    debugProcess.historyManager.markHistoryFramesAsObsolete()
                     bindingValueIsSet.signal()
                 } finally {
                     syncObject.unlock()
