@@ -46,7 +46,7 @@ public class GHCiParser() {
 
         private val FORCE_OUTPUT_PATTERN = "^(\\w+)\\s=\\s(.*)$"
 
-        public fun tryCreateFilePosition(line: String): HsFilePosition? {
+        private fun tryCreateFilePosition(line: String): HsFilePosition? {
             for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
                 if (matcher.matches()) {
@@ -118,7 +118,7 @@ public class GHCiParser() {
         /**
          * Parses ghci output trying to find local bindings in it
          */
-        public fun tryParseLocalBindings(output: Deque<String?>): LocalBindingList {
+        private fun tryParseLocalBindings(output: Deque<String?>): LocalBindingList {
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             for (currentLine in output) {
