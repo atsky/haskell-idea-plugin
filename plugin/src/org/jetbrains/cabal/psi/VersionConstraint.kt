@@ -11,9 +11,12 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public fun satisfyConstraint(givenVersion: String): Boolean {
         val version = getVersionValue()
-        if (getComparator().equals(">=")) return givenVersion >= version
-        if (getComparator().equals("<=")) return givenVersion <= version
-        if (isSimple()) return givenVersion == version
+        val comparator = getComparator()
+        if (comparator.equals(">=")) return givenVersion >= version
+        if (comparator.equals(">"))  return givenVersion > version
+        if (comparator.equals("<=")) return givenVersion <= version
+        if (comparator.equals("<"))  return givenVersion < version
+        if (isSimple())              return givenVersion == version
         val baseVersion = version.get(0, version.size - 2)!! as String
         return givenVersion startsWith baseVersion
     }
