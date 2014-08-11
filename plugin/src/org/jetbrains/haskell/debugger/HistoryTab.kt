@@ -1,58 +1,50 @@
 package org.jetbrains.haskell.debugger
 
-import javax.swing.JPanel
 import com.intellij.debugger.ui.impl.VariablesPanel
-import javax.swing.JLabel
-import javax.swing.JTextField
 import com.intellij.debugger.impl.DebuggerStateManager
 import com.intellij.debugger.impl.DebuggerContextImpl
-import javax.swing.SpringLayout
-import com.intellij.ui.AppUIUtil
-import com.intellij.debugger.DebuggerManagerEx
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import com.intellij.xdebugger.frame.XStackFrame
-import com.intellij.debugger.ui.FramesPanel
-import com.intellij.debugger.ui.impl.UpdatableDebuggerView
-import javax.swing.JList
-import java.awt.Dimension
 import javax.swing.DefaultListModel
-import javax.swing.JFrame
-import javax.swing.JSplitPane
-import javax.swing.JScrollPane
-import java.awt.BorderLayout
-import com.intellij.debugger.impl.DebuggerSession
-import com.intellij.debugger.settings.DebuggerSettings
-import com.intellij.util.Alarm
-import com.intellij.openapi.application.ModalityState
-import java.util.Vector
-import javax.swing.JComponent
-import java.awt.Component
 import javax.swing.ListSelectionModel
-import com.intellij.ui.components.JBScrollPane
 import javax.swing.event.ListSelectionEvent
 import javax.swing.DefaultListSelectionModel
-import com.intellij.xdebugger.impl.frame.DebuggerFramesList
-import javax.swing.ListCellRenderer
-import com.intellij.debugger.ui.impl.FramesList
 import com.intellij.ui.components.JBList
+import com.intellij.execution.ui.RunnerLayoutUi
+import com.intellij.openapi.Disposable
+import com.intellij.icons.AllIcons
+import javax.swing.JComponent
+import com.intellij.execution.ui.layout.PlaceInGrid
 
 /**
  * Created by vlad on 8/4/14.
  */
 
-public class HistoryPanel(private val process: HaskellDebugProcess,
-                                   private val manager: HistoryManager) : JSplitPane(JSplitPane.HORIZONTAL_SPLIT) {
+public class HistoryTab(private val process: HaskellDebugProcess,
+                        private val manager: HistoryManager) : Disposable {
 
     private val debugSession = process.getSession()!!
     private val debuggerStateManager: DebuggerStateManager = MyDebuggerStateManager()
+    private val myUi: RunnerLayoutUi = RunnerLayoutUi.Factory.getInstance(process.getSession()!!.getProject())!!
+            .create("History", "Debugger History", process.getSession()!!.getSessionName(), this)
 
     private val framesPanel = FramesPanel()
     private val selectionModel = DefaultListSelectionModel()
     private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), debuggerStateManager, null);
 
     {
-        setLeftComponent(JBScrollPane(framesPanel))
-        setRightComponent(variablesPanel)
+        val framesContext = myUi.createContent("HistoryFramesContent", framesPanel, "History frames", AllIcons.Debugger.Frame, null)
+        val variablesContext = myUi.createContent("HistoryVariablesContent", variablesPanel, "Current variables", AllIcons.Debugger.Value, null)
+        framesContext.setCloseable(false)
+        variablesContext.setCloseable(false)
+        myUi.addContent(framesContext, 0, PlaceInGrid.left, false)
+        myUi.addContent(variablesContext, 0, PlaceInGrid.right, false)
+    }
+
+    public fun getComponent(): JComponent {
+        return myUi.getComponent()
+    }
+
+    override fun dispose() {
     }
 
     public fun stackChanged(stackFrame: HsStackFrame?) {

@@ -25,7 +25,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     }
     public val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
-    private val historyPanel: HistoryPanel = HistoryPanel(debugProcess, this)
+    private val historyPanel: HistoryTab = HistoryTab(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
@@ -78,7 +78,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     }
 
     override fun registerAdditionalContent(ui: RunnerLayoutUi) {
-        val context = ui.createContent("history", historyPanel, "History", null, null)
+        val context = ui.createContent("history", historyPanel.getComponent(), "History", null, null)
         ui.addContent(context)
     }
 
