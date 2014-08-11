@@ -9,15 +9,28 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
+    public fun compareTo(other: String): Int? {
+        if (!isSimple()) return null
+        val thisVersion  = getVersionValue().split('.') map { it.toInt() }
+        val otherVersion = other.split('.') map { it.toInt() }
+
+        fun compareFrom(i: Int): Int {
+            if (i >= thisVersion.size)  return -1
+            if (i >= otherVersion.size) return 1
+            if (thisVersion[i] == otherVersion[i]) return compareFrom(i + 1)
+            return if (thisVersion[i] < otherVersion[i]) -1 else 1
+        }
+        return compareFrom(0)
+    }
+
     public fun satisfyConstraint(givenVersion: String): Boolean {
-        val version = getVersionValue()
         val comparator = getComparator()
-        if (comparator.equals(">=")) return givenVersion >= version
-        if (comparator.equals(">"))  return givenVersion > version
-        if (comparator.equals("<=")) return givenVersion <= version
-        if (comparator.equals("<"))  return givenVersion < version
-        if (isSimple())              return givenVersion == version
-        val baseVersion = version.get(0, version.size - 2)!! as String
+        if (comparator.equals(">=")) return compareTo(givenVersion)!! <= 0
+        if (comparator.equals(">"))  return compareTo(givenVersion)!! <  0
+        if (comparator.equals("<=")) return compareTo(givenVersion)!! >= 0
+        if (comparator.equals("<"))  return compareTo(givenVersion)!! >  0
+        if (isSimple())              return compareTo(givenVersion)!! == 0
+        val baseVersion = getVersionValue().get(0, getVersionValue().size - 2)!! as String
         return givenVersion startsWith baseVersion
     }
 
