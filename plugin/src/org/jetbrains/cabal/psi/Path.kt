@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import java.io.FilenameFilter
 import java.util.ArrayList
+import org.jetbrains.cabal.highlight.ErrorMessage
 
 public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue {
 
@@ -21,7 +22,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun isAbsolute(): Boolean = getFile().isAbsolute()
 
-    public fun isValidPath(): String? {
+    public fun checkPath(): ErrorMessage? {
         when (getParent()) {
             is DataDirField         -> return checkDataDir()
             is HSSourceDirsField    -> return checkFromRootIf({ it -> it.isDirectory() })
@@ -39,7 +40,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
                     "extra-source-files" -> return checkFileOrWildcard(getPathFromRoot())
                     "extra-tmp-files"    -> return checkFromRootIf({ true })
                     "c-sources"          -> return checkFromRootIf({ it -> !it.isDirectory() })
-                    else -> return "unchecked"
+                    else -> return makeWarning("unchecked")
                 }
             }
         }
@@ -72,14 +73,6 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun getPathFromRoot(): String = if (isAbsolute()) getText() else File(getCabalRootFile()!!.getPath(), getText()).getPath()
 
-    private fun checkDataDir(): String? {
-        if (isAbsolute()) return  "this path should be relative"
-        val file = getFileFromRoot()
-        if (file == null) return "invalid path"
-        if (!file.isDirectory()) return "this is not a directory"
-        return null
-    }
-
     private fun findFileInDirs(getDirs: () -> List<Path>?): VirtualFile? {
         var res = getFileFromRoot()
         if ((res != null) && !res!!.isDirectory()) return res
@@ -102,42 +95,52 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         return null
     }
 
-    private fun checkFileFromIncludes(): String? {
-        if (findFileInDirs({ getParentBuildSection()?.getIncludeDirs() }) == null) return "there is no such file"
+    private fun makeWarning(msg: String) = ErrorMessage(this, msg, "warning")
+
+    private fun checkDataDir(): ErrorMessage? {
+        if (isAbsolute()) return makeWarning("this path should be relative")
+        val file = getFileFromRoot()
+        if (file == null) return makeWarning("invalid path")
+        if (!file.isDirectory()) return makeWarning("this is not a directory")
+        return null
+    }
+
+    private fun checkFileFromIncludes(): ErrorMessage? {
+        if (findFileInDirs({ getParentBuildSection()?.getIncludeDirs() }) == null) return makeWarning("there is no such file")
         return null
     }
 
     private fun isWildcard(): Boolean = getFilename().matches("^\\*\\.(.+)$")
 
-    public fun checkWildcard(dir: VirtualFile?): String? {
-        if (dir == null) return "invalid path"
+    public fun checkWildcard(dir: VirtualFile?): ErrorMessage? {
+        if (dir == null) return makeWarning("invalid path")
         val res = filterByWildcard(dir)?.size
-        if (res == null) return "invali path"
+        if (res == null) return makeWarning("invali path")
         if (res > 0) return null
-        return "no file matches this wildcard"
+        return makeWarning("no file matches this wildcard")
     }
 
-    private fun checkMainFile(): String? {
-        if (isAbsolute()) return "this path should be relative"
+    private fun checkMainFile(): ErrorMessage? {
+        if (isAbsolute()) return makeWarning("this path should be relative")
         val res = findFileInDirs({ getParentBuildSection()?.getHSSourceDirs() })
-        if (res == null)  return "invalid path"
+        if (res == null)  return makeWarning("invalid path")
         val ext = res.getExtension()
-        if ((ext != "hs") && (ext != "lhs")) return "invalid extension"
+        if ((ext != "hs") && (ext != "lhs")) return makeWarning("invalid extension")
         return null
     }
 
-    public fun checkFileOrWildcard(path: String): String? {
+    public fun checkFileOrWildcard(path: String): ErrorMessage? {
         fun getParentPath(path: String) = File(path).getParent()
 
         val file = getAbsoluteFile(path)
         if ((file != null) && !file.isDirectory()) return null
         if (isWildcard()) return checkWildcard(getAbsoluteFile(getParentPath(path)!!))
-        return "invalid path"
+        return makeWarning("invalid path")
     }
 
-    private fun checkFromRootIf(isValid: (VirtualFile) -> Boolean): String? {
+    private fun checkFromRootIf(isValid: (VirtualFile) -> Boolean): ErrorMessage? {
         val res = getFileFromRoot()
-        if ((res == null) || !isValid(res)) return "invalid path"
+        if ((res == null) || !isValid(res)) return makeWarning("invalid path")
         return null
     }
 }

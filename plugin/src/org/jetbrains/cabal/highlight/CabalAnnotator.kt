@@ -32,12 +32,7 @@ public class CabalAnnotator() : Annotator {
         if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
 
         if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }
-        if (element is Path) {
-            val warningMsg = element.isValidPath()
-            if (warningMsg != null) {
-                holder.createWarningAnnotation(element,  warningMsg)
-            }
-        }
+        if (element is Path)                handle(element.checkPath())
 
         if ((element is PropertyKey) || (element is SectionType)) {
             keyword(element)
