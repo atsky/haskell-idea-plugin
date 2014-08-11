@@ -60,37 +60,11 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
     protected open fun doClose() {
     }
 
-    override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
+    final override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
 
     protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
 
     protected fun setReadyForInput() {
         queue.setReadyForInput()
-    }
-
-    protected inner class SetTempBreakForRunCallback(val traceCommand: String,
-                                                     val module: String?) : CommandCallback<BreakpointCommandResult?>() {
-        override fun execAfterParsing(result: BreakpointCommandResult?) {
-            if (result == null) {
-                return
-            }
-            if (debugStarted) {
-                enqueueCommandWithPriority(ResumeCommand(RunToPositionCallback(result.breakpointNumber, module)))
-            } else {
-                enqueueCommandWithPriority(TraceCommand(traceCommand, RunToPositionCallback(result.breakpointNumber, module)))
-            }
-        }
-    }
-
-    private inner class RunToPositionCallback(val breakpointNumber: Int,
-                                              val module: String?) : CommandCallback<HsStackFrameInfo?>() {
-        override fun execAfterParsing(result: HsStackFrameInfo?) {
-            enqueueCommandWithPriority(RemoveBreakpointCommand(module, breakpointNumber, RemoveTempBreakCallback(result)))
-        }
-    }
-
-    private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
-    : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
 }

@@ -38,13 +38,15 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(debugProcess) {
+public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess) {
 
     class object {
         private val HANDLE_NAME = "handle"
-        private val TRACE_CMD = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
         public val PROMPT_LINE: String = "debug> "
     }
+
+    override val traceCommand: String = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
+    override val globalBreakpointIndices: Boolean = true
 
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
@@ -69,53 +71,6 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : QueueDebugger(deb
             }
         }))
     }
-
-    override fun trace() =
-            enqueueCommand(TraceCommand(TRACE_CMD, FlowCommand.StandardFlowCallback(debugProcess)))
-
-
-    override fun setBreakpoint(module: String, line: Int) = enqueueCommand(SetBreakpointCommand(module, line,
-            SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
-
-    override fun removeBreakpoint(module: String, breakpointNumber: Int) =
-            enqueueCommand(RemoveBreakpointCommand(null, breakpointNumber, null))
-
-    override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
-            enqueueCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
-
-    override fun removeExceptionBreakpoint() {
-        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
-        enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-exception\n"))
-    }
-
-    override fun stepInto() =
-            enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
-
-    override fun stepOver() =
-            enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
-
-    override fun runToPosition(module: String, line: Int) {
-        if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            enqueueCommand(SetBreakpointCommand(module, line, super.SetTempBreakForRunCallback(TRACE_CMD, null)))
-        } else {
-            if (debugStarted) resume() else trace()
-        }
-    }
-
-    override fun resume() =
-            enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
-
-    override fun back(callback: CommandCallback<MoveHistResult?>?) =
-            enqueueCommand(BackCommand(callback))
-
-    override fun forward(callback: CommandCallback<MoveHistResult?>?) =
-            enqueueCommand(ForwardCommand(callback))
-
-    override fun print(printCommand: PrintCommand) = enqueueCommand(printCommand)
-
-    override fun force(forceCommand: ForceCommand) = enqueueCommand(forceCommand)
-
-    override fun history(callback: CommandCallback<HistoryResult?>) = enqueueCommand(HistoryCommand(callback))
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()
