@@ -35,7 +35,8 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
                 debugProcess.historyManager.historyFrameAppeared(historyFrame)
                 if (result != null) {
                     debugProcess.historyManager.
-                            setHistoryFramesInfo(HsHistoryFrameInfo(0, null, historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
+                            setHistoryFramesInfo(HsHistoryFrameInfo(0, historyFrame.stackFrameInfo.functionName,
+                                    historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
                 }
                 debugProcess.historyManager.historyChanged(false, true, historyFrame)
                 if (breakpoint != null) {
