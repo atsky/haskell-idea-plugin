@@ -11,12 +11,20 @@ import java.util.ArrayList
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.jetbrains.cabal.psi.*
+import org.jetbrains.cabal.parser.*
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 
 public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, CabalLanguage.INSTANCE), FieldContainer {
+
+    public override fun getAvailableFieldNames(): List<String> {
+        var res = ArrayList<String>()
+        res.addAll(PKG_DESCR_FIELD_DESCRS)
+        res.addAll(TOP_SECTIONS)
+        return res
+    }
 
     public override fun getFileType(): FileType {
         return CabalFileType.INSTANCE

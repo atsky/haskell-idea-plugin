@@ -9,6 +9,8 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 
 public trait FieldContainer: PsiElement {
 
+    public open fun getAvailableFieldNames(): List<String> = listOf()
+
     public fun <T : Field> getField(fieldType: Class<T>): T? {
         return PsiTreeUtil.findChildOfType(this, fieldType)
     }

@@ -95,6 +95,11 @@ public val TOP_SECTIONS: List<String> = listOf(
         "flag"
 )
 
+public val IF_ELSE: List<String> = listOf(
+        "if",
+        "else"
+)
+
 public val BENCH_TYPE_VALS: List<String> = listOf(
         "exitcode-stdio-1.0"
 )

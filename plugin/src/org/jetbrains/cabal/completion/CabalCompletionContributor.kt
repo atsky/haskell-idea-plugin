@@ -30,17 +30,19 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             when (parent) {
                 is CabalFile -> {
                     values.addAll(PKG_DESCR_FIELD_DESCRS map {it.concat(":")})
-                    values.addAll(TOP_SECTIONS map {it.concat(":")})
-                    caseSensitivity = false
-                }
-                is Section -> {
-                    values.addAll(parent.getAvailableFieldNames() map {it.concat(":")})
+                    values.addAll(TOP_SECTIONS)
                     caseSensitivity = false
                 }
                 is RangedValue -> {
-                    if ((parent is Name) && (parent.isFlagNameInCondition())) {
-                        values.addAll(parent.getAvailableValues() map { it + ")" })
-                        caseSensitivity = false
+                    if ((parent is Name)) {
+                        if (parent.isFlagNameInCondition()) {
+                            values.addAll(parent.getAvailableValues() map { it + ")" })
+                            caseSensitivity = false
+                        }
+                        else if (parent.getParent() is InvalidField) {
+                            values.addAll(parent.getAvailableValues() map { if ((it in TOP_SECTIONS) || (it in IF_ELSE)) it else it.concat(":") })
+                            caseSensitivity = false
+                        }
                     }
                     else values.addAll(parent.getAvailableValues())
                 }

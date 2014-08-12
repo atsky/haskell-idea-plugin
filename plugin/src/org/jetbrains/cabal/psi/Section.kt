@@ -13,8 +13,6 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public open class Section(node: ASTNode): Field(node), FieldContainer {
 
-    public open fun getAvailableFieldNames(): List<String> = listOf()
-
     public open fun checkFieldsPresence(): List<ErrorMessage> = listOf()
 
     public fun getSectChildren(): List<PsiElement> = getChildren() filter { it is Field }

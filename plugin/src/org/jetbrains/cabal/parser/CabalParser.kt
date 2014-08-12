@@ -418,8 +418,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseFlag(): Boolean = parseExactSection(0, "flag", { parseFreeLine(CabalTokelTypes.NAME) }) {
         parseField(it, "description", { parseFreeForm(it) })
-                || parseField(it, "default"    , { parseBool()       })
-                || parseField(it, "manual"     , { parseBool()       })
+                || parseField(it, "default"    , { parseBool()})
+                || parseField(it, "manual"     , { parseBool()})
     }
 
     fun parseSection() = parseExecutable() || parseLibrary() || parseTestSuite() || parseBenchmark() || parseRepo() || parseFlag()
@@ -427,8 +427,8 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
         while (!builder.eof()) {
-            if (!(parseTopLevelField() || parseSection() || parseInvalidField(0)))
-                builder.advanceLexer()
+            skipNewLine()
+            parseTopLevelField() || parseSection() || parseInvalidField(0) || parseInvalidLine()
         }
         rootMarker.done(root)
         return builder.getTreeBuilt()!!

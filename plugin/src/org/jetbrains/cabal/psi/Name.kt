@@ -14,8 +14,13 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, RangedValue {
 
     public override fun getAvailableValues(): List<String> {
+        val parent = getParent()
         if (isFlagNameInCondition()) {
             return (getContainingFile() as CabalFile).getFlagNames()
+        }
+        else if (parent is InvalidField) {
+            return (parent.getParent() as FieldContainer).getAvailableFieldNames()
+
         }
         return listOf()
     }
