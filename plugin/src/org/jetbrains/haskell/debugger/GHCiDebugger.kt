@@ -38,7 +38,7 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess) {
+public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess, true) {
 
     class object {
         private val HANDLE_NAME = "handle"

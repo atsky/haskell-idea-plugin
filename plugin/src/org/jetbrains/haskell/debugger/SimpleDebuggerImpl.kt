@@ -25,7 +25,8 @@ import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
  * Created by vlad on 8/11/14.
  */
 
-public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess) : QueueDebugger(debugProcess) {
+public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
+                                         showCommandsInConsole: Boolean) : QueueDebugger(debugProcess, showCommandsInConsole) {
 
     /**
      * Function, which is used to run with ':trace' command.

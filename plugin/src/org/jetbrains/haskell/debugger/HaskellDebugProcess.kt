@@ -276,9 +276,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         val text = event?.getText()
         if (text != null) {
             print(text)
-            if (debugger is RemoteDebugger) {
-                (executionConsole as ConsoleView).print(text, ConsoleViewContentType.SYSTEM_OUTPUT)
-            }
             debugger.onTextAvailable(text, outputType)
         }
     }

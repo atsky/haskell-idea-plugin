@@ -17,7 +17,8 @@ import org.jetbrains.haskell.debugger.protocol.FlowCommand
  * Created by vlad on 8/8/14.
  */
 
-public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess) : ProcessDebugger {
+public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
+                                    private val showCommandsInConsole: Boolean) : ProcessDebugger {
     private val writeLock = ReentrantLock()
     private val queue: CommandQueue;
 
@@ -41,7 +42,11 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         lastCommand = command
         command.callback?.execBeforeSending()
         if (lastCommand !is HiddenCommand) {
-            debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
+            if (showCommandsInConsole) {
+                debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
+            } else {
+                print(text)
+            }
         }
         val os = debugProcess.getProcessHandler().getProcessInput()!!
         os.write(text.toByteArray())

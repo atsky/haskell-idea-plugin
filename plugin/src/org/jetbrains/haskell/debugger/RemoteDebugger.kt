@@ -31,7 +31,7 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
  * Created by vlad on 7/30/14.
  */
 
-public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess) {
+public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess, false) {
 
     override val traceCommand: String = "main"
     override val globalBreakpointIndices: Boolean = false
