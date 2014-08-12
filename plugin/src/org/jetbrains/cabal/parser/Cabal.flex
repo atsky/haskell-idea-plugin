@@ -26,8 +26,8 @@ import com.intellij.psi.tree.IElementType;
 
 DIGIT            = [0-9]
 WHITE_SPACE_CHAR = [\ \f]
-INDENT           = [\n]({WHITE_SPACE_CHAR}|"\n")*
-EOL_COMMENT      = "--"[^\n]*
+INDENT           = [\n]({WHITE_SPACE_CHAR}|[\n])*
+EOL_COMMENT      = {INDENT}"--"[^\n]*
 COMPARATOR       = >= | <= | < | > | ==
 LOGIC            = && | \|\|
 
@@ -43,7 +43,7 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
-{INDENT}              { return TokenType.NEW_LINE_INDENT; }
+{INDENT}              { return TokenType.NEW_LINE_INDENT; }            // there cannot be more than one new NEW_LINE_INDENT in row
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 {COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
 {LOGIC}               { return CabalTokelTypes.LOGIC; }

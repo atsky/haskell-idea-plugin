@@ -69,7 +69,6 @@ public trait CabalTokelTypes {
         val REPO_MODULE            : IElementType = CabalCompositeElementType("REPO_MODULE"              , ::RepoModuleField          )
         val TEST_MODULE            : IElementType = CabalCompositeElementType("TEST_MODULE"              , ::TestModuleField          )
         val PROPERTY               : IElementType = CabalCompositeElementType("PROPERTY"                 , ::PropertyField            )
-        val INVALID_PROPERTY       : IElementType = CabalCompositeElementType("INVALID_PROPERTY"         , ::InvalidProperty          )
         val TYPE                   : IElementType = CabalCompositeElementType("TYPE"                     , ::TypeField                )
         val REPO_LOCATION          : IElementType = CabalCompositeElementType("REPO_LOCATION"            , ::RepoLocationField        )
         val REPO_TAG               : IElementType = CabalCompositeElementType("REPO_TAG"                 , ::RepoTagField             )
@@ -82,6 +81,7 @@ public trait CabalTokelTypes {
         val DATA_FILES             : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFilesField           )
         val INSTALL_INCLUDES       : IElementType = CabalCompositeElementType("INSTALL_INCLUDES"         , ::InstallIncludesField     )
         val INCLUDES               : IElementType = CabalCompositeElementType("INCLUDES"                 , ::IncludesField            )
+        val INVALID_FIELD          : IElementType = CabalCompositeElementType("INVALID_FIELD"            , ::InvalidField             )
 
         val MAIN_FILE              : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField            )
 

@@ -27,7 +27,7 @@ public class CabalAnnotator() : Annotator {
         }
 
         if (element is PropertyField)       handle(element.checkUniqueness())
-        if (element is InvalidProperty)     handle(ErrorMessage(element, "invalid property", "error"))
+        if (element is InvalidField)        handle(ErrorMessage(element, "invalid field", "error"))
         if (element is Checkable)           element.checkValue()           forEach { handle(it) }
         if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
 
