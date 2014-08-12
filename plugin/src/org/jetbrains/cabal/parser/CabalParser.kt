@@ -389,45 +389,45 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return false
     }
 
-    fun parseSection(level: Int) =
-               parseExactSection(level, "executable", { parseFreeLine(CabalTokelTypes.NAME) }) {
-                              parseMainFile(it)
-                           || parseBuildInformation(it)
-               }
+    fun parseExecutable(): Boolean = parseExactSection(0, "executable", { parseFreeLine(CabalTokelTypes.NAME) }) {
+        parseMainFile(it) || parseBuildInformation(it)
+    }
 
-            || parseExactSection(level, "test-suite", { parseFreeLine(CabalTokelTypes.NAME) }) {
-                              parseMainFile(it)
-                           || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.TEST_SUITE_TYPE) })
-                           || parseField(it, "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
-                           || parseBuildInformation(it)
-               }
+    fun parseLibrary(): Boolean = parseExactSection(0, "library", { true }) {
+        parseField(it, "exposed-modules", { parseIDList(it) })
+                || parseField(it, "exposed", { parseBool() })
+                || parseBuildInformation(it)
+    }
 
-            || parseExactSection(level, "library", { true }) {
-                              parseField(it, "exposed-modules", { parseIDList(it) })
-                           || parseField(it, "exposed"        , { parseBool() })
-                           || parseBuildInformation(it)
-               }
+    fun parseTestSuite(): Boolean = parseExactSection(0, "test-suite", { parseFreeLine(CabalTokelTypes.NAME) }) {
+       parseMainFile(it)
+               || parseField(it, "type", { parseIDValue(CabalTokelTypes.TEST_SUITE_TYPE) })
+               || parseField(it, "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+               || parseBuildInformation(it)
+    }
 
-            || parseExactSection(level, "benchmark", { parseFreeLine(CabalTokelTypes.NAME) }) {
-                              parseMainFile(it)
-                           || parseField(it, "type"       , { parseIDValue(CabalTokelTypes.BENCHMARK_TYPE) })
-                           || parseBuildInformation(it)
-               }
+    fun parseBenchmark(): Boolean = parseExactSection(0, "benchmark", { parseFreeLine(CabalTokelTypes.NAME) }) {
+        parseMainFile(it)
+            || parseField(it, "type", { parseIDValue(CabalTokelTypes.BENCHMARK_TYPE) })
+            || parseBuildInformation(it)
+    }
 
-            || parseExactSection(level, "source-repository", { parseRepoKinds() }) {
-                              parseRepoFields(it)
-               }
+    fun parseRepo(): Boolean = parseExactSection(0, "source-repository", { parseRepoKinds() }) {
+        parseRepoFields(it)
+    }
 
-            || parseExactSection(level, "flag", { parseFreeLine(CabalTokelTypes.NAME) }) {
-                              parseField(it, "description", { parseFreeForm(it) })
-                           || parseField(it, "default"    , { parseBool()       })
-                           || parseField(it, "manual"     , { parseBool()       })
-               }
+    fun parseFlag(): Boolean = parseExactSection(0, "flag", { parseFreeLine(CabalTokelTypes.NAME) }) {
+        parseField(it, "description", { parseFreeForm(it) })
+                || parseField(it, "default"    , { parseBool()       })
+                || parseField(it, "manual"     , { parseBool()       })
+    }
+
+    fun parseSection() = parseExecutable() || parseLibrary() || parseTestSuite() || parseBenchmark() || parseRepo() || parseFlag()
 
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
         while (!builder.eof()) {
-            if (!(parseTopLevelField() || parseSection(0) || parseInvalidField(0)))
+            if (!(parseTopLevelField() || parseSection() || parseInvalidField(0)))
                 builder.advanceLexer()
         }
         rootMarker.done(root)
