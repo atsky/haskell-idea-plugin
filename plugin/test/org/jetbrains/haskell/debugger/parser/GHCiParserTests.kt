@@ -1,4 +1,4 @@
-package org.jetbrains.tests.haskell.debugger
+package org.jetbrains.haskell.debugger.parser
 
 import org.junit.Test as test
 import kotlin.test.assertEquals
@@ -78,23 +78,23 @@ public class GHCiParserTests {
 
     test fun tryParseStoppedAtTest() {
         val traceOutput =       "Stopped at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:4:16-47\n" +
-                                "_result :: [Integer] = _\n" +
-                                "a :: Integer = 8\n"
+                "_result :: [Integer] = _\n" +
+                "a :: Integer = 8\n"
         val withPreSymbols =    ",3Stopped at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:4:37-47\n" +
-                                "_result :: [a] = _\n" +
-                                "right :: [a] = _\n"
+                "_result :: [a] = _\n" +
+                "right :: [a] = _\n"
         val withPreStoppedAt =  "Stopped at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:2:2-2\n" +
                 "Stopped at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:4:37-47\n" +
                 "_result :: [a] = _\n" +
                 "right :: [a] = _\n"
         val multiline =         "Stopped at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:(3,1)-(5,56)\n" +
-                                "_result :: [a] = _"
+                "_result :: [a] = _"
         val pointStop =         "Stopped at /home/marat-x/HaskellTestSpace/Main/Main.hs:4:22\n" +
-                                "_result :: a1 = _"
+                "_result :: a1 = _"
         val withNoInfo =        "_result :: [Integer] = _\n" +
-                                "a :: Integer = 8\n" +
-                                "left :: [Integer] = _\n" +
-                                "right :: [Integer] = _\n"
+                "a :: Integer = 8\n" +
+                "left :: [Integer] = _\n" +
+                "right :: [Integer] = _\n"
         val deq = LinkedList<String?>()
 
         deq.addAll(traceOutput.split('\n'))
@@ -143,18 +143,18 @@ public class GHCiParserTests {
 
     test fun parseMoveHistResultTest() {
         val usual =     "Logged breakpoint at /home/marat-x/HaskellTestSpace/Main/Main.hs:3:10-14\n" +
-                        "_result :: Bool\n" +
-                        "n :: Integer"
+                "_result :: Bool\n" +
+                "n :: Integer"
         val multiline = "Logged breakpoint at /home/marat-x/HaskellTestSpace/Main/Main.hs:(3,1)-(4,22)\n" +
-                        "_result :: a1"
+                "_result :: a1"
         val pointStop = "Logged breakpoint at /home/marat-x/HaskellTestSpace/Main/Main.hs:4:22\n" +
-                        "_result :: a1"
+                "_result :: a1"
         val stopped =   "Stopped at /home/marat-x/HaskellTestSpace/Main/Main.hs:10:9-16\n" +
-                        "_result :: IO ()\n" +
-                        "r2 :: Integer"
+                "_result :: IO ()\n" +
+                "r2 :: Integer"
         val random =    "Stopperegada dfrgaargt /home/marat-x/HaskellTestSpace/Main/Main.hs:10:9-16\n" +
-                        "_result ::agrg IO ()\n" +
-                        "r2 :: Integer"
+                "_result ::agrg IO ()\n" +
+                "r2 :: Integer"
         val deq = LinkedList<String?>()
 
         deq.addAll(usual.split('\n'))
@@ -235,14 +235,14 @@ public class GHCiParserTests {
 
     test fun parseHistoryResultTest() {
         val usual =     "-1  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:10-14)\n" +
-                        "-2  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:(4,1)-(5,30))\n" +
-                        "-3  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:22)\n" +
-                        "<end of history>\n"
+                "-2  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:(4,1)-(5,30))\n" +
+                "-3  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:22)\n" +
+                "<end of history>\n"
 
         val notFull =   "-1  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:10-14)\n" +
-                        "-2  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:(4,1)-(5,30))\n" +
-                        "-3  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:22)\n" +
-                        "...\n"
+                "-2  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:(4,1)-(5,30))\n" +
+                "-3  : iter (/home/marat-x/HaskellTestSpace/Main/Main.hs:4:22)\n" +
+                "...\n"
         val deq = LinkedList<String?>()
 
         deq.addAll(usual.split('\n'))
