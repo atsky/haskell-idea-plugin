@@ -31,8 +31,9 @@ public class CabalAnnotator() : Annotator {
         if (element is Checkable)           element.checkValue()           forEach { handle(it) }
         if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
 
-        if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }
         if (element is Path)                handle(element.checkPath())
+        if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }
+        if (element is CabalVersionField)   handle(element.checkVersion())
 
         if ((element is PropertyKey) || (element is SectionType)) {
             keyword(element)
