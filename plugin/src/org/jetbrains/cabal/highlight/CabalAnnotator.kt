@@ -2,7 +2,9 @@ package org.jetbrains.cabal.highlight
 
 import com.intellij.lang.annotation.*
 import com.intellij.psi.PsiElement
+
 import org.jetbrains.cabal.psi.*
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.haskell.highlight.HaskellHighlighter
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.highlight.ErrorMessage
@@ -22,8 +24,16 @@ public class CabalAnnotator() : Annotator {
 
         fun handle(errMsg: ErrorMessage?) {
             if (errMsg == null) return
-            if (errMsg.severity == "error")   holder.createErrorAnnotation(errMsg.place, errMsg.text)
-            if (errMsg.severity == "warning") holder.createWarningAnnotation(errMsg.place, errMsg.text)
+            if (errMsg.isAfterNode) {
+                val endOffset = errMsg.place.getTextRange()!!.getEndOffset()
+                val place = TextRange(endOffset - 1, endOffset)
+                if (errMsg.severity == "error")   holder.createErrorAnnotation(place, errMsg.text)
+                if (errMsg.severity == "warning") holder.createWarningAnnotation(place, errMsg.text)
+            }
+            else {
+                if (errMsg.severity == "error") holder.createErrorAnnotation(errMsg.place, errMsg.text)
+                if (errMsg.severity == "warning") holder.createWarningAnnotation(errMsg.place, errMsg.text)
+            }
         }
 
         if (element is PropertyField)       handle(element.checkUniqueness())

@@ -8,8 +8,4 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class InvalidConditionPart(node: ASTNode) : InvalidValue(node) {
 
-    public override fun checkValue(): List<ErrorMessage> {
-        if (getText()!!.size > 0) return listOf(ErrorMessage(this, "invalid condition", "error"))
-        return listOf()
-    }
 }
