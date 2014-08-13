@@ -41,9 +41,9 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
 
     public fun getDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
 
-    public fun getActualDataDir(): VirtualFile {
-        val dataDir = getDataDir()?.getFileFromRoot()
-        if (dataDir == null) return getCabalVirtualFile()!!.getParent()!!
-        return dataDir
-    }
+//    public fun getActualDataDir(): VirtualFile {
+//        val dataDir = getDataDir()?.getFileFromRoot()
+//        if (dataDir == null) return getCabalVirtualFile()!!.getParent()!!
+//        return dataDir
+//    }
 }

@@ -9,7 +9,9 @@ import java.io.File
 public class DataFilesField(node: ASTNode) : PathsField(node) {
 
     public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
-        val dirPath = File(prefixPath.getPathWithParent(prefixPath.getCabalFile().getActualDataDir())).getParent()
+        var dataDir = prefixPath.getCabalFile().getDataDir()?.getFileWithParent(originalRootDir)
+        if (dataDir == null) dataDir = originalRootDir
+        val dirPath = File(prefixPath.getPathWithParent(dataDir!!)).getParent()
         val dirFile = if (dirPath == null) null else originalRootDir.getFileSystem().findFileByPath(dirPath)
         if (dirFile == null) return listOf()
         return listOf(dirFile)

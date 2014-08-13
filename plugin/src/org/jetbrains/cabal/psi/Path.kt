@@ -31,7 +31,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
             is RepoSubdirField      -> return null
             is MainFileField        -> return checkMainFile()
             is LicenseFilesField    -> return checkFromRootIf({ it -> !it.isDirectory() })
-            is DataFilesField       -> return checkFileOrWildcard(getPathWithParent(getCabalFile().getActualDataDir()))
+            is DataFilesField       -> return checkFileOrWildcard(getPathFromDataDir())
             is IncludesField        -> return checkFileFromIncludes()
             is InstallIncludesField -> return checkFileFromIncludes()
             else -> {
@@ -103,6 +103,12 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         if (file == null) return makeWarning("invalid path")
         if (!file.isDirectory()) return makeWarning("this is not a directory")
         return null
+    }
+
+    private fun getPathFromDataDir(): String {
+        val dataDir = getCabalFile().getDataDir()?.getFileFromRoot()
+        if (dataDir == null) return getPathFromRoot()
+        return getPathWithParent(dataDir)
     }
 
     private fun checkFileFromIncludes(): ErrorMessage? {

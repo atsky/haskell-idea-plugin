@@ -11,7 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 
 public open class PropertyField(node: ASTNode) : Field(node) {
 
-    public fun checkUniqueness(): ErrorMessage? {
+    public open fun checkUniqueness(): ErrorMessage? {
         if ((getParent()!!.getChildren() filter { (it is PropertyField) && (it.hasName(getFieldName())) }).size > 1)
                 return ErrorMessage(getKeyNode(), "duplicate field", "error")
         return null

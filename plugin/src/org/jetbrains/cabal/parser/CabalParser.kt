@@ -314,15 +314,15 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             || parseField(firstIndent, "license-file"           , { parsePath() })
             || parseField(firstIndent, "license-files"          , { parsePathList(it) })
             || parseField(firstIndent, "data-dir"               , { parsePath() })
-            || parseField(firstIndent, "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
-            || parseFieldVariety(firstIndent, URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseField(firstIndent, "maintainer"             , { parseFreeLine(CabalTokelTypes.E_MAIL) })
+            || parseFieldVariety(firstIndent, URL_FIELD_NAMES          , { parseFreeLine(CabalTokelTypes.URL) })
             || parseFieldVariety(firstIndent, TOP_FILE_LIST_FIELD_NAMES, { parsePathList(it) })
             || parseFieldVariety(firstIndent, FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
 
     fun parseMainFile(level: Int) = parseField(level, "main-is", { parsePath() })
 
     fun parseRepoFields(level: Int) =
-               parseField(level, "location"         , { parseTokenValue(CabalTokelTypes.URL) })
+               parseField(level, "location"         , { parseFreeLine(CabalTokelTypes.URL) })
             || parseField(level, "type"             , { parseIDValue(CabalTokelTypes.REPO_TYPE) })
             || parseField(level, "module"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
             || parseField(level, "branch"           , { parseTokenValue(CabalTokelTypes.TOKEN) })
