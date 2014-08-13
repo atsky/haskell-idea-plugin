@@ -59,7 +59,12 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseVersion() = token(CabalTokelTypes.NUMBER) || token(CabalTokelTypes.ID)
 
     fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
-        token(CabalTokelTypes.COMPARATOR) && parseVersion()
+        if (token(CabalTokelTypes.COMPARATOR)) {
+            parseVersion()
+        }
+        else {
+            matches(CabalTokelTypes.ID, "-any")
+        }
     }
 
     fun indentSize(str: String): Int {
