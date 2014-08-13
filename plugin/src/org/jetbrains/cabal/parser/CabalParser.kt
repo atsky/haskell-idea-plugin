@@ -145,9 +145,17 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun parseIDValue(elemType: IElementType) = start(elemType, { token(CabalTokelTypes.ID) })
 
-    fun parseTokenValue(elemType: IElementType) = parseFreeLine(elemType)                               // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    fun parseTokenValue(elemType: IElementType) = start(elemType) {
+        var isntEmpty = false
+        while (!isLastOnThisLine() && (builder.getTokenType() != CabalTokelTypes.COMMA)&& (builder.getTokenType() != CabalTokelTypes.TAB)) {
+            builder.advanceLexer()
+            isntEmpty = true
+            if (builder.rawTokenTypeStart(1) != builder.getCurrentOffset() + builder.getTokenText()!!.size) break
+        }
+        isntEmpty
+    }
 
-    fun parsePath() = parseTokenValue(CabalTokelTypes.PATH)                                             // !!!!!
+    fun parsePath() = parseTokenValue(CabalTokelTypes.PATH)
 
     fun parseTillSeparatorOrPrevLevel(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, separatorIsOptional: Boolean) : Boolean {
         if (!onOneLine) skipNewLineBiggerLevel(prevLevel)                                                          // returns false if there is nothing to parse
