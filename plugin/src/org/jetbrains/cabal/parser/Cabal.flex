@@ -60,7 +60,7 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 "}"                   { return CabalTokelTypes.CLOSE_CURLY; }
 "{-"/[^#]             { yybegin(BLOCK_COMMENT); return CabalTokelTypes.COMMENT; }
 ({DIGIT})+            { return CabalTokelTypes.NUMBER; }
-\"([^\"]|"\\\"")*\"   { return CabalTokelTypes.STRING; }
+\"([^\\\"]|\\.)*\"      { return CabalTokelTypes.STRING; }
 
 {IDENTIFIER}          { return CabalTokelTypes.ID; }
 

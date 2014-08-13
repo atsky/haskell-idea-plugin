@@ -88,26 +88,26 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
 
     fun isLastOnThisLine() : Boolean = (builder.eof() || (builder.getTokenType() == TokenType.NEW_LINE_INDENT))
 
-    fun skipNewLine(level: Int = -1) {
+    fun skipNewLineBiggerLevel(prevLevel: Int) {
         val nextIndent = nextLevel()
-        if ((nextIndent != null) && (nextIndent > level))
+        if ((nextIndent != null) && (nextIndent > prevLevel))
             builder.advanceLexer()
     }
 
-    fun isLastOnThisLevel(prevLevel: Int) : Boolean {
+    fun isLastBiggerLevel(level: Int) : Boolean {
         val nextIndent = nextLevel()
-        if (builder.eof() || ((nextIndent != null) && (nextIndent <= prevLevel))) {
+        if (builder.eof() || ((nextIndent != null) && (nextIndent <= level))) {
             return true
         }
         return false
     }
 
-    fun skipAllBiggerLevelTill(prevLevel: Int, parseSeparator: () -> Boolean) {
+    fun skipAllBiggerLevelTill(level: Int, parseSeparator: () -> Boolean) {
         while (!builder.eof()) {
-            if (isLastOnThisLevel(prevLevel)) {
+            if (isLastBiggerLevel(level)) {
                 break
             }
-            if (canParse({ skipNewLine(prevLevel); parseSeparator() })) {
+            if (canParse({ skipNewLineBiggerLevel(level); parseSeparator() })) {
                 break
             }
             builder.advanceLexer();
@@ -150,17 +150,17 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parsePath() = parseTokenValue(CabalTokelTypes.PATH)                                             // !!!!!
 
     fun parseTillSeparatorOrPrevLevel(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, separatorIsOptional: Boolean) : Boolean {
-        if (!onOneLine) skipNewLine(prevLevel)                                                          // returns false if there is nothing to parse
+        if (!onOneLine) skipNewLineBiggerLevel(prevLevel)                                                          // returns false if there is nothing to parse
         val mark = builder.mark()!!
         var valueParsed = parseValue()
-        if (!onOneLine) skipNewLine(prevLevel)
-        if (valueParsed && (isLastOnThisLevel(prevLevel) || canParse({ parseSeparator() }) || separatorIsOptional)) {
+        if (!onOneLine) skipNewLineBiggerLevel(prevLevel)
+        if (valueParsed && (isLastBiggerLevel(prevLevel) || canParse({ parseSeparator() }) || separatorIsOptional)) {
             mark.drop()
         }
         else {
             mark.rollbackTo()
             parseInvalidValueTillSeparator(prevLevel, parseSeparator, onOneLine)
-            if (!onOneLine) skipNewLine(prevLevel)
+            if (!onOneLine) skipNewLineBiggerLevel(prevLevel)
         }
         return true
     }
@@ -168,7 +168,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
     fun parseTillEndValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, separatorIsOptional: Boolean) : Boolean {
         do {
             parseTillSeparatorOrPrevLevel(prevLevel, parseValue, parseSeparator, onOneLine, separatorIsOptional)
-        } while ((!builder.eof()) && !isLastOnThisLevel(prevLevel) && (parseSeparator() || separatorIsOptional))
+        } while ((!builder.eof()) && !isLastBiggerLevel(prevLevel) && (parseSeparator() || separatorIsOptional))
         return true
     }
 
@@ -176,34 +176,34 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         var mark: Marker? = builder.mark()!!
         var nonEmpty = false
         do {
-            if (!onOneLine) skipNewLine(prevLevel);
+            if (!onOneLine) skipNewLineBiggerLevel(prevLevel);
             if (parseValue()) {
                 mark?.drop()
                 nonEmpty = true
             }
             else break
             mark = builder.mark()!!
-            if (!onOneLine) skipNewLine(prevLevel);
+            if (!onOneLine) skipNewLineBiggerLevel(prevLevel);
         } while ((!builder.eof()) && parseSeparator())
         mark?.rollbackTo()
         return nonEmpty
     }
 
-    fun parseCommonCommaList(level: Int, parseBody: () -> Boolean) = parseTillEndValueList(
-            level,
+    fun parseCommonCommaList(prevLevel: Int, parseBody: () -> Boolean) = parseTillEndValueList(
+            prevLevel,
             parseBody,
             { token(CabalTokelTypes.COMMA) },
             onOneLine = false,
             separatorIsOptional = true
     )
 
-    fun parseTokenList(level: Int)  = parseCommonCommaList(level, { parseTokenValue(CabalTokelTypes.TOKEN) })
+    fun parseTokenList(prevLevel: Int)  = parseCommonCommaList(prevLevel, { parseTokenValue(CabalTokelTypes.TOKEN) })
 
-    fun parseIDList(level: Int)     = parseCommonCommaList(level, { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+    fun parseIDList(prevLevel: Int)     = parseCommonCommaList(prevLevel, { parseIDValue(CabalTokelTypes.IDENTIFIER) })
 
-    fun parseOptionList(level: Int) = parseCommonCommaList(level, { parseIDValue(CabalTokelTypes.OPTION) })
+    fun parseOptionList(prevLevel: Int) = parseCommonCommaList(prevLevel, { parseIDValue(CabalTokelTypes.OPTION) })
 
-    fun parsePathList(level: Int)   = parseCommonCommaList(level, { parsePath() })
+    fun parsePathList(prevLevel: Int)   = parseCommonCommaList(prevLevel, { parsePath() })
 
     fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
         parseTillValidValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine)
@@ -214,7 +214,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
                 && (parseComplexVersionConstraint(prevLevel, onOneLine) || true)
     }
 
-    fun parseSimpleCondition(level: Int) = start(CabalTokelTypes.SIMPLE_CONDITION) {
+    fun parseSimpleCondition(prevLevel: Int) = start(CabalTokelTypes.SIMPLE_CONDITION) {
         val testName = builder.getTokenText()
         if (parseBool()) {
             true
@@ -222,7 +222,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         else if (token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)) {
             var res: Boolean
             when (testName) {
-                "impl" -> res = parseFullVersionConstraint(level, CabalTokelTypes.COMPILER, true)
+                "impl" -> res = parseFullVersionConstraint(prevLevel, CabalTokelTypes.COMPILER, true)
                 "flag" -> res = parseIDValue(CabalTokelTypes.NAME)
                 else   -> res = parseIDValue(CabalTokelTypes.IDENTIFIER)
             }
@@ -243,21 +243,21 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         true
     }
 
-    fun parseConditionPart(level: Int): Boolean = start(CabalTokelTypes.CONDITION_PART) {
+    fun parseConditionPart(prevLevel: Int): Boolean = start(CabalTokelTypes.CONDITION_PART) {
         if (token(CabalTokelTypes.NEGATION)) {
-            parseConditionPart(level)
+            parseConditionPart(prevLevel)
         }
         else if (token(CabalTokelTypes.OPEN_PAREN)) {
-            parseCondition(level) && (token(CabalTokelTypes.CLOSE_PAREN) || true)
+            parseCondition(prevLevel) && (token(CabalTokelTypes.CLOSE_PAREN) || true)
         }
         else {
-            parseSimpleCondition(level)
+            parseSimpleCondition(prevLevel)
         }
     }
 
-    fun parseCondition(level: Int) = parseTillValidValueList(
-            level,
-            { parseConditionPart(level) || parseInvalidConditionPart() },
+    fun parseCondition(prevLevel: Int) = parseTillValidValueList(
+            prevLevel,
+            { parseConditionPart(prevLevel) || parseInvalidConditionPart() },
             { token(CabalTokelTypes.LOGIC) || (parseInvalidConditionPart() && token(CabalTokelTypes.LOGIC)) },
             onOneLine = true
     )
@@ -270,12 +270,12 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             separatorIsOptional = false
     )
 
-    fun parseCompilerList(level: Int) = parseConstraintList(level, CabalTokelTypes.COMPILER)
+    fun parseCompilerList(prevLevel: Int) = parseConstraintList(prevLevel, CabalTokelTypes.COMPILER)
 
     fun parseField(level: Int, key : String?, parseValue : (Int) -> Boolean) = start(PROPERTY_FIELD_TYPES.get(key)!!) {
         if (parsePropertyKey(key) && token(CabalTokelTypes.COLON)) {
-            skipNewLine(level)
-            (parseValue(level) && isLastOnThisLevel(level)) || parseInvalidValueTillSeparator(level, parseSeparator = { false }, onOneLine = false)
+            skipNewLineBiggerLevel(level)
+            (parseValue(level) && isLastBiggerLevel(level)) || parseInvalidValueTillSeparator(level, parseSeparator = { false }, onOneLine = false)
         }
         else false
     }
@@ -296,20 +296,20 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         else false
     }
 
-    fun parseTopLevelField() =
-               parseField(0, "version"                , { start(CabalTokelTypes.VERSION_VALUE, { parseVersion() }) })
-            || parseField(0, "cabal-version"          , { parseSimpleVersionConstraint() })
-            || parseField(0, "name"                   , { parseIDValue(CabalTokelTypes.NAME) })
-            || parseField(0, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
-            || parseField(0, "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })
-            || parseField(0, "tested-with"            , { parseCompilerList(it) })
-            || parseField(0, "license-file"           , { parsePath() })
-            || parseField(0, "license-files"          , { parsePathList(it) })
-            || parseField(0, "data-dir"               , { parsePath() })
-            || parseField(0, "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
-            || parseFieldVariety(0, URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
-            || parseFieldVariety(0, TOP_FILE_LIST_FIELD_NAMES, { parsePathList(it) })
-            || parseFieldVariety(0, FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
+    fun parseTopLevelField(firstIndent: Int) =
+               parseField(firstIndent, "version"                , { start(CabalTokelTypes.VERSION_VALUE, { parseVersion() }) })
+            || parseField(firstIndent, "cabal-version"          , { parseSimpleVersionConstraint() })
+            || parseField(firstIndent, "name"                   , { parseIDValue(CabalTokelTypes.NAME) })
+            || parseField(firstIndent, "build-type"             , { parseIDValue(CabalTokelTypes.BUILD_TYPE) })
+            || parseField(firstIndent, "license"                , { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+            || parseField(firstIndent, "tested-with"            , { parseCompilerList(it) })
+            || parseField(firstIndent, "license-file"           , { parsePath() })
+            || parseField(firstIndent, "license-files"          , { parsePathList(it) })
+            || parseField(firstIndent, "data-dir"               , { parsePath() })
+            || parseField(firstIndent, "maintainer"             , { parseTokenValue(CabalTokelTypes.E_MAIL) })
+            || parseFieldVariety(firstIndent, URL_FIELD_NAMES          , { parseTokenValue(CabalTokelTypes.URL) })
+            || parseFieldVariety(firstIndent, TOP_FILE_LIST_FIELD_NAMES, { parsePathList(it) })
+            || parseFieldVariety(firstIndent, FREE_FORM_FIELD_NAMES    , { parseFreeForm(it) })
 
     fun parseMainFile(level: Int) = parseField(level, "main-is", { parsePath() })
 
@@ -351,7 +351,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
             else if ((currentLevel == null) && (level > prevLevel)) {
                 currentLevel = level
             }
-            skipNewLine()
+            skipNewLineBiggerLevel(prevLevel)
             if ((currentLevel != null) && (level != currentLevel!!) && (level > prevLevel)) {
                 parseInvalidValueTillSeparator(currentLevel!!, parseSeparator = { false }, onOneLine = false)
             }
@@ -381,7 +381,7 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         if (parseExactSection(level, "if", { start(CabalTokelTypes.FULL_CONDITION, { parseCondition(level) }) }, parseFields)) {
             if (nextLevel() == level) {
                 val marker = builder.mark()!!
-                skipNewLine()
+                skipNewLineBiggerLevel(level - 1)
                 if (parseExactSection(level, "else", { true }, parseFields)) {
                     marker.drop()
                 }
@@ -394,46 +394,60 @@ class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, bu
         return false
     }
 
-    fun parseExecutable(): Boolean = parseExactSection(0, "executable", { parseFreeLine(CabalTokelTypes.NAME) }) {
+    fun parseExecutable(firstIndent: Int): Boolean = parseExactSection(firstIndent, "executable", { parseFreeLine(CabalTokelTypes.NAME) }) {
         parseMainFile(it) || parseBuildInformation(it)
     }
 
-    fun parseLibrary(): Boolean = parseExactSection(0, "library", { true }) {
+    fun parseLibrary(firstIndent: Int): Boolean = parseExactSection(firstIndent, "library", { true }) {
         parseField(it, "exposed-modules", { parseIDList(it) })
                 || parseField(it, "exposed", { parseBool() })
                 || parseBuildInformation(it)
     }
 
-    fun parseTestSuite(): Boolean = parseExactSection(0, "test-suite", { parseFreeLine(CabalTokelTypes.NAME) }) {
+    fun parseTestSuite(firstIndent: Int): Boolean = parseExactSection(firstIndent, "test-suite", { parseFreeLine(CabalTokelTypes.NAME) }) {
        parseMainFile(it)
                || parseField(it, "type", { parseIDValue(CabalTokelTypes.TEST_SUITE_TYPE) })
                || parseField(it, "test-module", { parseIDValue(CabalTokelTypes.IDENTIFIER) })
                || parseBuildInformation(it)
     }
 
-    fun parseBenchmark(): Boolean = parseExactSection(0, "benchmark", { parseFreeLine(CabalTokelTypes.NAME) }) {
+    fun parseBenchmark(firstIndent: Int): Boolean = parseExactSection(firstIndent, "benchmark", { parseFreeLine(CabalTokelTypes.NAME) }) {
         parseMainFile(it)
             || parseField(it, "type", { parseIDValue(CabalTokelTypes.BENCHMARK_TYPE) })
             || parseBuildInformation(it)
     }
 
-    fun parseRepo(): Boolean = parseExactSection(0, "source-repository", { parseRepoKinds() }) {
+    fun parseRepo(firstIndent: Int): Boolean = parseExactSection(firstIndent, "source-repository", { parseRepoKinds() }) {
         parseRepoFields(it)
     }
 
-    fun parseFlag(): Boolean = parseExactSection(0, "flag", { parseFreeLine(CabalTokelTypes.NAME) }) {
+    fun parseFlag(firstIndent: Int): Boolean = parseExactSection(firstIndent, "flag", { parseFreeLine(CabalTokelTypes.NAME) }) {
         parseField(it, "description", { parseFreeForm(it) })
                 || parseField(it, "default"    , { parseBool()})
                 || parseField(it, "manual"     , { parseBool()})
     }
 
-    fun parseSection() = parseExecutable() || parseLibrary() || parseTestSuite() || parseBenchmark() || parseRepo() || parseFlag()
+    fun parseSection(firstIndent: Int) = parseExecutable(firstIndent)
+                                      || parseLibrary(firstIndent)
+                                      || parseTestSuite(firstIndent)
+                                      || parseBenchmark(firstIndent)
+                                      || parseRepo(firstIndent)
+                                      || parseFlag(firstIndent)
 
     fun parseInternal(root: IElementType): ASTNode {
         val rootMarker = mark()
+        val firstIndent = builder.getCurrentOffset()
         while (!builder.eof()) {
-            skipNewLine()
-            parseTopLevelField() || parseSection() || parseInvalidField(0) || parseInvalidLine()
+            val nextIndent = nextLevel()
+            if ((nextIndent == null) || (nextIndent == firstIndent)) {
+                skipNewLineBiggerLevel(firstIndent - 1)
+                parseTopLevelField(firstIndent) || parseSection(firstIndent) || parseInvalidField(firstIndent) || parseInvalidLine()
+            }
+            else {
+                skipNewLineBiggerLevel(- 1)
+                parseInvalidLine()
+            }
+
         }
         rootMarker.done(root)
         return builder.getTreeBuilt()!!
