@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="pty4j-0.3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/pty4j-0.3.jar!/" />
+      <root url="file://$PROJECT_DIR$/lib/os" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

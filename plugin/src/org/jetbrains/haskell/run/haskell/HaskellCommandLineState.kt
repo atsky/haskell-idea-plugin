@@ -4,7 +4,6 @@ import com.intellij.execution.CantRunException
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.JavaCommandLineStateUtil
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import java.io.File
@@ -27,14 +26,36 @@ import org.jetbrains.cabal.CabalFile
 import org.jetbrains.cabal.psi.Executable
 import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
+import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.process.OSProcessHandler
+import com.pty4j.PtyProcess
+import org.jetbrains.haskell.config.HaskellSettings
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
 
     protected override fun startProcess(): ProcessHandler {
         val generalCommandLine = createCommandLine()
+        val processHandler: ProcessHandler =
+                if (HaskellSettings.getInstance().getState().usePty!!) {
+                    OSProcessHandler(getPtyProcess(generalCommandLine)!!)
+                } else {
+                    OSProcessHandler(generalCommandLine)
+                }
+        ProcessTerminatedListener.attach(processHandler)
+        return processHandler
+    }
 
-        return JavaCommandLineStateUtil.startProcess(generalCommandLine)
+    private fun getPtyProcess(generalCommandLine: GeneralCommandLine): PtyProcess? {
+        val exePath = generalCommandLine.getExePath()!!
+        val params = generalCommandLine.getParametersList()?.getList()
+        val env = generalCommandLine.getEnvironment()
+        val dir = generalCommandLine.getWorkDirectory()
+        val command = Array(1 + (params?.size ?: 0), {
+            (i: Int) ->
+            if (i == 0) exePath else params!!.get(i - 1)
+        })
+        return PtyProcess.exec(command, env, dir?.getAbsolutePath(), true)
     }
 
     /**

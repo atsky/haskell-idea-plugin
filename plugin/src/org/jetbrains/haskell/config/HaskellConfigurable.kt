@@ -24,6 +24,7 @@ public class HaskellConfigurable() : Configurable {
     private val ghcMod = TextFieldWithBrowseButton()
     private val ghcModi = TextFieldWithBrowseButton()
     private val useGhcMod = JBCheckBox("Use ghc-mod automatic check (turn off if you have problems with ghc-mod)")
+    private val usePty = JBCheckBox("Use pseudo terminal for project running")
 
 
     override fun getDisplayName(): String {
@@ -93,26 +94,34 @@ public class HaskellConfigurable() : Configurable {
         }
 
         addLabeledControl(0, "cabal executable", cabalPathField)
-        addLabeledControl(1, "cabal data path", cabalDataPathField);
+        addLabeledControl(1, "cabal data path", cabalDataPathField)
         addLabeledControl(2, "ghc-mod executable", ghcMod)
         addLabeledControl(3, "ghc-modi executable", ghcModi)
 
-
-        useGhcMod.addChangeListener(object : ChangeListener {
+        val defaultChangeListener = object : ChangeListener {
             override fun stateChanged(p0: ChangeEvent) {
                 isModified = true;
             }
-        })
+        }
+        useGhcMod.addChangeListener(defaultChangeListener)
+        usePty.addChangeListener(defaultChangeListener)
+
         result.add(useGhcMod, base.setConstraints {
             anchor = GridBagConstraints.LINE_START
             gridx = 0;
             gridwidth = 2;
             gridy = 4;
         })
+        result.add(usePty, base.setConstraints {
+            anchor = GridBagConstraints.LINE_START
+            gridx = 0;
+            gridwidth = 2;
+            gridy = 5;
+        })
 
 
         result.add(Box.createVerticalStrut(1), base.setConstraints {
-            gridy = 5;
+            gridy = 6;
             weighty = 2.0;
         })
 
@@ -131,6 +140,7 @@ public class HaskellConfigurable() : Configurable {
         state.ghcModPath = ghcMod.getTextField()!!.getText()
         state.ghcModiPath = ghcModi.getTextField()!!.getText()
         state.useGhcMod = useGhcMod.isSelected()
+        state.usePty = usePty.isSelected()
 
         isModified = false
     }
@@ -146,7 +156,8 @@ public class HaskellConfigurable() : Configurable {
         cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
         ghcModi.getTextField()!!.setText(state.ghcModiPath ?: "")
-        useGhcMod.setSelected(state.useGhcMod!!);
+        useGhcMod.setSelected(state.useGhcMod!!)
+        usePty.setSelected(state.usePty!!)
 
         isModified = false
     }

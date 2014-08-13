@@ -28,7 +28,6 @@ public class HistoryTab(private val process: HaskellDebugProcess,
             .create("History", "Debugger History", process.getSession()!!.getSessionName(), this)
 
     private val framesPanel = FramesPanel()
-    private val selectionModel = DefaultListSelectionModel()
     private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), debuggerStateManager, null);
 
     {
