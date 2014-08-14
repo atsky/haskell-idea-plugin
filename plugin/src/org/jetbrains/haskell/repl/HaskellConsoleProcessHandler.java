@@ -17,12 +17,11 @@ public final class HaskellConsoleProcessHandler extends ColoredProcessHandler {
         this.console = console;
     }
 
-
-
     @Override
-    protected void textAvailable(String text, Key attributes) {
+    public void coloredTextAvailable(String text, Key attributes) {
         String string = processPrompts(console, StringUtil.convertLineSeparators(text));
         HaskellConsoleHighlightingUtil.processOutput(console, string, attributes);
+        super.coloredTextAvailable(string, attributes);
     }
 
     private static String processPrompts(LanguageConsoleImpl console, String text) {
