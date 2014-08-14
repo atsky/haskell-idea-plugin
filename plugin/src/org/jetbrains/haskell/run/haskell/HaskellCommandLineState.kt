@@ -146,8 +146,12 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw ExecutionException("Cannot run remote debugger: path not specified")
         }
 
-        val builder = ProcessBuilder(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}", "-i${srcDirPath}")
-                .directory(File(baseDir))
+        val command: ArrayList<String> = arrayListOf(debuggerPath, "-m${filePath}", "-p${streamHandler.getPort()}", "-i${srcDirPath}")
+        val depends = getDependencies()
+        for (dep in depends) {
+            command.add("-pkg${dep.getBaseName()}")
+        }
+        val builder = ProcessBuilder(command) .directory(File(baseDir))
 
         try {
             return RemoteProcessHandler(builder.start(), streamHandler)
