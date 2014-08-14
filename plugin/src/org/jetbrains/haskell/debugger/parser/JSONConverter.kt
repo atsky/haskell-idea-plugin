@@ -42,87 +42,75 @@ public class JSONConverter {
 
         private val EVALUATED_MSG = "evaluated"
 
-        public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? {
-            val cases: List<Case<ExceptionResult>> = listOf(
-                Case({ it.equals(WARNING_MSG) || it.equals(EXCEPTION_MSG) },
-                     { ExceptionResult(json.getString("message")) })
-            )
-            return infoSwitchOrNull(json, cases)
-        }
+        public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? =
+            switchInfoOrNull(json) {
+                case(WARNING_MSG, EXCEPTION_MSG) { ExceptionResult(json.getString("message")) }
+            }
 
-        public fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? {
-            val cases: List<Case<BreakpointCommandResult>> = listOf(
-                Case({ it.equals(BREAKPOINT_SET_MSG) },
-                     { BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!) }),
-                Case({ it.equals(BREAKPOINT_NOT_SET_MSG) },
-                     { null: BreakpointCommandResult? })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - set breakpoint")
-        }
+        public fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? =
+            switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - set breakpoint") {
+                case(BREAKPOINT_SET_MSG) {
+                    BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!)
+                }
+                case(BREAKPOINT_NOT_SET_MSG) { null }
+            }
 
-        public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? {
-            val cases: List<Case<HsStackFrameInfo>> = listOf(
-                Case({ it.equals(PAUSED_MSG) },
-                     { HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
-                                        localBindingListFromJSONArray(json.getArray("vars")).list,
-                                        json.getString(STOPPED_AT_FUNC_TAG)) }),
-                Case({ it.equals(FINISHED_MSG) },
-                     { null: HsStackFrameInfo? })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - flow command")
-        }
+        public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? =
+            switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - flow command") {
+                case(PAUSED_MSG) {
+                    HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
+                                     localBindingListFromJSONArray(json.getArray("vars")).list,
+                                     json.getString(STOPPED_AT_FUNC_TAG))
+                }
+                case(FINISHED_MSG) { null }
+            }
 
-        public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? {
-            val cases: List<Case<MoveHistResult>> = listOf(
-                Case({ it.equals(BACK_MSG) || it.equals(FORWARD_MSG) },
-                     { MoveHistResult(filePositionFromJSON(json.getObject("src_span")),
-                                      localBindingListFromJSONArray(json.getArray("vars"))) })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - move through history")
-        }
+        public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? =
+            switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - move through history") {
+                case(BACK_MSG, FORWARD_MSG) {
+                    MoveHistResult(filePositionFromJSON(json.getObject("src_span")),
+                                   localBindingListFromJSONArray(json.getArray("vars")))
+                }
+            }
 
-        public fun expressionTypeFromJSON(json: JSONObject): ExpressionType {
-            val cases: List<Case<ExpressionType>> = listOf(
-                Case({ it.equals(EXPRESSION_TYPE_MSG) },
-                     { ExpressionType("<unknown>", json.getString("type")) })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - expression type") as ExpressionType
-        }
+        public fun expressionTypeFromJSON(json: JSONObject): ExpressionType =
+            switchInfoOrThrow<ExpressionType>(json, WRONG_OUTPUT_MSG + " - expression type") {
+                case(EXPRESSION_TYPE_MSG) {
+                    ExpressionType("<unknown>", json.getString("type"))
+                }
+            } as ExpressionType
 
-        public fun evalResultFromJSON(json: JSONObject): EvalResult {
-            val cases: List<Case<EvalResult>> = listOf(
-                Case({ it.equals(EVALUATED_MSG) },
-                     { EvalResult(json.getString("type"), json.getString("value")) })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - eval") as EvalResult
-        }
+        public fun evalResultFromJSON(json: JSONObject): EvalResult =
+            switchInfoOrThrow<EvalResult>(json, WRONG_OUTPUT_MSG + " - eval") {
+                case(EVALUATED_MSG) {
+                    EvalResult(json.getString("type"), json.getString("value"))
+                }
+            } as EvalResult
 
-        public fun historyResultFromJSON(json: JSONObject): HistoryResult {
-            val cases: List<Case<HistoryResult>> = listOf(
-                Case({ it.equals(HISTORY_MSG) },
-                     { HistoryResult(ArrayList(json.getArray("history").toArray().map {
-                                    (callInfo) ->
-                                        with (callInfo as JSONObject) {
-                                        HsHistoryFrameInfo(getInt("index"), getString("function"),
-                                                                  filePositionFromJSON(getObject("src_span")))
-                                    }
-                                }), json.get("end_reached") as Boolean) })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - get history") as HistoryResult
-        }
+        public fun historyResultFromJSON(json: JSONObject): HistoryResult =
+            switchInfoOrThrow<HistoryResult>(json, WRONG_OUTPUT_MSG + " - get history") {
+                case(HISTORY_MSG) {
+                    HistoryResult(ArrayList(json.getArray("history").toArray().map {
+                                        (callInfo) ->
+                                            with (callInfo as JSONObject) {
+                                            HsHistoryFrameInfo(getInt("index"), getString("function"),
+                                                                      filePositionFromJSON(getObject("src_span")))
+                                        }
+                                    }), json.get("end_reached") as Boolean)
+                }
+            } as HistoryResult
 
-        public fun breaksListFromJSON(json: JSONObject): BreakInfoList {
-            val cases: List<Case<BreakInfoList>> = listOf(
-                Case({ it.equals(BREAK_LIST_FOR_LINE_INFO) },
-                     { val indexSpanArray = json.getArray(BREAKS_TAG)
-                       val lambda = {(p: Any?) -> BreakInfo(
-                                     (p as JSONObject).getInt(BREAK_INDEX_TAG),
-                                     filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG)) as HsFilePosition
-                                    )}
-                       BreakInfoList(ArrayList(indexSpanArray.toArray().map(lambda))) })
-            )
-            return infoSwitchOrThrow(json, cases, WRONG_OUTPUT_MSG + " - breakpoints list") as BreakInfoList
-        }
+        public fun breaksListFromJSON(json: JSONObject): BreakInfoList =
+            switchInfoOrThrow<BreakInfoList>(json, WRONG_OUTPUT_MSG + " - breakpoints list") {
+                case(BREAK_LIST_FOR_LINE_INFO) {
+                    val indexSpanArray = json.getArray(BREAKS_TAG)
+                    val lambda = {(p: Any?) -> BreakInfo(
+                                  (p as JSONObject).getInt(BREAK_INDEX_TAG),
+                                  filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG)) as HsFilePosition
+                                 )}
+                    BreakInfoList(ArrayList(indexSpanArray.toArray().map(lambda)))
+                }
+            } as BreakInfoList
 
         public fun parseJSONObject(string: String): JSONResult {
             val parser = JSONParser()
@@ -162,23 +150,33 @@ public class JSONConverter {
                     }
                 }))
 
-        private class Case<R: ParseResult>(val condition: (String) -> Boolean, val action: (JSONObject) -> R?)
+        private class InfoSwitch<R: ParseResult>(val info: String) {
+            public var someCaseMatched: Boolean = false
+            public var result: R? = null
+        }
 
-        private fun infoSwitch<R: ParseResult>(json: JSONObject,
-                                               cases: List<Case<R>>,
-                                               defaultAction: (JSONObject) -> R?): R? {
-            val info = json.getString(INFO_TAG)
-            val resultCase = cases firstOrNull { it.condition(info) }
-            if(resultCase != null) {
-                return resultCase.action(json)
+        fun <R: ParseResult>InfoSwitch<R>.case(vararg caseStrings: String, action: () -> R?) {
+            if(!this.someCaseMatched && caseStrings any { it.equals(this.info) }) {
+                this.result = action()
+                this.someCaseMatched = true
+            }
+        }
+
+        private fun switchInfo<R: ParseResult>(json: JSONObject,
+                                               defaultAction: (JSONObject) -> R?,
+                                               cases: InfoSwitch<R>.() -> Unit): R? {
+            val infoSwitch = InfoSwitch<R>(json.getString(INFO_TAG))
+            infoSwitch.cases()
+            if(infoSwitch.someCaseMatched) {
+                return infoSwitch.result
             }
             return defaultAction(json)
         }
 
-        private fun infoSwitchOrThrow<R: ParseResult>(json: JSONObject, cases: List<Case<R>>, throwMsg: String): R? =
-                infoSwitch(json, cases, { throw RuntimeException(throwMsg) })
+        private fun switchInfoOrThrow<R: ParseResult>(json: JSONObject, throwMsg: String, cases: InfoSwitch<R>.() -> Unit): R? =
+            switchInfo(json, { throw RuntimeException(throwMsg) }, cases)
 
-        private fun infoSwitchOrNull<R: ParseResult>(json: JSONObject, cases: List<Case<R>>): R? =
-                infoSwitch(json, cases, { null: R? })
+        private fun switchInfoOrNull<R: ParseResult>(json: JSONObject, cases: InfoSwitch<R>.() -> Unit): R? =
+            switchInfo(json, { null: R? }, cases)
     }
 }
