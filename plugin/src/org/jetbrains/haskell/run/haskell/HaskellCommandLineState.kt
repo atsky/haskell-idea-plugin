@@ -30,6 +30,8 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.process.OSProcessHandler
 import com.pty4j.PtyProcess
 import org.jetbrains.haskell.config.HaskellSettings
+import org.jetbrains.cabal.psi.FullVersionConstraint
+import java.util.ArrayList
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -58,22 +60,24 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return PtyProcess.exec(command, env, dir?.getAbsolutePath(), true)
     }
 
+    private fun getDependencies(): List<FullVersionConstraint> {
+        val module = configuration.getModule()
+        if (module == null) {
+            throw ExecutionException("Error while starting debug process: module not specified")
+        }
+        val exec = getExecutable(module)
+        return exec.getBuildDepends() ?: listOf()
+    }
+
     /**
-     * Returns pair of main file path and path ro the sources directory
+     * Returns pair of main file path and path to the sources directory
      */
     private fun getPaths(): Pair<String, String> {
         val module = configuration.getModule()
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
         }
-        val cabalFile = tryGetCabalFile(module)
-        if (cabalFile == null) {
-            throw ExecutionException("Error while starting debug process: cabal file not found")
-        }
-        val exec = tryGetExecWithNameFromConfig(cabalFile)
-        if (exec == null) {
-            throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.getMyExecutableName()}")
-        }
+        val exec = getExecutable(module)
         val mainFileName: String? = exec.getMainFile()?.getText()
         if (mainFileName == null) {
             throw ExecutionException("Error while starting debug process: no main file specified in executable section")
@@ -86,6 +90,19 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         return Pair(filePath, srcDirPath)
     }
 
+    private fun getExecutable(module: Module): Executable {
+
+        val cabalFile = tryGetCabalFile(module)
+        if (cabalFile == null) {
+            throw ExecutionException("Error while starting debug process: cabal file not found")
+        }
+        val exec = tryGetExecWithNameFromConfig(cabalFile)
+        if (exec == null) {
+            throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.getMyExecutableName()}")
+        }
+        return exec
+    }
+
     private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
         val module = configuration.getModule()
         if (module == null) {
@@ -94,9 +111,20 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val paths = getPaths()
         val filePath = paths.first
         val srcDirPath = paths.second
-        val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci");
+        val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci")
+        if (ghciPath == null) {
+            throw ExecutionException("Error while starting debug process: ghci path not specified")
+        }
 
-        val process = Runtime.getRuntime().exec(ghciPath + " " + filePath + " -i" + srcDirPath)
+        val command: ArrayList<String> = arrayListOf(ghciPath, filePath, "-i$srcDirPath")
+        val depends = getDependencies()
+        command.add("-package")
+        command.add("network")
+        for (dep in depends) {
+            command.add("-package")
+            command.add(dep.getBaseName())
+        }
+        val process = Runtime.getRuntime().exec(command.copyToArray())
         return GHCiProcessHandler(process)
     }
 

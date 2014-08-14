@@ -25,22 +25,22 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
-import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.protocol.SyncCommand
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointHandler
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.protocol.BreakpointListCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointByIndexCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
 import org.jetbrains.haskell.debugger.parser.BreakInfo
-import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
+import com.intellij.notification.Notifications
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.xdebugger.impl.actions.StepOutAction
+import com.intellij.xdebugger.impl.actions.ForceStepIntoAction
 
 /**
  * Created by vlad on 7/10/14.
@@ -135,7 +135,8 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun startStepOut() {
-        throw UnsupportedOperationException()
+        Notifications.Bus.notify(Notification("", "Debug execution error", "'Step out' not implemented", NotificationType.WARNING))
+        getSession()!!.positionReached(getSession()!!.getSuspendContext()!!)
     }
 
     override fun stop() {
@@ -159,9 +160,9 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             registeredBreakpoints.put(BreakpointPosition(module, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())),
-                                      BreakpointEntry(index, breakpoint))
+                    BreakpointEntry(index, breakpoint))
             val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, this))
             debugger.enqueueCommand(command)
         } else {
@@ -187,7 +188,7 @@ public class HaskellDebugProcess(session: XDebugSession,
                 historyManager.withRealFrameUpdate {
                     (_) ->
                     debugger.force(ForceCommand(localBinding.name!!,
-                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this)))
+                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this)))
                 }
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
@@ -202,7 +203,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun breakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
-        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
             val callback = BreakpointListCommand.DefaultCallback(syncObject, resultArray)
@@ -258,6 +259,20 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
+        //temporary code for removal of unused actions from debug panel
+        var stepOut: StepOutAction? = null
+        var forceStepInto: ForceStepIntoAction? = null
+        for (action in topToolbar.getChildActionsOrStubs()) {
+            if (action is StepOutAction) {
+                stepOut = action
+            }
+            if (action is ForceStepIntoAction) {
+                forceStepInto = action
+            }
+        }
+        topToolbar.remove(stepOut)
+        topToolbar.remove(forceStepInto)
+
         historyManager.registerActions(leftToolbar, topToolbar)
     }
 
