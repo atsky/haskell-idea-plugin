@@ -23,7 +23,7 @@ private val FQ_NAME = RuleBasedElementType("FQ name", ::FqName) {
 
 
 private val VALUE_NAME = RuleBasedElementType("Value name", ::ValueName) {
-    simpleId
+    SIMPLE_ID
 }
 
 val CONTEXT : Rule = lazy {
@@ -64,15 +64,15 @@ fun inBraces(rule : Rule) : Rule =
     (LEFT_BRACE + rule + RIGHT_BRACE) or (VIRTUAL_LEFT_PAREN + rule + RIGHT_BRACE_RULE)
 
 
-val expressionList = aList(anAtomExpression, null)
+val expressionList = aList(ATOM_EXPRESSION, null)
 
 
 val aGuard = lazy {
-    VERTICAL_BAR + anExpression + EQUALS + anExpression
+    VERTICAL_BAR + EXPRESSION + EQUALS + EXPRESSION
 }
 
 val aValueBody = rule(VALUE_BODY) {
-    val rhs = (EQUALS + anExpression) or notEmptyList(aGuard)
+    val rhs = (EQUALS + EXPRESSION) or notEmptyList(aGuard)
     VALUE_NAME + expressionList + rhs
 }
 
@@ -111,7 +111,7 @@ val modulePrefix = RuleBasedElementType("ModulePrefix", ::ModulePrefix) {
 val anExport = lazy {
 
     val symbolExport = rule(SYMBOL_EXPORT) {
-        simpleId or TYPE_OR_CONS or inParentheses(OPERATOR_ID)
+        SIMPLE_ID or TYPE_OR_CONS or inParentheses(OPERATOR_ID)
     }
 
     val qcnameExt = maybe(TYPE_KW) + maybe(modulePrefix) + symbolExport
@@ -162,7 +162,7 @@ val aDataDeclaration = rule(DATA_DECLARATION) {
 }
 
 val SOME_ID = RuleBasedElementType("Some id", ::SomeId) {
-    simpleId or TYPE_OR_CONS or OPERATOR_ID
+    SIMPLE_ID or TYPE_OR_CONS or OPERATOR_ID
 }
 
 val ANY : Rule = RuleBasedElementType("Any", ::UnparsedToken) {

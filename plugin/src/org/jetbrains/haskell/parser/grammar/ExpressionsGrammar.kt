@@ -15,16 +15,17 @@ import org.jetbrains.haskell.psi.ReferenceExpression
 import org.jetbrains.haskell.psi.CaseClause
 import org.jetbrains.haskell.psi.DoStatement
 import org.jetbrains.haskell.psi.CaseExpression
+import org.jetbrains.haskell.psi.BindStatement
 
 /**
  * Created by atsky on 21/05/14.
  */
-val simpleId = lazy {
+val SIMPLE_ID = lazy {
     ID or AS_KW or HIDING_KW or QUALIFIED_KW
 }
 
 
-val anAtomExpression = lazy {
+val ATOM_EXPRESSION = lazy {
     UNDERSCORE or
     COLON or
     STRING or
@@ -40,12 +41,12 @@ val anAtomExpression = lazy {
     DO_EXPRESSION or
     anLambdaLeftPart or
     rule(CONSTRUCTOR, { TYPE_OR_CONS }) or
-    inParentheses(notEmptyList(anExpression, COMMA)) or
+    inParentheses(notEmptyList(EXPRESSION, COMMA)) or
     listLiteral
 }
 
 val FIELD_BIND: Rule = lazy {
-    simpleId + EQUALS + anExpression
+    SIMPLE_ID + EQUALS + EXPRESSION
 }
 
 val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", ::FieldUpdate) {
@@ -54,22 +55,26 @@ val FIELD_UPDATE: Rule = RuleBasedElementType("Field update", ::FieldUpdate) {
 
 
 val listLiteral = lazy{
-    (LEFT_BRACKET + aList(anExpression, COMMA) + RIGHT_BRACKET)
+    (LEFT_BRACKET + aList(EXPRESSION, COMMA) + RIGHT_BRACKET)
 }
 
 
-val anExpression: Rule = lazy {
-    aList(anAtomExpression, null)
+val EXPRESSION: Rule = lazy {
+    aList(ATOM_EXPRESSION, null)
 }
 
 val LET_EXPRESSION = RuleBasedElementType("Let expression", ::LetExpression) {
-    LET_KW + simpleId + EQUALS + anExpression + IN_KW + anExpression
+    LET_KW + SIMPLE_ID + EQUALS + EXPRESSION + IN_KW + EXPRESSION
+}
+
+val BIND_STATEMENT: Rule = RuleBasedElementType("Bind statement", ::BindStatement) {
+    VALUE_NAME + LEFT_ARROW + EXPRESSION
 }
 
 val DO_STATEMENT: Rule = RuleBasedElementType("Do statement", ::DoStatement) {
-    (VALUE_NAME + LEFT_ARROW + anExpression) or
-    (LET_KW + simpleId + EQUALS + anExpression) or
-    anExpression or
+    BIND_STATEMENT or
+    (LET_KW + SIMPLE_ID + EQUALS + EXPRESSION) or
+    EXPRESSION or
     untilSemicolon
 }
 
@@ -79,18 +84,18 @@ private val DO_EXPRESSION = RuleBasedElementType("Do expression", ::DoExpression
 }
 
 private val anLambdaLeftPart = lazy {
-    BACK_SLASH + notEmptyList(simpleId) + RIGHT_ARROW
+    BACK_SLASH + notEmptyList(SIMPLE_ID) + RIGHT_ARROW
 }
 
 private val REFERENCE_EXPRESSION = RuleBasedElementType("expression", ::ReferenceExpression) {
-    simpleId
+    SIMPLE_ID
 }
 
 private val aCaseCase: Rule = RuleBasedElementType("Case clause", ::CaseClause) {
-    anExpression + RIGHT_ARROW + anExpression
+    EXPRESSION + RIGHT_ARROW + EXPRESSION
 }
 
 private val CASE_EXPRESSION = RuleBasedElementType("Case expression", ::CaseExpression) {
     val caseBody = inBraces(aList(aCaseCase, SEMICOLON_RULE))
-    CASE_KW + anExpression + OF_KW + caseBody
+    CASE_KW + EXPRESSION + OF_KW + caseBody
 }

@@ -16,7 +16,7 @@ val TYPE_NAME : Rule = RuleBasedElementType("Simple type", ::TypeName) {
 
 
 val SIMPLETYPE : Rule = RuleBasedElementType("Simple type", ::SimpleType) {
-    TYPE_NAME + aList(simpleId)
+    TYPE_NAME + aList(SIMPLE_ID)
 }
 
 val TYPE_DECLARATION : Rule = RuleBasedElementType("Type declaretion", ::TypeDeclaration) {
@@ -35,7 +35,7 @@ val TYPE_REF = RuleBasedElementType("Type ref", ::TypeRef) { TYPE_OR_CONS }
 
 private val aPrimitiveType : Rule = rule(TYPE_TOKEN) {
 
-    val noBangType = simpleId or
+    val noBangType = SIMPLE_ID or
                      TYPE_REF or
                      (LEFT_BRACKET + TYPE + RIGHT_BRACKET) or
                      inParentheses(aList(TYPE, COMMA)) or
