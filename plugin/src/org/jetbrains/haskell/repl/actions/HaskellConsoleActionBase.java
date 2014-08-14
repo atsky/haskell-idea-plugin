@@ -49,7 +49,7 @@ abstract class HaskellConsoleActionBase extends AnAction {
             HaskellConsoleProcessHandler processHandler = findRunningHaskellConsole(project);
 
         // if a console isn't runnning, start one
-        if (processHandler == null) {
+        if (processHandler == null || processHandler.isProcessTerminated()) {
             Module module = RunHaskellConsoleAction.getModule(project);
             processHandler = HaskellConsoleRunner.run(module);
             if (processHandler == null)
@@ -95,11 +95,6 @@ abstract class HaskellConsoleActionBase extends AnAction {
 
         VirtualFile virtualFile = psiFile.getVirtualFile();
         if (virtualFile == null || virtualFile instanceof LightVirtualFile) {
-            presentation.setEnabled(false);
-            return;
-        }
-        String filePath = virtualFile.getPath();
-        if (filePath == null) {
             presentation.setEnabled(false);
             return;
         }
