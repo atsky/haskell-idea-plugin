@@ -6,6 +6,7 @@ import org.jetbrains.cabal.psi.Checkable
 import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.highlight.ErrorMessage
+import java.lang.IllegalStateException
 
 public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
@@ -35,14 +36,25 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public fun satisfyConstraint(givenVersion: String): Boolean {
         val comparator = getComparator()
-        if (isAny())            return true
-        if (comparator == ">=") return compareTo(givenVersion)!! <= 0
-        if (comparator == ">")  return compareTo(givenVersion)!! <  0
-        if (comparator == "<=") return compareTo(givenVersion)!! >= 0
-        if (comparator == "<")  return compareTo(givenVersion)!! >  0
-        if (isSimple())         return compareTo(givenVersion)!! == 0
-        val baseVersion = getVersionValue().get(0, getVersionValue().size - 2)!! as String
-        return givenVersion startsWith baseVersion
+        val compareRes = compareTo(givenVersion)
+
+        if (isAny()) return true
+        
+        if (!isSimple()) {
+            val baseVersion = getVersionValue().get(0, getVersionValue().size - 2)!! as String
+            return givenVersion startsWith baseVersion
+        }
+
+        if ((comparator == null) || (compareRes == null)) throw IllegalStateException()
+
+        return when (comparator) {
+            ">=" -> compareRes <= 0
+            ">"  -> compareRes <  0
+            "<=" -> compareRes >= 0
+            "<"  -> compareRes >  0
+            "==" -> compareRes == 0
+            else -> throw IllegalStateException()
+        }
     }
 
     public fun isAny(): Boolean = getText().equals("-any")
