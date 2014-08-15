@@ -11,7 +11,7 @@ public class CompilerId(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue
     }
 
     public override fun check(): List<ErrorMessage> {
-        if (getText()!!.toLowerCase() !in getAvailableValues()) return listOf(ErrorMessage(this, "invalid field value", "error"))
+        if (getText()!!.toLowerCase() !in getAvailableValues()) return listOf(ErrorMessage(this, "invalid compiler", "error"))
         return listOf()
     }
 }

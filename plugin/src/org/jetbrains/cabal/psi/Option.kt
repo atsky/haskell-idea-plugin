@@ -8,8 +8,4 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class Option(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
-    public override fun check(): List<ErrorMessage> {
-        if (!getNode().getText()!!.matches("^(\\w|[.\\-@])*$")) return listOf(ErrorMessage(this, "invalid option", "error"))
-        return listOf()
-    }
 }

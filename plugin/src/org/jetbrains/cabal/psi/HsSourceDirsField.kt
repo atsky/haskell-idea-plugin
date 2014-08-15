@@ -11,6 +11,7 @@ public class HsSourceDirsField(node: ASTNode) : PathsField(node) {
     public override fun checkUniqueness(): ErrorMessage? {
         if ((getParent()!!.getChildren() filter { (it is PropertyField) && (it.hasName("hs-source-dir") || it.hasName("hs-source-dirs")) }).size > 1)
                 return ErrorMessage(getKeyNode(), "duplicate field", "error")
+        if (hasName("hs-source-dir")) return ErrorMessage(getKeyNode(), "The field \"hs-source-deir\" is deprecated, please, use \"hs-source-dirs\"", "warning")
         return null
     }
 

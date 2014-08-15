@@ -104,15 +104,16 @@ public trait CabalTokelTypes {
         val E_MAIL                 : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                   )
         val TOKEN                  : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                    )
         val OPTION                 : IElementType = CabalCompositeElementType("OPTION"                   , ::Option                   )
+        val COMPILER               : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerId               )
+        val LANGUAGE               : IElementType = CabalCompositeElementType("LANGUAGE"                 , ::Language                 )
 
         val INVALID_VALUE          : IElementType = CabalCompositeElementType("INVALID_VALUE"            , ::InvalidValue             )
         val INVALID_CONDITION_PART : IElementType = CabalCompositeElementType("INVALID_CONDITION_PART"   , ::InvalidConditionPart     )
 
-        val COMPILER               : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerId               )
+
         val TEST_SUITE_TYPE        : IElementType = CabalCompositeElementType("TEST_SUITE_TYPE"          , ::TestSuiteType            )
         val BENCHMARK_TYPE         : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType            )
         val BUILD_TYPE             : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildType                )
-
 
         val REPO_SUBDIR            : IElementType = CabalCompositeElementType("REPO_SUBDIR"              , ::RepoSubdirField          )
         val REPO_LOCATION          : IElementType = CabalCompositeElementType("REPO_LOCATION"            , ::RepoLocationField        )

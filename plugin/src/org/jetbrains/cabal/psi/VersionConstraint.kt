@@ -39,7 +39,7 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
         val compareRes = compareTo(givenVersion)
 
         if (isAny()) return true
-        
+
         if (!isSimple()) {
             val baseVersion = getVersionValue().get(0, getVersionValue().size - 2)!! as String
             return givenVersion startsWith baseVersion

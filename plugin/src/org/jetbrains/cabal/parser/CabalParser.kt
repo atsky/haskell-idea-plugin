@@ -13,58 +13,13 @@ import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
 
 public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
-    class object {
-        public val OPTIONS_FIELD_NAMES : List<String> = listOf (
-                "ghc-options",
-                "ghc-prof-options",
-                "ghc-shared-options",
-                "hugs-options",
-                "nhc98-options",
-                "cc-options",
-                "cpp-options",
-                "ld-options"
-        )
-
-        public val FREE_FORM_FIELD_NAMES : List<String> = listOf (
-                "copyright",
-                "author",
-                "stability",
-                "synopsis",
-                "description",
-                "category"
-        )
-
-        public val TOP_FILE_LIST_FIELD_NAMES : List<String> = listOf (
-                "extra-doc-files",
-                "extra-tmp-files",
-                "data-files",
-                "extra-source-files"
-        )
-
-        public val URL_FIELD_NAMES : List<String> = listOf (
-                "package-url",
-                "homepage",
-                "bug-reports"
-        )
-    }
-
     public fun parse(): ASTNode = parseInternal(root)
 
-    fun parsePropertyKey(propName : String?) = start(CabalTokelTypes.PROPERTY_KEY) {
-        if (propName == null) token(CabalTokelTypes.ID) else matchesIgnoreCase(CabalTokelTypes.ID, propName)
-    }
-
-    fun parseBool() = matchesIgnoreCase(CabalTokelTypes.ID, "true") || matchesIgnoreCase(CabalTokelTypes.ID, "false")
-
-    fun parseVersion() = token(CabalTokelTypes.NUMBER) || token(CabalTokelTypes.ID)
-
-    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
-        if (token(CabalTokelTypes.COMPARATOR)) {
-            parseVersion()
-        }
-        else {
-            matches(CabalTokelTypes.ID, "-any")
-        }
+    fun canParse(parse: () -> Boolean): Boolean {
+        val marker = builder.mark()!!
+        val res = parse()
+        marker.rollbackTo()
+        return res
     }
 
     fun indentSize(str: String): Int {
@@ -77,13 +32,6 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             return indentSize(builder.getTokenText()!!)
         }
         return null
-    }
-
-    fun canParse(parse: () -> Boolean): Boolean {
-        val marker = builder.mark()!!
-        val res = parse()
-        marker.rollbackTo()
-        return res
     }
 
     fun isLastOnThisLine() : Boolean = builder.eof() || (builder.getTokenType() == TokenType.NEW_LINE_INDENT)
@@ -120,6 +68,23 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         }
     }
 
+    fun parsePropertyKey(propName : String?) = start(CabalTokelTypes.PROPERTY_KEY) {
+        if (propName == null) token(CabalTokelTypes.ID) else matchesIgnoreCase(CabalTokelTypes.ID, propName)
+    }
+
+    fun parseBool() = matchesIgnoreCase(CabalTokelTypes.ID, "true") || matchesIgnoreCase(CabalTokelTypes.ID, "false")
+
+    fun parseVersion() = token(CabalTokelTypes.NUMBER) || token(CabalTokelTypes.ID)
+
+    fun parseSimpleVersionConstraint() = start(CabalTokelTypes.VERSION_CONSTRAINT) {
+        if (token(CabalTokelTypes.COMPARATOR)) {
+            parseVersion()
+        }
+        else {
+            matches(CabalTokelTypes.ID, "-any")
+        }
+    }
+
     fun parseFreeLine(elemType: IElementType) = start(elemType) {
         while (!isLastOnThisLine()) {
             builder.advanceLexer()
@@ -145,7 +110,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         true
     }
 
-    fun parseIDValue(elemType: IElementType) = start(elemType, { token(CabalTokelTypes.ID) })
+    fun parseIdValue(elemType: IElementType) = start(elemType, { token(CabalTokelTypes.ID) })
 
     fun parseTokenValue(elemType: IElementType) = start(elemType) {
 
@@ -160,7 +125,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         while (nextTokenIsValid()) {
             builder.advanceLexer()
             isntEmpty = true
-            if (emptySpaceBeforeNext()) break
+            if (!isLastOnThisLine() && emptySpaceBeforeNext()) break
         }
         isntEmpty
     }
@@ -219,18 +184,20 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun parseTokenList(prevLevel: Int)  = parseCommonCommaList(prevLevel, { parseTokenValue(CabalTokelTypes.TOKEN) })
 
-    fun parseIDList(prevLevel: Int)     = parseCommonCommaList(prevLevel, { parseIDValue(CabalTokelTypes.IDENTIFIER) })
+    fun parseIdList(prevLevel: Int) = parseCommonCommaList(prevLevel, { parseIdValue(CabalTokelTypes.IDENTIFIER) })
 
-    fun parseOptionList(prevLevel: Int) = parseCommonCommaList(prevLevel, { parseIDValue(CabalTokelTypes.OPTION) })
+    fun parseOptionList(prevLevel: Int) = parseCommonCommaList(prevLevel, { parseTokenValue(CabalTokelTypes.OPTION) })
 
     fun parsePathList(prevLevel: Int)   = parseCommonCommaList(prevLevel, { parsePath() })
+
+    fun parseLanguageList(prevLevel: Int) = parseCommonCommaList(prevLevel, { parseIdValue(CabalTokelTypes.LANGUAGE) })
 
     fun parseComplexVersionConstraint(prevLevel : Int, onOneLine: Boolean = false) = start(CabalTokelTypes.COMPLEX_CONSTRAINT) {
         parseTillValidValueList(prevLevel, { parseSimpleVersionConstraint() }, { token(CabalTokelTypes.LOGIC) }, onOneLine)
     }
 
     fun parseFullVersionConstraint(prevLevel: Int, tokenType: IElementType, onOneLine: Boolean = false) = start(CabalTokelTypes.FULL_CONSTRAINT) {
-        parseIDValue(tokenType)
+        parseIdValue(tokenType)
                 && (parseComplexVersionConstraint(prevLevel, onOneLine) || true)
     }
 
@@ -243,8 +210,8 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             var res: Boolean
             when (testName) {
                 "impl" -> res = parseFullVersionConstraint(prevLevel, CabalTokelTypes.COMPILER, true)
-                "flag" -> res = parseIDValue(CabalTokelTypes.NAME)
-                else   -> res = parseIDValue(CabalTokelTypes.IDENTIFIER)
+                "flag" -> res = parseIdValue(CabalTokelTypes.NAME)
+                else   -> res = parseIdValue(CabalTokelTypes.IDENTIFIER)
             }
             res && token(CabalTokelTypes.CLOSE_PAREN)
         }
@@ -256,7 +223,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
                                         && (builder.getTokenType() != CabalTokelTypes.CLOSE_PAREN)
                                         && (builder.getTokenType() != TokenType.NEW_LINE_INDENT)) {
             if ((builder.getTokenText() == "flag") && token(CabalTokelTypes.ID) && token(CabalTokelTypes.OPEN_PAREN)) {
-                parseIDValue(CabalTokelTypes.NAME)
+                parseIdValue(CabalTokelTypes.NAME)
             }
             else builder.advanceLexer()
         }
@@ -305,7 +272,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     }
 
     fun parseInvalidField(level: Int) = start(CabalTokelTypes.INVALID_FIELD) {
-        if (parseIDValue(CabalTokelTypes.NAME)) {
+        if (parseIdValue(CabalTokelTypes.NAME)) {
             token(CabalTokelTypes.COLON)
             skipAllBiggerLevelTill(level, parseSeparator = { false })
             true
@@ -352,7 +319,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         matchesIgnoreCase(CabalTokelTypes.ID, name)
     }
 
-    fun parseRepoKinds() = (parseIDValue(CabalTokelTypes.REPO_KIND) && parseIDValue(CabalTokelTypes.REPO_KIND)) || true
+    fun parseRepoKinds() = (parseIdValue(CabalTokelTypes.REPO_KIND) && parseIdValue(CabalTokelTypes.REPO_KIND)) || true
 
     fun parseRepoFields(level: Int)          = parseFieldFrom(level      , SOURCE_REPO_FIELDS)
     fun parseBuildInformation(level: Int)    = parseFieldFrom(level      , BUILD_INFO_FIELDS )
