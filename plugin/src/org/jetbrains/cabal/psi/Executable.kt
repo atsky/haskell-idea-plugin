@@ -22,15 +22,15 @@ public class Executable(node: ASTNode) : BuildSection(node) {
         return res
     }
 
-    public override fun checkFieldsPresence(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (getField(javaClass<MainFileField>()) == null) return listOf(ErrorMessage(getSectTypeNode(), "main-is field is required", "error"))
         return listOf()
     }
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(EXECUTABLE_FIELDS)
-        res.addAll(BUILD_INFO)
+        res.addAll(EXECUTABLE_FIELDS.keySet())
+        res.addAll(BUILD_INFO_FIELDS.keySet())
         res.addAll(listOf("is", "else"))
         return res
     }

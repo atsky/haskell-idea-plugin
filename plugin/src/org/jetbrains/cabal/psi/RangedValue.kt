@@ -9,7 +9,7 @@ public trait RangedValue: Checkable, PsiElement {
 
     public fun getAvailableValues(): List<String> { return listOf() }
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (getText()!! !in getAvailableValues()) return listOf(ErrorMessage(this, "invalid field value", "error"))
         return listOf()
     }

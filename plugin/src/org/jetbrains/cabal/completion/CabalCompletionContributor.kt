@@ -29,8 +29,8 @@ public open class CabalCompletionContributor() : CompletionContributor() {
 
             when (parent) {
                 is CabalFile -> {
-                    values.addAll(PKG_DESCR_FIELD_DESCRS map {it.concat(":")})
-                    values.addAll(TOP_SECTIONS)
+                    values.addAll(PKG_DESCR_FIELDS.keySet() map {it.concat(":")})
+                    values.addAll(TOP_SECTION_NAMES)
                     caseSensitivity = false
                 }
                 is RangedValue -> {
@@ -40,7 +40,9 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                             caseSensitivity = false
                         }
                         else if (parent.getParent() is InvalidField) {
-                            values.addAll(parent.getAvailableValues() map { if ((it in TOP_SECTIONS) || (it in IF_ELSE)) it else it.concat(":") })
+                            values.addAll(parent.getAvailableValues() map {
+                                if (it in SECTIONS.keySet()) it else it.concat(":")
+                            })
                             caseSensitivity = false
                         }
                     }
@@ -54,7 +56,8 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                 is Path -> {
                     val grandParent = parent.getParent()
                     if (grandParent is PathsField) {
-                        values.addAll(grandParent.getNextAvailableFile(parent, parameters!!.getOriginalFile().getVirtualFile()!!.getParent()!!))
+                        val originalRootDir = parameters!!.getOriginalFile().getVirtualFile()!!.getParent()!!
+                        values.addAll(grandParent.getNextAvailableFile(parent, originalRootDir))
                     }
                 }
                 is Identifier -> {
@@ -63,13 +66,15 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                         parentField = parentField?.getParent()
                     }
                     if (parentField is BuildDependsField) {
-                        values.addAll(CabalInterface(current!!.getProject()).getInstalledPackagesList() map { it.name })
+                        val project = current!!.getProject()
+                        values.addAll(CabalInterface(project).getInstalledPackagesList() map { it.name })
                     }
                 }
             }
 
             for (value in values) {
-                result?.addElement(LookupElementBuilder.create(value)!!.withCaseSensitivity(caseSensitivity)!!)
+                val lookupElemBuilder = LookupElementBuilder.create(value)!!.withCaseSensitivity(caseSensitivity)!!
+                result?.addElement(lookupElemBuilder)
             }
         }
     }

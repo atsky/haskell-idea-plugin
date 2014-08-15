@@ -21,8 +21,8 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(PKG_DESCR_FIELD_DESCRS)
-        res.addAll(TOP_SECTIONS)
+        res.addAll(PKG_DESCR_FIELDS.keySet())
+        res.addAll(TOP_SECTION_NAMES)
         return res
     }
 
@@ -40,10 +40,4 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
     public fun getFlagNames(): List<String> = PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<Flag>()) map { it.getFlagName() }
 
     public fun getDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
-
-//    public fun getActualDataDir(): VirtualFile {
-//        val dataDir = getDataDir()?.getFileFromRoot()
-//        if (dataDir == null) return getCabalVirtualFile()!!.getParent()!!
-//        return dataDir
-//    }
 }

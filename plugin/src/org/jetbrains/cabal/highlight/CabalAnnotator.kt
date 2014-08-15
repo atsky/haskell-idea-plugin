@@ -16,12 +16,6 @@ public class CabalAnnotator() : Annotator {
             holder.createInfoAnnotation(e, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
         }
 
-        fun maybeError(elem: PsiElement, msg: String?) {
-            if (msg != null) {
-                holder.createErrorAnnotation(elem, msg)
-            }
-        }
-
         fun handle(errMsg: ErrorMessage?) {
             if (errMsg == null) return
             if (errMsg.isAfterNode) {
@@ -36,15 +30,12 @@ public class CabalAnnotator() : Annotator {
             }
         }
 
-        if (element is PropertyField)       handle(element.checkUniqueness())
-        if (element is InvalidField)        handle(ErrorMessage(element, "invalid field", "error"))
-        if (element is Checkable)           element.checkValue()           forEach { handle(it) }
-        if (element is Section)             element.checkFieldsPresence()  forEach { handle(it) }
-
-        if (element is Path)                handle(element.checkPath())
-        if (element is BuildDependsField)   element.checkPackageVersions() forEach { handle(it) }
-        if (element is CabalVersionField)   handle(element.checkVersion())
-
+        if (element is Checkable) {
+            (element.check()).forEach { handle(it) }
+        }
+        if (element is PropertyField) {
+            handle(element.checkUniqueness())
+        }
         if ((element is PropertyKey) || (element is SectionType)) {
             keyword(element)
         }

@@ -5,12 +5,12 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class CompilerID(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue {
+public class CompilerId(node: ASTNode) : ASTWrapperPsiElement(node), RangedValue {
     public override fun getAvailableValues(): List<String> {
         return COMPILER_VALS
     }
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (getText()!!.toLowerCase() !in getAvailableValues()) return listOf(ErrorMessage(this, "invalid field value", "error"))
         return listOf()
     }

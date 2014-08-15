@@ -8,7 +8,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class E_mail(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (!getNode().getText()!!.matches("^.+@.+\\..+$")) return listOf(ErrorMessage(this, "invalid value", "error"))
         return listOf()
     }

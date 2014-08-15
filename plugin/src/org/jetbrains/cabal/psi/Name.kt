@@ -25,7 +25,7 @@ public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Ra
         return listOf()
     }
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (isFlagNameInCondition()) {
             if (getText().toLowerCase() in (getContainingFile() as CabalFile).getFlagNames()) return listOf()
             return listOf(ErrorMessage(this, "invalid flag name", "error"))

@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.parser
+package org.jetbrains.cabal.parser
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.haskell.HaskellLanguage

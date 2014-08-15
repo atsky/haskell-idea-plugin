@@ -20,7 +20,7 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
         )
     }
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (isBool()) return listOf()
         if (getTestName() in VALID_TESTS_NAMES) {
             return listOf()

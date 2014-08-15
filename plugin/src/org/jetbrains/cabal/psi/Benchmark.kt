@@ -11,13 +11,13 @@ public class Benchmark(node: ASTNode) : BuildSection(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(BENCHMARK_FIELDS)
-        res.addAll(BUILD_INFO)
+        res.addAll(BENCHMARK_FIELDS.keySet())
+        res.addAll(BUILD_INFO_FIELDS.keySet())
         res.addAll(listOf("is", "else"))
         return res
     }
 
-    public override fun checkFieldsPresence(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         val res = ArrayList<ErrorMessage>()
 
         val typeField   = getField(javaClass<TypeField>())

@@ -8,8 +8,8 @@ public class Library(node: ASTNode) : BuildSection(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(LIBRARY_FIELDS)
-        res.addAll(BUILD_INFO)
+        res.addAll(LIBRARY_FIELDS.keySet())
+        res.addAll(BUILD_INFO_FIELDS.keySet())
         res.addAll(listOf("is", "else"))
         return res
     }

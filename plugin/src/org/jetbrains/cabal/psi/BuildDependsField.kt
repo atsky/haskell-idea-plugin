@@ -4,17 +4,19 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.psi.PropertyField
 import org.jetbrains.cabal.psi.FullVersionConstraint
 import org.jetbrains.cabal.psi.ComplexVersionConstraint
+import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.util.ArrayList
 
-public class BuildDependsField(node: ASTNode) : PropertyField(node) {
+public class BuildDependsField(node: ASTNode) : PropertyField(node), Checkable {
 
     public fun getPackageNames(): List<String> = getValues(javaClass<FullVersionConstraint>()) map { it.getBaseName() }
 
-    public fun getConstraintsWithName(name: String): List<FullVersionConstraint> = getValues(javaClass<FullVersionConstraint>()) filter { it.getBaseName().equals(name) }
+    public fun getConstraintsWithName(name: String): List<FullVersionConstraint>
+            = getValues(javaClass<FullVersionConstraint>()) filter { it.getBaseName().equals(name) }
 
-    public fun checkPackageVersions(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         val packageConstraints = getValues(javaClass<FullVersionConstraint>())
         val installedPackages  = CabalInterface(getProject()).getInstalledPackagesList()
         var res = ArrayList<ErrorMessage>()

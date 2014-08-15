@@ -15,8 +15,8 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.cabal.CabalFile
 import org.jetbrains.cabal.CabalLanguage
-import org.jetbrains.haskell.cabal.CabalParser
-import org.jetbrains.haskell.parser.CabalCompositeElementType
+import org.jetbrains.cabal.parser.CabalParser
+import org.jetbrains.cabal.parser.CabalCompositeElementType
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 
 public class CaballParserDefinition() : ParserDefinition {

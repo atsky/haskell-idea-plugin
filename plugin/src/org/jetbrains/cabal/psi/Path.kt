@@ -2,17 +2,17 @@ package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.cabal.psi.Checkable
-import org.jetbrains.cabal.psi.PropertyValue
-import org.jetbrains.cabal.CabalFile
-import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import org.jetbrains.cabal.CabalFile
+import org.jetbrains.cabal.psi.Checkable
+import org.jetbrains.cabal.psi.PropertyValue
+import org.jetbrains.cabal.highlight.ErrorMessage
+import java.io.File
 import java.io.FilenameFilter
 import java.util.ArrayList
-import org.jetbrains.cabal.highlight.ErrorMessage
 
-public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue {
+public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Checkable {
 
     public fun getFile(): File = File(getText())
 
@@ -22,28 +22,29 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun isAbsolute(): Boolean = getFile().isAbsolute()
 
-    public fun checkPath(): ErrorMessage? {
-        when (getParent()) {
-            is DataDirField         -> return checkDataDir()
-            is HSSourceDirsField    -> return checkFromRootIf({ it -> it.isDirectory() })
-            is IncludeDirsField     -> return checkFromRootIf({ it -> it.isDirectory() })
-            is ExtraLibDirsField    -> return checkFromRootIf({ it -> it.isDirectory() })
-            is RepoSubdirField      -> return null
-            is MainFileField        -> return checkMainFile()
-            is LicenseFilesField    -> return checkFromRootIf({ it -> !it.isDirectory() })
-            is DataFilesField       -> return checkFileOrWildcard(getPathFromDataDir())
-            is IncludesField        -> return checkFileFromIncludes()
-            is InstallIncludesField -> return checkFileFromIncludes()
+    public override fun check(): List<ErrorMessage> {
+        val errorMsg = when (getParent()) {
+            is DataDirField         -> checkDataDir()
+            is HsSourceDirsField    -> checkFromRootIf({ it -> it.isDirectory() })
+            is IncludeDirsField     -> checkFromRootIf({ it -> it.isDirectory() })
+            is ExtraLibDirsField    -> checkFromRootIf({ it -> it.isDirectory() })
+            is RepoSubdirField      -> null
+            is MainFileField        -> checkMainFile()
+            is LicenseFilesField    -> checkFromRootIf({ it -> !it.isDirectory() })
+            is DataFilesField       -> checkFileOrWildcard(getPathFromDataDir())
+            is IncludesField        -> checkFileFromIncludes()
+            is InstallIncludesField -> checkFileFromIncludes()
             else -> {
                 when ((getParent() as PropertyField).getPropertyName().toLowerCase()) {
-                    "extra-doc-files"    -> return checkFileOrWildcard(getPathFromRoot())
-                    "extra-source-files" -> return checkFileOrWildcard(getPathFromRoot())
-                    "extra-tmp-files"    -> return checkFromRootIf({ true })
-                    "c-sources"          -> return checkFromRootIf({ it -> !it.isDirectory() })
-                    else -> return makeWarning("unchecked")
+                    "extra-doc-files"    -> checkFileOrWildcard(getPathFromRoot())
+                    "extra-source-files" -> checkFileOrWildcard(getPathFromRoot())
+                    "extra-tmp-files"    -> checkFromRootIf({ true })
+                    "c-sources"          -> checkFromRootIf({ it -> !it.isDirectory() })
+                    else -> makeWarning("unchecked")
                 }
             }
         }
+        return if (errorMsg == null) listOf() else listOf(errorMsg)
     }
 
     private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile>? {

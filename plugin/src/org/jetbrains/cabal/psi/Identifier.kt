@@ -8,7 +8,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class Identifier(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         if (!getNode().getText()!!.matches("^[a-zA-Z](\\w|[.-])*$")) return listOf(ErrorMessage(this, "invalid identifier", "error"))
         return listOf()
     }

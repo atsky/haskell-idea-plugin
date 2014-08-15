@@ -55,7 +55,7 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public fun getVersionValue(): String = (getVersion().replaceAll("(\\-[0-9a-zA-Z]+)+\\.", "\\.")).replaceAll("(\\-[0-9a-zA-Z]+)+$", "")
 
-    public override fun checkValue(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         val comparator = getComparator()
         if (comparator == null) return listOf()
         val version = getVersion()

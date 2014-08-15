@@ -6,7 +6,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.haskell.parser.CabalCompositeElementType
+import org.jetbrains.cabal.parser.CabalCompositeElementType
 import org.jetbrains.haskell.parser.HaskellToken
 import org.jetbrains.cabal.psi.*
 
@@ -53,7 +53,6 @@ public trait CabalTokelTypes {
         val FLAG                   : IElementType = CabalCompositeElementType("FLAG"                     , ::Flag                     )
         val IF_CONDITION           : IElementType = CabalCompositeElementType("IF_CONDITION"             , ::IfCondition              )
         val ELSE_CONDITION         : IElementType = CabalCompositeElementType("ELSE_CONDITION"           , ::ElseCondition            )
-        val REPO_KIND              : IElementType = CabalCompositeElementType("REPO_KIND"                , ::RepoKind                 )
 
         val VERSION                : IElementType = CabalCompositeElementType("VERSION_PROPERTY"         , ::VersionField             )
         val CABAL_VERSION          : IElementType = CabalCompositeElementType("CABAL_VERSION_PROPERTY"   , ::CabalVersionField        )
@@ -66,17 +65,13 @@ public trait CabalTokelTypes {
         val LICENSE                : IElementType = CabalCompositeElementType("LICENSE"                  , ::LicenseField             )
         val TESTED_WITH            : IElementType = CabalCompositeElementType("TESTED_WITH"              , ::TestedWithField          )
         val LICENSE_FILES          : IElementType = CabalCompositeElementType("LICENSE_FILES"            , ::LicenseFilesField        )
-        val REPO_MODULE            : IElementType = CabalCompositeElementType("REPO_MODULE"              , ::RepoModuleField          )
         val TEST_MODULE            : IElementType = CabalCompositeElementType("TEST_MODULE"              , ::TestModuleField          )
         val PROPERTY               : IElementType = CabalCompositeElementType("PROPERTY"                 , ::PropertyField            )
         val TYPE                   : IElementType = CabalCompositeElementType("TYPE"                     , ::TypeField                )
-        val REPO_LOCATION          : IElementType = CabalCompositeElementType("REPO_LOCATION"            , ::RepoLocationField        )
-        val REPO_TAG               : IElementType = CabalCompositeElementType("REPO_TAG"                 , ::RepoTagField             )
-        val HS_SOURCE_DIRS         : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HSSourceDirsField        )
+        val HS_SOURCE_DIRS         : IElementType = CabalCompositeElementType("HS_SOURCE_DIRS"           , ::HsSourceDirsField        )
         val INCLUDE_DIRS           : IElementType = CabalCompositeElementType("INCLUDE_DIRS"             , ::IncludeDirsField         )
         val BOOL_FIELD             : IElementType = CabalCompositeElementType("BOOL_FIELD"               , ::BoolField                )
         val PATHS_FIELD            : IElementType = CabalCompositeElementType("PATHS_FIELD"              , ::PathsField               )
-        val REPO_SUBDIR            : IElementType = CabalCompositeElementType("REPO_SUBDIR"              , ::RepoSubdirField          )
         val EXTRA_LIB_DIRS         : IElementType = CabalCompositeElementType("EXTRA_LIB_DIRS"           , ::ExtraLibDirsField        )
         val DATA_FILES             : IElementType = CabalCompositeElementType("DATA_FILES"               , ::DataFilesField           )
         val INSTALL_INCLUDES       : IElementType = CabalCompositeElementType("INSTALL_INCLUDES"         , ::InstallIncludesField     )
@@ -100,7 +95,7 @@ public trait CabalTokelTypes {
         val SIMPLE_CONDITION       : IElementType = CabalCompositeElementType("SIMPLE_CONDITION"         , ::SimpleCondition          )
         val CONDITION_PART         : IElementType = CabalCompositeElementType("CONDITION_PART"           , ::ConditionPart            )
 
-        val URL                    : IElementType = CabalCompositeElementType("URL"                      , ::URL                      )
+        val URL                    : IElementType = CabalCompositeElementType("URL"                      , ::Url                      )
         val NAME                   : IElementType = CabalCompositeElementType("NAME"                     , ::Name                     )
         val PATH                   : IElementType = CabalCompositeElementType("PATH"                     , ::Path                     )
         val FREE_FORM              : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                 )
@@ -113,10 +108,18 @@ public trait CabalTokelTypes {
         val INVALID_VALUE          : IElementType = CabalCompositeElementType("INVALID_VALUE"            , ::InvalidValue             )
         val INVALID_CONDITION_PART : IElementType = CabalCompositeElementType("INVALID_CONDITION_PART"   , ::InvalidConditionPart     )
 
-        val COMPILER               : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerID               )
+        val COMPILER               : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerId               )
         val TEST_SUITE_TYPE        : IElementType = CabalCompositeElementType("TEST_SUITE_TYPE"          , ::TestSuiteType            )
-        val REPO_TYPE              : IElementType = CabalCompositeElementType("REPO_TYPE"                , ::RepoType                 )
         val BENCHMARK_TYPE         : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType            )
         val BUILD_TYPE             : IElementType = CabalCompositeElementType("BUILD_TYPE"               , ::BuildType                )
+
+
+        val REPO_SUBDIR            : IElementType = CabalCompositeElementType("REPO_SUBDIR"              , ::RepoSubdirField          )
+        val REPO_LOCATION          : IElementType = CabalCompositeElementType("REPO_LOCATION"            , ::RepoLocationField        )
+        val REPO_TAG               : IElementType = CabalCompositeElementType("REPO_TAG"                 , ::RepoTagField             )
+        val REPO_MODULE            : IElementType = CabalCompositeElementType("REPO_MODULE"              , ::RepoModuleField          )
+
+        val REPO_KIND              : IElementType = CabalCompositeElementType("REPO_KIND"                , ::RepoKind                 )
+        val REPO_TYPE              : IElementType = CabalCompositeElementType("REPO_TYPE"                , ::RepoType                 )
     }
 }

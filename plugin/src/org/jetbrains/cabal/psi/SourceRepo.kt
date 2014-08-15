@@ -9,10 +9,12 @@ import java.util.ArrayList
 public class SourceRepo(node: ASTNode) : Section(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
-        return REPO_SOURCE_FIELDS
+        var res = ArrayList<String>()
+        res.addAll(SOURCE_REPO_FIELDS.keySet())
+        return res
     }
 
-    public override fun checkFieldsPresence(): List<ErrorMessage> {
+    public override fun check(): List<ErrorMessage> {
         val res = ArrayList<ErrorMessage>()
 
         val typeField   = getField(javaClass<TypeField>())

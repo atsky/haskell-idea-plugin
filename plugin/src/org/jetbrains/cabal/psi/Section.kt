@@ -1,19 +1,21 @@
 package org.jetbrains.cabal.psi
 
-import com.intellij.psi.tree.IElementType
 import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTDelegatePsiElement
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.PsiElement
-import org.jetbrains.cabal.parser.*
-import org.jetbrains.cabal.psi.PropertyField
 import com.intellij.psi.impl.source.tree.SharedImplUtil
 import com.intellij.psi.util.PsiTreeUtil
-import java.util.ArrayList
+
+import org.jetbrains.cabal.psi.PropertyField
+import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public open class Section(node: ASTNode): Field(node), FieldContainer {
+import java.util.ArrayList
 
-    public open fun checkFieldsPresence(): List<ErrorMessage> = listOf()
+public open class Section(node: ASTNode): Field(node), FieldContainer, Checkable {
+
+    public override fun check(): List<ErrorMessage> = listOf()
 
     public fun getSectChildren(): List<PsiElement> = getChildren() filter { it is Field }
 

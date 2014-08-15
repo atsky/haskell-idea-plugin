@@ -11,10 +11,11 @@ import java.io.File
 
 public open class BuildSection(node: ASTNode): Section(node) {
 
-    public fun getHSSourceDirs(): List<Path>? = getField(javaClass<HSSourceDirsField>())?.getValues(javaClass<Path>())
+    public fun getHSSourceDirs(): List<Path>? = getField(javaClass<HsSourceDirsField>())?.getValues(javaClass<Path>())
 
     public fun getIncludeDirs() : List<Path>? = getField(javaClass<IncludeDirsField>())?.getValues(javaClass<Path>())
 
-    public fun getBuildDepends(): List<FullVersionConstraint>? = getField(javaClass<BuildDependsField>())?.getValues(javaClass<FullVersionConstraint>())
+    public fun getBuildDepends(): List<FullVersionConstraint>?
+            = getField(javaClass<BuildDependsField>())?.getValues(javaClass<FullVersionConstraint>())
 
 }

@@ -9,11 +9,14 @@ import com.intellij.psi.tree.IElementType
 import java.util.ArrayList
 import com.intellij.psi.util.PsiTreeUtil
 
-public open class PropertyField(node: ASTNode) : Field(node) {
+public open class PropertyField(node: ASTNode) : Field(node), Checkable {
 
     public open fun checkUniqueness(): ErrorMessage? {
-        if ((getParent()!!.getChildren() filter { (it is PropertyField) && (it.hasName(getFieldName())) }).size > 1)
-                return ErrorMessage(getKeyNode(), "duplicate field", "error")
+        fun isSame(field: PsiElement) = (field is PropertyField) && (field.hasName(getFieldName()))
+
+        if ((getParent()!!.getChildren() filter { isSame(it) }).size > 1) {
+            return ErrorMessage(getKeyNode(), "duplicate field", "error")
+        }
         return null
     }
 
