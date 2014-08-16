@@ -127,41 +127,48 @@ public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) 
 )
 
 public val SECTION_TYPES: Map<String, IElementType> = mapOf(
-    "flag"                  to CabalTokelTypes.FLAG          ,
-    "executable"            to CabalTokelTypes.EXECUTABLE    ,
-    "library"               to CabalTokelTypes.LIBRARY       ,
-    "test-suite"            to CabalTokelTypes.TEST_SUITE    ,
-    "benchmark"             to CabalTokelTypes.BENCHMARK     ,
-    "if"                    to CabalTokelTypes.IF_CONDITION  ,
-    "else"                  to CabalTokelTypes.ELSE_CONDITION,
-    "source-repository"     to CabalTokelTypes.SOURCE_REPO
+        "flag"                  to CabalTokelTypes.FLAG          ,
+        "executable"            to CabalTokelTypes.EXECUTABLE    ,
+        "library"               to CabalTokelTypes.LIBRARY       ,
+        "test-suite"            to CabalTokelTypes.TEST_SUITE    ,
+        "benchmark"             to CabalTokelTypes.BENCHMARK     ,
+        "if"                    to CabalTokelTypes.IF_CONDITION  ,
+        "else"                  to CabalTokelTypes.ELSE_CONDITION,
+        "source-repository"     to CabalTokelTypes.SOURCE_REPO
 )
 
 public val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
                                        Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>>?
                                                                                                         >> = mapOf(
-    "executable"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, EXECUTABLE_FIELDS) ,
-    "library"               to Pair({ CabalParser.(level: Int) -> true }                                    , LIBRARY_FIELDS)    ,
-    "test-suite"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, TEST_SUITE_FIELDS) ,
-    "benchmark"             to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, BENCHMARK_FIELDS)  ,
-    "flag"                  to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, FLAG_FIELDS)       ,
-    "source-repository"     to Pair({ CabalParser.(level: Int) -> this.parseRepoKinds() }                   , SOURCE_REPO_FIELDS),
-    "if"                    to Pair({ CabalParser.(level: Int) -> this.parseFullCondition(level) }          , null)              ,
-    "else"                  to Pair({ CabalParser.(level: Int) -> true }                                    , null)
+        "executable"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, EXECUTABLE_FIELDS) ,
+        "library"               to Pair({ CabalParser.(level: Int) -> true }                                    , LIBRARY_FIELDS)    ,
+        "test-suite"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, TEST_SUITE_FIELDS) ,
+        "benchmark"             to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, BENCHMARK_FIELDS)  ,
+        "flag"                  to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, FLAG_FIELDS)       ,
+        "source-repository"     to Pair({ CabalParser.(level: Int) -> this.parseRepoKinds() }                   , SOURCE_REPO_FIELDS),
+        "if"                    to Pair({ CabalParser.(level: Int) -> this.parseFullCondition(level) }          , null)              ,
+        "else"                  to Pair({ CabalParser.(level: Int) -> true }                                    , null)
 )
 
 public val TOP_SECTION_NAMES: List<String> = listOf(
-    "flag",
-    "executable",
-    "library",
-    "test-suite",
-    "benchmark",
-    "source-repository"
+        "flag",
+        "executable",
+        "library",
+        "test-suite",
+        "benchmark",
+        "source-repository"
 )
 
 public val IF_ELSE: List<String> = listOf(
-    "if",
-    "else"
+        "if",
+        "else"
+)
+
+public val BUILD_INFO_SECTIONS: List<String> = listOf(
+        "executable",
+        "library",
+        "test-suite",
+        "benchmark"
 )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -86,13 +86,15 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     }
 
     fun parseFreeLine(elemType: IElementType) = start(elemType) {
+        var isEmpty = true
         while (!isLastOnThisLine()) {
             builder.advanceLexer()
+            isEmpty = false
         }
-        true
+        !isEmpty
     }
 
-    fun parseInvalidLine() = parseFreeLine(CabalTokelTypes.INVALID_VALUE)
+    fun parseInvalidLine() = parseFreeLine(CabalTokelTypes.INVALID_VALUE) || start(CabalTokelTypes.INVALID_VALUE, { true })
 
     fun parseAsInvalid(parseBody: () -> Boolean) = start(CabalTokelTypes.INVALID_VALUE, { parseBody() })
 
@@ -121,13 +123,13 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         fun emptySpaceBeforeNext()
                 = (builder.rawTokenTypeStart(1) != builder.getCurrentOffset() + builder.getTokenText()!!.size)
 
-        var isntEmpty = false
+        var isEmpty = true
         while (nextTokenIsValid()) {
             builder.advanceLexer()
-            isntEmpty = true
+            isEmpty = false
             if (!isLastOnThisLine() && emptySpaceBeforeNext()) break
         }
-        isntEmpty
+        !isEmpty
     }
 
     fun parsePath() = parseTokenValue(CabalTokelTypes.PATH)
@@ -328,7 +330,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
                                                                                                      = start(SECTION_TYPES.get(key)!!) {
         if (parseSectionType(key)) {
             (parseAfterInfo(level) && isLastOnThisLine()) || parseInvalidLine()
-            parseProperties(level, { parseBody(it) }, canContainIf = (key == "library") || (key == "executable"))
+            parseProperties(level, { parseBody(it) }, canContainIf = (key in BUILD_INFO_SECTIONS))
         }
         else false
     }
