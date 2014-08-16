@@ -5,7 +5,7 @@ import org.jetbrains.cabal.psi.PropertyField
 import org.jetbrains.cabal.psi.PathsField
 import com.intellij.openapi.vfs.VirtualFile
 
-public class ExtraLibDirsField(node: ASTNode) : PathsField(node) {
+public class ExtraLibDirsField(node: ASTNode) : PropertyField(node), PathsField {
 
     public override fun isValidFile(file: VirtualFile): Boolean = file.isDirectory()
 

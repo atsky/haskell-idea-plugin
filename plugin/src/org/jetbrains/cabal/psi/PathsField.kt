@@ -13,9 +13,9 @@ import java.io.FilenameFilter
 import java.util.ArrayList
 import com.intellij.psi.PsiFile
 
-public open class PathsField(node: ASTNode): PropertyField(node) {
+public trait PathsField: PropertyField {
 
-    public open fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
+    public fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
         val parentDirs = getParentDirs(prefixPath, originalRootDir)
         var res = ArrayList<String>()
         for (parentDir in parentDirs) {
@@ -26,21 +26,21 @@ public open class PathsField(node: ASTNode): PropertyField(node) {
        return res
     }
 
-    public open fun isValidFile(file: VirtualFile): Boolean = true
+    public fun isValidFile(file: VirtualFile): Boolean = true
 
-    public open fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
+    public fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
         val dir = getParentDirFromRoot(prefixPath, originalRootDir)
         if (dir == null) return listOf()
         return listOf(dir)
     }
 
-    public fun getParentDirFromRoot(prefixPath: Path, originalRootDir: VirtualFile): VirtualFile? {
+    public final fun getParentDirFromRoot(prefixPath: Path, originalRootDir: VirtualFile): VirtualFile? {
         val dirPath = File(prefixPath.getPathWithParent(originalRootDir)).getParent()
         val dirFile = if (dirPath == null) null else originalRootDir.getFileSystem().findFileByPath(dirPath)
         return dirFile
     }
 
-    public fun getParentDirsFromSourceDirs(prefixPath: Path, originalRootDir: VirtualFile, getSourceDirs: BuildSection.() -> List<Path>?): List<VirtualFile> {
+    public final fun getParentDirsFromSourceDirs(prefixPath: Path, originalRootDir: VirtualFile, getSourceDirs: BuildSection.() -> List<Path>?): List<VirtualFile> {
         var res = ArrayList<VirtualFile>()
         val sourceDirs = prefixPath.getParentBuildSection()?.getSourceDirs()
         if (sourceDirs == null) return res

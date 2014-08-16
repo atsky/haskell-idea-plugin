@@ -33,7 +33,7 @@ public class CabalAnnotator() : Annotator {
         if (element is Checkable) {
             (element.check()).forEach { handle(it) }
         }
-        if (element is PropertyField) {
+        if (element is SingleValueField) {
             handle(element.checkUniqueness())
         }
         if ((element is PropertyKey) || (element is SectionType)) {

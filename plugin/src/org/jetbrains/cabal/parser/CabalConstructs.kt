@@ -17,24 +17,24 @@ public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
     "license-file"       to Pair(CabalTokelTypes.LICENSE_FILES     , { CabalParser.(level: Int) -> this.parsePath() }                             ),
 //    "license-files"      to Pair(CabalTokelTypes.LICENSE_FILES     , { CabalParser.(level: Int) -> this.parsePathList(level) }                    ),
 
-    "copyright"          to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
-    "author"             to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
-    "maintainer"         to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.E_MAIL) }   ),
-    "stability"          to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
-    "homepage"           to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
-    "bug-reports"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
-    "package-url"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
-    "synopsis"           to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
-    "description"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
-    "category"           to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "copyright"          to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "author"             to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "maintainer"         to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.E_MAIL) }   ),
+    "stability"          to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "homepage"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
+    "bug-reports"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
+    "package-url"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
+    "synopsis"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "description"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
+    "category"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }                    ),
 
     "tested-with"        to Pair(CabalTokelTypes.TESTED_WITH       , { CabalParser.(level: Int) -> this.parseCompilerList(level) }                ),
 
     "data-files"         to Pair(CabalTokelTypes.DATA_FILES        , { CabalParser.(level: Int) -> this.parsePathList(level) }                    ),
     "data-dir"           to Pair(CabalTokelTypes.DATA_DIR          , { CabalParser.(level: Int) -> this.parsePath() }                             ),
-    "extra-source-files" to Pair(CabalTokelTypes.PATHS_FIELD       , { CabalParser.(level: Int) -> this.parsePathList(level) }                    ),
+    "extra-source-files" to Pair(CabalTokelTypes.EXTRA_SOURCE      , { CabalParser.(level: Int) -> this.parsePathList(level) }                    ),
 //    "extra-doc-files"    to Pair(CabalTokelTypes.PATHS_FIELD       , { CabalParser.(level: Int) -> this.parsePathList(level) }                    ),
-    "extra-tmp-files"    to Pair(CabalTokelTypes.PATHS_FIELD       , { CabalParser.(level: Int) -> this.parsePathList(level) }                    )
+    "extra-tmp-files"    to Pair(CabalTokelTypes.EXTRA_TMP         , { CabalParser.(level: Int) -> this.parsePathList(level) }                    )
 )
 
 public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
@@ -57,7 +57,7 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
     "install-includes"   to Pair(CabalTokelTypes.INSTALL_INCLUDES  , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
     "include-dirs"       to Pair(CabalTokelTypes.INCLUDE_DIRS      , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
 
-    "c-sources"          to Pair(CabalTokelTypes.PATHS_FIELD       , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
+    "c-sources"          to Pair(CabalTokelTypes.C_SOURCES         , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
 
     "extra-libraries"    to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseTokenList(level) }                  ),
     "extra-lib-dirs"     to Pair(CabalTokelTypes.EXTRA_LIB_DIRS    , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
@@ -71,7 +71,7 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
 
     "default-extensions" to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
     "other-extensions"   to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
-    "default-language"   to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.LANGUAGE) } ),
+    "default-language"   to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.LANGUAGE) } ),
     "other-languages"    to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseLanguageList(level) }               )
 )
 
@@ -112,7 +112,7 @@ public val BENCHMARK_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
 }()
 
 public val FLAG_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
-    "description"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseFreeForm(level) }),
+    "description"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeForm(level) }),
     "default"            to Pair(CabalTokelTypes.BOOL_FIELD        , { CabalParser.(level: Int) -> this.parseBool() }         ),
     "manual"             to Pair(CabalTokelTypes.BOOL_FIELD        , { CabalParser.(level: Int) -> this.parseBool() }         )
 )
@@ -123,7 +123,7 @@ public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) 
     "subdir"             to Pair(CabalTokelTypes.REPO_SUBDIR       , { CabalParser.(level: Int) -> this.parsePath() }                            ),
     "module"             to Pair(CabalTokelTypes.REPO_MODULE       , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } ),
     "tag"                to Pair(CabalTokelTypes.REPO_TAG          , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } ),
-    "branch"             to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } )
+    "branch"             to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } )
 )
 
 public val SECTION_TYPES: Map<String, IElementType> = mapOf(

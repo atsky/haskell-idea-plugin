@@ -1,13 +1,14 @@
 package org.jetbrains.cabal.psi
 
 import org.jetbrains.cabal.psi.PathsField
+import org.jetbrains.cabal.psi.SingleValueField
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.util.ArrayList
 
-public class MainFileField(node: ASTNode) : PathsField(node) {
+public class MainFileField(node: ASTNode) : SingleValueField(node), PathsField {
 
     public override fun isValidFile(file: VirtualFile): Boolean {
         if (!file.isDirectory()) return (file.getExtension() == "hs") || (file.getExtension() == "lhs")

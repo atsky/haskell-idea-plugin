@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 import java.util.ArrayList
 
-public class IncludesField(node: ASTNode) : PathsField(node) {
+public class IncludesField(node: ASTNode) : PropertyField(node), PathsField {
 
     public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
         if (prefixPath.isAbsolute()) return listOf()
