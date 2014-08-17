@@ -158,8 +158,10 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         if (!(HaskellSettings.getInstance().getState().useGhcMod!!)) {
             return listOf();
         }
-        return listOf() //todo return results from ghc-modi without exception
-//        return getResultFromGhcModi(psiFile, baseDir, file)
+        if (!file.isInLocalFileSystem()) {
+            return listOf()
+        }
+        return getResultFromGhcModi(psiFile, baseDir, file)
     }
 
 
