@@ -1,21 +1,13 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers
 
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
-import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
-import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
 import java.util.concurrent.locks.ReentrantLock
-import org.jetbrains.haskell.debugger.protocol.CommandCallback
-import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import org.jetbrains.haskell.debugger.protocol.ResumeCommand
-import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
-import org.jetbrains.haskell.debugger.protocol.FlowCommand
-
-/**
- * Created by vlad on 8/8/14.
- */
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import com.intellij.execution.ui.ConsoleViewContentType
+import org.jetbrains.haskell.debugger.procdebuggers.utils.CommandQueue
 
 public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
                                     private val showCommandsInConsole: Boolean) : ProcessDebugger {

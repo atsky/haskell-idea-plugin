@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers
 
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.openapi.util.Key
@@ -26,6 +26,8 @@ import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
+import org.jetbrains.haskell.debugger.procdebuggers.SimpleDebuggerImpl
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 
 /**
  * Created by vlad on 7/30/14.

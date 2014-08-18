@@ -1,29 +1,26 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers
 
-import org.jetbrains.haskell.debugger.parser.MoveHistResult
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
-import org.jetbrains.haskell.debugger.protocol.TraceCommand
-import org.jetbrains.haskell.debugger.protocol.FlowCommand
-import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import org.jetbrains.haskell.debugger.protocol.ResumeCommand
-import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
-import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
-import org.jetbrains.haskell.debugger.parser.ParseResult
-import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
-import org.jetbrains.haskell.debugger.protocol.StepCommand
-import org.jetbrains.haskell.debugger.protocol.StepOverCommand
-import org.jetbrains.haskell.debugger.protocol.BackCommand
-import org.jetbrains.haskell.debugger.protocol.ForwardCommand
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import org.jetbrains.haskell.debugger.protocol.ForceCommand
-import org.jetbrains.haskell.debugger.parser.HistoryResult
-import org.jetbrains.haskell.debugger.protocol.HistoryCommand
-import org.jetbrains.haskell.debugger.protocol.HiddenCommand
+import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
+import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
+import org.jetbrains.haskell.debugger.parser.ParseResult
+import org.jetbrains.haskell.debugger.protocol.TraceCommand
+import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
+import org.jetbrains.haskell.debugger.protocol.StepOverCommand
 import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
-
-/**
- * Created by vlad on 8/11/14.
- */
+import org.jetbrains.haskell.debugger.protocol.ResumeCommand
+import org.jetbrains.haskell.debugger.protocol.BackCommand
+import org.jetbrains.haskell.debugger.protocol.ForwardCommand
+import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
+import org.jetbrains.haskell.debugger.protocol.FlowCommand
+import org.jetbrains.haskell.debugger.protocol.StepCommand
+import org.jetbrains.haskell.debugger.parser.MoveHistResult
+import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 
 public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
                                          showCommandsInConsole: Boolean) : QueueDebugger(debugProcess, showCommandsInConsole) {

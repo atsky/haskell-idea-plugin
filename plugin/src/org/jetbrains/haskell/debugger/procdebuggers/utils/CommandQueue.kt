@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers.utils
 
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import java.util.LinkedList

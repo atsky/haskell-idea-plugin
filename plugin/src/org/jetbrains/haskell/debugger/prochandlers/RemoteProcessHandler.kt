@@ -1,6 +1,8 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.prochandlers
 
 import com.intellij.execution.process.ProcessListener
+import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
+import org.jetbrains.haskell.debugger.procdebuggers.utils.RemoteDebugStreamHandler
 
 /**
  * Created by vlad on 7/30/14.

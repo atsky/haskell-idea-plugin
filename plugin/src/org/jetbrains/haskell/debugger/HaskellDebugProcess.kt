@@ -41,6 +41,11 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.xdebugger.impl.actions.StepOutAction
 import com.intellij.xdebugger.impl.actions.ForceStepIntoAction
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
+import org.jetbrains.haskell.debugger.procdebuggers.GHCiDebugger
+import org.jetbrains.haskell.debugger.procdebuggers.RemoteDebugger
+import org.jetbrains.haskell.debugger.history.HistoryManager
+import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 
 /**
  * Created by vlad on 7/10/14.

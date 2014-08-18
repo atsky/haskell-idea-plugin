@@ -1,17 +1,12 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers.utils
 
+import com.intellij.execution.process.ProcessListener
+import com.intellij.execution.process.ProcessHandler
 import java.net.ServerSocket
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessEvent
-import com.intellij.openapi.util.Key
-import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
-
-/**
- * Created by vlad on 7/30/14.
- */
 
 public class RemoteDebugStreamHandler: Runnable {
 

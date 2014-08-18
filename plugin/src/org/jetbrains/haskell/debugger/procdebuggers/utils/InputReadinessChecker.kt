@@ -1,12 +1,9 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers.utils
 
+import org.jetbrains.haskell.debugger.procdebuggers.GHCiDebugger
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
-
-/**
- * Created by vlad on 7/16/14.
- */
 
 public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal: () -> Unit) : Runnable {
 

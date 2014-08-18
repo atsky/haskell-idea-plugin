@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers
 
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
@@ -33,6 +33,9 @@ import org.jetbrains.haskell.debugger.protocol.FlowCommand
 import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.protocol.HistoryCommand
+import org.jetbrains.haskell.debugger.procdebuggers.SimpleDebuggerImpl
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import org.jetbrains.haskell.debugger.procdebuggers.utils.InputReadinessChecker
 
 /**
  * Created by vlad on 7/11/14.
@@ -51,7 +54,7 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
 
-    public val processStopped: AtomicBoolean = AtomicBoolean(false);
+    public val processStopped: java.util.concurrent.atomic.AtomicBoolean = AtomicBoolean(false);
 
     {
         inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })

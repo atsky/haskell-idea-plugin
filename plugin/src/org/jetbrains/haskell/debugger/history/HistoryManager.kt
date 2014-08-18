@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.history
 
 import org.jetbrains.haskell.debugger.actions.SwitchableAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -14,6 +14,8 @@ import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import com.intellij.icons.AllIcons.Actions
 
 /**
  * Created by vlad on 8/5/14.
@@ -28,8 +30,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
     private val historyPanel: HistoryTab = HistoryTab(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
-    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",
-            com.intellij.icons.AllIcons.Actions.Back) {
+    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
             enabled = false
             forwardAction.enabled = false
@@ -43,7 +44,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }
     }
     private val forwardAction: SwitchableAction = object : SwitchableAction("forward", "Move forward along history",
-            com.intellij.icons.AllIcons.Actions.Forward) {
+            Actions.Forward) {
         override fun actionPerformed(e: AnActionEvent?) {
             enabled = false
             backAction.enabled = false
@@ -111,7 +112,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
             private set
         private var realHistIndex: Int = 0
         private var allFramesCollected = false
-        private val historyFrames: ArrayList<HsHistoryFrame> = ArrayList()
+        private val historyFrames: java.util.ArrayList<HsHistoryFrame> = ArrayList()
 
         public fun addFrame(frame: HsHistoryFrame) {
             historyFrames.add(frame)

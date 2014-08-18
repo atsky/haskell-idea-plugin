@@ -16,10 +16,9 @@ import com.intellij.execution.DefaultExecutionResult
 import com.intellij.execution.configurations.RunnerSettings
 import org.jetbrains.haskell.util.GHCUtil
 import com.intellij.openapi.roots.ModuleRootManager
-import org.jetbrains.haskell.debugger.GHCiProcessHandler
-import org.jetbrains.haskell.debugger.HaskellDebugProcessHandler
-import org.jetbrains.haskell.debugger.RemoteDebugStreamHandler
-import org.jetbrains.haskell.debugger.RemoteProcessHandler
+import org.jetbrains.haskell.debugger.prochandlers.GHCiProcessHandler
+import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
+import org.jetbrains.haskell.debugger.procdebuggers.utils.RemoteDebugStreamHandler
 import org.jetbrains.cabal.CabalInterface
 import com.intellij.openapi.module.Module
 import org.jetbrains.cabal.CabalFile
@@ -32,6 +31,7 @@ import com.pty4j.PtyProcess
 import org.jetbrains.haskell.config.HaskellSettings
 import org.jetbrains.cabal.psi.FullVersionConstraint
 import java.util.ArrayList
+import org.jetbrains.haskell.debugger.prochandlers.RemoteProcessHandler
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 

@@ -1,20 +1,16 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.procdebuggers
 
-import com.intellij.openapi.util.Key
-import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
-import org.jetbrains.haskell.debugger.protocol.ForceCommand
-import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
+import org.jetbrains.haskell.debugger.protocol.ForceCommand
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.protocol.CommandCallback
-import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import com.intellij.openapi.util.Key
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
-
-/**
- * Created by vlad on 7/11/14.
- */
+import org.jetbrains.haskell.debugger.parser.HistoryResult
 
 public trait ProcessDebugger {
 

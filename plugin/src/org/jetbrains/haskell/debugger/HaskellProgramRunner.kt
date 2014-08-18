@@ -23,6 +23,7 @@ import java.io.File
 import com.intellij.notification.NotificationListener
 import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
+import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 
 /**
  * Class for starting debug session.

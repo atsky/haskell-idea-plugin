@@ -1,23 +1,19 @@
-package org.jetbrains.haskell.debugger
+package org.jetbrains.haskell.debugger.history
 
-import com.intellij.debugger.ui.impl.VariablesPanel
-import com.intellij.debugger.impl.DebuggerStateManager
-import com.intellij.debugger.impl.DebuggerContextImpl
-import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import javax.swing.DefaultListModel
-import javax.swing.ListSelectionModel
-import javax.swing.event.ListSelectionEvent
-import javax.swing.DefaultListSelectionModel
-import com.intellij.ui.components.JBList
-import com.intellij.execution.ui.RunnerLayoutUi
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.openapi.Disposable
-import com.intellij.icons.AllIcons
+import com.intellij.debugger.impl.DebuggerStateManager
+import com.intellij.execution.ui.RunnerLayoutUi
+import com.intellij.debugger.ui.impl.VariablesPanel
 import javax.swing.JComponent
+import org.jetbrains.haskell.debugger.frames.HsStackFrame
+import com.intellij.ui.components.JBList
+import javax.swing.event.ListSelectionEvent
+import com.intellij.debugger.impl.DebuggerContextImpl
+import javax.swing.DefaultListModel
 import com.intellij.execution.ui.layout.PlaceInGrid
-
-/**
- * Created by vlad on 8/4/14.
- */
+import com.intellij.icons.AllIcons
+import javax.swing.ListSelectionModel
 
 public class HistoryTab(private val process: HaskellDebugProcess,
                         private val manager: HistoryManager) : Disposable {

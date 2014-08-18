@@ -2,7 +2,7 @@ package org.jetbrains.haskell.debugger.frames
 
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.XSourcePosition
-import org.jetbrains.haskell.debugger.ProcessDebugger
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 //import org.jetbrains.haskell.debugger.protocol.ExpressionCommand
 import com.intellij.xdebugger.frame.XNamedValue
 
