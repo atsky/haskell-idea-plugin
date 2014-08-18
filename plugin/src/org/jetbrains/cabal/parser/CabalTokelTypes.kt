@@ -104,7 +104,7 @@ public trait CabalTokelTypes {
         val FREE_FORM              : IElementType = CabalCompositeElementType("FREE_FORM"                , ::FreeForm                 )
         val VERSION_VALUE          : IElementType = CabalCompositeElementType("VERSION_VALUE"            , ::VersionValue             )
         val IDENTIFIER             : IElementType = CabalCompositeElementType("IDENTIFIER"               , ::Identifier               )
-        val E_MAIL                 : IElementType = CabalCompositeElementType("E_MAIL"                   , ::E_mail                   )
+        val E_MAIL                 : IElementType = CabalCompositeElementType("E_MAIL"                   , ::EMail                    )
         val TOKEN                  : IElementType = CabalCompositeElementType("TOKEN"                    , ::Token                    )
         val OPTION                 : IElementType = CabalCompositeElementType("OPTION"                   , ::Option                   )
         val COMPILER               : IElementType = CabalCompositeElementType("COMPILER"                 , ::CompilerId               )
@@ -112,7 +112,6 @@ public trait CabalTokelTypes {
 
         val INVALID_VALUE          : IElementType = CabalCompositeElementType("INVALID_VALUE"            , ::InvalidValue             )
         val INVALID_CONDITION_PART : IElementType = CabalCompositeElementType("INVALID_CONDITION_PART"   , ::InvalidConditionPart     )
-
 
         val TEST_SUITE_TYPE        : IElementType = CabalCompositeElementType("TEST_SUITE_TYPE"          , ::TestSuiteType            )
         val BENCHMARK_TYPE         : IElementType = CabalCompositeElementType("BENCHMARK_TYPE"           , ::BenchmarkType            )
