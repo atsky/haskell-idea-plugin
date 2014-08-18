@@ -46,12 +46,12 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
     "build-tools"        to Pair(CabalTokelTypes.BUILD_TOOLS       , { CabalParser.(level: Int) -> this.parseConstraintList(level) }             ),
     "buildable"          to Pair(CabalTokelTypes.BUILDABLE         , { CabalParser.(level: Int) -> this.parseBool() }                            ),
 
-    "ghc-options"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "ghc-prof-options"   to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "ghc-shared-options" to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "hugs-options"       to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "nhc98-options"      to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "jhc-options"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "ghc-options"        to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "ghc-prof-options"   to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "ghc-shared-options" to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "hugs-options"       to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "nhc98-options"      to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "jhc-options"        to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
 
     "includes"           to Pair(CabalTokelTypes.INCLUDES          , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
     "install-includes"   to Pair(CabalTokelTypes.INSTALL_INCLUDES  , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
@@ -59,20 +59,20 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
 
     "c-sources"          to Pair(CabalTokelTypes.C_SOURCES         , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
 
-    "extra-libraries"    to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseTokenList(level) }                  ),
+    "extra-libraries"    to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseTokenList(level) }                  ),
     "extra-lib-dirs"     to Pair(CabalTokelTypes.EXTRA_LIB_DIRS    , { CabalParser.(level: Int) -> this.parsePathList(level) }                   ),
 
-    "cc-options"         to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "cpp-options"        to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
-    "ld-options"         to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "cc-options"         to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "cpp-options"        to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
+    "ld-options"         to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseOptionList(level) }                 ),
 
     "pkgconfig-depends"  to Pair(CabalTokelTypes.PKG_CONFIG_DEPENDS, { CabalParser.(level: Int) -> this.parseConstraintList(level) }             ),
-    "frameworks"         to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseTokenList(level) }                  ),
+    "frameworks"         to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseTokenList(level) }                  ),
 
-    "default-extensions" to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
-    "other-extensions"   to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
+    "default-extensions" to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
+    "other-extensions"   to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseIdList(level) }                     ),
     "default-language"   to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.LANGUAGE) } ),
-    "other-languages"    to Pair(CabalTokelTypes.PROPERTY          , { CabalParser.(level: Int) -> this.parseLanguageList(level) }               )
+    "other-languages"    to Pair(CabalTokelTypes.MULTI_VAL         , { CabalParser.(level: Int) -> this.parseLanguageList(level) }               )
 )
 
 public val LIBRARY_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = {

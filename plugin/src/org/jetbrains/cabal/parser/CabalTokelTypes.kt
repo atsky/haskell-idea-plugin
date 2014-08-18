@@ -78,7 +78,7 @@ public trait CabalTokelTypes {
         val INSTALL_INCLUDES       : IElementType = CabalCompositeElementType("INSTALL_INCLUDES"         , ::InstallIncludesField     )
         val INCLUDES               : IElementType = CabalCompositeElementType("INCLUDES"                 , ::IncludesField            )
         val INVALID_FIELD          : IElementType = CabalCompositeElementType("INVALID_FIELD"            , ::InvalidField             )
-        val PROPERTY               : IElementType = CabalCompositeElementType("PROPERTY"                 , ::PropertyField            )
+        val MULTI_VAL              : IElementType = CabalCompositeElementType("MULTI_VAL"                , ::MultiValueField          )
         val SINGLE_VAL             : IElementType = CabalCompositeElementType("SINGLE_VAL"               , ::SingleValueField         )
 
         val MAIN_FILE              : IElementType = CabalCompositeElementType("MAIN_FILE"                , ::MainFileField            )

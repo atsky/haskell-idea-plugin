@@ -1,12 +1,12 @@
 package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.psi.PropertyField
+import org.jetbrains.cabal.psi.MultiValueField
 import org.jetbrains.cabal.psi.PathsField
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
-public class DataFilesField(node: ASTNode) : PropertyField(node), PathsField {
+public class DataFilesField(node: ASTNode) : MultiValueField(node), PathsField {
 
     public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
         var dataDir = prefixPath.getCabalFile().getDataDir()?.getFileWithParent(originalRootDir)  ?:  originalRootDir

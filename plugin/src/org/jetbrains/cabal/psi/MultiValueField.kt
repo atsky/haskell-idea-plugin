@@ -9,9 +9,9 @@ import com.intellij.psi.tree.IElementType
 import java.util.ArrayList
 import com.intellij.psi.util.PsiTreeUtil
 
-public open class PropertyField(node: ASTNode) : Field(node) {
+public open class MultiValueField(node: ASTNode) : PropertyField(node) {
 
-    public fun getKeyNode(): PsiElement = getFirstChild()!!
-
-    public fun getPropertyName(): String = getKeyNode().getText()!!
+    public fun <T : PsiElement> getValues(valueType: Class<T>): List<T> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, valueType)
+    }
 }

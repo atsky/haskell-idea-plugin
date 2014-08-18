@@ -1,7 +1,7 @@
 package org.jetbrains.cabal.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.cabal.psi.PropertyField
+import org.jetbrains.cabal.psi.MultiValueField
 import org.jetbrains.cabal.psi.FullVersionConstraint
 import org.jetbrains.cabal.psi.ComplexVersionConstraint
 import org.jetbrains.cabal.psi.Checkable
@@ -9,7 +9,7 @@ import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.util.ArrayList
 
-public class BuildDependsField(node: ASTNode) : PropertyField(node), Checkable {
+public class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable {
 
     public fun getPackageNames(): List<String> = getValues(javaClass<FullVersionConstraint>()) map { it.getBaseName() }
 

@@ -323,14 +323,11 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun parseRepoKinds() = (parseIdValue(CabalTokelTypes.REPO_KIND) && parseIdValue(CabalTokelTypes.REPO_KIND)) || true
 
-    fun parseRepoFields(level: Int)          = parseFieldFrom(level      , SOURCE_REPO_FIELDS)
-    fun parseBuildInformation(level: Int)    = parseFieldFrom(level      , BUILD_INFO_FIELDS )
-
     fun parseExactSection(level: Int, key: String, parseAfterInfo: CabalParser.(Int) -> Boolean, parseBody: (Int) -> Boolean)
                                                                                                      = start(SECTION_TYPES.get(key)!!) {
         if (parseSectionType(key)) {
             (parseAfterInfo(level) && isLastOnThisLine()) || parseInvalidLine()
-            parseProperties(level, { parseBody(it) }, canContainIf = (key in BUILD_INFO_SECTIONS))
+            parseProperties(level, { parseBody(it) }, canContainIf = (key in BUILD_INFO_SECTIONS) || (key in IF_ELSE))
         }
         else false
     }
@@ -374,7 +371,6 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         fun parseSomeField(level: Int) = parseTopLevelField(level)
                                       || parseTopSection(level)
                                       || parseInvalidField(level)
-                                      || parseInvalidLine()
 
         val rootMarker = mark()
         val firstIndent = builder.getCurrentOffset()
@@ -382,11 +378,11 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             val nextIndent = nextLevel()
             if ((nextIndent == null) || (nextIndent == firstIndent)) {
                 skipNewLineBiggerLevel(firstIndent - 1)
-                parseSomeField(firstIndent)
+                if (!builder.eof()) (parseSomeField(firstIndent) || parseInvalidLine())
             }
             else {
                 skipNewLineBiggerLevel(- 1)
-                parseInvalidLine()
+                if (!builder.eof()) parseInvalidLine()
             }
 
         }
