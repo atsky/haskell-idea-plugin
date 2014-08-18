@@ -10,9 +10,6 @@ import com.intellij.openapi.util.TextRange
 public open class InvalidValue(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun check(): List<ErrorMessage> {
-//        if (getParent() is InvalidField) {
-//            return listOf()
-//        }
         if (getText()!! == "") {
             return listOf(ErrorMessage(this, "invalid empty value", "error", isAfterNodeError = true))
         }

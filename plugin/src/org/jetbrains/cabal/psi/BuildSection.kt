@@ -11,11 +11,14 @@ import java.io.File
 
 public open class BuildSection(node: ASTNode): Section(node) {
 
-    public fun getHSSourceDirs(): List<Path>? = getField(javaClass<HsSourceDirsField>())?.getValues(javaClass<Path>())
+    private fun <F : PropertyField, V : PropertyValue> getFieldsValues(fieldT: Class<F>, valueT: Class<V>): List<V>
+            = getFields(fieldT) flatMap { it.getValues(valueT) }
 
-    public fun getIncludeDirs() : List<Path>? = getField(javaClass<IncludeDirsField>())?.getValues(javaClass<Path>())
+    public fun getHSSourceDirs(): List<Path> = getFieldsValues(javaClass<HsSourceDirsField>(), javaClass<Path>())
 
-    public fun getBuildDepends(): List<FullVersionConstraint>?
-            = getField(javaClass<BuildDependsField>())?.getValues(javaClass<FullVersionConstraint>())
+    public fun getIncludeDirs() : List<Path> = getFieldsValues(javaClass<IncludeDirsField>() , javaClass<Path>())
+
+    public fun getBuildDepends(): List<FullVersionConstraint>
+            = getFieldsValues(javaClass<BuildDependsField>(), javaClass<FullVersionConstraint>())
 
 }

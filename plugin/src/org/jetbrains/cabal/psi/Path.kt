@@ -47,9 +47,9 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         return if (errorMsg == null) listOf() else listOf(errorMsg)
     }
 
-    private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile>? {
+    private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile> {
         val ext = getFile().getName().replaceAll("^\\*(\\..+)$", "$1")
-        return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$") }
+        return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$") }  ?:  listOf()
     }
 
     private fun getCabalRootFile(): VirtualFile? = getCabalFile().getVirtualFile()?.getParent()
@@ -113,7 +113,9 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
     }
 
     private fun checkFileFromIncludes(): ErrorMessage? {
-        if (findFileInDirs({ getParentBuildSection()?.getIncludeDirs() }) == null) return makeWarning("there is no such file")
+        val parentSection = getParentBuildSection()
+        if (parentSection == null) throw IllegalStateException()
+        if (findFileInDirs({ parentSection.getIncludeDirs() }) == null) return makeWarning("there is no such file")
         return null
     }
 
@@ -121,15 +123,16 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun checkWildcard(dir: VirtualFile?): ErrorMessage? {
         if (dir == null) return makeWarning("invalid path")
-        val res = filterByWildcard(dir)?.size
-        if (res == null) return makeWarning("invali path")
+        val res = filterByWildcard(dir).size
         if (res > 0) return null
         return makeWarning("no file matches this wildcard")
     }
 
     private fun checkMainFile(): ErrorMessage? {
         if (isAbsolute()) return makeWarning("this path should be relative")
-        val res = findFileInDirs({ getParentBuildSection()?.getHSSourceDirs() })
+        val parentSection = getParentBuildSection()
+        if (parentSection == null) throw IllegalStateException()
+        val res = findFileInDirs({ parentSection.getHSSourceDirs() })
         if (res == null)  return makeWarning("invalid path")
         val ext = res.getExtension()
         if ((ext != "hs") && (ext != "lhs")) return makeWarning("invalid extension")
@@ -137,6 +140,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
     }
 
     public fun checkFileOrWildcard(path: String): ErrorMessage? {
+
         fun getParentPath(path: String) = File(path).getParent()
 
         val file = getAbsoluteFile(path)

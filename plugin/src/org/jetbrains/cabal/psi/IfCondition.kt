@@ -14,8 +14,6 @@ public class IfCondition(node: ASTNode) : Section(node) {
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
         res.addAll((getParent() as Section).getAvailableFieldNames())
-        res.remove("if")
-        res.remove("else")
         return res
     }
 

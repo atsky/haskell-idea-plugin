@@ -20,7 +20,7 @@ public trait PathsField: PropertyField {
         var res = ArrayList<String>()
         for (parentDir in parentDirs) {
             if (parentDir.isDirectory()) {
-                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName()/*.concat(if (it.isDirectory()) "/" else "")*/ })
+                res.addAll(parentDir.getChildren()!! filter { isValidFile(it) } map { it.getName().concat(if (it.isDirectory()) "/" else "") })
             }
         }
        return res

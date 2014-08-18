@@ -17,7 +17,7 @@ public class ComplexVersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node
         fun findLogicOrNullFromRange(startOffset: Int, endOffset: Int): PsiElement? {
             for (i in startOffset..endOffset - 1) {
                 val res = findElementAt(i)
-                if ((res != null) && (res.getNode()!!.getElementType() == CabalTokelTypes.LOGIC)) return res
+                if ((res?.getNode()?.getElementType() == CabalTokelTypes.LOGIC)) return res
             }
             return null
         }

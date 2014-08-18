@@ -19,7 +19,7 @@ public open class Section(node: ASTNode): Field(node), FieldContainer, Checkable
 
     public fun getSectChildren(): List<PsiElement> = getChildren() filter { it is Field }
 
-    public fun getSectTypeNode(): PsiElement = getFirstChild()!!
+    public fun getSectTypeNode(): PsiElement = (getChildren() firstOrNull { it is SectionType }) ?: throw IllegalStateException()
 
     public fun getSectType(): String = getSectTypeNode().getText()!!
 

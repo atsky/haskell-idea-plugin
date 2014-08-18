@@ -13,7 +13,6 @@ import java.util.ArrayList
 public class FullCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     public override fun check(): List<ErrorMessage> {
-//        val res = PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<ConditionPart>()) flatMap { it.checkInvalidParts() }
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<ConditionPart>()) flatMap { it.checkBrackets() }
     }
 }

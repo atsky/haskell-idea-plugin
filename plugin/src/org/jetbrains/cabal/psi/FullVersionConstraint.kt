@@ -8,13 +8,6 @@ public class FullVersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), 
 
     public fun getBaseName() : String = getFirstChild()!!.getText()!!
 
-    public fun getConstraint() : ComplexVersionConstraint? {
-        var nodes = getChildren()
-        for (node in nodes) {
-            if (node is ComplexVersionConstraint) {
-                return node
-            }
-        }
-        return null
-    }
+    public fun getConstraint() : ComplexVersionConstraint?
+            = (getChildren() firstOrNull { it is ComplexVersionConstraint }) as ComplexVersionConstraint?
 }
