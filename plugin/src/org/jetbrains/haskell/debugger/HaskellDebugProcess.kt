@@ -211,8 +211,8 @@ public class HaskellDebugProcess(session: XDebugSession,
         if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
-            val callback = BreakpointListCommand.DefaultCallback(syncObject, resultArray)
-            val command = BreakpointListCommand(moduleName, lineNumber, callback)
+            val callback = BreakpointListCommand.DefaultCallback(resultArray)
+            val command = BreakpointListCommand(moduleName, lineNumber, syncObject, callback)
             syncCommand(command, syncObject)
             return resultArray
         }

@@ -17,8 +17,9 @@ import org.jetbrains.haskell.debugger.parser.BreakInfo
 
 public class BreakpointListCommand(val module: String,
                                    val lineNumber: Int? = null,
-                                   callback: SyncCommandCallback<BreakInfoList?>)
-: SyncCommand<BreakInfoList?>(callback) {
+                                   syncObj: SyncObject,
+                                   callback: CommandCallback<BreakInfoList?>)
+: SyncCommand<BreakInfoList?>(syncObj, callback) {
 
     override fun getText(): String {
         if(lineNumber == null) {
@@ -34,8 +35,8 @@ public class BreakpointListCommand(val module: String,
     override fun parseJSONOutput(output: JSONObject): BreakInfoList? = JSONConverter.breaksListFromJSON(output)
 
     class object {
-        public class DefaultCallback(syncObject: SyncObject, private val resultList: ArrayList<BreakInfo>)
-        : SyncCommandCallback<BreakInfoList?>(syncObject) {
+        public class DefaultCallback(private val resultList: ArrayList<BreakInfo>)
+        : CommandCallback<BreakInfoList?>() {
             override fun execAfterParsing(result: BreakInfoList?) {
                 if(result != null) {
                     for (filePos in result.list) {
