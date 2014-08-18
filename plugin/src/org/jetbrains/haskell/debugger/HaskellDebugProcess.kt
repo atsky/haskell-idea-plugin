@@ -278,7 +278,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         topToolbar.remove(stepOut)
         topToolbar.remove(forceStepInto)
 
-        historyManager.registerActions(leftToolbar, topToolbar)
+        historyManager.registerActions(topToolbar)
     }
 
     // ProcessListener

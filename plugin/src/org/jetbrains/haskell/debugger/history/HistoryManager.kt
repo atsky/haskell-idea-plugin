@@ -80,7 +80,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         ui.addContent(context)
     }
 
-    public fun registerActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
+    public fun registerActions(topToolbar: DefaultActionGroup) {
         topToolbar.addSeparator()
         topToolbar.add(backAction)
         topToolbar.add(forwardAction)
@@ -213,9 +213,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
 
         public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
             if (realHistIndex == historyIndex) {
-                if (finalCallback != null) {
-                    finalCallback(null)
-                }
+                finalCallback?.invoke(null)
                 return
             }
             if (realHistIndex < historyIndex) {
@@ -231,9 +229,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                 --toGo
                 ++realHistIndex
                 if (toGo == 0 || result == null) {
-                    if (finalCallback != null) {
-                        finalCallback!!(null)
-                    }
+                    finalCallback?.invoke(null)
                 } else {
                     debugProcess.debugger.back(this)
                 }
@@ -246,9 +242,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
                 --toGo
                 --realHistIndex
                 if (toGo == 0 || result == null) {
-                    if (finalCallback != null) {
-                        finalCallback!!(null)
-                    }
+                    finalCallback?.invoke(null)
                 } else {
                     debugProcess.debugger.forward(this)
                 }

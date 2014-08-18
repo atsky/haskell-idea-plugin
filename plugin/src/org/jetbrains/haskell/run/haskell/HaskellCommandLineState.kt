@@ -32,6 +32,7 @@ import org.jetbrains.haskell.config.HaskellSettings
 import org.jetbrains.cabal.psi.FullVersionConstraint
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.prochandlers.RemoteProcessHandler
+import com.intellij.openapi.vfs.CharsetToolkit
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -40,7 +41,8 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val generalCommandLine = createCommandLine()
         val processHandler: ProcessHandler =
                 if (HaskellSettings.getInstance().getState().usePty!!) {
-                    OSProcessHandler(getPtyProcess(generalCommandLine)!!)
+                    OSProcessHandler(getPtyProcess(generalCommandLine)!!, generalCommandLine.getCommandLineString(),
+                            CharsetToolkit.UTF8_CHARSET)
                 } else {
                     OSProcessHandler(generalCommandLine)
                 }
@@ -151,7 +153,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         for (dep in depends) {
             command.add("-pkg${dep.getBaseName()}")
         }
-        val builder = ProcessBuilder(command) .directory(File(baseDir))
+        val builder = ProcessBuilder(command).directory(File(baseDir))
 
         try {
             return RemoteProcessHandler(builder.start(), streamHandler)
