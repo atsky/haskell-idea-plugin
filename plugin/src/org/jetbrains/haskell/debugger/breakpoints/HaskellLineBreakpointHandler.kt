@@ -33,7 +33,7 @@ public class HaskellLineBreakpointHandler(val project: Project,
         val breakpointLineNumber: Int? = getHaskellBreakpointLineNumber(breakpoint)
         if (breakpointLineNumber != null) {
             val moduleName = getModuleName(breakpoint)
-            val breaksList = debugProcess.breakListForLine(moduleName, breakpointLineNumber)
+            val breaksList = debugProcess.syncBreakListForLine(moduleName, breakpointLineNumber)
             addUserData(breakpoint, breaksList)
             debugProcess.addBreakpoint(moduleName, breakpointLineNumber, breakpoint)
         }

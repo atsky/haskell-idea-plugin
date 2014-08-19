@@ -207,7 +207,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun breakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
+    public fun syncBreakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
         if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
