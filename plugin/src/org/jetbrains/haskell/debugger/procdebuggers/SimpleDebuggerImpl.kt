@@ -21,6 +21,7 @@ import org.jetbrains.haskell.debugger.protocol.StepCommand
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
+import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 
 public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
                                          showCommandsInConsole: Boolean) : QueueDebugger(debugProcess, showCommandsInConsole) {
@@ -43,21 +44,11 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
 
     override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(debugProcess)))
 
-    override fun runToPosition(module: String, line: Int) {
-        if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            enqueueCommand(SetBreakpointCommand(module, line, SetTempBreakForRunCallback(if (globalBreakpointIndices) null else module)))
-        } else {
-            if (debugStarted) resume() else trace()
-        }
-    }
-
     override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(debugProcess)))
 
-    override fun back(callback: CommandCallback<MoveHistResult?>?) =
-            enqueueCommand(BackCommand(callback))
+    override fun back(callback: CommandCallback<MoveHistResult?>?) = enqueueCommand(BackCommand(callback))
 
-    override fun forward(callback: CommandCallback<MoveHistResult?>?) =
-            enqueueCommand(ForwardCommand(callback))
+    override fun forward(callback: CommandCallback<MoveHistResult?>?) = enqueueCommand(ForwardCommand(callback))
 
     override fun print(printCommand: PrintCommand) = enqueueCommand(printCommand)
 
@@ -65,29 +56,40 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
 
     override fun history(callback: CommandCallback<HistoryResult?>) = enqueueCommand(HistoryCommand(callback))
 
-    override fun setBreakpoint(module: String, line: Int) = enqueueCommand(SetBreakpointCommand(module, line,
-            SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)))
+    override fun setBreakpoint(module: String, line: Int) {
+        val callback = SetBreakpointCommand.StandardSetBreakpointCallback(module, debugProcess)
+        enqueueCommand(SetBreakpointCommand(module, line, callback))
+    }
 
-    override fun removeBreakpoint(module: String, breakpointNumber: Int) =
-            enqueueCommand(RemoveBreakpointCommand(if (globalBreakpointIndices) null else module, breakpointNumber, null))
+    override fun removeBreakpoint(module: String, breakpointNumber: Int) {
+        val moduleName = if(globalBreakpointIndices) null else module
+        enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber, null))
+    }
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
-            enqueueCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
+        enqueueCommand(HiddenCommand.createInstance(":set -fbreak-on-${if (uncaughtOnly) "error" else "exception"}\n"))
 
     override fun removeExceptionBreakpoint() {
         enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-error\n"))
         enqueueCommand(HiddenCommand.createInstance(":unset -fbreak-on-exception\n"))
     }
 
-    protected inner class SetTempBreakForRunCallback(val module: String?) : CommandCallback<BreakpointCommandResult?>() {
+    override fun runToPosition(module: String, line: Int) {
+        if (debugProcess.getBreakpointAtPosition(module, line) == null) {
+            val callback = SetTempBreakForRunCallback(if (globalBreakpointIndices) null else module)
+            enqueueCommand(SetBreakpointCommand(module, line, callback))
+        } else {
+            if (debugStarted) resume() else trace()
+        }
+    }
+
+    protected inner class SetTempBreakForRunCallback(val module: String?)
+    : CommandCallback<BreakpointCommandResult?>() {
         override fun execAfterParsing(result: BreakpointCommandResult?) {
-            if (result == null) {
-                return
-            }
-            if (debugStarted) {
-                enqueueCommandWithPriority(ResumeCommand(RunToPositionCallback(result.breakpointNumber, module)))
-            } else {
-                enqueueCommandWithPriority(TraceCommand(traceCommand, RunToPositionCallback(result.breakpointNumber, module)))
+            if (result != null) {
+                val callback = RunToPositionCallback(result.breakpointNumber, module)
+                val command = if (debugStarted) ResumeCommand(callback) else TraceCommand(traceCommand, callback)
+                enqueueCommandWithPriority(command)
             }
         }
     }
@@ -95,12 +97,14 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
     private inner class RunToPositionCallback(val breakpointNumber: Int,
                                               val module: String?) : CommandCallback<HsStackFrameInfo?>() {
         override fun execAfterParsing(result: HsStackFrameInfo?) {
-            enqueueCommandWithPriority(RemoveBreakpointCommand(module, breakpointNumber, RemoveTempBreakCallback(result)))
+            val command = RemoveBreakpointCommand(module, breakpointNumber, RemoveTempBreakCallback(result))
+            enqueueCommandWithPriority(command)
         }
     }
 
     private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
     : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) = FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
+        override fun execAfterParsing(result: ParseResult?) =
+            FlowCommand.StandardFlowCallback(debugProcess).execAfterParsing(flowResult)
     }
 }

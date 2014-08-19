@@ -29,10 +29,18 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
      */
     protected fun execute(command: AbstractCommand<out ParseResult?>) {
         val text = command.getText()
-
         writeLock.lock()
         lastCommand = command
         command.callback?.execBeforeSending()
+        printCommandIfNeeded(text)
+        sendCommandToProcess(text)
+        if (lastCommand is TraceCommand) {
+            debugStarted = true
+        }
+        writeLock.unlock()
+    }
+
+    private fun printCommandIfNeeded(text: String) {
         if (lastCommand !is HiddenCommand) {
             if (showCommandsInConsole) {
                 debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
@@ -40,13 +48,12 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
                 print(text)
             }
         }
+    }
+
+    private fun sendCommandToProcess(text: String) {
         val os = debugProcess.getProcessHandler().getProcessInput()!!
         os.write(text.toByteArray())
         os.flush()
-        if (lastCommand is TraceCommand) {
-            debugStarted = true
-        }
-        writeLock.unlock()
     }
 
     final override fun close() {
@@ -54,14 +61,11 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         doClose()
     }
 
-    protected open fun doClose() {
-    }
+    protected open fun doClose() {}
 
     final override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
 
     protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
 
-    protected fun setReadyForInput() {
-        queue.setReadyForInput()
-    }
+    protected fun setReadyForInput(): Unit = queue.setReadyForInput()
 }
