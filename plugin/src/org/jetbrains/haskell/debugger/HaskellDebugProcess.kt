@@ -61,62 +61,121 @@ import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
-                                 val myProcessHandler: HaskellDebugProcessHandler) : XDebugProcess(session), ProcessListener {
+                                 val myProcessHandler: HaskellDebugProcessHandler)
+: XDebugProcess(session), ProcessListener {
 
-    private val debuggerEditorsProvider: XDebuggerEditorsProvider
     public val historyManager: HistoryManager = HistoryManager(this)
+    public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
+        private set
+    public val debugger: ProcessDebugger
 
-    public val debugger: ProcessDebugger;
-
-    {
-        debuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-        debugger =
-                if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.GHCI)
-                    GHCiDebugger(this)
-                else
-                    RemoteDebugger(this)
-
-        myProcessHandler.setDebugProcessListener(this)
-    }
-
+    private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
             HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
             HaskellExceptionBreakpointHandler(this)
     )
+    private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
 
-    override fun getBreakpointHandlers(): Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> {
-        return _breakpointHandlers
+    private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index";
+
+    {
+        val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
+                             HaskellDebugSettings.DebuggerType.GHCI
+        debugger = if (debuggerIsGHCi) GHCiDebugger(this) else RemoteDebugger(this)
+        myProcessHandler.setDebugProcessListener(this)
     }
 
-    public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
-        private set
+    // XDebugProcess methods overriding
+
+    override fun getEditorsProvider(): XDebuggerEditorsProvider = _editorsProvider
+
+    override fun getBreakpointHandlers()
+            : Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> = _breakpointHandlers
+
+    override fun doGetProcessHandler(): ProcessHandler? = myProcessHandler
+
+    override fun createConsole(): ExecutionConsole = executionConsole
+
+    override fun startStepOver() = debugger.stepOver()
+
+    override fun startStepInto() = debugger.stepInto()
+
+    override fun startStepOut() {
+        val msg = "'Step out' not implemented"
+        Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.WARNING))
+        getSession()!!.positionReached(getSession()!!.getSuspendContext()!!)
+    }
+
+    override fun stop() {
+        historyManager.clean()
+        debugger.close()
+    }
+
+    override fun resume() = debugger.resume()
+
+    override fun runToPosition(position: XSourcePosition) =
+            debugger.runToPosition(
+                    HaskellUtils.getModuleName(getSession()!!.getProject(), position.getFile()),
+                    HaskellUtils.zeroBasedToHaskellLineNumber(position.getLine()))
+
+    override fun sessionInitialized() {
+        super<XDebugProcess>.sessionInitialized()
+        val currentSession = getSession()
+        currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
+        debugger.prepareDebugger()
+        debugger.trace()
+    }
+
+    override fun createTabLayouter(): XDebugTabLayouter = historyManager
+
+    override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
+        //temporary code for removal of unused actions from debug panel
+        var stepOut: StepOutAction? = null
+        var forceStepInto: ForceStepIntoAction? = null
+        for (action in topToolbar.getChildActionsOrStubs()) {
+            if (action is StepOutAction) {
+                stepOut = action
+            }
+            if (action is ForceStepIntoAction) {
+                forceStepInto = action
+            }
+        }
+        topToolbar.remove(stepOut)
+        topToolbar.remove(forceStepInto)
+
+        historyManager.registerActions(topToolbar)
+    }
+
+    // ProcessListener methods overriding
+
+    override fun startNotified(event: ProcessEvent?) { }
+
+    override fun processTerminated(event: ProcessEvent?) { }
+
+    override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) { }
+
+    override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
+        val text = event?.getText()
+        if (text != null) {
+            print(text)
+            debugger.onTextAvailable(text, outputType)
+        }
+    }
+
+    // Class' own methods
 
     public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
         debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
-                HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
+                                        HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = null
         debugger.removeExceptionBreakpoint()
     }
-
-    private class BreakpointPosition(val module: String, val line: Int) {
-        override fun equals(other: Any?): Boolean {
-            if (other == null || other !is BreakpointPosition) {
-                return false
-            }
-            return module.equals(other.module) && line.equals(other.line)
-        }
-        override fun hashCode(): Int {
-            return module.hashCode() * 31 + line
-        }
-    }
-    private class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
-    private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
 
     public fun setBreakpointNumberAtLine(breakpointNumber: Int, module: String, line: Int) {
         val entry = registeredBreakpoints.get(BreakpointPosition(module, line))
@@ -129,46 +188,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         return registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpoint
     }
 
-    override fun getEditorsProvider(): XDebuggerEditorsProvider {
-        return debuggerEditorsProvider
-    }
-
-    override fun doGetProcessHandler(): ProcessHandler? {
-        return myProcessHandler
-    }
-
-    override fun createConsole(): ExecutionConsole {
-        return executionConsole
-    }
-
-    override fun startStepOver() {
-        debugger.stepOver()
-    }
-
-    override fun startStepInto() {
-        debugger.stepInto()
-    }
-
-    override fun startStepOut() {
-        Notifications.Bus.notify(Notification("", "Debug execution error", "'Step out' not implemented", NotificationType.WARNING))
-        getSession()!!.positionReached(getSession()!!.getSuspendContext()!!)
-    }
-
-    override fun stop() {
-        historyManager.clean()
-        debugger.close()
-    }
-
-    override fun resume() {
-        debugger.resume()
-    }
-
-    override fun runToPosition(position: XSourcePosition) {
-        debugger.runToPosition(
-                HaskellUtils.getModuleName(getSession()!!.getProject(), position.getFile()),
-                HaskellUtils.zeroBasedToHaskellLineNumber(position.getLine()))
-    }
-
     public fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(null, breakpoint))
         debugger.setBreakpoint(module, line)
@@ -176,12 +195,12 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
-            registeredBreakpoints.put(BreakpointPosition(module, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())),
-                    BreakpointEntry(index, breakpoint))
+            val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())
+            registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(index, breakpoint))
             val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, this))
             debugger.enqueueCommand(command)
         } else {
-            throw RuntimeException("Only remote debugger supports breakpoint setting by index")
+            throw RuntimeException(BREAK_BY_INDEX_ERROR_MSG)
         }
     }
 
@@ -229,6 +248,30 @@ public class HaskellDebugProcess(session: XDebugSession,
         return ArrayList()
     }
 
+    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
+        if(contentType == ConsoleViewContentType.ERROR_OUTPUT) {
+            System.err.print(text)
+            System.err.flush()
+        } else {
+            System.out.print(text)
+            System.out.flush()
+        }
+        (executionConsole as ConsoleView).print(text, contentType)
+    }
+
+    private class BreakpointPosition(val module: String, val line: Int) {
+        override fun equals(other: Any?): Boolean {
+            if (other == null || other !is BreakpointPosition) {
+                return false
+            }
+            return module.equals(other.module) && line.equals(other.line)
+        }
+
+        override fun hashCode(): Int = module.hashCode() * 31 + line
+    }
+
+    private class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
+
     /**
      * Used to make synchronous requests to debugger.
      *
@@ -244,70 +287,6 @@ public class HaskellDebugProcess(session: XDebugSession,
             }
         } finally {
             syncObject.unlock()
-        }
-    }
-
-    override fun sessionInitialized() {
-        super<XDebugProcess>.sessionInitialized()
-        val currentSession = getSession()
-        currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
-        debugger.prepareDebugger()
-        debugger.trace()
-    }
-
-
-    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
-        when (contentType) {
-            ConsoleViewContentType.ERROR_OUTPUT -> {
-                System.err.print(text)
-                System.err.flush()
-            }
-            else -> {
-                System.out.print(text)
-                System.out.flush()
-            }
-        }
-        (executionConsole as ConsoleView).print(text, contentType)
-    }
-
-    override fun createTabLayouter(): XDebugTabLayouter {
-        return historyManager
-    }
-
-    override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
-        //temporary code for removal of unused actions from debug panel
-        var stepOut: StepOutAction? = null
-        var forceStepInto: ForceStepIntoAction? = null
-        for (action in topToolbar.getChildActionsOrStubs()) {
-            if (action is StepOutAction) {
-                stepOut = action
-            }
-            if (action is ForceStepIntoAction) {
-                forceStepInto = action
-            }
-        }
-        topToolbar.remove(stepOut)
-        topToolbar.remove(forceStepInto)
-
-        historyManager.registerActions(topToolbar)
-    }
-
-    // ProcessListener
-
-    override fun startNotified(event: ProcessEvent?) {
-    }
-
-    override fun processTerminated(event: ProcessEvent?) {
-    }
-
-    override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) {
-    }
-
-    override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        val text = event?.getText()
-        if (text != null) {
-            print(text)
-            debugger.onTextAvailable(text, outputType)
         }
     }
 }
