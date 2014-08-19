@@ -13,7 +13,7 @@ import org.jetbrains.haskell.util.setConstraints
 import java.awt.GridBagConstraints
 import javax.swing.Box
 import java.awt.GridBagLayout
-import org.jetbrains.haskell.debugger.utils.HaskellUtils
+import org.jetbrains.haskell.debugger.utils.UIUtils
 
 /**
  * Created by vlad on 8/6/14.
@@ -31,7 +31,7 @@ public class HaskellExceptionBreakpointPropertiesPanel :
 
     override fun getComponent(): JComponent {
         val panel = JPanel(GridBagLayout())
-        HaskellUtils.addLabeledControl(panel, 0, "Breakpoint type:     ", selectDebuggerComboBox)
+        UIUtils.addLabeledControl(panel, 0, "Breakpoint type:     ", selectDebuggerComboBox)
         return panel
     }
 

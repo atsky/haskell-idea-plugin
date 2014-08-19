@@ -54,26 +54,6 @@ public class HaskellUtils {
             return reader.returnName()
         }
 
-        public fun addLabeledControl(panel: JPanel, row: Int, label: String, component: JComponent) {
-            val base = gridBagConstraints { insets = Insets(2, 0, 2, 3) }
-            panel.add(JLabel(label), base.setConstraints {
-                anchor = GridBagConstraints.LINE_START
-                gridx = 0;
-                gridy = row;
-            })
-            panel.add(component, base.setConstraints {
-                gridx = 1;
-                gridy = row;
-                fill = GridBagConstraints.HORIZONTAL
-                weightx = 1.0
-            })
-            panel.add(Box.createHorizontalStrut(1), base.setConstraints {
-                gridx = 2;
-                gridy = row;
-                weightx = 0.1
-            })
-        }
-
         public val HS_BOOLEAN_TYPENAME: String = "Bool"
         public val HS_BOOLEAN_TRUE: String = "True"
     }

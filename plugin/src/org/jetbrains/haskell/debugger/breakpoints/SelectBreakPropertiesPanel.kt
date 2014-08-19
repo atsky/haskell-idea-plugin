@@ -22,6 +22,7 @@ import org.jetbrains.haskell.debugger.utils.SyncObject
 import com.intellij.xdebugger.XDebuggerManager
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.parser.BreakInfo
+import org.jetbrains.haskell.debugger.utils.UIUtils
 
 /**
  * Panel with additional breakpoint settings (make right click on breakpoint to see it)
@@ -34,7 +35,7 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
     private val breaksComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(DEBUG_NOT_STARTED_ITEM)))
     private val mainPanel: JPanel = JPanel(GridLayout(1, 0));
     {
-        HaskellUtils.addLabeledControl(mainPanel, 0, PANEL_LABEL, breaksComboBox)
+        UIUtils.addLabeledControl(mainPanel, 0, PANEL_LABEL, breaksComboBox)
         breaksComboBox.setEnabled(false)
     }
 
