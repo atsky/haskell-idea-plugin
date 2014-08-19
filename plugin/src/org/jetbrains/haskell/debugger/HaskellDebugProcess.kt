@@ -48,7 +48,15 @@ import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 
 /**
- * Created by vlad on 7/10/14.
+ * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
+ *
+ * Attention! When sending commands to the underlying ProcessDebugger they are enqueued. But some commands may require
+ * a lot of time to finish and, for example, if you call asynchronous command that needs much time to finish and
+ * after that call synchronous command that freezes UI thread, you will get all the UI frozen until the first
+ * command is finished. To check no command is in progress use
+ * {@link org.jetbrains.haskell.debugger.HaskellDebugProcess#isReadyForNextCommand}
+ *
+ * @see org.jetbrains.haskell.debugger.HaskellDebugProcess#isReadyForNextCommand
  */
 
 public class HaskellDebugProcess(session: XDebugSession,
@@ -82,6 +90,8 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
+
+    public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
@@ -223,6 +233,7 @@ public class HaskellDebugProcess(session: XDebugSession,
      * Used to make synchronous requests to debugger.
      *
      * @see org.jetbrains.haskell.debugger.utils.SyncObject
+     * @see org.jetbrains.haskell.debugger.HaskellDebugProcess#isReadyForNextCommand
      */
     private fun syncCommand(command: SyncCommand<*>, syncObject: SyncObject) {
         syncObject.lock()

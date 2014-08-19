@@ -14,6 +14,8 @@ import org.jetbrains.haskell.debugger.parser.HistoryResult
 
 public trait ProcessDebugger {
 
+    public fun isReadyForNextCommand(): Boolean
+
     public fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback)
 
     public fun trace()

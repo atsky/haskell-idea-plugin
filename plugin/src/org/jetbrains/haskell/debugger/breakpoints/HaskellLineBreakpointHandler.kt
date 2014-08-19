@@ -14,6 +14,8 @@ import com.intellij.openapi.util.Key
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.parser.BreakInfo
+import org.jetbrains.haskell.debugger.utils.UIUtils
+import com.intellij.openapi.vfs.VirtualFile
 
 public class HaskellLineBreakpointHandler(val project: Project,
                                           breakpointTypeClass: Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
@@ -21,9 +23,18 @@ public class HaskellLineBreakpointHandler(val project: Project,
 : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass) {
     class object {
         public val PROJECT_KEY: Key<Project> = Key("org.jetbrains.haskell.debugger.breakpoints.ProjectForBreakpoint")
-        public val BREAKS_LIST_KEY: Key<ArrayList<BreakInfo>> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")
-        public val INDEX_IN_BREAKS_LIST_KEY: Key<Int> = Key("org.jetbrains.haskell.debugger.breakpoints.BreakListIndexForBreakpoint")
+        public val BREAKS_LIST_KEY: Key<ArrayList<BreakInfo>> =
+                                               Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")
+        public val INDEX_IN_BREAKS_LIST_KEY: Key<Int> =
+                Key("org.jetbrains.haskell.debugger.breakpoints.BreakListIndexForBreakpoint")
     }
+
+    private val GET_MODULE_ERR_TITLE = "Debug execution error"
+    private final fun GET_MODULE_ERR_MSG(file: VirtualFile) =
+                                       "Module name is not spesified in file: ${file.getCanonicalPath()}"
+    private val REMOVE_WARN_TITLE = "Remove breakpoint warning"
+    private val REMOVE_WARN_MSG =   "Attempt to remove breakpoint while debugger is busy." +
+                                    "Removing action will take effect only after next command"
     /**
      * Called when new breakpoint is added
      *
@@ -40,11 +51,16 @@ public class HaskellLineBreakpointHandler(val project: Project,
     }
 
     /**
-     * Called when breakpoint is removed
+     * Called when breakpoint is removed. If debugger is busy when this method is called, remove action will be
+     * performed any way and warning will be shown to user. Actually, removing should be forbidden but it requires
+     * control over UI part of breakpoint removing and I don't know how to do it for now
      *
      * @param breakpoint breakpoint to remove
      */
     override fun unregisterBreakpoint(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, isTemporary: Boolean) {
+        if(!debugProcess.isReadyForNextCommand()) {
+            Notifications.Bus.notify(Notification("", REMOVE_WARN_TITLE, REMOVE_WARN_MSG, NotificationType.WARNING))
+        }
         val breakpointLineNumber: Int? = getHaskellBreakpointLineNumber(breakpoint)
         if (breakpointLineNumber != null) {
             debugProcess.removeBreakpoint(HaskellUtils.getModuleName(project, breakpoint.getSourcePosition()!!.getFile()),
@@ -57,8 +73,7 @@ public class HaskellLineBreakpointHandler(val project: Project,
         try {
             return HaskellUtils.getModuleName(project, file)
         } catch (e: Exception) {
-            val msg = "Module name is not spesified in file: ${file.getCanonicalPath()}"
-            Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
+            Notifications.Bus.notify(Notification("", GET_MODULE_ERR_TITLE, GET_MODULE_ERR_MSG(file), NotificationType.ERROR))
             throw e
         }
     }

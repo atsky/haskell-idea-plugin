@@ -4,6 +4,7 @@ import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import java.util.LinkedList
 import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.parser.ParseResult
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Created by vlad on 7/15/14.
@@ -18,6 +19,9 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
     private val inputLock = ReentrantLock()
     private var ready: Boolean = false
     private val readyCondition = inputLock.newCondition()
+
+    private val someCommandInProgress: AtomicBoolean = AtomicBoolean(false)
+    public fun someCommandInProgress(): Boolean = someCommandInProgress.get()
 
     override fun run() {
         while (running) {
@@ -34,6 +38,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
 
             if (command != null) {
                 execute(command!!)
+                someCommandInProgress.set(true)
             }
         }
     }
@@ -61,6 +66,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
         inputLock.lock()
         running = false
         readyCondition.signal()
+        someCommandInProgress.set(false)
         inputLock.unlock()
     }
 
@@ -68,6 +74,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
         inputLock.lock()
         ready = true
         readyCondition.signal()
+        someCommandInProgress.set(false)
         inputLock.unlock()
     }
 

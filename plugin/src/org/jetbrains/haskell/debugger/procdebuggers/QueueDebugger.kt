@@ -68,4 +68,6 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
     protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
 
     protected fun setReadyForInput(): Unit = queue.setReadyForInput()
+
+    override fun isReadyForNextCommand(): Boolean = !queue.someCommandInProgress()
 }

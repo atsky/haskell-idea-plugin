@@ -18,6 +18,13 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.debugger.DebuggerManager
+import com.intellij.notification.Notifications
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import org.jetbrains.haskell.debugger.utils.UIUtils
+import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.XDebugProcess
+import org.jetbrains.haskell.debugger.HaskellDebugProcess
 
 public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
@@ -33,22 +40,13 @@ public class HaskellLineBreakpointType():
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
      */
     override fun canPutAt(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
-        var canStopAtLine: Boolean = false
         if(file.getFileType() == HaskellFileType.INSTANCE) {
-            val currentDoc: Document? = FileDocumentManager.getInstance()?.getDocument(file)
-            if(currentDoc != null) {
-                XDebuggerUtil.getInstance()?.iterateLine(project, currentDoc, lineNumber, object : Processor<PsiElement> {
-                    override fun process(psiElement: PsiElement?): Boolean {
-                        if (psiElement is PsiWhiteSpace || psiElement is PsiComment) {
-                            return true
-                        }
-                        canStopAtLine = true
-                        return false
-                    }
-                })
+            val canStopAtLine = checkLineInSourceFile(file, lineNumber, project)
+            if(canStopAtLine) {
+                return debuggerIsNotBusy(project)
             }
         }
-        return canStopAtLine
+        return false
     }
 
     /**
@@ -62,5 +60,31 @@ public class HaskellLineBreakpointType():
             return selectBreakpointPanel
         }
         return null
+    }
+
+    private fun checkLineInSourceFile(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
+        var canStopAtLine: Boolean = false
+        val currentDoc: Document? = FileDocumentManager.getInstance()?.getDocument(file)
+        if (currentDoc != null) {
+            XDebuggerUtil.getInstance()?.iterateLine(project, currentDoc, lineNumber, object : Processor<PsiElement> {
+                override fun process(psiElement: PsiElement?): Boolean {
+                    if (psiElement is PsiWhiteSpace || psiElement is PsiComment) {
+                        return true
+                    }
+                    canStopAtLine = true
+                    return false
+                }
+            })
+        }
+        return canStopAtLine
+    }
+
+    private fun debuggerIsNotBusy(project: Project): Boolean {
+        val debugProcess = XDebuggerManager.getInstance(project)?.getCurrentSession()?.getDebugProcess() as? HaskellDebugProcess
+        if (debugProcess != null && !debugProcess.isReadyForNextCommand()) {
+            UIUtils.notifyCommandInProgress()
+            return false
+        }
+        return true
     }
 }
