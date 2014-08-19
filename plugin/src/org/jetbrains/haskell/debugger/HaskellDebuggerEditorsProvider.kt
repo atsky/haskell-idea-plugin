@@ -19,10 +19,26 @@ import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.evaluation.EvaluationMode
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.psi.PsiDocumentManager
 
 public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
 
-    override fun createDocument(project: Project, text: String, sourcePosition: XSourcePosition?, mode: EvaluationMode): Document {
+    override fun createDocument(project: Project,
+                                text: String,
+                                sourcePosition: XSourcePosition?,
+                                mode: EvaluationMode): Document {
+        println("DEBUG: start")
+        if(sourcePosition != null) {
+            println("DEBUG: sourcePosition is not null")
+            val hsPsiFile = PsiFileFactory.getInstance(project)!!.createFileFromText(sourcePosition.getFile().getName(),
+                    HaskellFileType.INSTANCE,
+                    text)
+            val hsDocument = PsiDocumentManager.getInstance(project)!!.getDocument(hsPsiFile)
+            if(hsDocument != null) {
+                return hsDocument
+            }
+        }
+        println("DEBUG: EditorFactory.getInstance()!!.createDocument(text) called")
         return EditorFactory.getInstance()!!.createDocument(text)
     }
 
