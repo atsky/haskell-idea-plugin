@@ -227,7 +227,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
     private fun tryGetSrcDirFullPath(mainFileName: String, module: Module, correspondingExec: Executable): String? {
         val baseDirPath = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val srcDirs: List<String> = correspondingExec.getHSSourceDirs().map { it.getText() }
+        val srcDirs: List<String> = correspondingExec.getHsSourceDirs().map { it.getText() }
         for (srcDir in srcDirs) {
             val path = joinPath(baseDirPath, srcDir, mainFileName)
             val vFile = LocalFileSystem.getInstance()!!.findFileByIoFile(File(path))

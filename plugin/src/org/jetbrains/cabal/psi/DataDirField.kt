@@ -8,10 +8,9 @@ import java.io.File
 
 public class DataDirField(node: ASTNode) : SingleValueField(node), PathsField {
 
-    public override fun isValidFile(file: VirtualFile): Boolean = file.isDirectory()
+    public override fun isValidCompletionFile(file: VirtualFile): Boolean = file.isDirectory()
 
-    public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
-        if (prefixPath.isAbsolute()) return listOf()
-        return super<PathsField>.getParentDirs(prefixPath, originalRootDir)
-    }
+    public override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory()
+
+    public override fun validRelativity(path: File): Boolean = !path.isAbsolute()
 }

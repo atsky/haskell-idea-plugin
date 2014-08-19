@@ -102,7 +102,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         skipAllBiggerLevelTill(prevLevel, parseSeparator = { false }); true
     }
 
-    fun parseValueTillSeparator(prevLevel: Int, parseSeparator: () -> Boolean, onOneLine: Boolean) = start(CabalTokelTypes.INVALID_VALUE) {
+    fun parseInvalidTillSeparator(prevLevel: Int, parseSeparator: () -> Boolean, onOneLine: Boolean) = start(CabalTokelTypes.INVALID_VALUE) {
         if (!onOneLine) {
             skipAllBiggerLevelTill(prevLevel, parseSeparator)
         }
@@ -121,7 +121,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
                               && (builder.getTokenType() != CabalTokelTypes.TAB)
 
         fun emptySpaceBeforeNext()
-                = (builder.rawTokenTypeStart(1) != builder.getCurrentOffset() + builder.getTokenText()!!.size)
+                = ((builder.rawLookup(-1) == TokenType.WHITE_SPACE) || (builder.rawLookup(-1) == CabalTokelTypes.COMMENT))
 
         var isEmpty = true
         while (nextTokenIsValid()) {
@@ -146,7 +146,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         }
         else {
             mark.rollbackTo()
-            parseValueTillSeparator(prevLevel, parseSeparator, onOneLine)
+            parseInvalidTillSeparator(prevLevel, parseSeparator, onOneLine)
             if (!onOneLine) skipNewLineBiggerLevel(prevLevel)
         }
         return true
@@ -268,7 +268,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             skipNewLineBiggerLevel(level)
 
             (parseValue(level) && isLastBiggerLevel(level))
-                    || parseValueTillSeparator(level, parseSeparator = { false }, onOneLine = false)
+                    || parseInvalidTillSeparator(level, parseSeparator = { false }, onOneLine = false)
         }
         else false
     }
@@ -308,7 +308,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             }
             skipNewLineBiggerLevel(prevLevel)
             if ((currentLevel != null) && (level != currentLevel!!) && (level > prevLevel)) {
-                parseValueTillSeparator(currentLevel!!, parseSeparator = { false }, onOneLine = false)
+                parseInvalidTillSeparator(currentLevel!!, parseSeparator = { false }, onOneLine = false)
             }
             else {
                 parseSomeField(level)

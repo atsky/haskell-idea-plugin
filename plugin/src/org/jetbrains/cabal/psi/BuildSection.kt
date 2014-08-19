@@ -14,7 +14,7 @@ public open class BuildSection(node: ASTNode): Section(node) {
     private fun <F : MultiValueField, V : PropertyValue> getFieldsValues(fieldT: Class<F>, valueT: Class<V>): List<V>
             = getFields(fieldT) flatMap { it.getValues(valueT) }
 
-    public fun getHSSourceDirs(): List<Path> = getFieldsValues(javaClass<HsSourceDirsField>(), javaClass<Path>())
+    public fun getHsSourceDirs(): List<Path> = getFieldsValues(javaClass<HsSourceDirsField>(), javaClass<Path>())
 
     public fun getIncludeDirs() : List<Path> = getFieldsValues(javaClass<IncludeDirsField>() , javaClass<Path>())
 

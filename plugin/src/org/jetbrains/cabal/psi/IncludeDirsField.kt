@@ -7,5 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 public class IncludeDirsField(node: ASTNode) : MultiValueField(node), PathsField {
 
-    public override fun isValidFile(file: VirtualFile): Boolean = file.isDirectory()
+    public override fun isValidCompletionFile(file: VirtualFile): Boolean = file.isDirectory()
+
+    public override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory()
 }

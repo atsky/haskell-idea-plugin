@@ -14,5 +14,7 @@ public class HsSourceDirsField(node: ASTNode) : MultiValueField(node), PathsFiel
         return listOf()
     }
 
-    public override fun isValidFile(file: VirtualFile): Boolean = file.isDirectory()
+    public override fun isValidCompletionFile(file: VirtualFile): Boolean = file.isDirectory()
+
+    public override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory()
 }

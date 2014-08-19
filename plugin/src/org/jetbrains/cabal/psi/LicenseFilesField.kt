@@ -7,4 +7,5 @@ import com.intellij.openapi.vfs.VirtualFile
 
 public class LicenseFilesField(node: ASTNode) : MultiValueField(node), PathsField {
 
+    public override fun validVirtualFile(file: VirtualFile): Boolean = !file.isDirectory()
 }

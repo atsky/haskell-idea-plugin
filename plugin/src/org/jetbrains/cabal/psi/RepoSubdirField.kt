@@ -9,7 +9,7 @@ import java.io.File
 
 public class RepoSubdirField(node: ASTNode) : SingleValueField(node), PathsField {
 
-    public override fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> = listOf()
+    public override fun validVirtualFile(file: VirtualFile): Boolean = true
 
-    public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> = listOf()
+    public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf()
 }

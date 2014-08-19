@@ -10,10 +10,10 @@ import java.util.ArrayList
 
 public class IncludesField(node: ASTNode) : MultiValueField(node), PathsField {
 
-    public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
-        if (prefixPath.isAbsolute()) return listOf()
-        var res = ArrayList<VirtualFile>()
-        res.addAll(getParentDirsFromSourceDirs(prefixPath, originalRootDir, { getIncludeDirs() }))
-        return res
-    }
+    public override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory()
+
+    public override fun validRelativity(path: File): Boolean = !path.isAbsolute()
+
+    public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile>
+            = (getParentBuildSection()!!.getIncludeDirs() map { it.getVirtualFile(originalRootDir) }).filterNotNull()
 }

@@ -10,22 +10,23 @@ import java.util.ArrayList
 
 public class MainFileField(node: ASTNode) : SingleValueField(node), PathsField {
 
-    public override fun isValidFile(file: VirtualFile): Boolean {
+    public override fun isValidCompletionFile(file: VirtualFile): Boolean {
         if (!file.isDirectory()) return (file.getExtension() == "hs") || (file.getExtension() == "lhs")
         for (child in file.getChildren()!!) {
-            if (isValidFile(child)) return true
+            if (isValidCompletionFile(child)) return true
         }
         return false
     }
 
-    public override fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
-        if (prefixPath.isAbsolute()) return listOf()
+    public override fun validVirtualFile(file: VirtualFile): Boolean
+            = !file.isDirectory() && (file.getExtension() == "hs") || (file.getExtension() == "lhs")
+
+    public override fun validRelativity(path: File): Boolean = !path.isAbsolute()
+
+    public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> {
         var res = ArrayList<VirtualFile>()
-
-        val fromRootDir = getParentDirFromRoot(prefixPath, originalRootDir)
-        if (fromRootDir != null) res.add(fromRootDir)
-        res.addAll(getParentDirsFromSourceDirs(prefixPath, originalRootDir, { getHSSourceDirs() }))
-
+        res.addAll((getParentBuildSection()!!.getHsSourceDirs() map { it.getVirtualFile(originalRootDir) }).filterNotNull())
+        res.add(originalRootDir)
         return res
     }
 }
