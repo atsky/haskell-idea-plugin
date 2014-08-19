@@ -35,23 +35,24 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
 
 public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess, false) {
 
-    override val traceCommand: String = "main"
-    override val globalBreakpointIndices: Boolean = false
+    override val TRACE_COMMAND: String = "main"
+    override val GLOBAL_BREAKPOINT_INDICES: Boolean = false
 
-    override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) =
-            enqueueCommand(EvalCommand(false, expression, object : CommandCallback<EvalResult?>() {
-                override fun execAfterParsing(result: EvalResult?) {
-                    callback.evaluated(HsDebugValue(LocalBinding(null, result?.expressionType, result?.expressionValue)))
-                }
-            }))
-
-
-    override fun prepareDebugger() {
+    override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
+        val wrapperCallback = object : CommandCallback<EvalResult?>() {
+            override fun execAfterParsing(result: EvalResult?) {
+                val value = HsDebugValue(LocalBinding(null, result?.expressionType, result?.expressionValue))
+                callback.evaluated(value)
+            }
+        }
+        enqueueCommand(EvalCommand(false, expression, wrapperCallback))
     }
+
+    override fun prepareDebugger() {}
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()
-        enqueueCommand(EvalCommand(false, binding.name!!, object : CommandCallback<EvalResult?>() {
+        val callback = object : CommandCallback<EvalResult?>() {
             override fun execAfterParsing(result: EvalResult?) {
                 lock.lock()
                 binding.typeName = result?.expressionType
@@ -59,7 +60,8 @@ public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerI
                 condition.signalAll()
                 lock.unlock()
             }
-        }))
+        }
+        enqueueCommand(EvalCommand(false, binding.name!!, callback))
         lock.unlock()
     }
 

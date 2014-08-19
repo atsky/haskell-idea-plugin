@@ -29,16 +29,16 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
     /**
      * Function, which is used to run with ':trace' command.
      */
-    protected abstract val traceCommand: String
+    protected abstract val TRACE_COMMAND: String
 
     /**
      * When true, all breakpoint indices for all files are unique,
      * when false, breakpoint indices are unique only within one file.
      * Value is used to determine correct :delete invocation.
      */
-    protected abstract val globalBreakpointIndices: Boolean
+    protected abstract val GLOBAL_BREAKPOINT_INDICES: Boolean
 
-    override fun trace() = enqueueCommand(TraceCommand(traceCommand, FlowCommand.StandardFlowCallback(debugProcess)))
+    override fun trace() = enqueueCommand(TraceCommand(TRACE_COMMAND, FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
@@ -62,7 +62,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
     }
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) {
-        val moduleName = if(globalBreakpointIndices) null else module
+        val moduleName = if(GLOBAL_BREAKPOINT_INDICES) null else module
         enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber, null))
     }
 
@@ -76,7 +76,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
 
     override fun runToPosition(module: String, line: Int) {
         if (debugProcess.getBreakpointAtPosition(module, line) == null) {
-            val callback = SetTempBreakForRunCallback(if (globalBreakpointIndices) null else module)
+            val callback = SetTempBreakForRunCallback(if (GLOBAL_BREAKPOINT_INDICES) null else module)
             enqueueCommand(SetBreakpointCommand(module, line, callback))
         } else {
             if (debugStarted) resume() else trace()
@@ -88,7 +88,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
         override fun execAfterParsing(result: BreakpointCommandResult?) {
             if (result != null) {
                 val callback = RunToPositionCallback(result.breakpointNumber, module)
-                val command = if (debugStarted) ResumeCommand(callback) else TraceCommand(traceCommand, callback)
+                val command = if (debugStarted) ResumeCommand(callback) else TraceCommand(TRACE_COMMAND, callback)
                 enqueueCommandWithPriority(command)
             }
         }

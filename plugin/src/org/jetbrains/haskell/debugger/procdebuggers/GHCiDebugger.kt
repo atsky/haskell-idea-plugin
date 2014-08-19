@@ -48,13 +48,13 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
         public val PROMPT_LINE: String = "debug> "
     }
 
-    override val traceCommand: String = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
-    override val globalBreakpointIndices: Boolean = true
+    override val TRACE_COMMAND: String = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
+    override val GLOBAL_BREAKPOINT_INDICES: Boolean = true
 
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
 
-    public val processStopped: java.util.concurrent.atomic.AtomicBoolean = AtomicBoolean(false);
+    public val processStopped: AtomicBoolean = AtomicBoolean(false);
 
     {
         inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
@@ -62,51 +62,53 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
     }
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
-        enqueueCommand(ExpressionTypeCommand(expression, object : CommandCallback<ExpressionType?>() {
+        val wrapperCallback = object : CommandCallback<ExpressionType?>() {
             override fun execAfterParsing(result: ExpressionType?) {
                 if (result == null) {
                     callback.errorOccurred("Unknown expression")
                 } else {
-                    val expType = result.expressionType
-                    enqueueCommand(ShowExpressionCommand(expression,
-                            ShowExpressionCommand.StandardShowExpressionCallback(expType, callback)))
+                    val showCallback = ShowExpressionCommand.StandardShowExpressionCallback(result.expressionType, callback)
+                    enqueueCommand(ShowExpressionCommand(expression, showCallback))
                 }
             }
-        }))
+        }
+        enqueueCommand(ExpressionTypeCommand(expression, wrapperCallback))
     }
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()
-        enqueueCommand(ExpressionTypeCommand(binding.name!!, object : CommandCallback<ExpressionType?>() {
+        val callback = object : CommandCallback<ExpressionType?>() {
             override fun execAfterParsing(result: ExpressionType?) {
                 lock.lock()
                 binding.typeName = result?.expressionType
-                enqueueCommand(PrintCommand(binding.name!!, object : CommandCallback<LocalBinding?>() {
+                val printCallback = object : CommandCallback<LocalBinding?>() {
                     override fun execAfterParsing(result: LocalBinding?) {
                         lock.lock()
                         binding.value = result?.value
                         condition.signalAll()
                         lock.unlock()
                     }
-                }))
+                }
+                enqueueCommand(PrintCommand(binding.name!!, printCallback))
                 lock.unlock()
             }
-        }))
+        }
+        enqueueCommand(ExpressionTypeCommand(binding.name!!, callback))
         lock.unlock()
     }
 
     override fun prepareDebugger() {
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
 
-        val connectTo_host_port = "\\host port_ -> let port = toEnum port_ in " +
-                "socket AF_INET Stream 0 >>= " +
-                "(\\sock -> liftM hostAddresses (getHostByName host) >>= " +
-                "(\\addrs -> connect sock (SockAddrInet port (head addrs)) >> " +
-                "socketToHandle sock ReadWriteMode >>=  " +
-                "(\\handle -> return handle)))"
+        val connectToHostPort = "\\host port_ -> let port = toEnum port_ in " +
+                                "socket AF_INET Stream 0 >>= " +
+                                "(\\sock -> liftM hostAddresses (getHostByName host) >>= " +
+                                "(\\addrs -> connect sock (SockAddrInet port (head addrs)) >> " +
+                                "socketToHandle sock ReadWriteMode >>=  " +
+                                "(\\handle -> return handle)))"
         val host = "\"localhost\""
         val port = inputReadinessChecker.INPUT_READINESS_PORT
-        var stop_cmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
+        var stopCmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 
         /*
          * todo:
@@ -120,23 +122,18 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
                 ":m +Network.BSD\n",
                 ":m +Control.Monad\n",
                 ":m +Control.Concurrent\n",
-                "let $HANDLE_NAME = ($connectTo_host_port) $host $port\n",
-                ":set stop $stop_cmd\n"
-        )
-        for (cmd in commands) {
-            enqueueCommandWithPriority(HiddenCommand.createInstance(cmd))
-        }
+                "let $HANDLE_NAME = ($connectToHostPort) $host $port\n",
+                ":set stop $stopCmd\n")
+        commands map { enqueueCommandWithPriority(HiddenCommand.createInstance(it)) }
     }
 
-    override fun doClose() {
-        inputReadinessChecker.stop()
-    }
+    override fun doClose() = inputReadinessChecker.stop()
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
         if (outputType == ProcessOutputTypes.STDOUT) {
             collectedOutput.append(text)
             if (simpleReadinessCheck() &&
-                    (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
+                (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
                 handleOutput()
                 processStopped.set(false)
                 setReadyForInput()
@@ -144,18 +141,14 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
         }
     }
 
+    private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(PROMPT_LINE)
+
+    private fun outputIsDefinite(): Boolean = lastCommand is RealTimeCommand
+
     private fun handleOutput() {
         lastCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
         collectedOutput = StringBuilder()
     }
 
-    private fun outputIsDefinite(): Boolean {
-        return lastCommand is RealTimeCommand
-    }
-
-    private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(PROMPT_LINE)
-
-    private fun onStopSignal() {
-        debugProcess.getSession()?.stop()
-    }
+    private fun onStopSignal() = debugProcess.getSession()?.stop()
 }
