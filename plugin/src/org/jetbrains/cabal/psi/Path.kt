@@ -20,7 +20,9 @@ import com.intellij.psi.PsiReference
 public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Checkable {
 
     public override fun getReference(): PsiReference? {
-        val refFile: VirtualFile? = getVirtualFile(getCabalRootFile()!!)
+        val originalRootDir = getCabalRootFile()
+        if (originalRootDir == null) return null
+        val refFile: VirtualFile? = getVirtualFile(originalRootDir)
         if ((refFile == null) || (refFile.isDirectory())) return null
         val resolveTo = getManager()?.findFile(refFile)
         if (resolveTo == null) return null
