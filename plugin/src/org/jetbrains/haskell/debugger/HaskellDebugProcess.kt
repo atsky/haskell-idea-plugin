@@ -64,6 +64,7 @@ public class HaskellDebugProcess(session: XDebugSession,
                                  val myProcessHandler: HaskellDebugProcessHandler)
 : XDebugProcess(session), ProcessListener {
 
+    // arch change
     public val historyManager: HistoryManager = HistoryManager(this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
