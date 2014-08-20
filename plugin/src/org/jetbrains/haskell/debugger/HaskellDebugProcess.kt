@@ -69,6 +69,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         private set
     public val debugger: ProcessDebugger
 
+    //master changed
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
             HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
