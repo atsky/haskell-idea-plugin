@@ -11,6 +11,11 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.CommandQueue
 
 public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
                                     private val showCommandsInConsole: Boolean) : ProcessDebugger {
+    protected var lastCommand: AbstractCommand<out ParseResult?>? = null
+        private set
+    protected var debugStarted: Boolean = false
+        private set
+
     private val writeLock = ReentrantLock()
     private val queue: CommandQueue;
 
@@ -19,10 +24,20 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         queue.start()
     }
 
-    protected var lastCommand: AbstractCommand<out ParseResult?>? = null
-        private set
-    protected var debugStarted: Boolean = false
-        private set
+    override fun isReadyForNextCommand(): Boolean = !queue.someCommandInProgress()
+
+    final override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
+
+    final override fun close() {
+        queue.stop()
+        doClose()
+    }
+
+    protected open fun doClose() {}
+
+    protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
+
+    protected fun setReadyForInput(): Unit = queue.setReadyForInput()
 
     /**
      * Executes command immediately
@@ -55,19 +70,4 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         os.write(text.toByteArray())
         os.flush()
     }
-
-    final override fun close() {
-        queue.stop()
-        doClose()
-    }
-
-    protected open fun doClose() {}
-
-    final override fun enqueueCommand(command: AbstractCommand<*>) = queue.addCommand(command)
-
-    protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
-
-    protected fun setReadyForInput(): Unit = queue.setReadyForInput()
-
-    override fun isReadyForNextCommand(): Boolean = !queue.someCommandInProgress()
 }
