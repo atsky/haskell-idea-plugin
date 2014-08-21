@@ -38,7 +38,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
      */
     protected abstract val GLOBAL_BREAKPOINT_INDICES: Boolean
 
-    override fun trace() = enqueueCommand(TraceCommand(TRACE_COMMAND, FlowCommand.StandardFlowCallback(debugProcess)))
+    override fun trace(line: String?) = enqueueCommand(TraceCommand(line ?: TRACE_COMMAND, FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
@@ -79,7 +79,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
             val callback = SetTempBreakForRunCallback(if (GLOBAL_BREAKPOINT_INDICES) null else module)
             enqueueCommand(SetBreakpointCommand(module, line, callback))
         } else {
-            if (debugStarted) resume() else trace()
+            if (debugStarted) resume() else trace(null)
         }
     }
 

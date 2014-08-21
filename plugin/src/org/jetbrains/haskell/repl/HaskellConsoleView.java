@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class HaskellConsoleView extends LanguageConsoleViewImpl {
 
-    HaskellConsoleView(Project project,
-                       String title,
-                       ConsoleHistoryModel historyModel) {
+    public HaskellConsoleView(Project project,
+                              String title,
+                              ConsoleHistoryModel historyModel) {
         super(new HaskellConsole(project, title, historyModel));
     }
 

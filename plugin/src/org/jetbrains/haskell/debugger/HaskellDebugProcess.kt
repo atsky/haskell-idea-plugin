@@ -46,6 +46,8 @@ import org.jetbrains.haskell.debugger.procdebuggers.GHCiDebugger
 import org.jetbrains.haskell.debugger.procdebuggers.RemoteDebugger
 import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
+import com.intellij.execution.ui.RunnerLayoutUi
+import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -82,7 +84,7 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     {
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
-                             HaskellDebugSettings.DebuggerType.GHCI
+                HaskellDebugSettings.DebuggerType.GHCI
         debugger = if (debuggerIsGHCi) GHCiDebugger(this) else RemoteDebugger(this)
         myProcessHandler.setDebugProcessListener(this)
     }
@@ -125,10 +127,18 @@ public class HaskellDebugProcess(session: XDebugSession,
         val currentSession = getSession()
         currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
         debugger.prepareDebugger()
-        debugger.trace()
+        debugger.trace(null)
     }
 
-    override fun createTabLayouter(): XDebugTabLayouter = historyManager
+    override fun createTabLayouter(): XDebugTabLayouter = object : XDebugTabLayouter() {
+        override fun registerAdditionalContent(ui: RunnerLayoutUi) {
+            historyManager.registerContent(ui)
+            val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, myProcessHandler)
+            val c = ui.createContent("REPL", repl!!.getComponent()!!, "REPL Console", null, null)
+            c.setCloseable(false)
+            ui.addContent(c)
+        }
+    }
 
     override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
         //temporary code for removal of unused actions from debug panel
@@ -171,7 +181,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
         debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
-                                        HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
+                HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
@@ -251,7 +261,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
-        if(contentType == ConsoleViewContentType.ERROR_OUTPUT) {
+        if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
             System.err.print(text)
             System.err.flush()
         } else {

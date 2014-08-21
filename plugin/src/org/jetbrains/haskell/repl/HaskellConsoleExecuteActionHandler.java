@@ -2,7 +2,6 @@ package org.jetbrains.haskell.repl;
 
 import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.process.ConsoleHistoryModel;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
@@ -12,35 +11,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 
-import java.io.IOException;
-import java.io.OutputStream;
+public abstract class HaskellConsoleExecuteActionHandler {
 
-public final class HaskellConsoleExecuteActionHandler {
-
-    private final ProcessHandler processHandler;
     private final Project project;
     private final boolean preserveMarkup;
 
-    HaskellConsoleExecuteActionHandler(ProcessHandler processHandler,
-                                       Project project,
+    public HaskellConsoleExecuteActionHandler(Project project,
                                        boolean preserveMarkup) {
-        this.processHandler = processHandler;
         this.project = project;
         this.preserveMarkup = preserveMarkup;
     }
 
-    void processLine(String line) {
-        OutputStream os = processHandler.getProcessInput();
-        if (os != null) {
-            try {
-                byte[] bytes = (line + "\n").getBytes();
-                os.write(bytes);
-                os.flush();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-    }
+    public abstract void processLine(String line);
 
     public void runExecuteAction(final HaskellConsole console,
                                  boolean executeImmediately) {

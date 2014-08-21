@@ -21,7 +21,7 @@ import com.intellij.icons.AllIcons.Actions
  * Created by vlad on 8/5/14.
  */
 
-public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDebugTabLayouter() {
+public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
     class object {
         public val HISTORY_SIZE: Int = 20
     }
@@ -75,8 +75,9 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) : XDe
         }))
     }
 
-    override fun registerAdditionalContent(ui: RunnerLayoutUi) {
+    public fun registerContent(ui: RunnerLayoutUi) {
         val context = ui.createContent("history", historyPanel.getComponent(), "History", null, null)
+        context.setCloseable(false)
         ui.addContent(context)
     }
 
