@@ -9,9 +9,6 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
-import com.intellij.execution.process.ProcessListener
-import com.intellij.execution.process.ProcessEvent
-import com.intellij.openapi.util.Key
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
@@ -48,6 +45,9 @@ import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 import com.intellij.execution.ui.RunnerLayoutUi
 import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
+import java.util.Deque
+import com.intellij.xdebugger.frame.XSuspendContext
+import java.util.ArrayDeque
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -72,6 +72,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         private set
     public val debugger: ProcessDebugger
 
+    private val contexts: Deque<XSuspendContext> = ArrayDeque()
     private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
@@ -84,8 +85,8 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     {
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
-                             HaskellDebugSettings.DebuggerType.GHCI
-        if(debuggerIsGHCi) {
+                HaskellDebugSettings.DebuggerType.GHCI
+        if (debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
             debugger = GHCiDebugger(this, _processHandler,
                     executionConsole as ConsoleView,
@@ -143,7 +144,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         override fun registerAdditionalContent(ui: RunnerLayoutUi) {
             historyManager.registerContent(ui)
             val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, _processHandler)
-            val c = ui.createContent("REPL", repl!!.getComponent()!!, "REPL Console", null, null)
+            val c = ui.createContent("REPL", repl.getComponent()!!, "REPL Console", null, null)
             c.setCloseable(false)
             ui.addContent(c)
         }
@@ -168,18 +169,27 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     // Class' own methods
-
     public fun startTrace(line: String?) {
-        // save history state
+        historyManager.saveState()
+        val context = getSession()!!.getSuspendContext()
+        if (context != null) {
+            contexts.add(context)
+        }
         // disable actions
-        // start trace
         debugger.trace(line)
     }
 
     public fun traceFinished() {
-        // try restore history state
-        getSession()!!.stop()
+        if (historyManager.hasSavedStates()) {
+            historyManager.loadState()
+            if (!contexts.empty) {
+                getSession()!!.positionReached(contexts.pollLast()!!)
+            }
+        } else if (stopAfterTrace) {
+            getSession()!!.stop()
+        }
     }
+
 
     public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 

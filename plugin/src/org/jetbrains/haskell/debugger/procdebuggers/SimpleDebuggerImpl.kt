@@ -32,7 +32,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
     /**
      * Function, which is used to run with ':trace' command.
      */
-    protected abstract val TRACE_COMMAND: String
+    protected val TRACE_COMMAND: String = "main"
 
     /**
      * When true, all breakpoint indices for all files are unique,
@@ -41,7 +41,10 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
      */
     protected abstract val GLOBAL_BREAKPOINT_INDICES: Boolean
 
-    override fun trace(line: String?) = enqueueCommand(TraceCommand(line ?: TRACE_COMMAND, FlowCommand.StandardFlowCallback(debugProcess)))
+    protected open fun fixTraceCommand(line: String): String = line
+
+    override fun trace(line: String?) = enqueueCommand(TraceCommand(fixTraceCommand(line ?: TRACE_COMMAND),
+            FlowCommand.StandardFlowCallback(debugProcess)))
 
     override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(debugProcess)))
 
@@ -91,7 +94,7 @@ public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
         override fun execAfterParsing(result: BreakpointCommandResult?) {
             if (result != null) {
                 val callback = RunToPositionCallback(result.breakpointNumber, module)
-                val command = if (debugStarted) ResumeCommand(callback) else TraceCommand(TRACE_COMMAND, callback)
+                val command = if (debugStarted) ResumeCommand(callback) else TraceCommand(fixTraceCommand("main"), callback)
                 enqueueCommandWithPriority(command)
             }
         }

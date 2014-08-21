@@ -2,7 +2,6 @@ package org.jetbrains.haskell.debugger.history
 
 import org.jetbrains.haskell.debugger.actions.SwitchableAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.xdebugger.ui.XDebugTabLayouter
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import org.jetbrains.haskell.debugger.highlighting.HsExecutionPointHighlighter
@@ -16,6 +15,8 @@ import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.icons.AllIcons.Actions
+import java.util.Deque
+import java.util.ArrayDeque
 
 /**
  * Created by vlad on 8/5/14.
@@ -24,13 +25,18 @@ import com.intellij.icons.AllIcons.Actions
 public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
     class object {
         public val HISTORY_SIZE: Int = 20
+
+        public inner class StackState(public val historyIndex: Int,
+                                      public val realHistIndex: Int,
+                                      public val allFramesCollected: Boolean,
+                                      public val historyFrames: java.util.ArrayList<HsHistoryFrame>)
     }
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
     private val historyPanel: HistoryTab = HistoryTab(debugProcess, this)
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
-    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history",Actions.Back) {
+    private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
             enabled = false
             forwardAction.enabled = false
@@ -108,7 +114,13 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
 
     public fun markHistoryFramesAsObsolete(): Unit = historyStack.markFramesAsObsolete()
 
-    public inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
+    // save/load state managing
+    private val states: Deque<StackState> = ArrayDeque()
+    public fun saveState(): Unit = states.addLast(historyStack.save())
+    public fun loadState(): Unit = historyStack.loadFrom(states.pollLast()!!)
+    public fun hasSavedStates(): Boolean = !states.empty
+
+    private inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
         public var historyIndex: Int = 0
             private set
         private var realHistIndex: Int = 0
@@ -222,6 +234,17 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             } else {
                 debugProcess.debugger.forward(SequentialForwardCallback(realHistIndex - historyIndex, finalCallback))
             }
+        }
+
+        public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames))
+
+        public fun loadFrom(state: StackState) {
+            historyIndex = state.historyIndex
+            realHistIndex = state.realHistIndex
+            allFramesCollected = state.allFramesCollected
+            historyFrames.clear()
+            historyFrames.addAll(state.historyFrames)
+            updateHistory()
         }
 
         private inner class SequentialBackCallback(var toGo: Int,

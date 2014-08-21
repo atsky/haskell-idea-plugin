@@ -48,12 +48,14 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess, debugProcessHandler
 : SimpleDebuggerImpl(debugProcess, debugProcessHandler, consoleView) {
 
     class object {
-        private val HANDLE_NAME = "handle"
+        private val HANDLE_NAME = "__debug_handle"
+        private val TRACE_COMMAND_APPENDIX = " >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
         public val PROMPT_LINE: String = "debug> "
     }
 
-    override val TRACE_COMMAND: String = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = true
+
+    override fun fixTraceCommand(line: String): String = "($line)$TRACE_COMMAND_APPENDIX"
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
         val wrapperCallback = object : CommandCallback<ExpressionType?>() {

@@ -38,7 +38,6 @@ import com.intellij.execution.ui.ConsoleView
 public class RemoteDebugger(debugProcess: HaskellDebugProcess, debugProcessHandler: ProcessHandler)
 : SimpleDebuggerImpl(debugProcess, debugProcessHandler, null) {
 
-    override val TRACE_COMMAND: String = "main"
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = false
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
