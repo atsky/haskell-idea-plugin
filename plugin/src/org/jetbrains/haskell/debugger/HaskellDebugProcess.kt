@@ -61,17 +61,15 @@ import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
-                                 val myProcessHandler: HaskellDebugProcessHandler)
+                                 val _processHandler: HaskellDebugProcessHandler)
 : XDebugProcess(session) {
 
-    // arch change
     public val historyManager: HistoryManager = HistoryManager(this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
     public val debugger: ProcessDebugger
 
     private val debugProcessStateUpdater: DebugProcessStateUpdater
-    //master changed
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
             HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
@@ -91,7 +89,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
             debugger = RemoteDebugger(this)
         }
-        myProcessHandler.setDebugProcessListener(debugProcessStateUpdater)
+        _processHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
 
     // XDebugProcess methods overriding
@@ -101,7 +99,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun getBreakpointHandlers()
             : Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> = _breakpointHandlers
 
-    override fun doGetProcessHandler(): ProcessHandler? = myProcessHandler
+    override fun doGetProcessHandler(): ProcessHandler? = _processHandler
 
     override fun createConsole(): ExecutionConsole = executionConsole
 
