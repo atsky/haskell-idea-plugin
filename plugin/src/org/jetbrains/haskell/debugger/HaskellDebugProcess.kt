@@ -63,7 +63,8 @@ import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
-                                 val _processHandler: HaskellDebugProcessHandler)
+                                 val _processHandler: HaskellDebugProcessHandler,
+                                 val stopAfterTrace: Boolean)
 : XDebugProcess(session) {
 
     public val historyManager: HistoryManager = HistoryManager(this)
@@ -165,6 +166,18 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     // Class' own methods
+
+    public fun startTrace(line: String?) {
+        // save history state
+        // disable actions
+        // start trace
+        debugger.trace(line)
+    }
+
+    public fun traceFinished() {
+        // try restore history state
+        getSession()!!.stop()
+    }
 
     public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 

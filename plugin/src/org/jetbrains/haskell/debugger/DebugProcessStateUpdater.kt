@@ -32,7 +32,7 @@ public class GHCiDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): De
     public val processStopped: AtomicBoolean = AtomicBoolean(false);
 
     {
-        inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
+        inputReadinessChecker = InputReadinessChecker(this, { })
         inputReadinessChecker.start()
     }
 
@@ -57,8 +57,6 @@ public class GHCiDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): De
     }
 
     override fun close() = inputReadinessChecker.stop()
-
-    private fun onStopSignal() = debugProcess.getSession()?.stop()
 
     private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(GHCiDebugger.PROMPT_LINE)
 

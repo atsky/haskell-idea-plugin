@@ -33,14 +33,12 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             }
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {
-                if (result != null && result is HsStackFrameInfo) {
+                if (result != null) {
                     val frame = HsHistoryFrame(debugProcess, result)
                     frame.obsolete = false
                     debugProcess.debugger.history(HistoryCommand.DefaultHistoryCallback(debugProcess, frame, null))
-//                    val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-//                    debugProcess.historyFrameAppeared(frame)
-//                    debugProcess.historyChanged(false, true, frame)
-//                    debugProcess.getSession()!!.positionReached(context)
+                } else {
+                    debugProcess.traceFinished()
                 }
             }
         }

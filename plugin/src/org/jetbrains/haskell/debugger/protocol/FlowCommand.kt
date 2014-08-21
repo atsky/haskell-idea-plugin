@@ -61,6 +61,8 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                     } else {
                         setContext(result, breakpoint)
                     }
+                } else {
+                    debugProcess.traceFinished()
                 }
             }
 

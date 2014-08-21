@@ -10,6 +10,6 @@ public class DebugHaskellExecuteActionHandler(val debugProcess: HaskellDebugProc
         HaskellConsoleExecuteActionHandler(project, preserveMarkup) {
 
     override fun processLine(line: String?) {
-        debugProcess.debugger.trace(line)
+        debugProcess.startTrace(line)
     }
 }

@@ -89,7 +89,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
 
             val session = debuggerManager.startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
                 override fun start(session: XDebugSession): XDebugProcess =
-                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler)
+                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler, true)
             })
             return session.getRunContentDescriptor()
         } catch (e: Exception) {
