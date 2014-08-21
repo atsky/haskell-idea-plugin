@@ -8,11 +8,13 @@ import java.util.concurrent.locks.ReentrantLock
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.procdebuggers.utils.CommandQueue
+import java.util.concurrent.BlockingDeque
+import java.util.concurrent.LinkedBlockingDeque
 
 public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
                                     private val showCommandsInConsole: Boolean) : ProcessDebugger {
-    protected var lastCommand: AbstractCommand<out ParseResult?>? = null
-        private set
+
+    protected val executedCommands: BlockingDeque<AbstractCommand<out ParseResult?>> = LinkedBlockingDeque()
     protected var debugStarted: Boolean = false
         private set
 
@@ -33,11 +35,15 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         doClose()
     }
 
+    final override fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>? = executedCommands.peekFirst()
+
+    final override fun removeOldestExecutedCommand() { executedCommands.pollFirst() }
+
     protected open fun doClose() {}
 
     protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
 
-    protected fun setReadyForInput(): Unit = queue.setReadyForInput()
+    override fun setReadyForInput(): Unit = queue.setReadyForInput()
 
     /**
      * Executes command immediately
@@ -45,18 +51,18 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
     protected fun execute(command: AbstractCommand<out ParseResult?>) {
         val text = command.getText()
         writeLock.lock()
-        lastCommand = command
+        executedCommands.addLast(command)
         command.callback?.execBeforeSending()
         printCommandIfNeeded(text)
         sendCommandToProcess(text)
-        if (lastCommand is TraceCommand) {
+        if (executedCommands.peekLast() is TraceCommand) {
             debugStarted = true
         }
         writeLock.unlock()
     }
 
     private fun printCommandIfNeeded(text: String) {
-        if (lastCommand !is HiddenCommand) {
+        if (executedCommands.peekLast() !is HiddenCommand) {
             if (showCommandsInConsole) {
                 debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
             } else {

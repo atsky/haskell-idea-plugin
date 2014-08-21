@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.parser.ParseResult
 
 public trait ProcessDebugger {
 
@@ -54,5 +55,9 @@ public trait ProcessDebugger {
 
     public fun enqueueCommand(command: AbstractCommand<*>)
 
-    public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
+    public fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>?
+
+    public fun removeOldestExecutedCommand()
+
+    public fun setReadyForInput()
 }

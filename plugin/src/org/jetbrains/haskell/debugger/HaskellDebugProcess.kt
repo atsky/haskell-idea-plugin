@@ -63,16 +63,15 @@ import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
-                                 val myProcessHandler: HaskellDebugProcessHandler)
-: XDebugProcess(session), ProcessListener {
+                                 val _processHandler: HaskellDebugProcessHandler)
+: XDebugProcess(session) {
 
-    // arch change
     public val historyManager: HistoryManager = HistoryManager(this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
     public val debugger: ProcessDebugger
 
-    //master changed
+    private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
             HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
@@ -84,9 +83,15 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     {
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
-                HaskellDebugSettings.DebuggerType.GHCI
-        debugger = if (debuggerIsGHCi) GHCiDebugger(this) else RemoteDebugger(this)
-        myProcessHandler.setDebugProcessListener(this)
+                             HaskellDebugSettings.DebuggerType.GHCI
+        if(debuggerIsGHCi) {
+            debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
+            debugger = GHCiDebugger(this, (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
+        } else {
+            debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
+            debugger = RemoteDebugger(this)
+        }
+        _processHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
 
     // XDebugProcess methods overriding
@@ -96,7 +101,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun getBreakpointHandlers()
             : Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> = _breakpointHandlers
 
-    override fun doGetProcessHandler(): ProcessHandler? = myProcessHandler
+    override fun doGetProcessHandler(): ProcessHandler? = _processHandler
 
     override fun createConsole(): ExecutionConsole = executionConsole
 
@@ -113,6 +118,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun stop() {
         historyManager.clean()
         debugger.close()
+        debugProcessStateUpdater.close()
     }
 
     override fun resume() = debugger.resume()
@@ -133,7 +139,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun createTabLayouter(): XDebugTabLayouter = object : XDebugTabLayouter() {
         override fun registerAdditionalContent(ui: RunnerLayoutUi) {
             historyManager.registerContent(ui)
-            val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, myProcessHandler)
+            val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, _processHandler)
             val c = ui.createContent("REPL", repl!!.getComponent()!!, "REPL Console", null, null)
             c.setCloseable(false)
             ui.addContent(c)
@@ -156,22 +162,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         topToolbar.remove(forceStepInto)
 
         historyManager.registerActions(topToolbar)
-    }
-
-    // ProcessListener methods overriding
-
-    override fun startNotified(event: ProcessEvent?) { }
-
-    override fun processTerminated(event: ProcessEvent?) { }
-
-    override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) { }
-
-    override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        val text = event?.getText()
-        if (text != null) {
-            print(text)
-            debugger.onTextAvailable(text, outputType)
-        }
     }
 
     // Class' own methods
