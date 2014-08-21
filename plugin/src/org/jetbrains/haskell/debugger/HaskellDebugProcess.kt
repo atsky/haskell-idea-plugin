@@ -137,7 +137,9 @@ public class HaskellDebugProcess(session: XDebugSession,
         val currentSession = getSession()
         currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
         debugger.prepareDebugger()
-        debugger.trace(null)
+        if (stopAfterTrace) {
+            debugger.trace(null)
+        }
     }
 
     override fun createTabLayouter(): XDebugTabLayouter = object : XDebugTabLayouter() {

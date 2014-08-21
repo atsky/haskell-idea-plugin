@@ -51,7 +51,8 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
      * Checks if this runner can be used with specified executor and RunProfile
      */
     override fun canRun(executorId: String, profile: RunProfile): Boolean =
-            DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile is CabalRunConfiguration
+            (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) || DebugConsoleExecutor.EXECUTOR_ID.equals(executorId)) &&
+                    profile is CabalRunConfiguration
 
     /**
      * This method is executed when debug session is started (when you press "Debug" button)
@@ -89,7 +90,8 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
 
             val session = debuggerManager.startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
                 override fun start(session: XDebugSession): XDebugProcess =
-                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler, true)
+                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler,
+                                DefaultDebugExecutor.EXECUTOR_ID.equals(environment.getExecutor().getId()))
             })
             return session.getRunContentDescriptor()
         } catch (e: Exception) {

@@ -133,7 +133,7 @@
         <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointType"/>
         <applicationConfigurable instance="org.jetbrains.haskell.debugger.config.DebuggerConfigurable"/>
         <applicationService serviceImplementation="org.jetbrains.haskell.debugger.config.HaskellDebugSettings"/>
-
+        <executor implementation="org.jetbrains.haskell.debugger.DebugConsoleExecutor"/>
     </extensions>
 
     <extensionPoints>
