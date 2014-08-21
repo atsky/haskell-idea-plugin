@@ -1,7 +1,6 @@
 package org.jetbrains.haskell.repl;
 
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.console.ConsoleHistoryController;
 import com.intellij.execution.executors.DefaultRunExecutor;
@@ -14,7 +13,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -86,7 +84,7 @@ public final class HaskellConsoleRunner {
         consoleView = createConsoleView();
         String commandLine = cmdline.getCommandLineString();
         processHandler = new HaskellConsoleProcessHandler(process, commandLine, getLanguageConsole());
-        executeHandler = new HaskellConsoleExecuteActionHandler(processHandler, project, false);
+        executeHandler = new DefaultHaskellExecuteActionHandler(processHandler, project, false);
         getLanguageConsole().setExecuteHandler(executeHandler);
 
         // Init a console view
@@ -119,7 +117,7 @@ public final class HaskellConsoleRunner {
         panel.add(consoleView.getComponent(), BorderLayout.CENTER);
 
         RunContentDescriptor myDescriptor =
-            new RunContentDescriptor(consoleView, processHandler, panel, consoleTitle);
+                new RunContentDescriptor(consoleView, processHandler, panel, consoleTitle);
 
         // tool bar actions
         AnAction[] actions = fillToolBarActions(toolbarActions, defaultExecutor, myDescriptor);
@@ -180,7 +178,7 @@ public final class HaskellConsoleRunner {
 
         // run and history actions
         ArrayList<AnAction> executionActions = createConsoleExecActions(getLanguageConsole(),
-            processHandler, executeHandler, historyModel);
+                processHandler, executeHandler, historyModel);
         runAction = executionActions.get(0);
         actionList.addAll(executionActions);
 

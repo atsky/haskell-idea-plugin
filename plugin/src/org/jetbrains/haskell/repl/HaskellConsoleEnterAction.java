@@ -3,11 +3,11 @@ package org.jetbrains.haskell.repl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
-final class HaskellConsoleEnterAction extends HaskellExecuteActionBase {
+public final class HaskellConsoleEnterAction extends HaskellExecuteActionBase {
 
-    HaskellConsoleEnterAction(HaskellConsole languageConsole,
-                              ProcessHandler processHandler,
-                              HaskellConsoleExecuteActionHandler executeHandler) {
+    public HaskellConsoleEnterAction(HaskellConsole languageConsole,
+                                     ProcessHandler processHandler,
+                                     HaskellConsoleExecuteActionHandler executeHandler) {
         super(languageConsole, processHandler, executeHandler, HaskellConsoleRunner.EXECUTE_ACTION_ID);
     }
 

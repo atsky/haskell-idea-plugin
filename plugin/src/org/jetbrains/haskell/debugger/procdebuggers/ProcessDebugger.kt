@@ -18,7 +18,7 @@ public trait ProcessDebugger {
 
     public fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback)
 
-    public fun trace()
+    public fun trace(line: String?)
 
     public fun setBreakpoint(module: String, line: Int)
 

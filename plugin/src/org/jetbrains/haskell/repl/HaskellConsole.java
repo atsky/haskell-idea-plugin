@@ -17,8 +17,7 @@ public final class HaskellConsole extends LanguageConsoleImpl {
         this.historyModel = historyModel;
     }
 
-    
-    
+
     ConsoleHistoryModel getHistoryModel() {
         return historyModel;
     }
@@ -27,7 +26,7 @@ public final class HaskellConsole extends LanguageConsoleImpl {
         return executeHandler;
     }
 
-    void setExecuteHandler(HaskellConsoleExecuteActionHandler executeHandler) {
+    public void setExecuteHandler(HaskellConsoleExecuteActionHandler executeHandler) {
         this.executeHandler = executeHandler;
     }
 }
