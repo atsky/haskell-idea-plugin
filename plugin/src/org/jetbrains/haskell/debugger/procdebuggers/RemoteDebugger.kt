@@ -28,12 +28,15 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.procdebuggers.SimpleDebuggerImpl
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.ui.ConsoleView
 
 /**
  * Created by vlad on 7/30/14.
  */
 
-public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess, false) {
+public class RemoteDebugger(debugProcess: HaskellDebugProcess, debugProcessHandler: ProcessHandler)
+: SimpleDebuggerImpl(debugProcess, debugProcessHandler, null) {
 
     override val TRACE_COMMAND: String = "main"
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = false

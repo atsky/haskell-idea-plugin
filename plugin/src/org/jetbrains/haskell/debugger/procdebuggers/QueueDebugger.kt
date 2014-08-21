@@ -10,9 +10,12 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import org.jetbrains.haskell.debugger.procdebuggers.utils.CommandQueue
 import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
+import com.intellij.execution.ui.ConsoleView
+import com.intellij.execution.process.ProcessHandler
 
 public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
-                                    private val showCommandsInConsole: Boolean) : ProcessDebugger {
+                                    private val debugProcessHandler: ProcessHandler,
+                                    private val consoleView: ConsoleView?) : ProcessDebugger {
 
     protected val executedCommands: BlockingDeque<AbstractCommand<out ParseResult?>> = LinkedBlockingDeque()
     protected var debugStarted: Boolean = false
@@ -63,16 +66,13 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
 
     private fun printCommandIfNeeded(text: String) {
         if (executedCommands.peekLast() !is HiddenCommand) {
-            if (showCommandsInConsole) {
-                debugProcess.printToConsole(text, ConsoleViewContentType.SYSTEM_OUTPUT)
-            } else {
-                print(text)
-            }
+            print(text)
+            consoleView?.print(text, ConsoleViewContentType.SYSTEM_OUTPUT)
         }
     }
 
     private fun sendCommandToProcess(text: String) {
-        val os = debugProcess.getProcessHandler().getProcessInput()!!
+        val os = debugProcessHandler.getProcessInput()!!
         os.write(text.toByteArray())
         os.flush()
     }

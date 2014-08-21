@@ -22,9 +22,12 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import com.intellij.execution.ui.ConsoleView
+import com.intellij.execution.process.ProcessHandler
 
 public abstract class SimpleDebuggerImpl(debugProcess: HaskellDebugProcess,
-                                         showCommandsInConsole: Boolean) : QueueDebugger(debugProcess, showCommandsInConsole) {
+                                         debugProcessHandler: ProcessHandler,
+                                         consoleView: ConsoleView?) : QueueDebugger(debugProcess, debugProcessHandler, consoleView) {
 
     /**
      * Function, which is used to run with ':trace' command.

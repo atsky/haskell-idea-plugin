@@ -36,13 +36,16 @@ import org.jetbrains.haskell.debugger.protocol.HistoryCommand
 import org.jetbrains.haskell.debugger.procdebuggers.SimpleDebuggerImpl
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.procdebuggers.utils.InputReadinessChecker
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.ui.ConsoleView
 
 /**
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugProcess: HaskellDebugProcess, val INPUT_READINESS_PORT: Int)
-: SimpleDebuggerImpl(debugProcess, true) {
+public class GHCiDebugger(debugProcess: HaskellDebugProcess, debugProcessHandler: ProcessHandler,
+                          consoleView: ConsoleView?, val INPUT_READINESS_PORT: Int)
+: SimpleDebuggerImpl(debugProcess, debugProcessHandler, consoleView) {
 
     class object {
         private val HANDLE_NAME = "handle"

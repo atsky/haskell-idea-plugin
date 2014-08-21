@@ -87,10 +87,12 @@ public class HaskellDebugProcess(session: XDebugSession,
                              HaskellDebugSettings.DebuggerType.GHCI
         if(debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
-            debugger = GHCiDebugger(this, (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
+            debugger = GHCiDebugger(this, _processHandler,
+                    executionConsole as ConsoleView,
+                    (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
         } else {
             debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
-            debugger = RemoteDebugger(this)
+            debugger = RemoteDebugger(this, _processHandler)
         }
         _processHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
@@ -263,16 +265,16 @@ public class HaskellDebugProcess(session: XDebugSession,
         return ArrayList()
     }
 
-    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
-        if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
-            System.err.print(text)
-            System.err.flush()
-        } else {
-            System.out.print(text)
-            System.out.flush()
-        }
-        (executionConsole as ConsoleView).print(text, contentType)
-    }
+//    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
+//        if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
+//            System.err.print(text)
+//            System.err.flush()
+//        } else {
+//            System.out.print(text)
+//            System.out.flush()
+//        }
+//        (executionConsole as ConsoleView).print(text, contentType)
+//    }
 
     private class BreakpointPosition(val module: String, val line: Int) {
         override fun equals(other: Any?): Boolean {
