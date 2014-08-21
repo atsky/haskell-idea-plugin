@@ -55,4 +55,8 @@ public trait ProcessDebugger {
     public fun enqueueCommand(command: AbstractCommand<*>)
 
     public fun onTextAvailable(text: String, outputType: Key<out Any?>?)
+
+    public fun oldestExecutedCommand()
+
+    public fun removeOldestExecutedCommand()
 }

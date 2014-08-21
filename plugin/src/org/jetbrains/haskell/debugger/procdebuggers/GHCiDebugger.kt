@@ -143,11 +143,13 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
 
     private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(PROMPT_LINE)
 
-    private fun outputIsDefinite(): Boolean = lastCommand is RealTimeCommand
+    private fun outputIsDefinite(): Boolean = executedCommands.peekLast() is RealTimeCommand
 
     private fun handleOutput() {
-        lastCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
+        val oldestExecutedCommand = executedCommands.peekFirst()
+        oldestExecutedCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
         collectedOutput = StringBuilder()
+        executedCommands.pollFirst()
     }
 
     private fun onStopSignal() = debugProcess.getSession()?.stop()

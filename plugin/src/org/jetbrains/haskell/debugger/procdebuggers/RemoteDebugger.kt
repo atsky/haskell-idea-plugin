@@ -66,7 +66,9 @@ public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerI
     }
 
     override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        lastCommand?.handleJSONOutput(text)
+        val oldestExecutedCommand = executedCommands.peekFirst()
+        oldestExecutedCommand?.handleJSONOutput(text)
+        executedCommands.pollFirst()
         setReadyForInput()
     }
 }
