@@ -62,7 +62,7 @@ import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
                                  val myProcessHandler: HaskellDebugProcessHandler)
-: XDebugProcess(session), ProcessListener {
+: XDebugProcess(session) {
 
     // arch change
     public val historyManager: HistoryManager = HistoryManager(this)
@@ -70,6 +70,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         private set
     public val debugger: ProcessDebugger
 
+    private val debugProcessStateUpdater: DebugProcessStateUpdater
     //master changed
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
     private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
@@ -83,8 +84,14 @@ public class HaskellDebugProcess(session: XDebugSession,
     {
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
                              HaskellDebugSettings.DebuggerType.GHCI
-        debugger = if (debuggerIsGHCi) GHCiDebugger(this) else RemoteDebugger(this)
-        myProcessHandler.setDebugProcessListener(this)
+        if(debuggerIsGHCi) {
+            debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
+            debugger = GHCiDebugger(this, (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
+        } else {
+            debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
+            debugger = RemoteDebugger(this)
+        }
+        myProcessHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
 
     // XDebugProcess methods overriding
@@ -111,6 +118,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun stop() {
         historyManager.clean()
         debugger.close()
+        debugProcessStateUpdater.close()
     }
 
     override fun resume() = debugger.resume()
@@ -146,22 +154,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         topToolbar.remove(forceStepInto)
 
         historyManager.registerActions(topToolbar)
-    }
-
-    // ProcessListener methods overriding
-
-    override fun startNotified(event: ProcessEvent?) { }
-
-    override fun processTerminated(event: ProcessEvent?) { }
-
-    override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) { }
-
-    override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        val text = event?.getText()
-        if (text != null) {
-            print(text)
-            debugger.onTextAvailable(text, outputType)
-        }
     }
 
     // Class' own methods

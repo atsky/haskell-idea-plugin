@@ -4,8 +4,10 @@ import org.jetbrains.haskell.debugger.procdebuggers.GHCiDebugger
 import java.net.ServerSocket
 import java.net.Socket
 import java.net.SocketException
+import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 
-public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal: () -> Unit) : Runnable {
+public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateUpdater, val onStopSignal: () -> Unit)
+: Runnable {
 
     class object {
         private val OUTPUT_ACCEPTED_BYTE: Int = 0
@@ -36,7 +38,7 @@ public class InputReadinessChecker(val debugger: GHCiDebugger, val onStopSignal:
                 if (connected) {
                     val b = socket!!.getInputStream()!!.read()
                     if (b == OUTPUT_ACCEPTED_BYTE) {
-                        debugger.processStopped.set(true)
+                        debugStateUpdater.processStopped.set(true)
                     } else {
                         onStopSignal()
                         running = false

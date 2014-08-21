@@ -41,7 +41,8 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.InputReadinessChecker
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImpl(debugProcess, true) {
+public class GHCiDebugger(debugProcess: HaskellDebugProcess, val INPUT_READINESS_PORT: Int)
+: SimpleDebuggerImpl(debugProcess, true) {
 
     class object {
         private val HANDLE_NAME = "handle"
@@ -50,16 +51,6 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
 
     override val TRACE_COMMAND: String = "main >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = true
-
-    private val inputReadinessChecker: InputReadinessChecker
-    private var collectedOutput: StringBuilder = StringBuilder()
-
-    public val processStopped: AtomicBoolean = AtomicBoolean(false);
-
-    {
-        inputReadinessChecker = InputReadinessChecker(this, {() -> onStopSignal() })
-        inputReadinessChecker.start()
-    }
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
         val wrapperCallback = object : CommandCallback<ExpressionType?>() {
@@ -107,7 +98,6 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
                                 "socketToHandle sock ReadWriteMode >>=  " +
                                 "(\\handle -> return handle)))"
         val host = "\"localhost\""
-        val port = inputReadinessChecker.INPUT_READINESS_PORT
         var stopCmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 
         /*
@@ -122,35 +112,8 @@ public class GHCiDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerImp
                 ":m +Network.BSD\n",
                 ":m +Control.Monad\n",
                 ":m +Control.Concurrent\n",
-                "let $HANDLE_NAME = ($connectToHostPort) $host $port\n",
+                "let $HANDLE_NAME = ($connectToHostPort) $host $INPUT_READINESS_PORT\n",
                 ":set stop $stopCmd\n")
         commands map { enqueueCommandWithPriority(HiddenCommand.createInstance(it)) }
     }
-
-    override fun doClose() = inputReadinessChecker.stop()
-
-    override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        if (outputType == ProcessOutputTypes.STDOUT) {
-            collectedOutput.append(text)
-            if (simpleReadinessCheck() &&
-                (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite())) {
-                handleOutput()
-                processStopped.set(false)
-                setReadyForInput()
-            }
-        }
-    }
-
-    private fun simpleReadinessCheck(): Boolean = collectedOutput.toString().endsWith(PROMPT_LINE)
-
-    private fun outputIsDefinite(): Boolean = executedCommands.peekLast() is RealTimeCommand
-
-    private fun handleOutput() {
-        val oldestExecutedCommand = executedCommands.peekFirst()
-        oldestExecutedCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
-        collectedOutput = StringBuilder()
-        executedCommands.pollFirst()
-    }
-
-    private fun onStopSignal() = debugProcess.getSession()?.stop()
 }

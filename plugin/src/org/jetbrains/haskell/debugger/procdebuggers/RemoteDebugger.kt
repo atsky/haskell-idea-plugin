@@ -64,11 +64,4 @@ public class RemoteDebugger(debugProcess: HaskellDebugProcess) : SimpleDebuggerI
         enqueueCommand(EvalCommand(false, binding.name!!, callback))
         lock.unlock()
     }
-
-    override fun onTextAvailable(text: String, outputType: Key<out Any?>?) {
-        val oldestExecutedCommand = executedCommands.peekFirst()
-        oldestExecutedCommand?.handleJSONOutput(text)
-        executedCommands.pollFirst()
-        setReadyForInput()
-    }
 }

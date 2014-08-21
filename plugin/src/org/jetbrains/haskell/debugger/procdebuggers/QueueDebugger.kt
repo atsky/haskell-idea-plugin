@@ -35,7 +35,7 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
         doClose()
     }
 
-    final override fun oldestExecutedCommand() { executedCommands.peekFirst() }
+    final override fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>? = executedCommands.peekFirst()
 
     final override fun removeOldestExecutedCommand() { executedCommands.pollFirst() }
 
@@ -43,7 +43,7 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
 
     protected fun enqueueCommandWithPriority(command: AbstractCommand<*>): Unit = queue.addCommand(command, true)
 
-    protected fun setReadyForInput(): Unit = queue.setReadyForInput()
+    override fun setReadyForInput(): Unit = queue.setReadyForInput()
 
     /**
      * Executes command immediately
