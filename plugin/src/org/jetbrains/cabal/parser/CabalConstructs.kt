@@ -137,14 +137,14 @@ public val SECTION_TYPES: Map<String, IElementType> = mapOf(
 public val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
                                        Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>>?
                                                                                                         >> = mapOf(
-        "executable"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, EXECUTABLE_FIELDS) ,
-        "library"               to Pair({ CabalParser.(level: Int) -> true }                                    , LIBRARY_FIELDS)    ,
-        "test-suite"            to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, TEST_SUITE_FIELDS) ,
-        "benchmark"             to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, BENCHMARK_FIELDS)  ,
-        "flag"                  to Pair({ CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.NAME) }, FLAG_FIELDS)       ,
-        "source-repository"     to Pair({ CabalParser.(level: Int) -> this.parseRepoKinds() }                   , SOURCE_REPO_FIELDS),
-        "if"                    to Pair({ CabalParser.(level: Int) -> this.parseFullCondition(level) }          , null)              ,
-        "else"                  to Pair({ CabalParser.(level: Int) -> true }                                    , null)
+        "executable"            to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, EXECUTABLE_FIELDS) ,
+        "library"               to Pair({ CabalParser.(level: Int) -> true }                   , LIBRARY_FIELDS)    ,
+        "test-suite"            to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, TEST_SUITE_FIELDS) ,
+        "benchmark"             to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, BENCHMARK_FIELDS)  ,
+        "flag"                  to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, FLAG_FIELDS)       ,
+        "source-repository"     to Pair({ CabalParser.(level: Int) -> this.parseRepoKinds() }  , SOURCE_REPO_FIELDS),
+        "if"                    to Pair(CabalParser::parseFullCondition                        , null)              ,
+        "else"                  to Pair({ CabalParser.(level: Int) -> true }                   , null)
 )
 
 public val TOP_SECTION_NAMES: List<String> = listOf(
