@@ -18,23 +18,29 @@ public class CabalParsingTest extends ParsingTestCase {
     }
 
     @Test
-    public void testSimple() throws Exception { doTest(true); }
+    public void testBool() throws Exception { doTest(true); }
 
     @Test
     public void testFreeForm() throws Exception { doTest(true); }
 
     @Test
-    public void testSimpleTopLevel() throws Exception { doTest(true); }
+    public void testFreeLine() throws Exception { doTest(true); }
 
     @Test
-    public void testURLTest() throws Exception { doTest(true); }
+    public void testIdentifier() throws Exception { doTest(true); }
 
     @Test
-    public void testName() throws Exception { doTest(true); }
+    public void testToken() throws Exception { doTest(true); }
 
     @Test
     public void testSimpleVersion() throws Exception { doTest(true); }
 
     @Test
     public void testVersionConstraint() throws Exception { doTest(true); }
+
+    @Test
+    public void testFullVersionConstraint() throws Exception { doTest(true); }
+
+    @Test
+    public void testSimpleTopLevel() throws Exception { doTest(true); }
 }
