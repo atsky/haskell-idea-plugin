@@ -1,0 +1,8 @@
+library
+  if true&&true || true
+  if (true && true) || true
+  if !true
+  if (((true)))
+  if (((missing_brackets) || some
+  if inva ||
+       id

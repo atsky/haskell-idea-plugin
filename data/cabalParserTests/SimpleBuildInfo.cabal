@@ -1,0 +1,29 @@
+library
+  build-depends     :     some_value
+  other-modules     :     some_value
+  hs-source-dirs    :     some_value
+  hs-source-dir     :     some_value
+  extensions        :     some_value
+  build-tools       :     some_value
+  buildable         :     true
+  ghc-options       :     some_value
+  ghc-prof-options  :     some_value
+  ghc-shared-options:     some_value
+  hugs-options      :     some_value
+  nhc98-options     :     some_value
+  jhc-options       :     some_value
+  includes          :     some_value
+  install-includes  :     some_value
+  include-dirs      :     some_value
+  c-sources         :     some_value
+  extra-libraries   :     some_value
+  extra-lib-dirs    :     some_value
+  cc-options        :     some_value
+  cpp-options       :     some_value
+  ld-options        :     some_value
+  pkgconfig-depends :     some_value
+  frameworks        :     some_value
+  default-extensions:     some_value
+  other-extensions  :     some_value
+  default-language  :     some_value
+  other-languages   :     some_value

@@ -1,0 +1,32 @@
+library
+  if true
+    other-modules: d
+
+
+  else
+    other-modules: d
+
+  if true
+    other-modules: d
+
+  if os(invalid)
+      other-modules: d
+    else
+      other-modules: d
+
+
+  if os(invalid)
+    other-modules: d
+ else
+    other-modules: d
+
+
+ if true
+   if true
+     if true
+        other-modules: d
+     else
+        other-modules: d
+
+ else
+   other-modules: d

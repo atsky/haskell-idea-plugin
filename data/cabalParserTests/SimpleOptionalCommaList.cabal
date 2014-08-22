@@ -1,0 +1,11 @@
+library
+  other-modules:     one
+  extra-libraries:   a, a, a
+  extra-libraries:   a a a a
+  extra-libraries:   a, a, a a
+  cpp-options:       a
+                     ,
+                     a
+                     ,
+                     a
+                     a
