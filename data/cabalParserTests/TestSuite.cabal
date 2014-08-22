@@ -3,4 +3,4 @@ test-suite name
   main-is:     an
   type:        ice-cream
   if true
-     description: i'll have it
+     ghc-options: "i'll have it"
