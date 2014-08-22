@@ -152,7 +152,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
         return true
     }
 
-    fun parseTillEndValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, separatorIsOptional: Boolean) : Boolean {
+    fun parseTillEndValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, separatorIsOptional: Boolean, onOneLine: Boolean) : Boolean {
         do {
             parseTillSeparatorOrPrevLevel(prevLevel, parseValue, parseSeparator, onOneLine, separatorIsOptional)
         } while ((!builder.eof()) && !isLastBiggerLevel(prevLevel) && (parseSeparator() || separatorIsOptional))
@@ -180,8 +180,8 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
             prevLevel,
             parseBody,
             { token(CabalTokelTypes.COMMA) },
-            onOneLine = false,
-            separatorIsOptional = true
+            separatorIsOptional = true,
+            onOneLine = false
     )
 
     fun parseTokenList(prevLevel: Int)  = parseCommonCommaList(prevLevel, { parseTokenValue(CabalTokelTypes.TOKEN) })
@@ -253,15 +253,17 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun parseFullCondition(level: Int) = start(CabalTokelTypes.FULL_CONDITION, { parseCondition(level) })
 
-    fun parseConstraintList(prevLevel: Int, tokenType: IElementType = CabalTokelTypes.IDENTIFIER) = parseTillEndValueList(
-            prevLevel,
-            { parseFullVersionConstraint(prevLevel, tokenType) },
-            { token(CabalTokelTypes.COMMA) },
-            onOneLine = false,
-            separatorIsOptional = false
-    )
+    fun parseConstraintList(prevLevel: Int,
+                            tokenType: IElementType = CabalTokelTypes.IDENTIFIER,
+                            separatorIsOptional: Boolean = false)
+            = parseTillEndValueList(prevLevel,
+                                    { parseFullVersionConstraint(prevLevel, tokenType) },
+                                    { token(CabalTokelTypes.COMMA) },
+                                    separatorIsOptional,
+                                    onOneLine = false
+            )
 
-    fun parseCompilerList(prevLevel: Int) = parseConstraintList(prevLevel, CabalTokelTypes.COMPILER)
+    fun parseCompilerList(prevLevel: Int) = parseConstraintList(prevLevel, CabalTokelTypes.COMPILER, true)
 
     fun parseField(level: Int, key : String?, elemType: IElementType, parseValue : CabalParser.(Int) -> Boolean) = start(elemType) {
         if (parsePropertyKey(key) && token(CabalTokelTypes.COLON)) {
@@ -319,6 +321,11 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun parseSectionType(name: String) = start(CabalTokelTypes.SECTION_TYPE) {
         matchesIgnoreCase(CabalTokelTypes.ID, name)
+    }
+
+    fun parseSectionName() = start(CabalTokelTypes.NAME) {
+        skipFreeLineTill({ false });
+        true
     }
 
     fun parseRepoKinds() = (parseIdValue(CabalTokelTypes.REPO_KIND) && parseIdValue(CabalTokelTypes.REPO_KIND)) || true
