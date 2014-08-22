@@ -17,6 +17,7 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.icons.AllIcons.Actions
 import java.util.Deque
 import java.util.ArrayDeque
+import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 
 /**
  * Created by vlad on 8/5/14.
@@ -85,6 +86,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         val context = ui.createContent("history", historyPanel.getComponent(), "History", null, null)
         context.setCloseable(false)
         ui.addContent(context)
+        ui.getOptions().setToFocus(context, XDebuggerUIConstants.LAYOUT_VIEW_BREAKPOINT_CONDITION)
     }
 
     public fun registerActions(topToolbar: DefaultActionGroup) {

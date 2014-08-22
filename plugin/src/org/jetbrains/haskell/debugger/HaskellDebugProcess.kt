@@ -48,6 +48,10 @@ import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 import java.util.Deque
 import com.intellij.xdebugger.frame.XSuspendContext
 import java.util.ArrayDeque
+import com.intellij.execution.ExecutionManager
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.ui.content.ContentManagerListener
+import com.intellij.ui.content.ContentManagerEvent
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -146,9 +150,9 @@ public class HaskellDebugProcess(session: XDebugSession,
         override fun registerAdditionalContent(ui: RunnerLayoutUi) {
             historyManager.registerContent(ui)
             val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, _processHandler)
-            val c = ui.createContent("REPL", repl.getComponent()!!, "REPL Console", null, null)
-            c.setCloseable(false)
-            ui.addContent(c)
+            val consoleContext = ui.createContent("REPL", repl.getComponent()!!, "REPL Console", null, repl)
+            consoleContext.setCloseable(false)
+            ui.addContent(consoleContext)
         }
     }
 
@@ -189,6 +193,8 @@ public class HaskellDebugProcess(session: XDebugSession,
             }
         } else if (stopAfterTrace) {
             getSession()!!.stop()
+        } else {
+
         }
     }
 

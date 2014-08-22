@@ -14,6 +14,7 @@ import javax.swing.DefaultListModel
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.icons.AllIcons
 import javax.swing.ListSelectionModel
+import com.intellij.ui.components.JBScrollPane
 
 public class HistoryTab(private val process: HaskellDebugProcess,
                         private val manager: HistoryManager) : Disposable {
@@ -27,7 +28,7 @@ public class HistoryTab(private val process: HaskellDebugProcess,
     private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), debuggerStateManager, null);
 
     {
-        val framesContext = myUi.createContent("HistoryFramesContent", framesPanel, "History frames", AllIcons.Debugger.Frame, null)
+        val framesContext = myUi.createContent("HistoryFramesContent", JBScrollPane(framesPanel), "History frames", AllIcons.Debugger.Frame, null)
         val variablesContext = myUi.createContent("HistoryVariablesContent", variablesPanel, "Current variables", AllIcons.Debugger.Value, null)
         framesContext.setCloseable(false)
         variablesContext.setCloseable(false)
