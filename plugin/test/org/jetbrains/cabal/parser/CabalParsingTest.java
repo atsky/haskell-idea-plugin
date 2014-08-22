@@ -57,7 +57,7 @@ public class CabalParsingTest extends ParsingTestCase {
     public void testComplexCondition() throws Exception { doTest(true); }
 
     @Test
-    public void testIfElseCondition() throws Exception { doTest(true); }
+    public void testIfElseSection() throws Exception { doTest(true); }
 
     @Test
     public void testSimpleOptionalCommaList() throws Exception { doTest(true); }
