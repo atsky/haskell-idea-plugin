@@ -9,7 +9,6 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 public class Url(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
     public override fun check(): List<ErrorMessage> {
-        if (!getNode().getText()!!.matches("^[^ ]+$")) return listOf(ErrorMessage(this, "invalid URL", "error"))
         return listOf()
     }
 

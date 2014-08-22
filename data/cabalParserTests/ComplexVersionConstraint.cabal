@@ -1,0 +1,7 @@
+tested-with: id >= 2 && < 1.3
+tested-with: id >= 2
+   || < 1.3
+tested-with: id == 2.* &&
+             <=1.3.4||
+             ==1
+tested-with: id >=1.2||==1||==1.*&&>3

@@ -2,29 +2,24 @@ name:                Simple
 version:             1.0
 Build-Type:          Simple
 cabal-version:       >= 1.2
+
 package-url:         //some_url.com/folder/
 homepage:            //www.vk.com
 license:             identifier
-license-file:        filenameor
-license-files:       filename
-                     list
+license-file:        filename
+
 copyright:           freeform
 author:              freeform
 maintainer:          address
 stability:           freeform
-homepage:            URL
+
 bug-reports:         URL
-package-url:         URL
 synopsis:            freeform
 description:         freeform
 category:            freeform
+
 tested-with:         compilerlist
-data-files:          filename
-                     list
+data-files:          filenamelist
 data-dir:            directory
-extra-source-files:  filename
-                     list
-extra-doc-files:     filename
-                     list
-extra-tmp-files:     filename
-                     list
+extra-source-files:  filenamelist
+extra-tmp-files:     filenamelist

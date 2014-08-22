@@ -39,6 +39,9 @@ public class CabalParsingTest extends ParsingTestCase {
     public void testVersionConstraint() throws Exception { doTest(true); }
 
     @Test
+    public void testComplexVersionConstraint() throws Exception { doTest(true); }
+
+    @Test
     public void testFullVersionConstraint() throws Exception { doTest(true); }
 
     @Test

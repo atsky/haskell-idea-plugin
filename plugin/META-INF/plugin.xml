@@ -121,6 +121,8 @@
         <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator"/>
         <completion.contributor language="Cabal"
                                 implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor"/>
+        <projectImportProvider  implementation="org.jetbrains.cabal.export.CabalProjectImportProvider"/>
+        <projectImportBuilder   implementation="org.jetbrains.cabal.export.CabalProjectImportBuilder"/>
 
         <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
                     factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>

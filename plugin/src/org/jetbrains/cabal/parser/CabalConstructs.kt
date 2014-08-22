@@ -19,9 +19,9 @@ public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
     "author"             to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "maintainer"         to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.E_MAIL) }   ),
     "stability"          to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
-    "homepage"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
-    "bug-reports"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
-    "package-url"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }      ),
+    "homepage"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
+    "bug-reports"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
+    "package-url"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
     "synopsis"           to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "description"        to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "category"           to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
@@ -115,7 +115,7 @@ public val FLAG_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Bool
 )
 
 public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
-    "location"           to Pair(CabalTokelTypes.REPO_LOCATION     , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.URL) }     ),
+    "location"           to Pair(CabalTokelTypes.REPO_LOCATION     , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }   ),
     "type"               to Pair(CabalTokelTypes.TYPE              , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.REPO_TYPE) }),
     "subdir"             to Pair(CabalTokelTypes.REPO_SUBDIR       , { CabalParser.(level: Int) -> this.parsePath() }                            ),
     "module"             to Pair(CabalTokelTypes.REPO_MODULE       , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } ),
