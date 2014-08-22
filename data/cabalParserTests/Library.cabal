@@ -1,0 +1,5 @@
+library
+  exposed: true
+  exposed-modules: some
+  if true
+    other-languages: some

@@ -61,4 +61,31 @@ public class CabalParsingTest extends ParsingTestCase {
 
     @Test
     public void testSimpleOptionalCommaList() throws Exception { doTest(true); }
+
+    @Test
+    public void testBenchmark() throws Exception { doTest(true); }
+
+    @Test
+    public void testExecutable() throws Exception { doTest(true); }
+
+    @Test
+    public void testFlag() throws Exception { doTest(true); }
+
+    @Test
+    public void testInvalidField() throws Exception { doTest(true); }
+
+    @Test
+    public void testLibrary() throws Exception { doTest(true); }
+
+    @Test
+    public void testListInList() throws Exception { doTest(true); }
+
+    @Test
+    public void testRepoSource() throws Exception { doTest(true); }
+
+    @Test
+    public void testTestSuite() throws Exception { doTest(true); }
+
+    @Test
+    public void testEolComment() throws Exception { doTest(true); }
 }

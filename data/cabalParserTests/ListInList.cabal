@@ -1,0 +1,4 @@
+tested-with: a <= 2 && == 1     b == 3 || ==1.2.*  c == 1 && == 3
+
+library
+  build-depends: list <= 5 && == 7, some >= 15 && == 1, other <=100

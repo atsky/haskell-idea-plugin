@@ -1,0 +1,9 @@
+benchmark
+benchmark still /!!/ name
+  type: a
+
+
+benchmark name
+  main-is: a
+  if true
+     other-languages: adrs

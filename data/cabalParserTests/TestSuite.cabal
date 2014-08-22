@@ -1,0 +1,6 @@
+test-suite name
+  test-module: i_want
+  main-is:     an
+  type:        ice-cream
+  if true
+     description: i'll have it

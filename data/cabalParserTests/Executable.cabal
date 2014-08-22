@@ -1,0 +1,4 @@
+executable name
+  main-is: a
+  if true
+       other-languages: adrs

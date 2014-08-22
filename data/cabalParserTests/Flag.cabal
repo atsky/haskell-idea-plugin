@@ -1,0 +1,4 @@
+flag some
+  description: free
+  default: true
+  manual:  true

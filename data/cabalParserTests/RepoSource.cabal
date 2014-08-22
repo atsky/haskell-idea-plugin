@@ -1,0 +1,10 @@
+source-repository this
+  type:     some
+source-repository head
+  location: where
+source-repository this head
+  tag:      what
+source-repository
+  branch:   the_hell
+  module:   are_you
+  subdir:   doing_here

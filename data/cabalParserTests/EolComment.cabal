@@ -1,0 +1,20 @@
+    name: a
+     -- between_fields
+    tested-with:
+      -- before_value
+           a,
+             --inside_list
+   --some
+           a
+         --inside_list
+           a
+    executable a
+      --after sect name
+        other-languages: a
+      --comm
+           ,a
+
+
+   --comm
+        main-is: a
+
