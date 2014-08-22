@@ -88,4 +88,7 @@ public class CabalParsingTest extends ParsingTestCase {
 
     @Test
     public void testEolComment() throws Exception { doTest(true); }
+
+    @Test
+    public void testFirstIndent() throws Exception { doTest(true); }
 }
