@@ -15,6 +15,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.icons.AllIcons
 import javax.swing.ListSelectionModel
 import com.intellij.ui.components.JBScrollPane
+import javax.swing.ListModel
 
 public class HistoryTab(private val process: HaskellDebugProcess,
                         private val manager: HistoryManager) : Disposable {
@@ -54,6 +55,8 @@ public class HistoryTab(private val process: HaskellDebugProcess,
         framesPanel.addElement(line)
     }
 
+    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()
+
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()
         if (index != -1 && index + 1 < framesPanel.getIndexCount()) {
@@ -82,6 +85,10 @@ public class HistoryTab(private val process: HaskellDebugProcess,
             addListSelectionListener {(event: ListSelectionEvent) ->
                 manager.indexSelected(getSelectedIndex())
             }
+        }
+
+        override fun getModel(): DefaultListModel {
+            return listModel
         }
 
         public fun addElement(line: String) {

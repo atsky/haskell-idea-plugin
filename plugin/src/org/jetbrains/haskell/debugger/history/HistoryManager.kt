@@ -18,6 +18,7 @@ import com.intellij.icons.AllIcons.Actions
 import java.util.Deque
 import java.util.ArrayDeque
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import org.jetbrains.haskell.debugger.utils.SyncObject
 
 /**
  * Created by vlad on 8/5/14.
@@ -30,7 +31,8 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         public inner class StackState(public val historyIndex: Int,
                                       public val realHistIndex: Int,
                                       public val allFramesCollected: Boolean,
-                                      public val historyFrames: java.util.ArrayList<HsHistoryFrame>)
+                                      public val historyFrames: ArrayList<HsHistoryFrame>,
+                                      public val historyFramesLines: ArrayList<*>)
     }
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
@@ -119,7 +121,9 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
     // save/load state managing
     private val states: Deque<StackState> = ArrayDeque()
     public fun saveState(): Unit = states.addLast(historyStack.save())
-    public fun loadState(): Unit = historyStack.loadFrom(states.pollLast()!!)
+    public fun loadState(): Unit = AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), {
+        historyStack.loadFrom(states.pollLast()!!)
+    })
     public fun hasSavedStates(): Boolean = !states.empty
 
     private inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
@@ -167,16 +171,23 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         private fun moveForward() {
             if (historyIndex > 0) {
                 if (historyFrames[historyIndex - 1].obsolete) {
+                    val syncObject = SyncObject()
+                    syncObject.lock()
                     withRealFrameUpdate {
                         debugProcess.debugger.forward(object : CommandCallback<MoveHistResult?>() {
                             override fun execAfterParsing(result: MoveHistResult?) {
+                                syncObject.lock()
                                 if (result != null) {
                                     --historyIndex
                                     --realHistIndex
                                 }
+                                syncObject.signal()
+                                syncObject.unlock()
                             }
                         })
                     }
+                    syncObject.await()
+                    syncObject.unlock()
                 } else {
                     --historyIndex
                 }
@@ -186,24 +197,34 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         private fun moveBack() {
             if (historyIndex + 1 < historyFrames.size) {
                 if (historyFrames[historyIndex + 1].obsolete) {
+                    val syncObject = SyncObject()
+                    syncObject.lock()
                     withRealFrameUpdate {
                         debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
                             override fun execAfterParsing(result: MoveHistResult?) {
+                                syncObject.lock()
                                 if (result != null) {
                                     ++historyIndex
                                     ++realHistIndex
                                 }
+                                syncObject.signal()
+                                syncObject.unlock()
                             }
                         })
                     }
+                    syncObject.await()
+                    syncObject.unlock()
                 } else {
                     ++historyIndex
                 }
             } else if (allFramesCollected) {
             } else {
-                withRealFrameUpdate {(_) ->
+                val syncObject = SyncObject()
+                syncObject.lock()
+                withRealFrameUpdate {
                     debugProcess.debugger.back(object : CommandCallback<MoveHistResult?>() {
                         override fun execAfterParsing(result: MoveHistResult?) {
+                            syncObject.lock()
                             if (result != null) {
                                 val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
                                 addFrame(frame)
@@ -212,9 +233,13 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
                             } else {
                                 allFramesCollected = true
                             }
+                            syncObject.signal()
+                            syncObject.unlock()
                         }
                     })
                 }
+                syncObject.await()
+                syncObject.unlock()
             }
         }
 
@@ -238,7 +263,8 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             }
         }
 
-        public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames))
+        public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames),
+                historyPanel.getHistoryFramesModel().toArray().toArrayList())
 
         public fun loadFrom(state: StackState) {
             historyIndex = state.historyIndex
@@ -246,7 +272,10 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             allFramesCollected = state.allFramesCollected
             historyFrames.clear()
             historyFrames.addAll(state.historyFrames)
-            updateHistory()
+            historyPanel.getHistoryFramesModel().removeAllElements()
+            for (elem in state.historyFramesLines) {
+                historyPanel.addHistoryLine(elem.toString())
+            }
         }
 
         private inner class SequentialBackCallback(var toGo: Int,
