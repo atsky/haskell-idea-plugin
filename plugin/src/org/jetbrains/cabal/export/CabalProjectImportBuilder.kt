@@ -10,6 +10,8 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.ide.util.newProjectWizard.modes.ImportImlMode
 import org.jetbrains.haskell.icons.HaskellIcons
+import com.intellij.openapi.projectRoots.SdkTypeId
+import org.jetbrains.haskell.sdk.HaskellSdkType
 
 public class CabalProjectImportBuilder<T>(): ProjectImportBuilder<T>() {
 
@@ -34,6 +36,10 @@ public class CabalProjectImportBuilder<T>(): ProjectImportBuilder<T>() {
     }
 
     override fun setOpenProjectSettingsAfter(on: Boolean) {
+    }
+
+    override fun isSuitableSdkType(sdkType: SdkTypeId?): Boolean {
+        return sdkType is HaskellSdkType
     }
 
     override fun commit(project: Project?, model: ModifiableModuleModel?, modulesProvider: ModulesProvider?, artifactModel: ModifiableArtifactModel?): MutableList<Module>? {
