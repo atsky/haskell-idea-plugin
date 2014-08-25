@@ -48,7 +48,7 @@ public class HaskellConfigurable() : Configurable {
                 FileChooserDescriptorFactory.createSingleFolderDescriptor())
 
         ghcMod.addBrowseFolderListener(
-                "Select ghc-mod execurtable",
+                "Select ghc-mod executable",
                 null,
                 null,
                 FileChooserDescriptorFactory.createSingleLocalFileDescriptor())
