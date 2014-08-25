@@ -1,6 +1,6 @@
-    name: a
+name: a
      -- between_fields
-    tested-with:
+tested-with:
       -- before_value
            a,
              --inside_list
@@ -8,13 +8,12 @@
            a
          --inside_list
            a
-    executable a
+executable a
       --after sect name
-        other-languages: a
-      --comm
-           ,a
-
+     other-languages: a
+  --comm
+                      ,a
 
    --comm
-        main-is: a
+     main-is: a
 
