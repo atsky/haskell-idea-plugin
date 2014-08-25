@@ -1,11 +1,8 @@
 package org.jetbrains.haskell.debugger.protocol
 
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.GHCiParser
 import java.util.Deque
-import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
-import com.intellij.openapi.vfs.LocalFileSystem
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import org.jetbrains.haskell.debugger.frames.HsDebuggerEvaluator
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
@@ -18,10 +15,11 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
-import org.jetbrains.haskell.debugger.frames.HsTopStackFrame
 import org.json.simple.JSONObject
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.JSONConverter
+import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
 /**
  * Base class for commands that continue program execution until reaching breakpoint or finish
@@ -40,11 +38,10 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 
     class object {
 
-        public class StandardFlowCallback(val debugProcess: HaskellDebugProcess) : CommandCallback<HsStackFrameInfo?>() {
+        public class StandardFlowCallback(val debugger: ProcessDebugger,
+                                          val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
-            override fun execBeforeSending() {
-                debugProcess.historyManager.resetHistoryStack()
-            }
+            override fun execBeforeSending() = debugRespondent.getHistoryManager()?.resetHistoryStack()
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {
                 if (result != null) {
@@ -52,9 +49,8 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                         setExceptionContext(result)
                         return
                     }
-                    val moduleName = HaskellUtils.getModuleName(debugProcess.getSession()!!.getProject(),
-                            LocalFileSystem.getInstance()!!.findFileByPath(result.filePosition.filePath)!!)
-                    val breakpoint = debugProcess.getBreakpointAtPosition(moduleName, result.filePosition.rawStartLine)
+                    val module = debugRespondent.getModuleByFile(result.filePosition.filePath)
+                    val breakpoint = debugRespondent.getBreakpointAt(module, result.filePosition.rawStartLine)
                     val condition = breakpoint?.getCondition()
                     if (breakpoint != null && condition != null) {
                         handleCondition(breakpoint, condition, result)
@@ -62,12 +58,12 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                         setContext(result, breakpoint)
                     }
                 } else {
-                    debugProcess.traceFinished()
+                    debugRespondent.traceFinished()
                 }
             }
 
             private fun handleCondition(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, condition: String, result: HsStackFrameInfo) {
-                val evaluator = HsDebuggerEvaluator(debugProcess.debugger)
+                val evaluator = HsDebuggerEvaluator(debugger)
                 evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
                     override fun errorOccurred(errorMessage: String) {
                         val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.getLine()}" +
@@ -81,7 +77,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                                 (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
                             setContext(result, breakpoint)
                         } else {
-                            debugProcess.debugger.resume()
+                            debugger.resume()
                         }
                     }
 
@@ -89,23 +85,21 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             }
 
             private fun setExceptionContext(result: HsStackFrameInfo) {
-                val frame = HsHistoryFrame(debugProcess, result)
-                frame.obsolete = false
-                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", result))
-                debugProcess.historyManager.historyFrameAppeared(frame)
-                debugProcess.historyManager.historyChanged(false, true, frame)
-                val breakpoint = debugProcess.exceptionBreakpoint
-                if (breakpoint == null) {
-                    debugProcess.getSession()!!.positionReached(context)
-                } else {
-                    debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                val historyManager = debugRespondent.getHistoryManager()
+                if (historyManager != null) {
+                    val frame = HsHistoryFrame(debugger, result)
+                    frame.obsolete = false
+                    historyManager.historyFrameAppeared(frame)
+                    historyManager.historyChanged(false, true, frame)
                 }
+                val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", result))
+                debugRespondent.exceptionReached(context)
             }
 
             private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) {
-                val frame = HsHistoryFrame(debugProcess, result)
+                val frame = HsHistoryFrame(debugger, result)
                 frame.obsolete = false
-                debugProcess.debugger.history(HistoryCommand.DefaultHistoryCallback(debugProcess, frame, breakpoint))
+                debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))
             }
         }
     }

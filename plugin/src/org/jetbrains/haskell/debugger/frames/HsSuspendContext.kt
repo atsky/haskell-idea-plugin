@@ -1,17 +1,16 @@
 package org.jetbrains.haskell.debugger.frames
 
-import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import com.intellij.xdebugger.frame.XSuspendContext
 import com.intellij.xdebugger.frame.XExecutionStack
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
-public class HsSuspendContext(private val debugProcess: HaskellDebugProcess,
+public class HsSuspendContext(val debugger: ProcessDebugger,
                               val threadInfo: ProgramThreadInfo) : XSuspendContext() {
-    private val _activeExecutionStack : XExecutionStack = HsExecutionStack(debugProcess, threadInfo)
+    private val _activeExecutionStack: XExecutionStack = HsExecutionStack(debugger, threadInfo)
     override fun getActiveExecutionStack(): XExecutionStack = _activeExecutionStack
 
     /**
      * This method is not overrode, default implementation returns array of one element - _activeExecutionStack
      */
-//    override fun getExecutionStacks(): Array<XExecutionStack>?
+    //    override fun getExecutionStacks(): Array<XExecutionStack>?
 }

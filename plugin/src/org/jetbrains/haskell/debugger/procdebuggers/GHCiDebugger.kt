@@ -1,51 +1,27 @@
 package org.jetbrains.haskell.debugger.procdebuggers
 
-import org.jetbrains.haskell.debugger.protocol.AbstractCommand
-import org.jetbrains.haskell.debugger.protocol.TraceCommand
-import org.jetbrains.haskell.debugger.protocol.SetBreakpointCommand
-import org.jetbrains.haskell.debugger.protocol.RemoveBreakpointCommand
-import org.jetbrains.haskell.debugger.protocol.StepIntoCommand
-import org.jetbrains.haskell.debugger.protocol.StepOverCommand
-import org.jetbrains.haskell.debugger.protocol.ResumeCommand
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
-import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
-import com.intellij.openapi.util.Key
-import com.intellij.execution.process.ProcessOutputTypes
-import java.util.concurrent.atomic.AtomicBoolean
-import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.protocol.ExpressionTypeCommand
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
-import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
-import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
-import com.intellij.execution.ui.ConsoleViewContentType
-import org.jetbrains.haskell.debugger.protocol.ForceCommand
-import org.jetbrains.haskell.debugger.protocol.BackCommand
-import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.Condition
-import org.jetbrains.haskell.debugger.protocol.ForwardCommand
-import org.jetbrains.haskell.debugger.protocol.FlowCommand
-import org.jetbrains.haskell.debugger.protocol.StepCommand
-import org.jetbrains.haskell.debugger.parser.HistoryResult
-import org.jetbrains.haskell.debugger.protocol.HistoryCommand
-import org.jetbrains.haskell.debugger.procdebuggers.SimpleDebuggerImpl
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
-import org.jetbrains.haskell.debugger.procdebuggers.utils.InputReadinessChecker
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.ui.ConsoleView
+import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 
 /**
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugProcess: HaskellDebugProcess, debugProcessHandler: ProcessHandler,
+public class GHCiDebugger(debugRespondent: DebugRespondent,
+                          debugProcessHandler: ProcessHandler,
                           consoleView: ConsoleView?, val INPUT_READINESS_PORT: Int)
-: SimpleDebuggerImpl(debugProcess, debugProcessHandler, consoleView) {
+: SimpleDebuggerImpl(debugRespondent, debugProcessHandler, consoleView) {
 
     class object {
         private val HANDLE_NAME = "__debug_handle"

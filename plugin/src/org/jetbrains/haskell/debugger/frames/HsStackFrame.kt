@@ -10,16 +10,15 @@ import com.intellij.xdebugger.frame.XValueChildrenList
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.ArrayList
-import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import com.intellij.ui.ColoredTextContainer
 import com.intellij.icons.AllIcons
 import com.intellij.xdebugger.XDebuggerBundle
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
-public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProcess,
+public abstract class HsStackFrame(val debugger: ProcessDebugger,
                                    public val stackFrameInfo: HsStackFrameInfo) : XStackFrame() {
     class object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
@@ -63,7 +62,7 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)
      */
-    override fun getEvaluator(): XDebuggerEvaluator? = HsDebuggerEvaluator(debugProcess.debugger)
+    override fun getEvaluator(): XDebuggerEvaluator? = HsDebuggerEvaluator(debugger)
 
     /**
      * Makes stack frame appearance customization in frames list. Sets function name, source file name and part of code
@@ -72,13 +71,13 @@ public abstract class HsStackFrame(protected val debugProcess: HaskellDebugProce
     override fun customizePresentation(component: ColoredTextContainer) {
         val position = hackSourcePosition
         if (position != null) {
-            if(stackFrameInfo.functionName != null) {
+            if (stackFrameInfo.functionName != null) {
                 component.append(stackFrameInfo.functionName as String, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
                 component.append(" (", SimpleTextAttributes.REGULAR_ATTRIBUTES)
             }
             component.append(position.getFile().getName() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES)
             setSourceSpan(component)
-            if(stackFrameInfo.functionName != null) {
+            if (stackFrameInfo.functionName != null) {
                 component.append(")", SimpleTextAttributes.REGULAR_ATTRIBUTES)
             }
             component.setIcon(AllIcons.Debugger.StackFrame)

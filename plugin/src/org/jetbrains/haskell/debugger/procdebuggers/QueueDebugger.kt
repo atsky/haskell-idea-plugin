@@ -1,6 +1,5 @@
 package org.jetbrains.haskell.debugger.procdebuggers
 
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import org.jetbrains.haskell.debugger.protocol.TraceCommand
@@ -13,8 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.process.ProcessHandler
 
-public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess,
-                                    private val debugProcessHandler: ProcessHandler,
+public abstract class QueueDebugger(private val debugProcessHandler: ProcessHandler,
                                     private val consoleView: ConsoleView?) : ProcessDebugger {
 
     protected val executedCommands: BlockingDeque<AbstractCommand<out ParseResult?>> = LinkedBlockingDeque()
@@ -40,7 +38,9 @@ public abstract class QueueDebugger(public val debugProcess: HaskellDebugProcess
 
     final override fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>? = executedCommands.peekFirst()
 
-    final override fun removeOldestExecutedCommand() { executedCommands.pollFirst() }
+    final override fun removeOldestExecutedCommand() {
+        executedCommands.pollFirst()
+    }
 
     protected open fun doClose() {}
 

@@ -1,19 +1,14 @@
 package org.jetbrains.haskell.debugger.frames
 
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
-import com.intellij.xdebugger.frame.XCompositeNode
-import com.intellij.openapi.application.ApplicationManager
-import java.util.ArrayList
-import org.jetbrains.haskell.debugger.parser.LocalBinding
-import com.intellij.xdebugger.frame.XValueChildrenList
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
 /**
  * Created by marat-x on 7/22/14.
  */
-public class HsTopStackFrame(debugProcess: HaskellDebugProcess,
+public class HsTopStackFrame(debugger: ProcessDebugger,
                              stackFrameInfo: HsStackFrameInfo)
-                           : HsStackFrame(debugProcess, stackFrameInfo) {
+: HsStackFrame(debugger, stackFrameInfo) {
 
     override fun tryGetBindings() {
         // does nothing, because there is no way to get bindings if they are not set

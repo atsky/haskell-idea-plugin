@@ -226,7 +226,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
                         override fun execAfterParsing(result: MoveHistResult?) {
                             syncObject.lock()
                             if (result != null) {
-                                val frame = HsHistoryFrame(debugProcess, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
+                                val frame = HsHistoryFrame(debugProcess.debugger, HsStackFrameInfo(result.filePosition, result.bindingList.list, null))
                                 addFrame(frame)
                                 ++historyIndex
                                 ++realHistIndex

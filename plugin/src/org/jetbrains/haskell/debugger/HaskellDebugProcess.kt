@@ -10,7 +10,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler
 import com.intellij.execution.ui.ConsoleView
-import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointHandler
@@ -48,10 +47,8 @@ import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 import java.util.Deque
 import com.intellij.xdebugger.frame.XSuspendContext
 import java.util.ArrayDeque
-import com.intellij.execution.ExecutionManager
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.ui.content.ContentManagerListener
-import com.intellij.ui.content.ContentManagerEvent
+import org.jetbrains.haskell.debugger.procdebuggers.utils.DefaultRespondent
+import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -76,6 +73,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         private set
     public val debugger: ProcessDebugger
 
+    private val debugRespondent: DebugRespondent = DefaultRespondent(this)
     private val contexts: Deque<XSuspendContext> = ArrayDeque()
     private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
@@ -92,12 +90,12 @@ public class HaskellDebugProcess(session: XDebugSession,
                 HaskellDebugSettings.DebuggerType.GHCI
         if (debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
-            debugger = GHCiDebugger(this, _processHandler,
+            debugger = GHCiDebugger(debugRespondent, _processHandler,
                     executionConsole as ConsoleView,
                     (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
         } else {
             debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
-            debugger = RemoteDebugger(this, _processHandler)
+            debugger = RemoteDebugger(debugRespondent, _processHandler)
         }
         _processHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
@@ -232,7 +230,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
             val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())
             registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(index, breakpoint))
-            val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, this))
+            val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, debugRespondent))
             debugger.enqueueCommand(command)
         } else {
             throw RuntimeException(BREAK_BY_INDEX_ERROR_MSG)
@@ -282,17 +280,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
         return ArrayList()
     }
-
-//    public fun printToConsole(text: String, contentType: ConsoleViewContentType = ConsoleViewContentType.NORMAL_OUTPUT) {
-//        if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
-//            System.err.print(text)
-//            System.err.flush()
-//        } else {
-//            System.out.print(text)
-//            System.out.flush()
-//        }
-//        (executionConsole as ConsoleView).print(text, contentType)
-//    }
 
     private class BreakpointPosition(val module: String, val line: Int) {
         override fun equals(other: Any?): Boolean {

@@ -5,13 +5,14 @@ import java.util.Deque
 import org.json.simple.JSONObject
 import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.jetbrains.haskell.debugger.parser.JSONConverter
-import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
+import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 
 /**
  * Created by vlad on 8/7/14.
@@ -26,23 +27,27 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
     override fun parseJSONOutput(output: JSONObject): HistoryResult? = JSONConverter.historyResultFromJSON(output)
 
     class object {
-        public class DefaultHistoryCallback(val debugProcess: HaskellDebugProcess,
+        public class DefaultHistoryCallback(val debugger: ProcessDebugger,
+                                            val debugRespondent: DebugRespondent,
                                             val historyFrame: HsHistoryFrame,
                                             val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) : CommandCallback<HistoryResult?>() {
 
             override fun execAfterParsing(result: HistoryResult?) {
-                val context = HsSuspendContext(debugProcess, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
-                debugProcess.historyManager.historyFrameAppeared(historyFrame)
-                if (result != null) {
-                    debugProcess.historyManager.
-                            setHistoryFramesInfo(HsHistoryFrameInfo(0, historyFrame.stackFrameInfo.functionName,
-                                    historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
+                val historyManager = debugRespondent.getHistoryManager()
+                if (historyManager != null) {
+                    historyManager.historyFrameAppeared(historyFrame)
+                    if (result != null) {
+                        historyManager.
+                                setHistoryFramesInfo(HsHistoryFrameInfo(0, historyFrame.stackFrameInfo.functionName,
+                                        historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
+                    }
+                    historyManager.historyChanged(false, true, historyFrame)
                 }
-                debugProcess.historyManager.historyChanged(false, true, historyFrame)
+                val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
                 if (breakpoint != null) {
-                    debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                    debugRespondent.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
                 } else {
-                    debugProcess.getSession()!!.positionReached(context)
+                    debugRespondent.positionReached(context)
                 }
             }
         }
