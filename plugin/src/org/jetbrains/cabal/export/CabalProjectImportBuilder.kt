@@ -9,15 +9,16 @@ import com.intellij.openapi.module.ModifiableModuleModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.ide.util.newProjectWizard.modes.ImportImlMode
+import org.jetbrains.haskell.icons.HaskellIcons
 
 public class CabalProjectImportBuilder<T>(): ProjectImportBuilder<T>() {
 
     override fun getName(): String {
-        return ""
+        return "Cabal"
     }
 
-    override fun getIcon(): Icon? {
-        return null
+    override fun getIcon(): Icon {
+        return HaskellIcons.CABAL
     }
 
     override fun getList(): MutableList<T>? {

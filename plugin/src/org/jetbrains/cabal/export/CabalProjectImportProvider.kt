@@ -12,7 +12,7 @@ import com.intellij.ide.util.projectWizard.WizardContext
 public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImportBuilder()) {
 
     public override fun canImport(fileOrDirectory: VirtualFile?, project: Project?): Boolean {
-        return project != null && fileOrDirectory != null && !fileOrDirectory.isDirectory() && "cabal".equals(fileOrDirectory.getExtension());
+        return fileOrDirectory != null && !fileOrDirectory.isDirectory() && "cabal".equals(fileOrDirectory.getExtension());
     }
 
     public override fun getPathToBeImported(file: VirtualFile?): String? {
@@ -20,7 +20,7 @@ public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImp
     }
 
     public override fun canCreateNewProject(): Boolean {
-        return false;
+        return true;
     }
 
     public override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
@@ -28,6 +28,6 @@ public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImp
     }
 
     public override fun getFileSample(): String? {
-        return null;
+        return "Cabal File (*.cabal)";
     }
 }
