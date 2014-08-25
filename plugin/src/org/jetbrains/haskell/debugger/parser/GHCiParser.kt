@@ -51,9 +51,6 @@ public class GHCiParser() {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
                 if (matcher.matches()) {
                     val path = matcher.group(1)!!
-                    if (!File(path).exists()) {
-                        return null;
-                    }
                     val values = IntArray(matcher.groupCount() - 1)
                     for (j in 0..(values.size - 1)) {
                         values[j] = Integer.parseInt(matcher.group(j + 2)!!)

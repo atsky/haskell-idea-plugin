@@ -63,8 +63,6 @@ public class JSONConverter {
                                      json.getString(STOPPED_AT_FUNC_TAG))
                 }
                 case(FINISHED_MSG) { null }
-                case(EXCEPTION_MSG) { null }
-                case(WARNING_MSG) { null }
             }
 
         public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? =
