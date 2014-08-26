@@ -37,6 +37,7 @@ public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateU
                 if (connected) {
                     socket!!.getInputStream()!!.read()
                     debugStateUpdater.processStopped.set(true)
+                    debugStateUpdater.checkCollected()
                     connected = false
                     socket!!.close()
                 }

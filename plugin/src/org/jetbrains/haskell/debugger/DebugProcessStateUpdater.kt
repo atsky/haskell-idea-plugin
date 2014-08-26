@@ -45,16 +45,20 @@ public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
         if (text != null) {
             print(text)
             if (outputType == ProcessOutputTypes.STDOUT) {
-                val oldestExecutedCommand = debugger?.oldestExecutedCommand()
-                val outputIsDefinite = oldestExecutedCommand is RealTimeCommand
                 collectedOutput.append(text)
-                if (simpleReadinessCheck() &&
-                        (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite)) {
-                    handleOutput(oldestExecutedCommand)
-                    processStopped.set(false)
-                    debugger?.setReadyForInput()
-                }
+                checkCollected()
             }
+        }
+    }
+
+    public fun checkCollected() {
+        val oldestExecutedCommand = debugger?.oldestExecutedCommand()
+        val outputIsDefinite = oldestExecutedCommand is RealTimeCommand
+        if (simpleReadinessCheck() &&
+                (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite)) {
+            handleOutput(oldestExecutedCommand)
+            processStopped.set(false)
+            debugger?.setReadyForInput()
         }
     }
 
