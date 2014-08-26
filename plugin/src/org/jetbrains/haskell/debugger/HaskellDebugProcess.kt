@@ -89,13 +89,15 @@ public class HaskellDebugProcess(session: XDebugSession,
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
                 HaskellDebugSettings.DebuggerType.GHCI
         if (debuggerIsGHCi) {
-            debugProcessStateUpdater = GHCiDebugProcessStateUpdater(this)
+            debugProcessStateUpdater = GHCiDebugProcessStateUpdater()
             debugger = GHCiDebugger(debugRespondent, _processHandler,
                     executionConsole as ConsoleView,
                     (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
+            debugProcessStateUpdater.debugger = debugger
         } else {
-            debugProcessStateUpdater = RemoteDebugProcessStateUpdater(this)
+            debugProcessStateUpdater = RemoteDebugProcessStateUpdater()
             debugger = RemoteDebugger(debugRespondent, _processHandler)
+            debugProcessStateUpdater.debugger = debugger
         }
         _processHandler.setDebugProcessListener(debugProcessStateUpdater)
     }
@@ -217,9 +219,8 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun getBreakpointAtPosition(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
-        return registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpoint
-    }
+    public fun getBreakpointAtPosition(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? =
+            registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpoint
 
     public fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(null, breakpoint))

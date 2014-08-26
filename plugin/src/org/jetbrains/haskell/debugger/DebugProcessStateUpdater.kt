@@ -3,7 +3,6 @@ package org.jetbrains.haskell.debugger
 import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.util.Key
-import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 import org.jetbrains.haskell.debugger.procdebuggers.utils.InputReadinessChecker
 import java.util.concurrent.atomic.AtomicBoolean
 import com.intellij.execution.process.ProcessOutputTypes
@@ -11,11 +10,14 @@ import org.jetbrains.haskell.debugger.procdebuggers.GHCiDebugger
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
+import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
 /**
  * @author Habibullin Marat
  */
-public abstract class DebugProcessStateUpdater(protected val debugProcess: HaskellDebugProcess): ProcessListener {
+public abstract class DebugProcessStateUpdater() : ProcessListener {
+    public var debugger: ProcessDebugger? = null
+
     override fun startNotified(event: ProcessEvent?) { }
 
     override fun processTerminated(event: ProcessEvent?) { }
@@ -25,7 +27,7 @@ public abstract class DebugProcessStateUpdater(protected val debugProcess: Haske
     public abstract fun close()
 }
 
-public class GHCiDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): DebugProcessStateUpdater(debugProcess) {
+public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
 
@@ -43,14 +45,14 @@ public class GHCiDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): De
         if (text != null) {
             print(text)
             if (outputType == ProcessOutputTypes.STDOUT) {
-                val oldestExecutedCommand = debugProcess.debugger.oldestExecutedCommand()
+                val oldestExecutedCommand = debugger?.oldestExecutedCommand()
                 val outputIsDefinite = oldestExecutedCommand is RealTimeCommand
                 collectedOutput.append(text)
                 if (simpleReadinessCheck() &&
                         (processStopped.get() || !inputReadinessChecker.connected || outputIsDefinite)) {
                     handleOutput(oldestExecutedCommand)
                     processStopped.set(false)
-                    debugProcess.debugger.setReadyForInput()
+                    debugger?.setReadyForInput()
                 }
             }
         }
@@ -63,21 +65,22 @@ public class GHCiDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): De
     private fun handleOutput(oldestExecutedCommand: AbstractCommand<out ParseResult?>?) {
         oldestExecutedCommand?.handleGHCiOutput(collectedOutput.toString().split('\n').toLinkedList())
         collectedOutput = StringBuilder()
-        debugProcess.debugger.removeOldestExecutedCommand()
+        debugger?.removeOldestExecutedCommand()
     }
 }
 
-public class RemoteDebugProcessStateUpdater(debugProcess: HaskellDebugProcess): DebugProcessStateUpdater(debugProcess) {
+public class RemoteDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
         val text = event?.getText()
         if (text != null) {
             print(text)
-            val oldestExecutedCommand = debugProcess.debugger.oldestExecutedCommand()
+            val oldestExecutedCommand = debugger?.oldestExecutedCommand()
             oldestExecutedCommand?.handleJSONOutput(text)
-            debugProcess.debugger.removeOldestExecutedCommand()
-            debugProcess.debugger.setReadyForInput()
+            debugger?.removeOldestExecutedCommand()
+            debugger?.setReadyForInput()
         }
     }
 
-    override fun close() { }
+    override fun close() {
+    }
 }

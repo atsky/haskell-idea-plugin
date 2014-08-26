@@ -11,24 +11,24 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 
 public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
 
+    private val session = debugProcess.getSession()!!
+
     override fun traceFinished() = debugProcess.traceFinished()
 
-    override fun positionReached(context: HsSuspendContext) {
-        debugProcess.getSession()!!.positionReached(context)
-    }
+    override fun positionReached(context: HsSuspendContext) = session.positionReached(context)
 
     override fun breakpointReached(breakpoint: XBreakpoint<*>,
                                    evaluatedLogExpression: String?,
                                    context: HsSuspendContext) {
-        debugProcess.getSession()!!.breakpointReached(breakpoint, evaluatedLogExpression, context)
+        session.breakpointReached(breakpoint, evaluatedLogExpression, context)
     }
 
     override fun exceptionReached(context: HsSuspendContext) {
         val breakpoint = debugProcess.exceptionBreakpoint
         if (breakpoint == null) {
-            debugProcess.getSession()!!.positionReached(context)
+            session.positionReached(context)
         } else {
-            debugProcess.getSession()!!.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+            session.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
         }
     }
 
@@ -38,9 +38,8 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
     override fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int) =
             debugProcess.setBreakpointNumberAtLine(breakpointNumber, module, line)
 
-    override fun getHistoryManager(): HistoryManager? = debugProcess.historyManager
+    override fun getHistoryManager(): HistoryManager = debugProcess.historyManager
 
-    override fun getModuleByFile(filename: String): String = HaskellUtils.getModuleName(
-            debugProcess.getSession()!!.getProject(),
-            LocalFileSystem.getInstance()!!.findFileByPath(filename)!!)
+    override fun getModuleByFile(filename: String): String =
+            HaskellUtils.getModuleName(session.getProject(), LocalFileSystem.getInstance()!!.findFileByPath(filename)!!)
 }
