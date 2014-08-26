@@ -13,10 +13,21 @@ import java.io.File
 import kotlin.test.assertTrue
 import kotlin.test.assertNotNull
 import kotlin.test.assertEquals
+import java.util.Properties
+import java.io.FileInputStream
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
     class object {
+
+        public var properties: Properties? = null;
+
+        {
+            properties = Properties()
+            val filePath = javaClass.getResource("/unittest.properties")?.getFile()
+            assertNotNull(filePath)
+            properties!!.load(FileInputStream(filePath!!))
+        }
 
         public enum class Result {
             TRACE_FINISHED
@@ -124,11 +135,13 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         respondent = TestRespondent(syncObject!!)
 
         debugger = createDebugger(testFile, respondent!!)
+
+        debugger?.prepareDebugger()
     }
 
     Test public fun traceTest() {
         withAwait(syncObject!!) {
-            debugger!!.trace("main")
+            debugger!!.trace(null)
         }
         assertEquals(Result.TRACE_FINISHED, respondent!!.result)
     }

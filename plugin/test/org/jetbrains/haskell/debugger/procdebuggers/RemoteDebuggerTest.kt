@@ -16,6 +16,8 @@ import kotlin.test.assertNotNull
 public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
     class object {
+        public val pathPropertyName: String = "remotePath"
+
         public class TestRemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler,
                                               listener: ProcessListener) : OSProcessHandler(process, null, null) {
             {
@@ -36,8 +38,8 @@ public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
         val streamHandler = RemoteDebugStreamHandler()
         streamHandler.start()
 
-        val debuggerPath = javaClass.getResource("/HaskellDebugger")?.getFile()
-        assertNotNull(debuggerPath)
+        val debuggerPath = DebuggerTest.properties?.getProperty(pathPropertyName)
+        assertNotNull(debuggerPath, "Path to remote debugger not found ($pathPropertyName property inside unittest.properties)")
 
         val command: ArrayList<String> = arrayListOf(debuggerPath!!, "-m${filePath}", "-p${streamHandler.getPort()}")
         val builder = ProcessBuilder(command)
