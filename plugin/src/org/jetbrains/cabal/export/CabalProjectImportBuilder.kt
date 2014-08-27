@@ -13,7 +13,7 @@ import org.jetbrains.haskell.icons.HaskellIcons
 import com.intellij.openapi.projectRoots.SdkTypeId
 import org.jetbrains.haskell.sdk.HaskellSdkType
 
-public class CabalProjectImportBuilder<T>(): ProjectImportBuilder<T>() {
+public class CabalProjectImportBuilder(): ProjectImportBuilder<Boolean>() {
 
     override fun getName(): String {
         return "Cabal"
@@ -23,16 +23,16 @@ public class CabalProjectImportBuilder<T>(): ProjectImportBuilder<T>() {
         return HaskellIcons.CABAL
     }
 
-    override fun getList(): MutableList<T>? {
+    override fun getList(): MutableList<Boolean>? {
         return null
     }
 
-    override fun isMarked(element: T?): Boolean {
+    override fun isMarked(element: Boolean?): Boolean {
         return false
     }
 
     throws(javaClass<ConfigurationException>())
-    override fun setList(list: List<T>?) {
+    override fun setList(list: List<Boolean>?) {
     }
 
     override fun setOpenProjectSettingsAfter(on: Boolean) {

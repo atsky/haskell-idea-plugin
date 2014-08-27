@@ -8,6 +8,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.project.Project
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
+import java.util.ArrayList
+
+import org.jetbrains.haskell.module.HaskellModuleBuilder
+
+import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 
 public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImportBuilder()) {
 
@@ -16,7 +22,9 @@ public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImp
     }
 
     public override fun getPathToBeImported(file: VirtualFile?): String? {
-        return file?.getPath();
+        if (file == null)       return null
+        if (file.isDirectory()) return file.getPath()
+        return file.getParent()!!.getPath()
     }
 
     public override fun canCreateNewProject(): Boolean {
@@ -24,10 +32,10 @@ public class CabalProjectImportProvider(): ProjectImportProvider(CabalProjectImp
     }
 
     public override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
-        return ModuleWizardStep.EMPTY_ARRAY;
+        return Array<ModuleWizardStep>(1, { SimpleCabalStep(context!!) })
     }
 
     public override fun getFileSample(): String? {
-        return "Cabal File (*.cabal)";
+        return "<b>Cabal</b> project file (*.cabal)";
     }
 }
