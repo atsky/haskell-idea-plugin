@@ -25,6 +25,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
 
         public val PROPERTIES_FILE: String = "unittest.properties"
         public val TEST_MODULE_FILE: String = "TestMain.hs"
+
+        public val MAIN_LINE: Int = 10
+        public val QSORT_LINE: Int = 6
+
         public var properties: Properties? = null;
 
         {
@@ -166,38 +170,43 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         stopDebuggerServices()
     }
 
-    Test public fun traceTest() {
+    Test public fun mainTraceTest() {
         withAwait { debugger!!.trace(null) }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun customTraceTest() {
+        withAwait { debugger!!.trace("print $ qsort [5, 1, 2]") }
         assertResult(Result.TRACE_FINISHED)
     }
 
     Test public fun setBreakpointTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 4)
-            debugger!!.setBreakpoint("Main", 4)
+            respondent!!.addBreakpointToMap("Main", QSORT_LINE)
+            debugger!!.setBreakpoint("Main", QSORT_LINE)
         }
         assertResult(Result.BREAKPOINT_SET_AT)
     }
 
     Test public fun stoppedAtBreakpointTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 8)
-            debugger!!.setBreakpoint("Main", 8)
+            respondent!!.addBreakpointToMap("Main", MAIN_LINE)
+            debugger!!.setBreakpoint("Main", MAIN_LINE)
         }
         withAwait { debugger!!.trace(null) }
         assertResult(Result.BREAKPOINT_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", 8))!!.breakpoint, respondent!!.breakpoint)
-        assertEquals(8, filePosition?.rawStartLine)
-        assertEquals(8, filePosition?.rawEndLine)
+        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", MAIN_LINE))!!.breakpoint, respondent!!.breakpoint)
+        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
         assertEquals(8, filePosition?.rawStartSymbol)
         assertEquals(46, filePosition?.rawEndSymbol)
     }
 
     Test public fun resumeTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 8)
-            debugger!!.setBreakpoint("Main", 8)
+            respondent!!.addBreakpointToMap("Main", MAIN_LINE)
+            debugger!!.setBreakpoint("Main", MAIN_LINE)
         }
         withAwait { debugger!!.trace(null) }
         withAwait { debugger!!.resume() }
@@ -206,11 +215,11 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
 
     Test public fun removeBreakpointTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 4)
-            debugger!!.setBreakpoint("Main", 4)
+            respondent!!.addBreakpointToMap("Main", QSORT_LINE)
+            debugger!!.setBreakpoint("Main", QSORT_LINE)
         }
         withAwait { debugger!!.trace(null) }
-        withAwait { debugger!!.removeBreakpoint("Main", respondent!!.breakpoints.get(BreakpointPosition("Main", 4))!!.breakpointNumber!!) }
+        withAwait { debugger!!.removeBreakpoint("Main", respondent!!.breakpoints.get(BreakpointPosition("Main", 6))!!.breakpointNumber!!) }
         assertResult(Result.BREAKPOINT_REMOVED)
         withAwait { debugger!!.resume() }
         assertResult(Result.TRACE_FINISHED)
@@ -218,17 +227,62 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
 
     Test public fun stepTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 8)
-            debugger!!.setBreakpoint("Main", 8)
+            respondent!!.addBreakpointToMap("Main", MAIN_LINE)
+            debugger!!.setBreakpoint("Main", MAIN_LINE)
         }
         withAwait { debugger!!.trace(null) }
         withAwait { debugger!!.stepInto() }
         assertResult(Result.POSITION_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(8, filePosition?.rawStartLine)
-        assertEquals(8, filePosition?.rawEndLine)
+        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
         assertEquals(16, filePosition?.rawStartSymbol)
         assertEquals(46, filePosition?.rawEndSymbol)
     }
 
+    Test public fun stepLocalTest() {
+        withAwait {
+            respondent!!.addBreakpointToMap("Main", 13)
+            debugger!!.setBreakpoint("Main", 13)
+        }
+        assertResult(Result.BREAKPOINT_SET_AT)
+        withAwait { debugger!!.trace("steplocaltest") }
+        assertResult(Result.BREAKPOINT_REACHED)
+        withAwait { debugger!!.stepOver() }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun runToPositionTest() {
+        withAwait { debugger!!.runToPosition("Main", MAIN_LINE) }
+        assertResult(Result.POSITION_REACHED)
+        val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
+        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
+        assertEquals(8, filePosition?.rawStartSymbol)
+        assertEquals(46, filePosition?.rawEndSymbol)
+    }
+
+    Test public fun uncaughtExceptionBreakpointTest1() {
+        debugger!!.setExceptionBreakpoint(true)
+        withAwait { debugger!!.trace("uncaughtMain") }
+        assertResult(Result.EXCEPTION_REACHED)
+    }
+
+    Test public fun uncaughtExceptionBreakpointTest2() {
+        debugger!!.setExceptionBreakpoint(true)
+        withAwait { debugger!!.trace("caughtMain") }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun anyExceptionBreakpointTest1() {
+        debugger!!.setExceptionBreakpoint(false)
+        withAwait { debugger!!.trace("uncaughtMain") }
+        assertResult(Result.EXCEPTION_REACHED)
+    }
+
+    Test public fun anyExceptionBreakpointTest2() {
+        debugger!!.setExceptionBreakpoint(false)
+        withAwait { debugger!!.trace("caughtMain") }
+        assertResult(Result.EXCEPTION_REACHED)
+    }
 }

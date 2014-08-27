@@ -1,5 +1,7 @@
 module Main where
 
+import Control.Exception
+
 qsort [] = []
 qsort (a:as) = qsort left ++ [a] ++ qsort right
   where (left,right) = (filter (<=a) as, filter (>a) as)
@@ -7,5 +9,11 @@ qsort (a:as) = qsort left ++ [a] ++ qsort right
 main :: IO ()
 main = print $ qsort [1, 4, 7, 2, 9, 8, 10, 3]
 
-failingMain :: IO ()
-failingMain = (print $ qsort [1, 4, 7, 2, 9, 8, 10, 3]) >> undefined
+steplocaltest :: IO ()
+steplocaltest = main
+
+uncaughtMain :: IO ()
+uncaughtMain = main >> undefined
+
+caughtMain :: IO ()
+caughtMain = (main >> undefined) `catch` (const $ print "caught" :: SomeException -> IO ())
