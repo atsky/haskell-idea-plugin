@@ -32,8 +32,8 @@ public class PrintCommand(private val bindingName: String, callback: CommandCall
                     } else {
                         localBinding.value = ""
                     }
-                    bindingValueIsSet.signal()
                 } finally {
+                    bindingValueIsSet.signal()
                     syncObject.unlock()
                 }
             }

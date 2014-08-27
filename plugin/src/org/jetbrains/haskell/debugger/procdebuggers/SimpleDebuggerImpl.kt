@@ -68,7 +68,8 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) {
         val moduleName = if (GLOBAL_BREAKPOINT_INDICES) null else module
-        enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber, null))
+        enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber,
+                RemoveBreakpointCommand.StandardRemoveBreakpointCallback(debugRespondent)))
     }
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
@@ -108,8 +109,8 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     }
 
     private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
-    : CommandCallback<ParseResult?>() {
-        override fun execAfterParsing(result: ParseResult?) =
+    : CommandCallback<Nothing?>() {
+        override fun execAfterParsing(result: Nothing?) =
                 FlowCommand.StandardFlowCallback(this@SimpleDebuggerImpl, debugRespondent).execAfterParsing(flowResult)
     }
 }

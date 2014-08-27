@@ -20,6 +20,8 @@ public trait DebugRespondent {
 
     public fun exceptionReached(context: HsSuspendContext)
 
+    public fun breakpointRemoved()
+
     public fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>?
 
     public fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int)

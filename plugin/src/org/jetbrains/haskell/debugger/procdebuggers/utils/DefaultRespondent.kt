@@ -32,6 +32,8 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
         }
     }
 
+    override fun breakpointRemoved() { }
+
     override fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? =
             debugProcess.getBreakpointAtPosition(module, line)
 

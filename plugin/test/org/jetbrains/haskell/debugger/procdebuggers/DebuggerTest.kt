@@ -39,6 +39,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             POSITION_REACHED
             BREAKPOINT_REACHED
             EXCEPTION_REACHED
+            BREAKPOINT_REMOVED
             BREAKPOINT_SET_AT
         }
 
@@ -83,6 +84,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         override fun exceptionReached(context: HsSuspendContext) = withSignal {
             result = Result.EXCEPTION_REACHED
             this.context = context
+        }
+
+        override fun breakpointRemoved() = withSignal {
+            result = Result.BREAKPOINT_REMOVED
         }
 
         override fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
@@ -162,9 +167,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
     }
 
     Test public fun traceTest() {
-        withAwait {
-            debugger!!.trace(null)
-        }
+        withAwait { debugger!!.trace(null) }
         assertResult(Result.TRACE_FINISHED)
     }
 
@@ -181,11 +184,23 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             respondent!!.addBreakpointToMap("Main", 4)
             debugger!!.setBreakpoint("Main", 4)
         }
-        withAwait {
-            debugger!!.trace(null)
-        }
+        withAwait { debugger!!.trace(null) }
         assertResult(Result.BREAKPOINT_REACHED)
+        val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
+        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", 4))!!.breakpoint, respondent!!.breakpoint)
+        assertEquals(4, filePosition?.rawStartLine)
+    }
 
+    Test public fun removeBreakpoint() {
+        withAwait {
+            respondent!!.addBreakpointToMap("Main", 4)
+            debugger!!.setBreakpoint("Main", 4)
+        }
+        withAwait { debugger!!.trace(null) }
+        withAwait { debugger!!.removeBreakpoint("Main", respondent!!.breakpoints.get(BreakpointPosition("Main", 4))!!.breakpointNumber!!) }
+        assertResult(Result.BREAKPOINT_REMOVED)
+        withAwait { debugger!!.resume() }
+        assertResult(Result.TRACE_FINISHED)
     }
 
 }
