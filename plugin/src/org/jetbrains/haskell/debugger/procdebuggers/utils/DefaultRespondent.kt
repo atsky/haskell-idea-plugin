@@ -2,12 +2,14 @@ package org.jetbrains.haskell.debugger.procdebuggers.utils
 
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import org.jetbrains.haskell.debugger.history.HistoryManager
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.xdebugger.breakpoints.XBreakpoint
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 
 public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
 
@@ -40,7 +42,17 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
     override fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int) =
             debugProcess.setBreakpointNumberAtLine(breakpointNumber, module, line)
 
-    override fun getHistoryManager(): HistoryManager = debugProcess.historyManager
+    override fun resetHistoryStack() = debugProcess.historyManager.resetHistoryStack()
+
+    override fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?) {
+        debugProcess.historyManager.historyFrameAppeared(frame)
+        if (history != null) {
+            debugProcess.historyManager.setHistoryFramesInfo(
+                    HsHistoryFrameInfo(0, frame.stackFrameInfo.functionName,
+                            frame.stackFrameInfo.filePosition), history.frames, history.full)
+        }
+        debugProcess.historyManager.historyChanged(false, true, frame)
+    }
 
     override fun getModuleByFile(filename: String): String =
             HaskellUtils.getModuleName(session.getProject(), LocalFileSystem.getInstance()!!.findFileByPath(filename)!!)

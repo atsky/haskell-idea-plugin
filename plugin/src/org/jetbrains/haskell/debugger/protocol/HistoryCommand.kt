@@ -33,16 +33,7 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
                                             val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) : CommandCallback<HistoryResult?>() {
 
             override fun execAfterParsing(result: HistoryResult?) {
-                val historyManager = debugRespondent.getHistoryManager()
-                if (historyManager != null) {
-                    historyManager.historyFrameAppeared(historyFrame)
-                    if (result != null) {
-                        historyManager.
-                                setHistoryFramesInfo(HsHistoryFrameInfo(0, historyFrame.stackFrameInfo.functionName,
-                                        historyFrame.stackFrameInfo.filePosition), result.frames, result.full)
-                    }
-                    historyManager.historyChanged(false, true, historyFrame)
-                }
+                debugRespondent.historyFrameAppeared(historyFrame, result)
                 val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
                 if (breakpoint != null) {
                     debugRespondent.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)

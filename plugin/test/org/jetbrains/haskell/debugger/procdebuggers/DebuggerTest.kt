@@ -18,6 +18,8 @@ import java.util.Properties
 import java.io.FileInputStream
 import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl
 import com.intellij.xdebugger.impl.breakpoints.LineBreakpointState
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.parser.HistoryResult
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
@@ -108,7 +110,11 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             }
         }
 
-        override fun getHistoryManager(): HistoryManager? = null
+        override fun resetHistoryStack() {
+        }
+
+        override fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?) {
+        }
 
         override fun getModuleByFile(filename: String): String = moduleName
 

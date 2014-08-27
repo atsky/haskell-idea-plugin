@@ -41,7 +41,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
         public class StandardFlowCallback(val debugger: ProcessDebugger,
                                           val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
-            override fun execBeforeSending() = debugRespondent.getHistoryManager()?.resetHistoryStack()
+            override fun execBeforeSending() = debugRespondent.resetHistoryStack()
 
             override fun execAfterParsing(result: HsStackFrameInfo?) {
                 if (result != null) {
@@ -85,13 +85,9 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             }
 
             private fun setExceptionContext(result: HsStackFrameInfo) {
-                val historyManager = debugRespondent.getHistoryManager()
-                if (historyManager != null) {
-                    val frame = HsHistoryFrame(debugger, result)
-                    frame.obsolete = false
-                    historyManager.historyFrameAppeared(frame)
-                    historyManager.historyChanged(false, true, frame)
-                }
+                val frame = HsHistoryFrame(debugger, result)
+                frame.obsolete = false
+                debugRespondent.historyFrameAppeared(frame, null)
                 val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", result))
                 debugRespondent.exceptionReached(context)
             }

@@ -6,6 +6,8 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
 import org.jetbrains.haskell.debugger.history.HistoryManager
+import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
+import org.jetbrains.haskell.debugger.parser.HistoryResult
 
 
 public trait DebugRespondent {
@@ -26,7 +28,9 @@ public trait DebugRespondent {
 
     public fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int)
 
-    public fun getHistoryManager(): HistoryManager?
+    public fun resetHistoryStack()
+
+    public fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?)
 
     public fun getModuleByFile(filename: String): String
 
