@@ -12,6 +12,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessListener
 import org.jetbrains.haskell.debugger.RemoteDebugProcessStateUpdater
 import kotlin.test.assertNotNull
+import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 
 public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
@@ -32,6 +33,8 @@ public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
         }
     }
 
+    private var listener: RemoteDebugProcessStateUpdater? = null
+
     override fun createDebugger(file: File, respondent: DebugRespondent): RemoteDebugger {
         val filePath = file.getAbsolutePath()
 
@@ -43,10 +46,14 @@ public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
         val command: ArrayList<String> = arrayListOf(debuggerPath!!, "-m${filePath}", "-p${streamHandler.getPort()}")
         val builder = ProcessBuilder(command)
-        val listener = RemoteDebugProcessStateUpdater()
-        val handler = TestRemoteProcessHandler(builder.start(), streamHandler, listener)
+        listener = RemoteDebugProcessStateUpdater()
+        val handler = TestRemoteProcessHandler(builder.start(), streamHandler, listener!!)
         val debugger = RemoteDebugger(respondent, handler)
-        listener.debugger = debugger
+        listener!!.debugger = debugger
         return debugger
+    }
+
+    override fun stopDebuggerServices() {
+        listener?.close()
     }
 }

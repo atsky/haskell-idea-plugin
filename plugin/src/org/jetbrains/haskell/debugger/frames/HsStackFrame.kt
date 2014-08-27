@@ -51,13 +51,22 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
      */
     override fun getSourcePosition(): XSourcePosition? = null
 
+    private var _sourcePositionSet: Boolean = false
+    private var _hackSourcePosition: XSourcePosition? = null
     /**
      * This property holds XSourcePosition value. Use it instead of getSourcePosition()
      */
-    public val hackSourcePosition: XSourcePosition? = if (stackFrameInfo.filePosition == null) null else
-        XDebuggerUtil.getInstance()!!.createPosition(
-                LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition!!.filePath)),
-                stackFrameInfo.filePosition!!.normalizedStartLine)
+    public val hackSourcePosition: XSourcePosition?
+        get() {
+            if (!_sourcePositionSet) {
+                _hackSourcePosition = if (stackFrameInfo.filePosition == null) null else
+                    XDebuggerUtil.getInstance()!!.createPosition(
+                            LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition!!.filePath)),
+                            stackFrameInfo.filePosition!!.normalizedStartLine)
+                _sourcePositionSet = true
+            }
+            return hackSourcePosition
+        }
 
     /**
      * Returns evaluator (to use 'Evaluate expression' and other such tools)

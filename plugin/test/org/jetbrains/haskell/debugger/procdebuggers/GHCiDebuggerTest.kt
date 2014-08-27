@@ -56,9 +56,12 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
             override fun doDestroyProcess() {
                 stdoutReader.stopRunning()
                 stderrReader.stopRunning()
+                super.doDestroyProcess()
             }
         }
     }
+
+    private var listener: GHCiDebugProcessStateUpdater? = null
 
     override fun createDebugger(file: File, respondent: DebugRespondent): GHCiDebugger {
         val filePath = file.getAbsolutePath()
@@ -69,11 +72,14 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
         command.add("network")
         val process = Runtime.getRuntime().exec(command.copyToArray())
         val handler = TestGHCiProcessHandler(process)
-        val listener = GHCiDebugProcessStateUpdater()
-        val debugger = GHCiDebugger(respondent, handler, null, listener.INPUT_READINESS_PORT)
-        listener.debugger = debugger
+        listener = GHCiDebugProcessStateUpdater()
+        val debugger = GHCiDebugger(respondent, handler, null, listener!!.INPUT_READINESS_PORT)
+        listener!!.debugger = debugger
         handler.addProcessListener(listener)
         return debugger
     }
 
+    override fun stopDebuggerServices() {
+        listener?.close()
+    }
 }
