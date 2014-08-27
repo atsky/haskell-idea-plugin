@@ -8,8 +8,6 @@ import org.jetbrains.haskell.debugger.frames.HsDebuggerEvaluator
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XValue
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.notification.Notifications
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -20,6 +18,7 @@ import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.JSONConverter
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 /**
  * Base class for commands that continue program execution until reaching breakpoint or finish
@@ -51,7 +50,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                     }
                     val module = debugRespondent.getModuleByFile(result.filePosition.filePath)
                     val breakpoint = debugRespondent.getBreakpointAt(module, result.filePosition.rawStartLine)
-                    val condition = breakpoint?.getCondition()
+                    val condition = breakpoint?.condition
                     if (breakpoint != null && condition != null) {
                         handleCondition(breakpoint, condition, result)
                     } else {
@@ -62,11 +61,11 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 }
             }
 
-            private fun handleCondition(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>, condition: String, result: HsStackFrameInfo) {
+            private fun handleCondition(breakpoint: HaskellLineBreakpointDescription, condition: String, result: HsStackFrameInfo) {
                 val evaluator = HsDebuggerEvaluator(debugger)
                 evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
                     override fun errorOccurred(errorMessage: String) {
-                        val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.getLine()}" +
+                        val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.line}" +
                                 "cannot be evaluated, reason: $errorMessage"
                         Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
                         setContext(result, breakpoint)
@@ -92,7 +91,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 debugRespondent.exceptionReached(context)
             }
 
-            private fun setContext(result: HsStackFrameInfo, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) {
+            private fun setContext(result: HsStackFrameInfo, breakpoint: HaskellLineBreakpointDescription?) {
                 val frame = HsHistoryFrame(debugger, result)
                 frame.obsolete = false
                 debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))

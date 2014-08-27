@@ -1,13 +1,9 @@
 package org.jetbrains.haskell.debugger.procdebuggers.utils
 
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import com.intellij.xdebugger.breakpoints.XBreakpoint
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointProperties
-import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 
 public trait DebugRespondent {
@@ -16,15 +12,14 @@ public trait DebugRespondent {
 
     public fun positionReached(context: HsSuspendContext)
 
-    public fun breakpointReached(breakpoint: XBreakpoint<*>,
-                                 evaluatedLogExpression: String?,
+    public fun breakpointReached(breakpoint: HaskellLineBreakpointDescription,
                                  context: HsSuspendContext)
 
     public fun exceptionReached(context: HsSuspendContext)
 
     public fun breakpointRemoved()
 
-    public fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>?
+    public fun getBreakpointAt(module: String, line: Int): HaskellLineBreakpointDescription?
 
     public fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int)
 

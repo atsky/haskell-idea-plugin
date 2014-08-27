@@ -3,10 +3,6 @@ package org.jetbrains.haskell.debugger.procdebuggers
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import org.jetbrains.haskell.debugger.utils.SyncObject
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.intellij.xdebugger.breakpoints.XBreakpoint
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.junit.Test
 import org.junit.Before
 import org.junit.After
@@ -16,10 +12,9 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertEquals
 import java.util.Properties
 import java.io.FileInputStream
-import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl
-import com.intellij.xdebugger.impl.breakpoints.LineBreakpointState
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.HistoryResult
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
@@ -60,7 +55,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             override fun hashCode(): Int = module.hashCode() * 31 + line
         }
 
-        public class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>)
+        public class BreakpointEntry(var breakpointNumber: Int?, val breakpoint: HaskellLineBreakpointDescription)
 
     }
 
@@ -68,7 +63,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         public val moduleName: String = "Main"
         public var result: Result? = null
         public var context: HsSuspendContext? = null
-        public var breakpoint: XBreakpoint<out XBreakpointProperties<*>?>? = null
+        public var breakpoint: HaskellLineBreakpointDescription? = null
         public val breakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
 
         override fun traceFinished() = withSignal {
@@ -80,8 +75,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             this.context = context
         }
 
-        override fun breakpointReached(breakpoint: XBreakpoint<out XBreakpointProperties<*>?>,
-                                       evaluatedLogExpression: String?, context: HsSuspendContext) = withSignal {
+        override fun breakpointReached(breakpoint: HaskellLineBreakpointDescription, context: HsSuspendContext) = withSignal {
             result = Result.BREAKPOINT_REACHED
             this.breakpoint = breakpoint
             this.context = context
@@ -96,7 +90,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
             result = Result.BREAKPOINT_REMOVED
         }
 
-        override fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? {
+        override fun getBreakpointAt(module: String, line: Int): HaskellLineBreakpointDescription? {
             assert(module.equals(moduleName))
             return breakpoints.get(BreakpointPosition(module, line))?.breakpoint
         }
@@ -121,7 +115,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         public fun addBreakpointToMap(module: String, line: Int) {
             assert(module.equals(moduleName))
             val position = BreakpointPosition(module, line)
-            val breakpoint = XLineBreakpointImpl<XBreakpointProperties<*>>(null, null, null, LineBreakpointState())
+            val breakpoint = HaskellLineBreakpointDescription(module, line, null)
             val entry = BreakpointEntry(null, breakpoint)
             breakpoints.put(position, entry)
         }

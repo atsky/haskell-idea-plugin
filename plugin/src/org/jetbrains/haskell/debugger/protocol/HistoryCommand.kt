@@ -6,13 +6,11 @@ import org.json.simple.JSONObject
 import org.jetbrains.haskell.debugger.parser.GHCiParser
 import org.jetbrains.haskell.debugger.parser.JSONConverter
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
 import org.jetbrains.haskell.debugger.frames.ProgramThreadInfo
-import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 /**
  * Created by vlad on 8/7/14.
@@ -30,13 +28,13 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
         public class DefaultHistoryCallback(val debugger: ProcessDebugger,
                                             val debugRespondent: DebugRespondent,
                                             val historyFrame: HsHistoryFrame,
-                                            val breakpoint: XLineBreakpoint<XBreakpointProperties<*>>?) : CommandCallback<HistoryResult?>() {
+                                            val breakpoint: HaskellLineBreakpointDescription?) : CommandCallback<HistoryResult?>() {
 
             override fun execAfterParsing(result: HistoryResult?) {
                 debugRespondent.historyFrameAppeared(historyFrame, result)
                 val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
                 if (breakpoint != null) {
-                    debugRespondent.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+                    debugRespondent.breakpointReached(breakpoint, context)
                 } else {
                     debugRespondent.positionReached(context)
                 }

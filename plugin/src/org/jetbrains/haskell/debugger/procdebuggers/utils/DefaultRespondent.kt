@@ -2,14 +2,12 @@ package org.jetbrains.haskell.debugger.procdebuggers.utils
 
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.frames.HsSuspendContext
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import org.jetbrains.haskell.debugger.utils.HaskellUtils
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.xdebugger.breakpoints.XBreakpoint
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
+import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
 
@@ -19,10 +17,14 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
 
     override fun positionReached(context: HsSuspendContext) = session.positionReached(context)
 
-    override fun breakpointReached(breakpoint: XBreakpoint<*>,
-                                   evaluatedLogExpression: String?,
+    override fun breakpointReached(breakpoint: HaskellLineBreakpointDescription,
                                    context: HsSuspendContext) {
-        session.breakpointReached(breakpoint, evaluatedLogExpression, context)
+        val realBreakpoint = debugProcess.getBreakpointAtPosition(breakpoint.module, breakpoint.line)
+        if (realBreakpoint == null) {
+            session.positionReached(context)
+        } else {
+            session.breakpointReached(realBreakpoint, realBreakpoint.getLogExpression(), context)
+        }
     }
 
     override fun exceptionReached(context: HsSuspendContext) {
@@ -36,8 +38,14 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
 
     override fun breakpointRemoved() { }
 
-    override fun getBreakpointAt(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? =
-            debugProcess.getBreakpointAtPosition(module, line)
+    override fun getBreakpointAt(module: String, line: Int): HaskellLineBreakpointDescription? {
+        val breakpoint = debugProcess.getBreakpointAtPosition(module, line)
+        if (breakpoint == null) {
+            return null
+        } else {
+            return HaskellLineBreakpointDescription(module, line, breakpoint.getCondition())
+        }
+    }
 
     override fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int) =
             debugProcess.setBreakpointNumberAtLine(breakpointNumber, module, line)
