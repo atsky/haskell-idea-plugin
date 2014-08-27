@@ -8,4 +8,4 @@ main :: IO ()
 main = print $ qsort [1, 4, 7, 2, 9, 8, 10, 3]
 
 failingMain :: IO ()
-failingMain = main >> undefined
+failingMain = (print $ qsort [1, 4, 7, 2, 9, 8, 10, 3]) >> undefined

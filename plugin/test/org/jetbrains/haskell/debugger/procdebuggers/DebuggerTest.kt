@@ -181,17 +181,30 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
 
     Test public fun stoppedAtBreakpointTest() {
         withAwait {
-            respondent!!.addBreakpointToMap("Main", 4)
-            debugger!!.setBreakpoint("Main", 4)
+            respondent!!.addBreakpointToMap("Main", 8)
+            debugger!!.setBreakpoint("Main", 8)
         }
         withAwait { debugger!!.trace(null) }
         assertResult(Result.BREAKPOINT_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", 4))!!.breakpoint, respondent!!.breakpoint)
-        assertEquals(4, filePosition?.rawStartLine)
+        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", 8))!!.breakpoint, respondent!!.breakpoint)
+        assertEquals(8, filePosition?.rawStartLine)
+        assertEquals(8, filePosition?.rawEndLine)
+        assertEquals(8, filePosition?.rawStartSymbol)
+        assertEquals(46, filePosition?.rawEndSymbol)
     }
 
-    Test public fun removeBreakpoint() {
+    Test public fun resumeTest() {
+        withAwait {
+            respondent!!.addBreakpointToMap("Main", 8)
+            debugger!!.setBreakpoint("Main", 8)
+        }
+        withAwait { debugger!!.trace(null) }
+        withAwait { debugger!!.resume() }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun removeBreakpointTest() {
         withAwait {
             respondent!!.addBreakpointToMap("Main", 4)
             debugger!!.setBreakpoint("Main", 4)
@@ -201,6 +214,21 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         assertResult(Result.BREAKPOINT_REMOVED)
         withAwait { debugger!!.resume() }
         assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun stepTest() {
+        withAwait {
+            respondent!!.addBreakpointToMap("Main", 8)
+            debugger!!.setBreakpoint("Main", 8)
+        }
+        withAwait { debugger!!.trace(null) }
+        withAwait { debugger!!.stepInto() }
+        assertResult(Result.POSITION_REACHED)
+        val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
+        assertEquals(8, filePosition?.rawStartLine)
+        assertEquals(8, filePosition?.rawEndLine)
+        assertEquals(16, filePosition?.rawStartSymbol)
+        assertEquals(46, filePosition?.rawEndSymbol)
     }
 
 }

@@ -65,7 +65,7 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
                             stackFrameInfo.filePosition!!.normalizedStartLine)
                 _sourcePositionSet = true
             }
-            return hackSourcePosition
+            return _hackSourcePosition
         }
 
     /**
