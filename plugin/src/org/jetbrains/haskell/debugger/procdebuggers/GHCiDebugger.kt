@@ -5,7 +5,6 @@ import org.jetbrains.haskell.debugger.protocol.CommandCallback
 import org.jetbrains.haskell.debugger.protocol.ExpressionTypeCommand
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import org.jetbrains.haskell.debugger.parser.ExpressionType
-import org.jetbrains.haskell.debugger.protocol.ShowExpressionCommand
 import org.jetbrains.haskell.debugger.protocol.PrintCommand
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 import java.util.concurrent.locks.Lock
@@ -14,7 +13,6 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.ui.ConsoleView
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
-import org.jetbrains.haskell.debugger.parser.ShowOutput
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import java.util.Deque
 import org.json.simple.JSONObject
@@ -73,11 +71,11 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
         execute(HiddenCommand.createInstance(":set prompt \"$PROMPT_LINE\"\n"))
 
         val connectToHostPort = "\\host port_ -> let port = toEnum port_ in " +
-                                "socket AF_INET Stream 0 >>= " +
-                                "(\\sock -> liftM hostAddresses (getHostByName host) >>= " +
-                                "(\\addrs -> connect sock (SockAddrInet port (head addrs)) >> " +
-                                "socketToHandle sock ReadWriteMode >>=  " +
-                                "(\\handle -> return handle)))"
+                "socket AF_INET Stream 0 >>= " +
+                "(\\sock -> liftM hostAddresses (getHostByName host) >>= " +
+                "(\\addrs -> connect sock (SockAddrInet port (head addrs)) >> " +
+                "socketToHandle sock ReadWriteMode >>=  " +
+                "(\\handle -> return handle)))"
         val host = "\"localhost\""
         var stopCmd = "withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 0) >> hClose h"
 

@@ -19,6 +19,7 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XValue
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
+import org.jetbrains.haskell.debugger.protocol.CommandCallback
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
@@ -210,7 +211,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         assertEquals(MAIN_LINE, filePosition?.rawStartLine)
         assertEquals(MAIN_LINE, filePosition?.rawEndLine)
         assertEquals(8, filePosition?.rawStartSymbol)
-        assertEquals(46, filePosition?.rawEndSymbol)
+        assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     Test public fun resumeTest() {
@@ -247,7 +248,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         assertEquals(MAIN_LINE, filePosition?.rawStartLine)
         assertEquals(MAIN_LINE, filePosition?.rawEndLine)
         assertEquals(16, filePosition?.rawStartSymbol)
-        assertEquals(46, filePosition?.rawEndSymbol)
+        assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     Test public fun stepLocalTest() {
@@ -269,7 +270,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         assertEquals(MAIN_LINE, filePosition?.rawStartLine)
         assertEquals(MAIN_LINE, filePosition?.rawEndLine)
         assertEquals(8, filePosition?.rawStartSymbol)
-        assertEquals(46, filePosition?.rawEndSymbol)
+        assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     Test public fun uncaughtExceptionBreakpointTest1() {
@@ -296,33 +297,59 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         assertResult(Result.EXCEPTION_REACHED)
     }
 
+    Test public fun removeExceptionBreakpointTest1() {
+        debugger!!.setExceptionBreakpoint(false)
+        debugger!!.removeExceptionBreakpoint()
+        withAwait { debugger!!.trace("uncaughtMain") }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
+    Test public fun removeExceptionBreakpointTest2() {
+        debugger!!.setExceptionBreakpoint(true)
+        debugger!!.removeExceptionBreakpoint()
+        withAwait { debugger!!.trace("uncaughtMain") }
+        assertResult(Result.TRACE_FINISHED)
+    }
+
     Test public fun evaluateTest1() {
-        var forceResult: XValue? = null
+        var evalResult: XValue? = null
         withAwait {
             debugger!!.evaluateExpression("expression", object : XDebuggerEvaluator.XEvaluationCallback {
-                override fun evaluated(result: XValue) = withSignal { forceResult = result }
-                override fun errorOccurred(errorMessage: String) = withSignal { forceResult = null }
+                override fun evaluated(result: XValue) = withSignal { evalResult = result }
+                override fun errorOccurred(errorMessage: String) = withSignal { evalResult = null }
             })
         }
-        assertTrue(forceResult is HsDebugValue)
-        with (forceResult as HsDebugValue) {
+        assertTrue(evalResult is HsDebugValue)
+        with (evalResult as HsDebugValue) {
             assertEquals("Int", binding.typeName)
             assertEquals("_", binding.value)
         }
     }
 
     Test public fun evaluateTest2() {
-        var forceResult: XValue? = null
+        var evalResult: XValue? = null
         withAwait {
             debugger!!.evaluateExpression("(1 + 2 * 3) :: Int", object : XDebuggerEvaluator.XEvaluationCallback {
-                override fun evaluated(result: XValue) = withSignal { forceResult = result }
-                override fun errorOccurred(errorMessage: String) = withSignal { forceResult = null }
+                override fun evaluated(result: XValue) = withSignal { evalResult = result }
+                override fun errorOccurred(errorMessage: String) = withSignal { evalResult = null }
             })
         }
-        assertTrue(forceResult is HsDebugValue)
-        with (forceResult as HsDebugValue) {
+        assertTrue(evalResult is HsDebugValue)
+        with (evalResult as HsDebugValue) {
             assertEquals("Int", binding.typeName)
             assertEquals("_", binding.value)
         }
+    }
+
+    Test public fun forceTest() {
+        var forceResult: LocalBinding? = null
+        withAwait { debugger!!.setBreakpoint("Main", QSORT_LINE) }
+        withAwait { debugger!!.trace(null) }
+        withAwait {
+            debugger!!.force("left", object : CommandCallback<LocalBinding?>() {
+                override fun execAfterParsing(result: LocalBinding?) = withSignal { forceResult = result }
+            })
+        }
+        assertEquals("[4,2,3]", forceResult?.value)
     }
 }

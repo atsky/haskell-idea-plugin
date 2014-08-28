@@ -254,9 +254,8 @@ public class HaskellDebugProcess(session: XDebugSession,
             syncObject.lock()
             try {
                 historyManager.withRealFrameUpdate {
-                    (_) ->
-                    debugger.force(ForceCommand(localBinding.name!!,
-                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this)))
+                    debugger.force(localBinding.name!!,
+                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
                 }
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()

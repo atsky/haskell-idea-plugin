@@ -23,6 +23,7 @@ import org.jetbrains.haskell.debugger.protocol.HiddenCommand
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.process.ProcessHandler
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
+import org.jetbrains.haskell.debugger.parser.LocalBinding
 
 public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
                                          debugProcessHandler: ProcessHandler,
@@ -55,9 +56,11 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
 
     override fun forward(callback: CommandCallback<MoveHistResult?>?) = enqueueCommand(ForwardCommand(callback))
 
-    override fun print(printCommand: PrintCommand) = enqueueCommand(printCommand)
+    override fun print(binding: String, printCallback: CommandCallback<LocalBinding?>) =
+            enqueueCommand(PrintCommand(binding, printCallback))
 
-    override fun force(forceCommand: ForceCommand) = enqueueCommand(forceCommand)
+    override fun force(binding: String, forceCallback: CommandCallback<LocalBinding?>) =
+            enqueueCommand(ForceCommand(binding, forceCallback))
 
     override fun history(callback: CommandCallback<HistoryResult?>) = enqueueCommand(HistoryCommand(callback))
 

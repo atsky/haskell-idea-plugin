@@ -45,9 +45,9 @@ public trait ProcessDebugger {
 
     public fun forward(callback: CommandCallback<MoveHistResult?>?)
 
-    public fun print(printCommand: PrintCommand)
+    public fun print(binding: String, printCallback: CommandCallback<LocalBinding?>)
 
-    public fun force(forceCommand: ForceCommand)
+    public fun force(binding: String, forceCallback: CommandCallback<LocalBinding?>)
 
     public fun history(callback: CommandCallback<HistoryResult?>)
 
