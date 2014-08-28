@@ -31,7 +31,7 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
                                             val breakpoint: HaskellLineBreakpointDescription?) : CommandCallback<HistoryResult?>() {
 
             override fun execAfterParsing(result: HistoryResult?) {
-                debugRespondent.historyFrameAppeared(historyFrame, result)
+                debugRespondent.historyChange(historyFrame, result)
                 val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
                 if (breakpoint != null) {
                     debugRespondent.breakpointReached(breakpoint, context)

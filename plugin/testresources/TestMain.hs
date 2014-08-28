@@ -17,3 +17,6 @@ uncaughtMain = main >> undefined
 
 caughtMain :: IO ()
 caughtMain = (main >> undefined) `catch` (const $ print "caught" :: SomeException -> IO ())
+
+expression :: Int
+expression = 2 + 2 * 2

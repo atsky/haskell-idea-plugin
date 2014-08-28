@@ -86,7 +86,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             private fun setExceptionContext(result: HsStackFrameInfo) {
                 val frame = HsHistoryFrame(debugger, result)
                 frame.obsolete = false
-                debugRespondent.historyFrameAppeared(frame, null)
+                debugRespondent.historyChange(frame, null)
                 val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", result))
                 debugRespondent.exceptionReached(context)
             }

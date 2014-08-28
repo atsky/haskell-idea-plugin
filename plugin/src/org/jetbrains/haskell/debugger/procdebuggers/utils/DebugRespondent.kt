@@ -25,7 +25,7 @@ public trait DebugRespondent {
 
     public fun resetHistoryStack()
 
-    public fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?)
+    public fun historyChange(currentFrame: HsHistoryFrame, history: HistoryResult?)
 
     public fun getModuleByFile(filename: String): String
 

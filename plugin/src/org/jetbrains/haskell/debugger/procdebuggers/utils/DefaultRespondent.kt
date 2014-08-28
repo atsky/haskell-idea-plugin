@@ -52,14 +52,14 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
 
     override fun resetHistoryStack() = debugProcess.historyManager.resetHistoryStack()
 
-    override fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?) {
-        debugProcess.historyManager.historyFrameAppeared(frame)
+    override fun historyChange(currentFrame: HsHistoryFrame, history: HistoryResult?) {
+        debugProcess.historyManager.historyFrameAppeared(currentFrame)
         if (history != null) {
             debugProcess.historyManager.setHistoryFramesInfo(
-                    HsHistoryFrameInfo(0, frame.stackFrameInfo.functionName,
-                            frame.stackFrameInfo.filePosition), history.frames, history.full)
+                    HsHistoryFrameInfo(0, currentFrame.stackFrameInfo.functionName,
+                            currentFrame.stackFrameInfo.filePosition), history.frames, history.full)
         }
-        debugProcess.historyManager.historyChanged(false, true, frame)
+        debugProcess.historyManager.historyChanged(false, true, currentFrame)
     }
 
     override fun getModuleByFile(filename: String): String =

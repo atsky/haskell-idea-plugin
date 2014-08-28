@@ -15,6 +15,10 @@ import java.io.FileInputStream
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
+import org.jetbrains.haskell.debugger.parser.LocalBinding
+import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
+import com.intellij.xdebugger.frame.XValue
+import org.jetbrains.haskell.debugger.frames.HsDebugValue
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
@@ -65,6 +69,8 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         public var context: HsSuspendContext? = null
         public var breakpoint: HaskellLineBreakpointDescription? = null
         public val breakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
+        public var currentFrame: HsHistoryFrame? = null
+        public var history: HistoryResult? = null
 
         override fun traceFinished() = withSignal {
             result = Result.TRACE_FINISHED
@@ -105,9 +111,13 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         }
 
         override fun resetHistoryStack() {
+            currentFrame = null
+            history = null
         }
 
-        override fun historyFrameAppeared(frame: HsHistoryFrame, history: HistoryResult?) {
+        override fun historyChange(currentFrame: HsHistoryFrame, history: HistoryResult?) {
+            this.currentFrame = currentFrame
+            this.history = history
         }
 
         override fun getModuleByFile(filename: String): String = moduleName
@@ -121,7 +131,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         }
     }
 
-    public fun withSignal(method: () -> Unit) {
+    private fun withSignal(method: () -> Unit) {
         syncObject.lock()
         try {
             method()
@@ -131,7 +141,7 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         }
     }
 
-    public fun withAwait(method: () -> Unit) {
+    private fun withAwait(method: () -> Unit) {
         syncObject.lock()
         try {
             method()
@@ -284,5 +294,35 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         debugger!!.setExceptionBreakpoint(false)
         withAwait { debugger!!.trace("caughtMain") }
         assertResult(Result.EXCEPTION_REACHED)
+    }
+
+    Test public fun evaluateTest1() {
+        var forceResult: XValue? = null
+        withAwait {
+            debugger!!.evaluateExpression("expression", object : XDebuggerEvaluator.XEvaluationCallback {
+                override fun evaluated(result: XValue) = withSignal { forceResult = result }
+                override fun errorOccurred(errorMessage: String) = withSignal { forceResult = null }
+            })
+        }
+        assertTrue(forceResult is HsDebugValue)
+        with (forceResult as HsDebugValue) {
+            assertEquals("Int", binding.typeName)
+            assertEquals("_", binding.value)
+        }
+    }
+
+    Test public fun evaluateTest2() {
+        var forceResult: XValue? = null
+        withAwait {
+            debugger!!.evaluateExpression("(1 + 2 * 3) :: Int", object : XDebuggerEvaluator.XEvaluationCallback {
+                override fun evaluated(result: XValue) = withSignal { forceResult = result }
+                override fun errorOccurred(errorMessage: String) = withSignal { forceResult = null }
+            })
+        }
+        assertTrue(forceResult is HsDebugValue)
+        with (forceResult as HsDebugValue) {
+            assertEquals("Int", binding.typeName)
+            assertEquals("_", binding.value)
+        }
     }
 }

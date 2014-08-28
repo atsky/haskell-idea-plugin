@@ -13,6 +13,11 @@ import java.util.concurrent.locks.Condition
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.ui.ConsoleView
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
+import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
+import org.jetbrains.haskell.debugger.parser.ShowOutput
+import org.jetbrains.haskell.debugger.frames.HsDebugValue
+import java.util.Deque
+import org.json.simple.JSONObject
 
 /**
  * Created by vlad on 7/11/14.
@@ -25,6 +30,7 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
 
     class object {
         private val HANDLE_NAME = "__debug_handle"
+        private val TEMP_BINDING_NAME = "__debug_temporary"
         private val TRACE_COMMAND_APPENDIX = " >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
         public val PROMPT_LINE: String = "debug> "
     }
@@ -34,17 +40,11 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
     override fun fixTraceCommand(line: String): String = "($line)$TRACE_COMMAND_APPENDIX"
 
     override fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback) {
-        val wrapperCallback = object : CommandCallback<ExpressionType?>() {
-            override fun execAfterParsing(result: ExpressionType?) {
-                if (result == null) {
-                    callback.errorOccurred("Unknown expression")
-                } else {
-                    val showCallback = ShowExpressionCommand.StandardShowExpressionCallback(result.expressionType, callback)
-                    enqueueCommand(ShowExpressionCommand(expression, showCallback))
-                }
-            }
-        }
-        enqueueCommand(ExpressionTypeCommand(expression, wrapperCallback))
+        enqueueCommand(object : RealTimeCommand<Nothing?>(EvaluationLetCallback(callback)) {
+            override fun getText(): String = "let $TEMP_BINDING_NAME = $expression\n"
+            override fun parseGHCiOutput(output: Deque<String?>): Nothing? = null
+            override fun parseJSONOutput(output: JSONObject): Nothing? = null
+        })
     }
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
@@ -96,5 +96,32 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
                 "let $HANDLE_NAME = ($connectToHostPort) $host $INPUT_READINESS_PORT\n",
                 ":set stop $stopCmd\n")
         commands map { enqueueCommandWithPriority(HiddenCommand.createInstance(it)) }
+    }
+
+    private inner class EvaluationPrintCallback(val expressionType: String,
+                                                val callback: XDebuggerEvaluator.XEvaluationCallback) : CommandCallback<LocalBinding?>() {
+        override fun execAfterParsing(result: LocalBinding?) {
+            if (result == null) {
+                callback.errorOccurred("Cannot show type: $expressionType")
+            } else {
+                callback.evaluated(HsDebugValue(LocalBinding(null, expressionType, result.value)))
+            }
+        }
+    }
+
+    private inner class EvaluationTypeCallback(val callback: XDebuggerEvaluator.XEvaluationCallback) : CommandCallback<ExpressionType?>() {
+        override fun execAfterParsing(result: ExpressionType?) {
+            if (result == null) {
+                callback.errorOccurred("Unknown type")
+            } else {
+                enqueueCommand(PrintCommand(TEMP_BINDING_NAME, EvaluationPrintCallback(result.expressionType, callback)))
+            }
+        }
+    }
+
+    private inner class EvaluationLetCallback(val callback: XDebuggerEvaluator.XEvaluationCallback) : CommandCallback<Nothing?>() {
+        override fun execAfterParsing(result: Nothing?) {
+            enqueueCommand(ExpressionTypeCommand(TEMP_BINDING_NAME, EvaluationTypeCallback(callback)))
+        }
     }
 }
