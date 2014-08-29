@@ -8,4 +8,4 @@ import org.jetbrains.cabal.util.*
 
 public class CabalLocalSettings(project: Project)
         : AbstractExternalSystemLocalSettings(SYSTEM_ID, project, PlatformFacadeImpl()) {
-}//
+}

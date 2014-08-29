@@ -10,6 +10,7 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalProjectImportProvider
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
 import org.jetbrains.cabal.export.CabalModuleBuilder
+import org.jetbrains.cabal.export.SimpleCabalStep
 import org.jetbrains.cabal.settings.CabalProjectSettings
 import org.jetbrains.cabal.util.*
 import java.util.ArrayList
@@ -42,6 +43,7 @@ public class CabalProjectImportProvider(builder: CabalProjectImportBuilder): Abs
 
     public override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
         return array(ExternalModuleSettingsStep(CabalModuleBuilder(), CabalProjectSettingsControl(CabalProjectSettings())))
+//        return array(SimpleCabalStep(context))
     }
 
     public override fun getFileSample(): String? {
