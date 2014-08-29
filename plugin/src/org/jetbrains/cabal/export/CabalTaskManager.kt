@@ -9,22 +9,12 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 
 import java.io.File
 
-//import java.util.List
-
 public class CabalTaskManager(): ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
     throws(javaClass<ExternalSystemException>())
     override fun cancelTask(id: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener): Boolean {
         return false
     }
-
-//    throws(javaClass<ExternalSystemException>())
-//    public override fun executeTasks(id: ExternalSystemTaskId,
-//                                     taskNames: List<String>,
-//                                     projectPath: String,
-//                                     settings: ExternalSystemExecutionSettings?,
-//                                     vmOptions: List<String>, scriptParameters: List<String>, debuggerSetup: String?, listener: ExternalSystemTaskNotificationListener)
-//    {}
 
     throws(javaClass<ExternalSystemException>())
     public override fun executeTasks(id: ExternalSystemTaskId,

@@ -3,7 +3,6 @@ package org.jetbrains.cabal.export
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractImportFromExternalSystemWizardStep
 import com.intellij.openapi.options.ConfigurationException
-//import com.intellij.projectImport.ProjectImportWizardStep
 import org.jetbrains.cabal.export.ImportFromCabalControl
 import org.jetbrains.cabal.settings.CabalProjectSettings
 

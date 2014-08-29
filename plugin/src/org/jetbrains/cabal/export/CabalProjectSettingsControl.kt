@@ -12,18 +12,6 @@ public class CabalProjectSettingsControl(initialSettings: CabalProjectSettings)
 
     throws(javaClass<ConfigurationException>())
     override fun validate(settings: CabalProjectSettings): Boolean {
-//        val gradleHomePath = FileUtil.toCanonicalPath(myGradleHomePathField!!.getText())
-//        if (myUseLocalDistributionButton.isSelected()) {
-//            if (StringUtil.isEmpty(gradleHomePath)) {
-//                myGradleHomeSettingType = LocationSettingType.UNKNOWN
-//                throw ConfigurationException(GradleBundle.message("gradle.home.setting.type.explicit.empty", gradleHomePath))
-//            } else
-//                if (!myInstallationManager.isGradleSdkHome(File(gradleHomePath))) {
-//                    myGradleHomeSettingType = LocationSettingType.EXPLICIT_INCORRECT
-//                    DelayedBalloonInfo(MessageType.ERROR, myGradleHomeSettingType, 0).run()
-//                    throw ConfigurationException(GradleBundle.message("gradle.home.setting.type.explicit.incorrect", gradleHomePath))
-//                }
-//        }
         return true
     }
 

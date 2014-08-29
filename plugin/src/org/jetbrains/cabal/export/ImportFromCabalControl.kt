@@ -18,7 +18,9 @@ public class ImportFromCabalControl()
         ) {
 
     override fun createProjectSettingsControl(settings: CabalProjectSettings): ExternalSystemSettingsControl<CabalProjectSettings> {
-        return CabalProjectSettingsControl(settings)
+        val settingsControl = CabalProjectSettingsControl(settings)
+        settingsControl.hideUseAutoImportBox()
+        return settingsControl
     }
 
     override fun createSystemSettingsControl(settings: CabalSettings): ExternalSystemSettingsControl<CabalSettings>? {
@@ -26,6 +28,5 @@ public class ImportFromCabalControl()
     }
 
     override fun onLinkedProjectPathChange(path: String) {
-        //(getProjectSettingsControl() as GradleProjectSettingsControl).updateWrapperControls(path, false)
     }
 }
