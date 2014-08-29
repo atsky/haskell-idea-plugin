@@ -14,6 +14,8 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import org.jetbrains.cabal.util.*
 import javax.swing.Icon
 import java.io.File
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.LocalFileSystem
 
 
 public class CabalProjectImportBuilder(dataManager: ProjectDataManager)
@@ -47,6 +49,12 @@ public class CabalProjectImportBuilder(dataManager: ProjectDataManager)
 //    }
 
     override fun doPrepare(context: WizardContext) {
+        var pathToUse = getFileToImport()!!
+        val file = LocalFileSystem.getInstance()!!.refreshAndFindFileByPath(pathToUse)
+        if (file != null && file.isDirectory()) {
+            pathToUse = File(pathToUse).getAbsolutePath()
+        }
+        getControl(context.getProject()).setLinkedProjectPath(pathToUse)
     }
 
     override fun beforeCommit(dataNode: DataNode<ProjectData>, project: Project) {
