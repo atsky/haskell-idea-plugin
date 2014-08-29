@@ -124,6 +124,11 @@
         <projectImportProvider  implementation="org.jetbrains.cabal.export.CabalProjectImportProvider"/>
         <projectImportBuilder   implementation="org.jetbrains.cabal.export.CabalProjectImportBuilder"/>
 
+        <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalSettings"/>
+        <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalLocalSettings"/>
+
+        <externalSystemManager implementation="org.jetbrains.cabal.CabalManager"/>
+
         <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
                     factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
