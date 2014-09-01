@@ -38,7 +38,7 @@ public class CabalManager()
     }
 
     override fun getLocalSettingsProvider(): Function<Project, CabalLocalSettings> {
-        return Function<Project, CabalLocalSettings> { CabalLocalSettings(it!!) }
+        return Function<Project, CabalLocalSettings> { CabalLocalSettings.getInstance(it!!) }
     }
 
     override fun getExecutionSettingsProvider(): Function<Pair<Project, String>, ExternalSystemExecutionSettings> {

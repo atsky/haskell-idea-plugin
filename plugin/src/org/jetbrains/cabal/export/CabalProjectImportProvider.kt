@@ -42,8 +42,8 @@ public class CabalProjectImportProvider(builder: CabalProjectImportBuilder): Abs
     }
 
     public override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
-        return array(ExternalModuleSettingsStep(CabalModuleBuilder(), CabalProjectSettingsControl(CabalProjectSettings())))
-//        return array(SimpleCabalStep(context))
+//        return array(ExternalModuleSettingsStep(CabalModuleBuilder(), CabalProjectSettingsControl(CabalProjectSettings())))
+        return array(SimpleCabalStep(context!!))
     }
 
     public override fun getFileSample(): String? {
