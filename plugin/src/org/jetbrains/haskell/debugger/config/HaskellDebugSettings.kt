@@ -26,6 +26,7 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
             public var debuggerType: DebuggerType = DebuggerType.GHCI
             public var remoteDebuggerPath: String? = null
             public var traceOff: Boolean = false
+            public var printDebugOutput: Boolean = false
         }
 
         public fun getInstance(): HaskellDebugSettings {

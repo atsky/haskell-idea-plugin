@@ -35,10 +35,12 @@ public class DebuggerConfigurable() : Configurable {
         private val ITEM_REMOTE = "Remote"
 
         private val TRACE_CHECKBOX_LABEL = "Switch off ':trace' command"
+        private val PRINT_DEBUG_OUTPUT_LABEL = "Print debugger output to stdout"
     }
     private val selectDebuggerComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(ITEM_GHCI, ITEM_REMOTE)))
     private val remoteDebuggerPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
     private val traceSwitchOffCheckBox: JCheckBox = JCheckBox(TRACE_CHECKBOX_LABEL, false)
+    private val printDebugOutputCheckBox: JCheckBox = JCheckBox(PRINT_DEBUG_OUTPUT_LABEL, false)
 
     private var isModified = false
 
@@ -62,18 +64,30 @@ public class DebuggerConfigurable() : Configurable {
         }
         val docListener : DocumentAdapter = object : DocumentAdapter() {
             override fun textChanged(e: DocumentEvent?) {
-                isModified = true;
+                isModified = true
             }
         };
         selectDebuggerComboBox.addItemListener(itemListener)
         remoteDebuggerPathField.getTextField()!!.getDocument()!!.addDocumentListener(docListener)
         traceSwitchOffCheckBox.addItemListener(itemListener)
+        printDebugOutputCheckBox.addItemListener(itemListener)
 
         val result = JPanel(GridBagLayout())
         UIUtils.addLabeledControl(result, 0, "Prefered debugger:     ", selectDebuggerComboBox)
         UIUtils.addLabeledControl(result, 1, "Remote debugger path:     ", remoteDebuggerPathField)
-        UIUtils.addLabeledControl(result, 2, "Additional options:     ", traceSwitchOffCheckBox)
-        result.add(JPanel(), gridBagConstraints { gridx = 0; gridy = 5; weighty = 10.0 })
+        result.add(traceSwitchOffCheckBox, gridBagConstraints {
+            anchor = GridBagConstraints.LINE_START
+            gridx = 0;
+            gridwidth = 2;
+            gridy = 2;
+        })
+        result.add(printDebugOutputCheckBox, gridBagConstraints {
+            anchor = GridBagConstraints.LINE_START
+            gridx = 0;
+            gridwidth = 2;
+            gridy = 3;
+        })
+        result.add(JPanel(), gridBagConstraints { gridx = 0; gridy = 4; weighty = 10.0 })
         return result
     }
 
@@ -87,11 +101,13 @@ public class DebuggerConfigurable() : Configurable {
         val ghciSelected = selectDebuggerComboBox.getSelectedIndex() == 0
         val remotePath = remoteDebuggerPathField.getTextField()!!.getText()
         val traceSwitchedOff = traceSwitchOffCheckBox.isSelected()
+        val printDebugOutput = printDebugOutputCheckBox.isSelected()
 
         val state = HaskellDebugSettings.getInstance().getState()
         state.debuggerType = if (ghciSelected) HaskellDebugSettings.DebuggerType.GHCI else HaskellDebugSettings.DebuggerType.REMOTE
         state.remoteDebuggerPath = remotePath
         state.traceOff = traceSwitchedOff
+        state.printDebugOutput = printDebugOutput
 
         isModified = false
     }
@@ -105,6 +121,7 @@ public class DebuggerConfigurable() : Configurable {
         selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == HaskellDebugSettings.DebuggerType.GHCI) 0 else 1)
         traceSwitchOffCheckBox.setSelected(state.traceOff)
         remoteDebuggerPathField.getTextField()!!.setText(state.remoteDebuggerPath)
+        printDebugOutputCheckBox.setSelected(state.printDebugOutput)
 
         isModified = false
     }

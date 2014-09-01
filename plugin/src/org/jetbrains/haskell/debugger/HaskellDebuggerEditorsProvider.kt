@@ -27,9 +27,7 @@ public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
                                 text: String,
                                 sourcePosition: XSourcePosition?,
                                 mode: EvaluationMode): Document {
-        println("DEBUG: start")
         if(sourcePosition != null) {
-            println("DEBUG: sourcePosition is not null")
             val hsPsiFile = PsiFileFactory.getInstance(project)!!.createFileFromText(sourcePosition.getFile().getName(),
                     HaskellFileType.INSTANCE,
                     text)
@@ -38,7 +36,6 @@ public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
                 return hsDocument
             }
         }
-        println("DEBUG: EditorFactory.getInstance()!!.createDocument(text) called")
         return EditorFactory.getInstance()!!.createDocument(text)
     }
 

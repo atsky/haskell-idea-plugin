@@ -11,11 +11,13 @@ import org.jetbrains.haskell.debugger.protocol.RealTimeCommand
 import org.jetbrains.haskell.debugger.parser.ParseResult
 import org.jetbrains.haskell.debugger.protocol.AbstractCommand
 import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
 /**
  * @author Habibullin Marat
  */
 public abstract class DebugProcessStateUpdater() : ProcessListener {
+    protected val printDebuggerOutput: Boolean = HaskellDebugSettings.getInstance().getState().printDebugOutput
     public var debugger: ProcessDebugger? = null
 
     override fun startNotified(event: ProcessEvent?) { }
@@ -43,7 +45,9 @@ public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
         val text = event?.getText()
         if (text != null) {
-            print(text)
+            if (printDebuggerOutput) {
+                print(text)
+            }
             if (outputType == ProcessOutputTypes.STDOUT) {
                 collectedOutput.append(text)
                 checkCollected()
@@ -77,7 +81,9 @@ public class RemoteDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
         val text = event?.getText()
         if (text != null) {
-            print(text)
+            if (printDebuggerOutput) {
+                print(text)
+            }
             val oldestExecutedCommand = debugger?.oldestExecutedCommand()
             oldestExecutedCommand?.handleJSONOutput(text)
             debugger?.removeOldestExecutedCommand()

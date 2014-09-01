@@ -11,6 +11,7 @@ import java.util.concurrent.BlockingDeque
 import java.util.concurrent.LinkedBlockingDeque
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.process.ProcessHandler
+import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
 public abstract class QueueDebugger(private val debugProcessHandler: ProcessHandler,
                                     private val consoleView: ConsoleView?) : ProcessDebugger {
@@ -19,6 +20,7 @@ public abstract class QueueDebugger(private val debugProcessHandler: ProcessHand
     protected var debugStarted: Boolean = false
         private set
 
+    private val printCommands: Boolean = HaskellDebugSettings.getInstance().getState().printDebugOutput
     private val writeLock = ReentrantLock()
     private val queue: CommandQueue;
 
@@ -66,7 +68,9 @@ public abstract class QueueDebugger(private val debugProcessHandler: ProcessHand
 
     private fun printCommandIfNeeded(text: String) {
         if (executedCommands.peekLast() !is HiddenCommand) {
-            print(text)
+            if (printCommands) {
+                print(text)
+            }
             consoleView?.print(text, ConsoleViewContentType.SYSTEM_OUTPUT)
         }
     }
