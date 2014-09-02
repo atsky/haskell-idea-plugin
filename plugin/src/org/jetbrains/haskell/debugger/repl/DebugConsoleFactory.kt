@@ -16,11 +16,8 @@ public class DebugConsoleFactory {
     class object {
 
         public fun createDebugConsole(project: Project,
-                                      debugProcess: HaskellDebugProcess,
                                       processHandler: HaskellDebugProcessHandler): HaskellConsoleView {
             val consoleView = HaskellConsoleView(project, "Debug REPL console", ConsoleHistoryModel())
-            val executeHandler = DebugHaskellExecuteActionHandler(debugProcess, project, false)
-            consoleView.getConsole().setExecuteHandler(executeHandler)
 
             ProcessTerminatedListener.attach(processHandler)
 
@@ -37,9 +34,6 @@ public class DebugConsoleFactory {
             })
 
             consoleView.attachToProcess(processHandler)
-
-            val enterAction = HaskellConsoleEnterAction(consoleView.getConsole(), processHandler, executeHandler)
-            enterAction.registerCustomShortcutSet(enterAction.getShortcutSet()!!, consoleView.getConsole().getConsoleEditor().getComponent())
 
             return consoleView
         }

@@ -43,12 +43,13 @@ import org.jetbrains.haskell.debugger.procdebuggers.RemoteDebugger
 import org.jetbrains.haskell.debugger.history.HistoryManager
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 import com.intellij.execution.ui.RunnerLayoutUi
-import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 import java.util.Deque
 import com.intellij.xdebugger.frame.XSuspendContext
 import java.util.ArrayDeque
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DefaultRespondent
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
+import org.jetbrains.haskell.repl.HaskellConsoleView
+import org.jetbrains.haskell.debugger.repl.DebugHaskellExecuteActionHandler
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -86,6 +87,12 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index";
 
     {
+        if (executionConsole is HaskellConsoleView) {
+            executionConsole.registerExecuteActionHandler(
+                    DebugHaskellExecuteActionHandler(this, session.getProject(), false),
+                    _processHandler)
+        }
+
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
                 HaskellDebugSettings.DebuggerType.GHCI
         if (debuggerIsGHCi) {
@@ -107,7 +114,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun getEditorsProvider(): XDebuggerEditorsProvider = _editorsProvider
 
     override fun getBreakpointHandlers()
-            : Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<out Any?>?>?>> = _breakpointHandlers
+            : Array<XBreakpointHandler<out XBreakpoint<out XBreakpointProperties<*>?>?>> = _breakpointHandlers
 
     override fun doGetProcessHandler(): ProcessHandler? = _processHandler
 
@@ -149,10 +156,6 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun createTabLayouter(): XDebugTabLayouter = object : XDebugTabLayouter() {
         override fun registerAdditionalContent(ui: RunnerLayoutUi) {
             historyManager.registerContent(ui)
-            val repl = DebugConsoleFactory.createDebugConsole(getSession()!!.getProject(), this@HaskellDebugProcess, _processHandler)
-            val consoleContext = ui.createContent("REPL", repl.getComponent()!!, "REPL Console", null, repl)
-            consoleContext.setCloseable(false)
-            ui.addContent(consoleContext)
         }
     }
 
@@ -198,7 +201,6 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-
     public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
@@ -208,6 +210,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+        assert(breakpoint == exceptionBreakpoint)
         exceptionBreakpoint = null
         debugger.removeExceptionBreakpoint()
     }

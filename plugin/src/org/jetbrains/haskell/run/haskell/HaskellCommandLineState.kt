@@ -33,6 +33,8 @@ import org.jetbrains.cabal.psi.FullVersionConstraint
 import java.util.ArrayList
 import org.jetbrains.haskell.debugger.prochandlers.RemoteProcessHandler
 import com.intellij.openapi.vfs.CharsetToolkit
+import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
+import com.intellij.openapi.project.Project
 
 public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
@@ -162,14 +164,14 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         }
     }
 
-    public fun executeDebug(executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
+    public fun executeDebug(project: Project, executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
         val processHandler =
                 if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.GHCI)
                     startGHCiDebugProcess()
                 else
                     startRemoteDebugProcess()
-        val console = createConsole(executor)
-        console?.attachToProcess(processHandler)
+        val console = DebugConsoleFactory.createDebugConsole(project, processHandler)
+        console.attachToProcess(processHandler)
 
         return DefaultExecutionResult(console, processHandler)
     }

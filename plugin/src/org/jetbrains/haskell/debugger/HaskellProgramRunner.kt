@@ -85,7 +85,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
                     return null
                 }
             }
-            val executionResult = (state as HaskellCommandLineState).executeDebug(environment.getExecutor(), this)
+            val executionResult = (state as HaskellCommandLineState).executeDebug(project, environment.getExecutor(), this)
             val processHandler = executionResult.getProcessHandler()!! as HaskellDebugProcessHandler
 
             val session = debuggerManager.startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
