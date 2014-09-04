@@ -5,7 +5,6 @@ import com.intellij.openapi.externalSystem.service.project.PlatformFacade;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemLocalSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
-import org.jetbrains.cabal.util.ConstantsGetter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.cabal.util.UtilPackage;
