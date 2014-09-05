@@ -11,7 +11,13 @@ public class DebugHaskellExecuteActionHandler(val debugProcess: HaskellDebugProc
 
     override fun processLine(line: String?) {
         if (line != null && line.trim().length > 0) {
-            debugProcess.startTrace(line)
+            if (debugProcess.isReadyForNextCommand()) {
+                debugProcess.startTrace(line)
+            } else {
+                val output = debugProcess.getProcessHandler().getProcessInput()
+                output?.write(line.getBytes())
+                output?.flush()
+            }
         }
     }
 }
