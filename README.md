@@ -10,17 +10,14 @@ You can download latest build manually from BuildServer:
 
 For now provides basic features:
 * Haskell syntax highlight
-* Error checking with [buidwrapper](https://github.com/JPMoresmau/BuildWrapper).
-* Show type of symbol (Ctrl + I, or ⌘ + I on mac)
-* Simple completion based on [ghc-mod](http://hackage.haskell.org/package/ghc-mod)
 * Cabal syntax highlight
+* Error checking with [ghc-modi](http://hackage.haskell.org/package/ghc-mod).
+* Simple completion based on [ghc-modi](http://hackage.haskell.org/package/ghc-mod)
+* Show type of symbol (Ctrl + I, or ⌘ + I on mac)
 * Build of cabal projects
 * Installation of cabal packages
-
-### Problems
-
-If you installed new version of cabal through `cabal install cabal-install`
-then buildwrapper fails ([issue](https://github.com/JPMoresmau/BuildWrapper/issues/15)).
+* Graphical debugger
+* REPL
 
 ### Plans
 
@@ -36,7 +33,8 @@ You can install plugin from idea by going to `Preferences` -> `Plugins` and pres
 To normal work this plugin need:
 * [Haskell platform](http://www.haskell.org/platform/)
 * cabal must be in `PATH`
-* cabal packages `ghc-mod`, `buildwrapper`
+* cabal package `ghc-mod`
+* cabal package `remote-debugger` - if you want to use debugger
 
 ## Source compilation
 
