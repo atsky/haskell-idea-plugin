@@ -39,6 +39,7 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
                 settings.update();
                 return settings
             }
+            persisted.update();
             return persisted
         }
     }
