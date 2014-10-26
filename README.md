@@ -43,3 +43,8 @@ To normal compilation you will need:
 * Kotlin plugin
 * JDK 6
 * IntelliJ IDEA Plugin SDK
+
+## Acknowledgments
+I thank the following people for their help:
+* Vladislav Polyansky, Marat Habibullin for development of debugger support.
+* Anna Yaveyn for development of cabal support. 
