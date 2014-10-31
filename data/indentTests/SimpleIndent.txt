@@ -1,6 +1,6 @@
 FILE
   Module(Module)
-    ASTWrapperPsiElement(Module header)
+    ModuleHeader(Module header)
       PsiElement(module)('module')
       PsiWhiteSpace(' ')
       FqName(FQ name)
