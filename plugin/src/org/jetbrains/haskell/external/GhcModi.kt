@@ -19,6 +19,9 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.ProgressIndicator
 import org.jetbrains.haskell.util.ProcessRunner
+import com.intellij.notification.NotificationListener
+import javax.swing.event.HyperlinkEvent
+import com.intellij.openapi.options.ShowSettingsUtil
 
 /**
  * Created by atsky on 15/06/14.
@@ -81,7 +84,6 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
             if (isStopped()) {
                 val inStream = process!!.getInputStream()!!
                 val string = inStream.readBytes(inStream.available()).toString("UTF-8")
-                Notifications.Bus.notify(Notification("ghc.modi", "ghc-modi failed", string, NotificationType.ERROR))
                 process = null
                 startProcess();
             }
@@ -110,6 +112,22 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                         lines[last] = lines[last] + split[0]
                     }
                     lines.addAll(split.toList().subList(1, split.size))
+                }
+                if (lines[lines.size - 2].startsWith("NG")) {
+                    val hyperlinkHandler = object : NotificationListener.Adapter() {
+                        override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
+                            notification.expire()
+                            if (!project.isDisposed()) {
+                                ShowSettingsUtil.getInstance()?.showSettingsDialog(project, "Haskell")
+                            }
+                        }
+                    }
+                    Notifications.Bus.notify(Notification(
+                            "ghc.modi",
+                            "ghc-modi failed",
+                            "ghc-modi failed with error: " + lines[lines.size - 2] +
+                            "<br/>You can disable ghc-modi in <a href=\"#\">Settings | Haskell</a>",
+                            NotificationType.ERROR, hyperlinkHandler))
                 }
                 lines
             }
