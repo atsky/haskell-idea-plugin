@@ -17,22 +17,26 @@ import javax.swing.Box
  */
 public class UIUtils {
     class object {
-        public fun addLabeledControl(panel: JPanel, row: Int, label: String, component: JComponent) {
+        public fun addLabeledControl(panel: JPanel,
+                                     row: Int,
+                                     label: String,
+                                     component: JComponent,
+                                     isFill : Boolean = true) {
             val base = gridBagConstraints { insets = Insets(2, 0, 2, 3) }
             panel.add(JLabel(label), base.setConstraints {
                 anchor = GridBagConstraints.LINE_START
-                gridx = 0;
-                gridy = row;
+                gridx = 0
+                gridy = row
             })
             panel.add(component, base.setConstraints {
-                gridx = 1;
-                gridy = row;
-                fill = GridBagConstraints.HORIZONTAL
+                gridx = 1
+                gridy = row
+                fill = if (isFill) GridBagConstraints.HORIZONTAL else GridBagConstraints.NONE
                 weightx = 1.0
             })
             panel.add(Box.createHorizontalStrut(1), base.setConstraints {
-                gridx = 2;
-                gridy = row;
+                gridx = 2
+                gridy = row
                 weightx = 0.1
             })
         }

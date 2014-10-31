@@ -20,6 +20,9 @@ import javax.swing.JCheckBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import org.jetbrains.haskell.debugger.utils.UIUtils
+import javax.swing.JButton
+import javax.swing.AbstractAction
+import java.awt.event.ActionEvent
 
 /**
  * Manages debugger settings. Creates additional section in IDEA Settings and tracks changes appeared there to obtain
@@ -73,8 +76,8 @@ public class DebuggerConfigurable() : Configurable {
         printDebugOutputCheckBox.addItemListener(itemListener)
 
         val result = JPanel(GridBagLayout())
-        UIUtils.addLabeledControl(result, 0, "Prefered debugger:     ", selectDebuggerComboBox)
-        UIUtils.addLabeledControl(result, 1, "Remote debugger path:     ", remoteDebuggerPathField)
+        UIUtils.addLabeledControl(result, 0, "Prefered debugger:", selectDebuggerComboBox, false)
+        UIUtils.addLabeledControl(result, 1, "Remote debugger path:", remoteDebuggerPathField)
         result.add(traceSwitchOffCheckBox, gridBagConstraints {
             anchor = GridBagConstraints.LINE_START
             gridx = 0;
