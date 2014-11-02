@@ -13,7 +13,7 @@ For now provides basic features:
 * Cabal syntax highlight
 * Error checking with [ghc-modi](http://hackage.haskell.org/package/ghc-mod).
 * Simple completion based on [ghc-modi](http://hackage.haskell.org/package/ghc-mod)
-* Show type of symbol (Ctrl + I, or ⌘ + I on mac)
+* Show type of symbol (Ctrl + Shift + T, or ⌘ + Shift + T on mac)
 * Build of cabal projects
 * Installation of cabal packages
 * Graphical debugger
