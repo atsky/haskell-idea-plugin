@@ -106,7 +106,7 @@ public class JSONConverter {
                     val indexSpanArray = json.getArray(BREAKS_TAG)
                     val lambda = {(p: Any?) -> BreakInfo(
                                   (p as JSONObject).getInt(BREAK_INDEX_TAG),
-                                  filePositionFromJSON((p as JSONObject).getObject(SRC_SPAN_TAG)) as HsFilePosition
+                                  filePositionFromJSON(p.getObject(SRC_SPAN_TAG)) as HsFilePosition
                                  )}
                     BreakInfoList(ArrayList(indexSpanArray.toArray().map(lambda)))
                 }

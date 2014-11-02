@@ -97,7 +97,7 @@ public class HaskellSdkType() : SdkType("GHC") {
     }
 
     override fun getVersionString(sdkHome: String?): String? {
-        val versionString: String? = getGhcVersion(sdkHome!!)
+        val versionString: String? = getGhcVersion(sdkHome)
         if (versionString != null && versionString.length() == 0) {
             return null
         }
@@ -113,7 +113,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun saveAdditionalData(additionalData: SdkAdditionalData, additional: Element) {
         if (additionalData is HaskellSdkAdditionalData) {
-            ((additionalData as HaskellSdkAdditionalData)).save(additional)
+            additionalData.save(additional)
         }
     }
 
@@ -183,7 +183,7 @@ public class HaskellSdkType() : SdkType("GHC") {
             return children != null && children.size >= 1
         }
 
-        public fun getGhcVersion(homePath: String): String? {
+        public fun getGhcVersion(homePath: String?): String? {
             if (homePath == null || !File(homePath).isDirectory()) {
                 return null
             }

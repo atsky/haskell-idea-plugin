@@ -73,7 +73,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                     override fun evaluated(evalResult: XValue) {
                         if (evalResult is HsDebugValue &&
                                 evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
-                                (evalResult as HsDebugValue).binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
+                                evalResult.binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
                             setContext(result, breakpoint)
                         } else {
                             debugger.resume()

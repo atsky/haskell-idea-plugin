@@ -82,8 +82,6 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
         }
         return synchronized(process!!) {
             if (isStopped()) {
-                val inStream = process!!.getInputStream()!!
-                val string = inStream.readBytes(inStream.available()).toString("UTF-8")
                 process = null
                 startProcess();
             }

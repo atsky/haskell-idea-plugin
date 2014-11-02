@@ -15,10 +15,6 @@ public class HaskellSdkAdditionalData(cabalPath: String?,
     private var myCabalDataPath: String? = cabalLibPath
 
 
-    public fun checkValid(sdkModel: SdkModel?): Unit {
-
-    }
-
     public override fun clone() : Any {
         return super<Cloneable>.clone()
     }

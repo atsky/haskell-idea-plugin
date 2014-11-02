@@ -32,7 +32,7 @@ public class TarGzFile(archiveFile: VirtualFile,
             return true
         }
         val archiveIns = getArchiveFile().getInputStream()
-        val bin = BufferedInputStream(archiveIns as InputStream)
+        val bin = BufferedInputStream(archiveIns : InputStream)
         val gzIn = GzipCompressorInputStream(bin);
 
 
