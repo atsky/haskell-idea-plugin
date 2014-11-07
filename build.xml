@@ -36,6 +36,13 @@
         </sequential>
     </target>
 
+    <target name="compile.grammar.lexer">
+        <sequential>
+            <delete file="./generator/src/org/jetbrains/generator/GrammarLexer.java"/>
+            <jflex file="./generator/src/org/jetbrains/generator/Generator.flex" />
+        </sequential>
+    </target>
+
     <target name="compile.cabal.lexer">
         <sequential>
             <delete file="${cabal.lexer.result.file}"/>

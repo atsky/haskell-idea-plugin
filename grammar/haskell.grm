@@ -1,0 +1,175 @@
+tokens {
+ '_'            underscore
+ 'as'           as
+ 'case'         case
+ 'class'        class
+ 'data'         data
+ 'default'      default
+ 'deriving'     deriving
+ 'do'           do
+ 'else'         else
+ 'hiding'       hiding
+ 'if'           if
+ 'import'       import
+ 'in'           in
+ 'infix'        infix
+ 'infixl'       infixl
+ 'infixr'       infixr
+ 'instance'     instance
+ 'let'          let
+ 'module'       module
+ 'newtype'      newtype
+ 'of'           of
+ 'qualified'    qualified
+ 'then'         then
+ 'type'         type
+ 'where'        where
+
+ 'forall'       forall
+ 'foreign'      foreign
+ 'export'       export
+ 'label'        label
+ 'dynamic'      dynamic
+ 'safe'         safe
+ 'interruptible' interruptible
+ 'unsafe'       unsafe
+ 'mdo'          mdo
+ 'family'       family
+ 'role'         role
+ 'stdcall'      stdcallconv
+ 'ccall'        ccallconv
+ 'capi'         capiconv
+ 'prim'         primcallconv
+ 'javascript'   javascriptcallconv
+ 'proc'         proc                -- for arrow notation extension
+ 'rec'          rec                 -- for arrow notation extension
+ 'group'        group               -- for list transform extension
+ 'by'           by                  -- for list transform extension
+ 'using'        using               -- for list transform extension
+ 'pattern'      pattern             -- for pattern synonyms
+ '{-# INLINE'            inline_prag
+ '{-# SPECIALISE'        spec_prag
+ '{-# SPECIALISE_INLINE' spec_inline_prag
+ '{-# SOURCE'            source_prag
+ '{-# RULES'             rules_prag
+ '{-# CORE'              core_prag               -- hdaume: annotated core
+ '{-# SCC'               scc_prag
+ '{-# GENERATED'         generated_prag
+ '{-# DEPRECATED'        deprecated_prag
+ '{-# WARNING'           warning_prag
+ '{-# UNPACK'            unpack_prag
+ '{-# NOUNPACK'          nounpack_prag
+ '{-# ANN'               ann_prag
+ '{-# VECTORISE'         vect_prag
+ '{-# VECTORISE_SCALAR'  vect_scalar_prag
+ '{-# NOVECTORISE'       novect_prag
+ '{-# MINIMAL'           minimal_prag
+ '{-# CTYPE'             ctype
+ '#-}'                   close_prag
+
+ '..'           dotdot              -- reserved symbols
+ ':'            colon
+ '::'           dcolon
+ '='            equal
+ '\\'           lam
+ 'lcase'        lcase
+ '|'            vbar
+ '<-'           larrow
+ '->'           rarrow
+ '@'            at
+ '~'            tilde
+ '~#'           tildehsh
+ '=>'           darrow
+ '-'            minus
+ '!'            bang
+ '*'            star
+ '-<'           larrowtail             -- for arrow notation
+ '>-'           rarrowtail             -- for arrow notation
+ '-<<'          LLarrowtail            -- for arrow notation
+ '>>-'          RRarrowtail            -- for arrow notation
+ '.'            dot
+
+ '{'            ocurly                 -- special symbols
+ '}'            ccurly
+ vocurly        vocurly                -- virtual open curly (from layout)
+ vccurly        vccurly                -- virtual close curly (from layout)
+ '['            obrack
+ ']'            cbrack
+ '[:'           opabrack
+ ':]'           cpabrack
+ '('            oparen
+ ')'            cparen
+ '(#'           oubxparen
+ '#)'           cubxparen
+ '(|'           oparenbar
+ '|)'           cparenbar
+ ';'            semi
+ ','            comma
+ '`'            backquote
+ SIMPLEQUOTE    simpleQuote           -- 'x
+
+ VARID          varid              -- identifiers
+ CONID          conid
+ VARSYM         varsym
+ CONSYM         consym
+ QVARID         qvarid
+ QCONID         qconid
+ QVARSYM        qvarsym
+ QCONSYM        qconsym
+ PREFIXQVARSYM  prefixqvarsym
+ PREFIXQCONSYM  prefixqconsym
+
+ IPDUPVARID     dupipvarid                 -- GHC extension
+
+ CHAR           char
+ STRING         string
+ INTEGER        integer
+ RATIONAL       rational
+
+ PRIMCHAR       primchar
+ PRIMSTRING     primstring
+ PRIMINTEGER    primint
+ PRIMWORD       primword
+ PRIMFLOAT      primfloat
+ PRIMDOUBLE     primdouble
+
+ DOCNEXT        docCommentNext
+ DOCPREV        docCommentPrev
+ DOCNAMED       docCommentNamed
+ DOCSECTION     docSection
+
+-- Template Haskell
+ '[|'            openExpQuote
+ '[p|'           openPatQuote
+ '[t|'           openTypQuote
+ '[d|'           openDecQuote
+ '|]'            closeQuote
+ '[||'           openTExpQuote
+ '||]'           closeTExpQuote
+ TH_ID_SPLICE    idEscape         -- $x
+ '$('            parenEscape      -- $( exp )
+ TH_ID_TY_SPLICE idTyEscape       -- $$x
+ '$$('           parenTyEscape    -- $$( exp )
+ TH_TY_QUOTE     tyQuote          -- ''T
+ TH_QUASIQUOTE   quasiQuote
+ TH_QQUASIQUOTE  qQuasiQuote
+}
+
+
+-- Identifiers; one of the entry points
+identifier
+        : qvar
+        | qcon
+        | qvarop
+        | qconop
+        | '(' '->' ')'
+;
+
+module  : maybedocheader 'module' modid maybemodwarning maybeexports 'where' body
+        | body2
+;
+
+maybedocheader
+        : moduleheader
+        | {- empty -}
+;
