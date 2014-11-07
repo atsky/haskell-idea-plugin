@@ -20,9 +20,9 @@ class GrammarParser(val tokens : List<Token>) {
         val tokens = parseTokens()
         match(RIGHT_BRACE)
 
-        parseRules()
+        val rules = parseRules()
 
-        return Grammar(tokens);
+        return Grammar(tokens, rules);
     }
 
     fun text(): String {
@@ -81,25 +81,29 @@ class GrammarParser(val tokens : List<Token>) {
         }
     }
 
-    fun parseRules() {
+    fun parseRules() : List<Rule> {
+        val list = ArrayList<Rule>()
         while (!eof()) {
-            parseRule()
+            list.add(parseRule())
         }
+        return list;
     }
 
     fun parseRule() : Rule {
         val name = match(ID).text
         match(COLON)
 
+        val variants = ArrayList<Variant>()
+
         while (true) {
-            parseVariant()
+            variants.add(parseVariant())
             if (!tryMatch(VBAR)) {
                 break;
             }
         }
 
         match(SEMICOLON)
-        return Rule(name, listOf())
+        return Rule(name, variants)
     }
 
 
