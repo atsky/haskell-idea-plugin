@@ -190,6 +190,7 @@ public val REPO_TYPE_VALS : List<String> = listOf(
 
 public val TS_TYPE_VALS : List<String> = listOf(
         "exitcode-stdio-1.0",
+        "detailed-0.9",
         "detailed-1.0"
 )
 
