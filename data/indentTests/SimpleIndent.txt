@@ -4,7 +4,7 @@ FILE
       PsiElement(module)('module')
       PsiWhiteSpace(' ')
       FqName(FQ name)
-        PsiElement(type_cons)('SimpleIndent')
+        PsiElement(CONID)('SimpleIndent')
       PsiWhiteSpace(' ')
       PsiElement(where)('where')
     PsiWhiteSpace('\n')
