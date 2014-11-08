@@ -155,21 +155,5 @@ tokens {
  TH_QQUASIQUOTE  qQuasiQuote
 }
 
-
--- Identifiers; one of the entry points
-identifier
-        : qvar
-        | qcon
-        | qvarop
-        | qconop
-        | '(' '->' ')'
-;
-
-module  : maybedocheader 'module' modid maybemodwarning maybeexports 'where' body
-        | body2
-;
-
-maybedocheader
-        : moduleheader
-        | {- empty -}
+module  : 'module' conid 'where'
 ;

@@ -13,10 +13,13 @@ import java.util.HashMap
  * Created by atsky on 11/7/14.
  */
 class Generator(val grammar: Grammar) {
+    class object {
+        val MAIN_PATH = "./plugin/gen/org/jetbrains/grammar/"
+    }
 
-    val tokens : Map<String, TokenDescription>
-    val rules : Map<String, AbstractRule>
-    val fakeRules : List<FakeRule>;
+    val tokens: Map<String, TokenDescription>
+    val rules: Map<String, AbstractRule>
+    val fakeRules: List<FakeRule>;
 
     {
         val tokens = HashMap<String, TokenDescription>()
@@ -38,7 +41,7 @@ class Generator(val grammar: Grammar) {
                 for (ref in variant.atoms) {
                     if (ref.isName) {
                         val name = ref.text
-                        if (!tokens.contains(name) && ! rules.contains(name)) {
+                        if (!tokens.contains(name) && !rules.contains(name)) {
                             val rule = FakeRule(name)
                             fakeRules.add(rule)
                             rules[name] = rule;
@@ -54,44 +57,76 @@ class Generator(val grammar: Grammar) {
     }
 
     fun generate() {
-        generateTokens(grammar.tokens)
+        generateLexerTokens(grammar.tokens)
+        generateTokens()
         generateParser();
     }
 
-    fun generateTokens(tokens: List<TokenDescription>) {
+    fun generateLexerTokens(tokens: List<TokenDescription>) {
         val result = TextGenerator()
         with(result) {
-            line("package org.jetbrains.grammar")
-            line("import org.jetbrains.haskell.parser.HaskellToken")
+            line("package org.jetbrains.grammar;")
+            line()
+            line("import com.intellij.psi.tree.IElementType;")
             line()
             line()
-            line("object HaslkellTokens {")
+            line("public interface HaskellLexerTokens {")
 
             indent {
                 for (token in tokens) {
                     val name = token.name.toUpperCase()
-                    line("val ${name} = HaskellToken(\"${token.text}\")");
+                    line("public static IElementType ${name} = new IElementType(\"${token.text}\", null);");
                 }
             }
             line("}")
         }
 
 
-        val parent = File("./grammar/gen/org/jetbrains/grammar/")
+        val parent = File(MAIN_PATH)
+        parent.mkdirs()
+        val writer = FileWriter(File(parent, "HaskellLexerTokens.java"))
+        writer.write(result.toString())
+        writer.close()
+    }
+
+    fun generateTokens() {
+        val result = TextGenerator()
+        with(result) {
+            line("package org.jetbrains.grammar")
+            line()
+            line("import org.jetbrains.haskell.parser.HaskellToken")
+            line()
+            line()
+            line("object HaskellTokens {")
+
+            indent {
+                for (token in grammar.rules) {
+                    val name = token.name.toUpperCase()
+                    line("val ${name} = IElementType(\"${token.name}\", null)");
+                }
+            }
+            line("}")
+        }
+
+
+        val parent = File(MAIN_PATH)
         parent.mkdirs()
         val writer = FileWriter(File(parent, "HaskellTokens.kt"))
         writer.write(result.toString())
         writer.close()
     }
 
+
     fun generateParser() {
         val result = TextGenerator()
         with(result) {
             line("package org.jetbrains.grammar")
-            line("import org.jetbrains.haskell.parser.HaskellParser")
+            line()
+            line("import org.jetbrains.grammar.HaskellTokens")
+            line("import com.intellij.lang.PsiBuilder")
             line()
             line()
-            line("class HaslkellParser {")
+            line("public class HaskellParser(state : PsiBuilder) : BaseHaskellParser(state) {")
 
             indent {
                 for (rule in grammar.rules) {
@@ -107,7 +142,7 @@ class Generator(val grammar: Grammar) {
         }
 
 
-        val parent = File("./grammar/gen/org/jetbrains/grammar/")
+        val parent = File(MAIN_PATH)
         parent.mkdirs()
         val writer = FileWriter(File(parent, "HaskellParser.kt"))
         writer.write(result.toString())
@@ -118,13 +153,16 @@ class Generator(val grammar: Grammar) {
                      rule: Rule) {
         with(textGenerator) {
             line()
-            line("// Fake")
+            line("// " + rule.toString())
             line("fun ${getParseFun(rule.name)}() : Boolean {")
             indent {
+                line("var res = true")
+                var first = true
                 for (variant in rule.variants) {
-                    generateVariant(this, variant)
+                    generateVariant(this, variant, first)
+                    first = false
                 }
-                line("return false")
+                line("return res")
             }
             line("}")
         }
@@ -134,28 +172,49 @@ class Generator(val grammar: Grammar) {
                          rule: FakeRule) {
         with(textGenerator) {
             line()
-            line("// " + rule.toString())
+            line("// Fake rule")
             line("fun ${getParseFun(rule.name)}() : Boolean {")
             indent {
-                line("return false")
+                line("throw FakeRuleException()")
             }
             line("}")
         }
     }
 
     fun generateVariant(textGenerator: TextGenerator,
-                        variant: Variant) {
+                        variant: Variant,
+                        first : Boolean) {
         with(textGenerator) {
-            for (ref in variant.atoms) {
-                if (ref.isName) {
-                    line(getParseFun(ref.text) + "()")
+            if (variant.atoms.empty) {
+                line("res = true")
+            } else {
+                if (first) {
+                    line("var mark = makeMark()")
+                } else {
+                    line("res = true")
+                    line("mark = makeMark()")
                 }
+                for (ref in variant.atoms) {
+                    val prefix = "res = res && "
+                    if (tokens.contains(ref.text)) {
+                        val token = tokens[ref.text]!!
+                        line(prefix + "token(HaskellLexerTokens.${token.name.toUpperCase()})")
+                    } else {
+                        line(prefix + getParseFun(ref.text) + "()")
+                    }
+                }
+
+                line("if (res) {")
+                line("  mark.drop()")
+                line("  return true")
+                line("}")
+                line("mark.rollbackTo()")
             }
         }
     }
 
     fun getParseFun(name: String): String =
-        "parse" + Character.toUpperCase(name[0]) + name.substring(1)
+            "parse" + Character.toUpperCase(name[0]) + name.substring(1)
 
 }
 
