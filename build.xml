@@ -70,7 +70,7 @@
     </target>
 
     <target name="download.kotlinc" depends="mk.buid">
-        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.8.11/kotlin-compiler-0.8.11.zip"
+        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.9.66/kotlin-compiler-0.9.66.zip"
              dest="${build.dir}" skipexisting="true"/>
     </target>
 
@@ -113,8 +113,9 @@
 
         <mkdir dir="${build.dir}/plugin"/>
         <javac2 destdir="${build.dir}/plugin"
-                classpathref="build.classpath"
-                srcdir="${basedir}/plugin/src">
+                classpathref="build.classpath">
+            <src path="${basedir}/plugin/src"/>
+            <src path="${basedir}/plugin/gen"/>
             <withKotlin externalannotations="${external.annotations.path}"/>
         </javac2>
     </target>
@@ -133,6 +134,10 @@
         <copy file="${basedir}/lib/kotlin-runtime.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/json-simple-1.1.1.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
+        <copy file="${basedir}/lib/pty4j-0.3.jar" todir="${plugin.destination}"/>
+        <copy todir="${plugin.destination}/os" >
+            <fileset dir="${basedir}/lib/os/" includes="**"/>
+        </copy>
 
         <zip destfile="${build.dir}/haskell-plugin.zip"
              basedir="${build.dir}"
