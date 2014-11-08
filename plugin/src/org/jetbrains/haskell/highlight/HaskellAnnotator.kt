@@ -6,7 +6,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import org.jetbrains.haskell.psi.Import
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.haskell.parser.token.*
-import org.codehaus.groovy.ast.ASTNode
+import com.intellij.lang.ASTNode
 
 
 /**
