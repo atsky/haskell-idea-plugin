@@ -18,7 +18,7 @@ import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 import org.jetbrains.haskell.parser.token.*
 import com.intellij.extapi.psi.ASTWrapperPsiElement
-import org.jetbrains.grammar.HaskellTokens
+//import org.jetbrains.grammar.HaskellTokens
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.parser.rules.ParserState
 
