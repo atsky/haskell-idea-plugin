@@ -136,7 +136,7 @@
         <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/pty4j-0.3.jar" todir="${plugin.destination}"/>
         <copy todir="${plugin.destination}/os" >
-            <fileset dir="${basedir}/lib/os/" includes="**"/>
+            <fileset dir="${basedir}/lib/" includes="**"/>
         </copy>
 
         <zip destfile="${build.dir}/haskell-plugin.zip"
