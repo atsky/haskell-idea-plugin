@@ -4,6 +4,7 @@ import org.jetbrains.haskell.parser.HaskellToken
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.TokenType
 import java.util.ArrayList
+import org.jetbrains.grammar.HaskellLexerTokens
 
 /**
  * Created by atsky on 3/12/14.
@@ -12,6 +13,11 @@ import java.util.ArrayList
 private val KEYWORDS_MUTABLE: MutableList<HaskellToken> = ArrayList()
 public val KEYWORDS: List<HaskellToken> = KEYWORDS_MUTABLE
 
+fun keyword(token : HaskellToken) : HaskellToken {
+    KEYWORDS_MUTABLE.add(token)
+    return token
+}
+
 fun keyword(name : String) : HaskellToken {
     val result = HaskellToken(name)
     KEYWORDS_MUTABLE.add(result)
@@ -19,57 +25,57 @@ fun keyword(name : String) : HaskellToken {
 }
 
 // Keywords
-public val AS_KW: HaskellToken          = HaskellToken("as")
-public val CASE_KW: HaskellToken        = keyword("case")
-public val CLASS_KW: HaskellToken       = keyword("class")
-public val DATA_KW: HaskellToken        = keyword("data")
-public val DEFAULT_KW: HaskellToken     = keyword("default")
-public val DERIVING_KW: HaskellToken    = keyword("deriving")
-public val DO_KW: HaskellToken          = keyword("do")
-public val ELSE_KW: HaskellToken        = keyword("else")
-public val EXPORT: HaskellToken         = keyword("export")
-public val HIDING_KW: HaskellToken      = HaskellToken("hiding")
-public val IF_KW: HaskellToken          = keyword("if")
-public val IMPORT_KW: HaskellToken      = keyword("import")
-public val IN_KW: HaskellToken          = keyword("in")
-public val INFIX_KW: HaskellToken       = keyword("infix")
-public val INFIXL_KW: HaskellToken      = keyword("infixl")
-public val INFIXR_KW: HaskellToken      = keyword("infixr")
-public val INSTANCE_KW: HaskellToken    = keyword("instance")
-public val FORALL_KW: HaskellToken      = keyword("forall")
-public val FOREIGN_KW: HaskellToken     = keyword("foreign")
-public val LET_KW: HaskellToken         = keyword("let")
-public val MODULE_KW: HaskellToken      = keyword("module")
-public val NEWTYPE_KW: HaskellToken     = keyword("newtype")
-public val OF_KW: HaskellToken          = keyword("of")
-public val QUALIFIED_KW: HaskellToken   = HaskellToken("qualified")
-public val THEN_KW: HaskellToken        = keyword("then")
-public val WHERE_KW: HaskellToken       = keyword("where")
-public val TYPE_KW: HaskellToken        = keyword("type")
-public val SAFE: HaskellToken           = keyword("safe")
-public val UNSAFE: HaskellToken         = keyword("unsafe")
+public val AS_KW: HaskellToken          = HaskellLexerTokens.AS
+public val CASE_KW: HaskellToken        = keyword(HaskellLexerTokens.CASE)
+public val CLASS_KW: HaskellToken       = keyword(HaskellLexerTokens.CLASS)
+public val DATA_KW: HaskellToken        = keyword(HaskellLexerTokens.DATA)
+public val DEFAULT_KW: HaskellToken     = keyword(HaskellLexerTokens.DEFAULT)
+public val DERIVING_KW: HaskellToken    = keyword(HaskellLexerTokens.DERIVING)
+public val DO_KW: HaskellToken          = keyword(HaskellLexerTokens.DO)
+public val ELSE_KW: HaskellToken        = keyword(HaskellLexerTokens.ELSE)
+public val EXPORT: HaskellToken         = keyword(HaskellLexerTokens.EXPORT)
+public val HIDING_KW: HaskellToken      = HaskellLexerTokens.HIDING
+public val IF_KW: HaskellToken          = keyword(HaskellLexerTokens.IF)
+public val IMPORT_KW: HaskellToken      = keyword(HaskellLexerTokens.IMPORT)
+public val IN_KW: HaskellToken          = keyword(HaskellLexerTokens.IN)
+public val INFIX_KW: HaskellToken       = keyword(HaskellLexerTokens.INFIX)
+public val INFIXL_KW: HaskellToken      = keyword(HaskellLexerTokens.INFIXL)
+public val INFIXR_KW: HaskellToken      = keyword(HaskellLexerTokens.INFIXR)
+public val INSTANCE_KW: HaskellToken    = keyword(HaskellLexerTokens.INSTANCE)
+public val FORALL_KW: HaskellToken      = keyword(HaskellLexerTokens.FORALL)
+public val FOREIGN_KW: HaskellToken     = keyword(HaskellLexerTokens.FOREIGN)
+public val LET_KW: HaskellToken         = keyword(HaskellLexerTokens.LET)
+public val MODULE_KW: HaskellToken      = keyword(HaskellLexerTokens.MODULE)
+public val NEWTYPE_KW: HaskellToken     = keyword(HaskellLexerTokens.NEWTYPE)
+public val OF_KW: HaskellToken          = keyword(HaskellLexerTokens.OF)
+public val QUALIFIED_KW: HaskellToken   = HaskellLexerTokens.QUALIFIED
+public val THEN_KW: HaskellToken        = keyword(HaskellLexerTokens.THEN)
+public val WHERE_KW: HaskellToken       = keyword(HaskellLexerTokens.WHERE)
+public val TYPE_KW: HaskellToken        = keyword(HaskellLexerTokens.TYPE)
+public val SAFE: HaskellToken           = keyword(HaskellLexerTokens.SAFE)
+public val UNSAFE: HaskellToken         = keyword(HaskellLexerTokens.UNSAFE)
 
 // Operators
-public val RIGHT_ARROW: HaskellToken          = HaskellToken("->")
-public val LEFT_ARROW: HaskellToken           = HaskellToken("<-")
-public val EQUALS: HaskellToken               = HaskellToken("=")
-public val COLON : HaskellToken               = HaskellToken(":")
-public val DOUBLE_COLON : HaskellToken        = HaskellToken("::")
-public val COMMA : HaskellToken               = HaskellToken(",")
-public val DOT : HaskellToken                 = HaskellToken(".")
-public val DOT_DOT : HaskellToken             = HaskellToken("..")
+public val RIGHT_ARROW: HaskellToken          = HaskellLexerTokens.RARROW
+public val LEFT_ARROW: HaskellToken           = HaskellLexerTokens.LARROW
+public val EQUALS: HaskellToken               = HaskellLexerTokens.EQUAL
+public val COLON : HaskellToken               = HaskellLexerTokens.COLON
+public val DOUBLE_COLON : HaskellToken        = HaskellLexerTokens.DCOLON
+public val COMMA : HaskellToken               = HaskellLexerTokens.COMMA
+public val DOT : HaskellToken                 = HaskellLexerTokens.DOT
+public val DOT_DOT : HaskellToken             = HaskellLexerTokens.DOTDOT
 public val DOLLAR : HaskellToken              = HaskellToken("$")
-public val BACK_SLASH: HaskellToken           = HaskellToken("\\")
-public val VERTICAL_BAR : HaskellToken        = HaskellToken("|")
-public val SEMICOLON : HaskellToken           = HaskellToken(";")
-public val AT : HaskellToken                  = HaskellToken("@")
+public val BACK_SLASH: HaskellToken           = HaskellLexerTokens.LAM
+public val VERTICAL_BAR : HaskellToken        = HaskellLexerTokens.VBAR
+public val SEMICOLON : HaskellToken           = HaskellLexerTokens.SEMI
+public val AT : HaskellToken                  = HaskellLexerTokens.AT
 public val QUESTION : HaskellToken            = HaskellToken("?")
 public val HASH : HaskellToken                = HaskellToken("#")
-public val TILDE : HaskellToken               = HaskellToken("~")
+public val TILDE : HaskellToken               = HaskellLexerTokens.TILDE
 public val DOUBLE_ARROW : HaskellToken        = HaskellToken("=>")
-public val EXCLAMATION : HaskellToken         = HaskellToken("!")
-public val UNDERSCORE : HaskellToken          = HaskellToken("_")
-public val BACKQUOTE : HaskellToken           = HaskellToken("`")
+public val EXCLAMATION : HaskellToken         = HaskellLexerTokens.BANG
+public val UNDERSCORE : HaskellToken          = HaskellLexerTokens.UNDERSCORE
+public val BACKQUOTE : HaskellToken           = HaskellLexerTokens.BACKQUOTE
 
 
 

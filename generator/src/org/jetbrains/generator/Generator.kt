@@ -67,7 +67,7 @@ class Generator(val grammar: Grammar) {
         with(result) {
             line("package org.jetbrains.grammar;")
             line()
-            line("import com.intellij.psi.tree.IElementType;")
+            line("import org.jetbrains.haskell.parser.HaskellToken;")
             line()
             line()
             line("public interface HaskellLexerTokens {")
@@ -75,7 +75,7 @@ class Generator(val grammar: Grammar) {
             indent {
                 for (token in tokens) {
                     val name = token.name.toUpperCase()
-                    line("public static IElementType ${name} = new IElementType(\"${token.text}\", null);");
+                    line("public static HaskellToken ${name} = new HaskellToken(\"${token.text}\");");
                 }
             }
             line("}")
@@ -94,7 +94,7 @@ class Generator(val grammar: Grammar) {
         with(result) {
             line("package org.jetbrains.grammar")
             line()
-            line("import org.jetbrains.haskell.parser.HaskellToken")
+            line("import com.intellij.psi.tree.IElementType")
             line()
             line()
             line("object HaskellTokens {")
