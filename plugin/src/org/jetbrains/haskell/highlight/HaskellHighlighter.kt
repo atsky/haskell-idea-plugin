@@ -20,13 +20,12 @@ import org.jetbrains.haskell.parser.token.*
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     class object {
-        public val STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
-        public val KEYWORD_VALUE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("KEYWORD.VALUE", DefaultLanguageHighlighterColors.KEYWORD)
-        public val COMMENT_STYLE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val TYPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("TYPE", TextAttributes(Color(30, 150, 0), null, null, null, Font.BOLD))
-        public val CONSTRUCTOR: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CONSTRUCTOR", TextAttributes(Color(0, 110, 110), null, null, null, Font.ITALIC))
-        public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE.getDefaultAttributes())
-        public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE.getDefaultAttributes());
+        public val STRING_LITERAL: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
+        public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+        public val COMMENT: TextAttributesKey                          = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val CONSTRUCTOR: TextAttributesKey                      = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
+        public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey   = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
+        public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
     }
 
     public override fun getHighlightingLexer(): Lexer {
@@ -46,14 +45,14 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     {
         keys1 = THashMap<IElementType, TextAttributesKey>()
-        keys1.put(END_OF_LINE_COMMENT, COMMENT_STYLE)
-        keys1.put(BLOCK_COMMENT, COMMENT_STYLE)
+        keys1.put(END_OF_LINE_COMMENT, COMMENT)
+        keys1.put(BLOCK_COMMENT, COMMENT)
 
         for (keyword in org.jetbrains.haskell.parser.token.KEYWORDS)
         {
-            keys1.put(keyword, KEYWORD_VALUE)
+            keys1.put(keyword, HASKELL_KEYWORD)
         }
-        keys1.put(PRAGMA, COMMENT_STYLE)
+        keys1.put(PRAGMA, COMMENT)
         keys1.put(TYPE_OR_CONS, CONSTRUCTOR)
         keys1.put(OPERATOR_CONS, CONSTRUCTOR)
         keys1.put(COLON, CONSTRUCTOR)
@@ -68,8 +67,8 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
 
     {
-        DISPLAY_NAMES.put(KEYWORD_VALUE, Pair<String, HighlightSeverity>("Property value", null))
-        DISPLAY_NAMES.put(COMMENT_STYLE, Pair<String, HighlightSeverity>("Comment", null))
+        DISPLAY_NAMES.put(HASKELL_KEYWORD, Pair<String, HighlightSeverity>("Property value", null))
+        DISPLAY_NAMES.put(COMMENT, Pair<String, HighlightSeverity>("Comment", null))
         DISPLAY_NAMES.put(PROPERTIES_VALID_STRING_ESCAPE, Pair<String, HighlightSeverity>("Valid string escape", null))
         DISPLAY_NAMES.put(PROPERTIES_INVALID_STRING_ESCAPE, Pair("Invalid string escape", HighlightSeverity.WARNING))
     }

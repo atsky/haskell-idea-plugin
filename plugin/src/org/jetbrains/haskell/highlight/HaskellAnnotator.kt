@@ -16,10 +16,10 @@ public class HaskellAnnotator() : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element is Import) {
             for (node in element.getNode().getChildren(TokenSet.create(HIDING_KW, QUALIFIED_KW))!!) {
-                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
             for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS_KW)) ?: array<ASTNode>()) {
-                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
         }
     }

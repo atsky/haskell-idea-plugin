@@ -106,6 +106,9 @@
                                     implementationClass="org.jetbrains.haskell.doc.HaskellQuickDocumentationProvider"
                                     order="first"/>
 
+        <colorSettingsPage implementation="org.jetbrains.haskell.highlight.HaskellColorsAndFontsPage"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/HaskellDefault.xml"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/HaskellDracula.xml"/>
         <lang.syntaxHighlighterFactory key="Haskell"
                                        implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
         <lang.fileViewProviderFactory language="Haskell"

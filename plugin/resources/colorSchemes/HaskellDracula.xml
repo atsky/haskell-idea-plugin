@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+    <option name="HASKELL_CONSTRUCTOR">
+        <value>
+            <option name="FOREGROUND" value="67daf0"/>
+        </value>
+    </option>
+    <option name="HASKELL_KEYWORD">
+        <value>
+            <option name="FOREGROUND" value="f9264c"/>
+        </value>
+    </option>
+</list>

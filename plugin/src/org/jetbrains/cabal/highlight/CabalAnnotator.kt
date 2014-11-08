@@ -13,7 +13,7 @@ public class CabalAnnotator() : Annotator {
 
     public override fun annotate(element: PsiElement, holder: AnnotationHolder): Unit {
         fun keyword(e : PsiElement) {
-            holder.createInfoAnnotation(e, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
+            holder.createInfoAnnotation(e, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
         }
 
         fun handle(errMsg: ErrorMessage?) {
