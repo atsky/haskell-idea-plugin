@@ -43,7 +43,7 @@ public class GeneratedHaskellParserDefinition() : ParserDefinition {
                 val rootMarker = builder!!.mark()
 
                 val state = ParserState(builder);
-                org.jetbrains.grammar.HaskellParser(state).parseModule()
+                //org.jetbrains.grammar.HaskellParser(state).parseModule()
                 rootMarker.done(root)
                 return builder.getTreeBuilt()!!
             }
@@ -59,9 +59,9 @@ public class GeneratedHaskellParserDefinition() : ParserDefinition {
 
     override fun createElement(node: ASTNode?): PsiElement {
         val elementType = node!!.getElementType()
-        if (elementType == HaskellTokens.MODULE) {
-            return Module(node)
-        }
+        //if (elementType == HaskellTokens.MODULE) {
+        //    return Module(node)
+        //}
 
         return ASTWrapperPsiElement(node)
     }
