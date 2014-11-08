@@ -10,4 +10,9 @@
             <option name="FOREGROUND" value="f9264c"/>
         </value>
     </option>
+    <option name="HASKELL_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="f9264c"/>
+        </value>
+    </option>
 </list>

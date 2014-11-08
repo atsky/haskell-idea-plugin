@@ -23,7 +23,9 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
         public val STRING_LITERAL: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
         public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
         public val COMMENT: TextAttributesKey                          = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val HASKELL_PRAGMA: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
         public val CONSTRUCTOR: TextAttributesKey                      = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
+        public val HASKELL_OPERATOR: TextAttributesKey                 = TextAttributesKey.createTextAttributesKey("HASKELL_OPERATOR", DefaultLanguageHighlighterColors.IDENTIFIER)
         public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey   = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
         public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
     }
@@ -52,9 +54,11 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
         {
             keys1.put(keyword, HASKELL_KEYWORD)
         }
-        keys1.put(PRAGMA, COMMENT)
+        keys1.put(PRAGMA, HASKELL_PRAGMA)
         keys1.put(TYPE_OR_CONS, CONSTRUCTOR)
         keys1.put(OPERATOR_CONS, CONSTRUCTOR)
+        keys1.put(OPERATOR_ID, HASKELL_OPERATOR)
+        keys1.put(DOLLAR, HASKELL_OPERATOR)
         keys1.put(COLON, CONSTRUCTOR)
         keys1.put(STRING, STRING_LITERAL)
         keys1.put(CHARACTER, STRING_LITERAL)
