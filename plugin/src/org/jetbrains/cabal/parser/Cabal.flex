@@ -45,6 +45,8 @@ IDENTIFIER       = {IDENTIFIER_PART}+
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
 {INDENT}              { return TokenType.NEW_LINE_INDENT; }            // there cannot be more than one new NEW_LINE_INDENT in row
 {EOL_COMMENT}         { return CabalTokelTypes.END_OF_LINE_COMMENT; }
+^{WHITE_SPACE_CHAR}*"--"[^\n]*
+                      { return CabalTokelTypes.END_OF_LINE_COMMENT; }
 {COMPARATOR}          { return CabalTokelTypes.COMPARATOR; }
 {LOGIC}               { return CabalTokelTypes.LOGIC; }
 "("                   { return CabalTokelTypes.OPEN_PAREN; }

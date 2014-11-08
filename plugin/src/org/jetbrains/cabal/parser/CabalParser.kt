@@ -380,7 +380,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
                                       || parseInvalidField(level)
 
         val rootMarker = mark()
-        val firstIndent = builder.getCurrentOffset()
+        val firstIndent = nextLevel() ?: 0
         while (!builder.eof()) {
             val nextIndent = nextLevel()
             if ((nextIndent == null) || (nextIndent == firstIndent)) {
