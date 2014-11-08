@@ -81,12 +81,12 @@ public val BACKQUOTE : HaskellToken           = HaskellLexerTokens.BACKQUOTE
 
 
 // Braces
-public val LEFT_BRACKET : HaskellToken        = HaskellToken("[")
-public val LEFT_PAREN : HaskellToken          = HaskellToken("(")
-public val LEFT_BRACE : HaskellToken          = HaskellToken("{")
-public val RIGHT_BRACE : HaskellToken         = HaskellToken("}")
-public val RIGHT_BRACKET : HaskellToken       = HaskellToken("]")
-public val RIGHT_PAREN : HaskellToken         = HaskellToken(")")
+public val LEFT_BRACKET : HaskellToken        = HaskellLexerTokens.OBRACK
+public val LEFT_PAREN : HaskellToken          = HaskellLexerTokens.OPAREN
+public val LEFT_BRACE : HaskellToken          = HaskellLexerTokens.OCURLY
+public val RIGHT_BRACE : HaskellToken         = HaskellLexerTokens.CCURLY
+public val RIGHT_BRACKET : HaskellToken       = HaskellLexerTokens.CBRACK
+public val RIGHT_PAREN : HaskellToken         = HaskellLexerTokens.CPAREN
 
 
 public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
@@ -124,7 +124,7 @@ public val OPERATOR_ID: HaskellToken          = HaskellToken("opertor")
 public val OPERATOR_CONS: HaskellToken        = HaskellToken("opertor cons")
 public val PRAGMA : HaskellToken              = HaskellToken("PRAGMA")
 public val STRING : HaskellToken              = HaskellToken("string")
-public val TYPE_OR_CONS: HaskellToken         = HaskellToken("type_cons")
+public val TYPE_OR_CONS: HaskellToken         = HaskellLexerTokens.CONID
 public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN")
 public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
 public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")

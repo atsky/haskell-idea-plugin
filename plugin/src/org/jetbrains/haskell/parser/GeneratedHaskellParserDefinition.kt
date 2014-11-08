@@ -20,9 +20,10 @@ import org.jetbrains.haskell.parser.token.*
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.grammar.HaskellTokens
 import org.jetbrains.haskell.psi.Module
+import org.jetbrains.haskell.parser.rules.ParserState
 
 
-public class GenratedHaskellParserDefinition() : ParserDefinition {
+public class GeneratedHaskellParserDefinition() : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
     override fun createLexer(project: Project?): Lexer = HaskellLexer()
@@ -41,7 +42,8 @@ public class GenratedHaskellParserDefinition() : ParserDefinition {
             override fun parse(root: IElementType?, builder: PsiBuilder?): ASTNode {
                 val rootMarker = builder!!.mark()
 
-                org.jetbrains.grammar.HaskellParser(builder!!).parseModule()
+                val state = ParserState(builder);
+                org.jetbrains.grammar.HaskellParser(state).parseModule()
                 rootMarker.done(root)
                 return builder.getTreeBuilt()!!
             }

@@ -95,6 +95,8 @@ class Generator(val grammar: Grammar) {
             line("package org.jetbrains.grammar")
             line()
             line("import com.intellij.psi.tree.IElementType")
+            line("import org.jetbrains.haskell.parser.HaskellCompositeElementType")
+            line("import org.jetbrains.haskell.psi.*")
             line()
             line()
             line("object HaskellTokens {")
@@ -102,7 +104,8 @@ class Generator(val grammar: Grammar) {
             indent {
                 for (token in grammar.rules) {
                     val name = token.name.toUpperCase()
-                    line("val ${name} = IElementType(\"${token.name}\", null)");
+                    val psiName = Character.toUpperCase(token.name[0]) + token.name.substring(1)
+                    line("val ${name} = HaskellCompositeElementType(\"${token.name}\", ::${psiName})");
                 }
             }
             line("}")
@@ -123,10 +126,10 @@ class Generator(val grammar: Grammar) {
             line("package org.jetbrains.grammar")
             line()
             line("import org.jetbrains.grammar.HaskellTokens")
-            line("import com.intellij.lang.PsiBuilder")
+            line("import org.jetbrains.haskell.parser.rules.ParserState")
             line()
             line()
-            line("public class HaskellParser(state : PsiBuilder) : BaseHaskellParser(state) {")
+            line("public class HaskellParser(state : vgitgParserState) : BaseHaskellParser(state) {")
 
             indent {
                 for (rule in grammar.rules) {
@@ -159,7 +162,7 @@ class Generator(val grammar: Grammar) {
                 line("var res = true")
                 var first = true
                 for (variant in rule.variants) {
-                    generateVariant(this, variant, first)
+                    generateVariant(this, rule, variant, first)
                     first = false
                 }
                 line("return res")
@@ -182,6 +185,7 @@ class Generator(val grammar: Grammar) {
     }
 
     fun generateVariant(textGenerator: TextGenerator,
+                        rule : Rule,
                         variant: Variant,
                         first : Boolean) {
         with(textGenerator) {
@@ -205,7 +209,7 @@ class Generator(val grammar: Grammar) {
                 }
 
                 line("if (res) {")
-                line("  mark.drop()")
+                line("  mark.done(HaskellTokens.${rule.name.toUpperCase()})")
                 line("  return true")
                 line("}")
                 line("mark.rollbackTo()")
