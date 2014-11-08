@@ -6,6 +6,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import org.jetbrains.haskell.psi.Import
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.haskell.parser.token.*
+import org.codehaus.groovy.ast.ASTNode
 
 
 /**
@@ -17,7 +18,7 @@ public class HaskellAnnotator() : Annotator {
             for (node in element.getNode().getChildren(TokenSet.create(HIDING_KW, QUALIFIED_KW))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
             }
-            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS_KW)) ?: array()) {
+            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS_KW)) ?: array<ASTNode>()) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.KEYWORD_VALUE)
             }
         }
