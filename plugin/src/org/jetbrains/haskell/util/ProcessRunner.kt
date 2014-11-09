@@ -39,8 +39,13 @@ public class ProcessRunner(workingDirectory: String? = null) {
         return data
     }
 
-    public fun getProcess(cmd: List<String>): Process {
+    public fun getProcess(cmd: List<String>, path : String? = null): Process {
         val processBuilder: ProcessBuilder = ProcessBuilder(cmd)
+
+        if (path != null) {
+            val environment = processBuilder.environment()!!
+            environment.put("PATH", environment.get("PATH") + ":" + path)
+        }
 
         if (OS.isMac) {
             // It's hack to make homebrew based HaskellPlatform work

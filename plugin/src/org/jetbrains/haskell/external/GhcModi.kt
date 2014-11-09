@@ -22,6 +22,8 @@ import org.jetbrains.haskell.util.ProcessRunner
 import com.intellij.notification.NotificationListener
 import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
+import com.intellij.openapi.roots.ProjectRootManager
+import org.jetbrains.haskell.sdk.HaskellSdkType
 
 /**
  * Created by atsky on 15/06/14.
@@ -49,7 +51,13 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
 
     fun startProcess() {
         assert(process == null)
-        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()))
+        val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
+        val ghcHome = if (sdk.getSdkType() is HaskellSdkType) {
+            sdk.getHomePath() + File.separator + "bin"
+        } else {
+            null
+        }
+        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()), ghcHome)
     }
 
     fun getPath(): String {
