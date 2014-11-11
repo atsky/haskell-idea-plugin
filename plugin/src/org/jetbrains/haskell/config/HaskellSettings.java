@@ -34,7 +34,7 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
         public String cabalPath;
         public String cabalDataPath;
         public Boolean useGhcMod;
-        public Boolean usePty;
+        public Boolean usePtyProcess;
     }
 
     State myState = new State();
@@ -61,8 +61,8 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
         if (myState.useGhcMod == null) {
             myState.useGhcMod = true;
         }
-        if (myState.usePty == null) {
-            myState.usePty = true;
+        if (myState.usePtyProcess == null) {
+            myState.usePtyProcess = false;
         }
     }
 

@@ -42,7 +42,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     protected override fun startProcess(): ProcessHandler {
         val generalCommandLine = createCommandLine()
         val processHandler: ProcessHandler =
-                if (HaskellSettings.getInstance().getState().usePty!!) {
+                if (HaskellSettings.getInstance().getState().usePtyProcess!!) {
                     OSProcessHandler(getPtyProcess(generalCommandLine)!!, generalCommandLine.getCommandLineString(),
                             CharsetToolkit.UTF8_CHARSET)
                 } else {

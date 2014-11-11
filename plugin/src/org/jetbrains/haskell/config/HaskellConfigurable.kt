@@ -140,7 +140,7 @@ public class HaskellConfigurable() : Configurable {
         state.ghcModPath = ghcMod.getTextField()!!.getText()
         state.ghcModiPath = ghcModi.getTextField()!!.getText()
         state.useGhcMod = useGhcMod.isSelected()
-        state.usePty = usePty.isSelected()
+        state.usePtyProcess = usePty.isSelected()
 
         isModified = false
     }
@@ -157,7 +157,7 @@ public class HaskellConfigurable() : Configurable {
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
         ghcModi.getTextField()!!.setText(state.ghcModiPath ?: "")
         useGhcMod.setSelected(state.useGhcMod!!)
-        usePty.setSelected(state.usePty!!)
+        usePty.setSelected(state.usePtyProcess!!)
 
         isModified = false
     }
