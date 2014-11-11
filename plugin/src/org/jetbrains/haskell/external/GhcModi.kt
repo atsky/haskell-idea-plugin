@@ -52,7 +52,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
     fun startProcess() {
         assert(process == null)
         val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
-        val ghcHome = if (sdk.getSdkType() is HaskellSdkType) {
+        val ghcHome = if (sdk != null && sdk.getSdkType() is HaskellSdkType) {
             sdk.getHomePath() + File.separator + "bin"
         } else {
             null
