@@ -64,7 +64,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
             val paths = System.getenv("PATH")!!.split(File.pathSeparator).toArrayList()
 
             val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
-            if (sdk.getSdkType() is HaskellSdkType) {
+            if (sdk != null && sdk.getSdkType() is HaskellSdkType) {
                 paths.add(sdk.getHomePath() + File.separator + "bin")
             }
 
