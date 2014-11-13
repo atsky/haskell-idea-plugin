@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>Haskell</name>
     <description>Haskell language support</description>
-    <version>0.4.@snapshot@ Beta</version>
+    <version>0.4.1</version>
     <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
@@ -95,7 +95,11 @@
                            language="Haskell"/>
 
         <lang.parserDefinition language="Haskell"
+                               implementationClass="org.jetbrains.haskell.parser.HaskellGrammarKitParserDefinition"/>
+
+     <!--   <lang.parserDefinition language="Haskell"
                                implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
+     -->
         <configurationType implementation="org.jetbrains.haskell.run.haskell.HaskellRunConfigurationType"/>
         <!-- <configurationType implementation="org.jetbrains.haskell.run.cmd.CmdLineRunConfigurationType"/> -->
         <runConfigurationProducer implementation="org.jetbrains.haskell.run.haskell.CabalRunConfigurationProducer"/>
