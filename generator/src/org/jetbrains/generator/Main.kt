@@ -27,7 +27,7 @@ fun getTokens(lexer : GrammarLexer) : List<Token> {
 
 fun main(args : Array<String>) {
 
-    val lexer = GrammarLexer(FileReader("./grammar/haskell.grm"))
+    val lexer = GrammarLexer(FileReader("./plugin/haskell.grm"))
 
     val grammarParser = GrammarParser(getTokens(lexer))
      val grammar = grammarParser.parseGrammar()!!

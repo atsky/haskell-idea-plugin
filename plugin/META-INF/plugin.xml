@@ -95,7 +95,7 @@
                            language="Haskell"/>
 
         <lang.parserDefinition language="Haskell"
-                               implementationClass="org.jetbrains.haskell.parser.HaskellGrammarKitParserDefinition"/>
+                               implementationClass="org.jetbrains.haskell.parser.GeneratedHaskellParserDefinition"/>
 
      <!--   <lang.parserDefinition language="Haskell"
                                implementationClass="org.jetbrains.haskell.parser.HaskellParserDefinition"/>
