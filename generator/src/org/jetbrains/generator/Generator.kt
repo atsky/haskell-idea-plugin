@@ -129,7 +129,7 @@ class Generator(val grammar: Grammar) {
             line("import org.jetbrains.haskell.parser.rules.ParserState")
             line()
             line()
-            line("public class HaskellParser(state : vgitgParserState) : BaseHaskellParser(state) {")
+            line("public class HaskellParser(state : ParserState) : BaseHaskellParser(state) {")
 
             indent {
                 for (rule in grammar.rules) {
