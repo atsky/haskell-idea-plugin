@@ -59,7 +59,7 @@ class GrammarParser(val tokens : List<Token>) {
     fun match(expected: TokenType) : Token {
         val next = getNext()
         if (next == null || next.type != expected) {
-            throw ParserException(next, "${expected} expected");
+            throw ParserException(next, "${expected} expected, but ${next?.type}");
         }
         return next;
     }

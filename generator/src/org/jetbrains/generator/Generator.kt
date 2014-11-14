@@ -105,7 +105,11 @@ class Generator(val grammar: Grammar) {
                 for (token in grammar.rules) {
                     val name = token.name.toUpperCase()
                     val psiName = Character.toUpperCase(token.name[0]) + token.name.substring(1)
-                    line("val ${name} = HaskellCompositeElementType(\"${token.name}\", ::${psiName})");
+                    if (psiName == "Module") {
+                        line("val ${name} = HaskellCompositeElementType(\"${token.name}\", ::${psiName})");
+                    } else {
+                        line("val ${name} = HaskellCompositeElementType(\"${token.name}\")");
+                    }
                 }
             }
             line("}")
@@ -137,6 +141,7 @@ class Generator(val grammar: Grammar) {
                 }
 
                 for (rule in fakeRules) {
+                    println("Fake rule [${rule.name}] generated")
                     generateFakeRule(this, rule)
                 }
             }
