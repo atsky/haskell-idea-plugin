@@ -43,7 +43,7 @@ public class GeneratedHaskellParserDefinition() : ParserDefinition {
                 val rootMarker = builder!!.mark()
 
                 val state = ParserState(builder);
-                org.jetbrains.grammar.HaskellParser(state).parseModule()
+                //org.jetbrains.grammar.HaskellParser(state).parseModule()
                 rootMarker.done(root)
                 return builder.getTreeBuilt()!!
             }

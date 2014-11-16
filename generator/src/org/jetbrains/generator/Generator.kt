@@ -130,20 +130,27 @@ class Generator(val grammar: Grammar) {
             line("package org.jetbrains.grammar")
             line()
             line("import org.jetbrains.grammar.HaskellTokens")
+            line("import org.jetbrains.grammar.HaskellLexerTokens.*")
             line("import org.jetbrains.haskell.parser.rules.ParserState")
+            line("import org.jetbrains.grammar.dumb.Rule")
             line()
             line()
             line("public class HaskellParser(state : ParserState) : BaseHaskellParser(state) {")
 
             indent {
-                for (rule in grammar.rules) {
-                    generateRule(this, rule)
+                line("override fun getGrammar() : List<Rule> {")
+                indent {
+                    line("return grammar {")
+                        indent {
+                            for (rule in rules.values()) {
+                                if (rule is Rule) {
+                                    generateRule(this, rule)
+                                }
+                            }
+                        }
+                    line("}");
                 }
-
-                for (rule in fakeRules) {
-                    println("Fake rule [${rule.name}] generated")
-                    generateFakeRule(this, rule)
-                }
+                line("}")
             }
 
             line("}")
@@ -160,17 +167,11 @@ class Generator(val grammar: Grammar) {
     fun generateRule(textGenerator: TextGenerator,
                      rule: Rule) {
         with(textGenerator) {
-            line()
-            line("// " + rule.toString())
-            line("fun ${getParseFun(rule.name)}() : Boolean {")
+            line("rule(\"${rule.name}\") {")
             indent {
-                line("var res = true")
-                var first = true
-                for (variant in rule.variants) {
-                    generateVariant(this, rule, variant, first)
-                    first = false
+                for (varinant in rule.variants) {
+                    generateVariant(this, rule, varinant);
                 }
-                line("return res")
             }
             line("}")
         }
@@ -191,34 +192,23 @@ class Generator(val grammar: Grammar) {
 
     fun generateVariant(textGenerator: TextGenerator,
                         rule : Rule,
-                        variant: Variant,
-                        first : Boolean) {
+                        variant: Variant) {
         with(textGenerator) {
-            if (variant.atoms.empty) {
-                line("res = true")
-            } else {
-                if (first) {
-                    line("var mark = makeMark()")
+            val builder = StringBuilder()
+            var first = true;
+            for (atom in variant.atoms) {
+                if (!first) {
+                    builder.append(", ")
+                }
+                if (tokens.contains(atom.text)) {
+                    val tokenDescription = tokens[atom.text]!!
+                    builder.append(tokenDescription.name.toUpperCase())
                 } else {
-                    line("res = true")
-                    line("mark = makeMark()")
+                    builder.append("\"" + atom.text + "\"")
                 }
-                for (ref in variant.atoms) {
-                    val prefix = "res = res && "
-                    if (tokens.contains(ref.text)) {
-                        val token = tokens[ref.text]!!
-                        line(prefix + "token(HaskellLexerTokens.${token.name.toUpperCase()})")
-                    } else {
-                        line(prefix + getParseFun(ref.text) + "()")
-                    }
-                }
-
-                line("if (res) {")
-                line("  mark.done(HaskellTokens.${rule.name.toUpperCase()})")
-                line("  return true")
-                line("}")
-                line("mark.rollbackTo()")
+                first = false;
             }
+            line("variant(${builder})")
         }
     }
 
