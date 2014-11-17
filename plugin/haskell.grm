@@ -675,71 +675,74 @@ wherebinds                                      -- May have implicit parameters
         | {- empty -}
 ;
 
-{-
+
 -----------------------------------------------------------------------------
 -- Transformation Rules
 
-rules   :: { OrdList (LHsDecl RdrName) }
-        :  rules ';' rule                       { $1 `snocOL` $3 }
-        |  rules ';'                            { $1 }
-        |  rule                                 { unitOL $1 }
-        |  {- empty -}                          { nilOL }
+rules
+        :  rules ';' rule
+        |  rules ';'
+        |  rule
+        |  {- empty -}
+;
 
-rule    :: { LHsDecl RdrName }
+rule
         : STRING rule_activation rule_forall infixexp '=' exp
-             { sLL $1 $> $ RuleD (HsRule (getSTRING $1)
-                                  ($2 `orElse` AlwaysActive)
-                                  $3 $4 placeHolderNames $6 placeHolderNames) }
+;
 
 -- Rules can be specified to be NeverActive, unlike inline/specialize pragmas
-rule_activation :: { Maybe Activation }
-        : {- empty -}                           { Nothing }
-        | rule_explicit_activation              { Just $1 }
+rule_activation
+        : {- empty -}
+        | rule_explicit_activation
+;
 
-rule_explicit_activation :: { Activation }  -- In brackets
-        : '[' INTEGER ']'               { ActiveAfter  (fromInteger (getINTEGER $2)) }
-        | '[' '~' INTEGER ']'           { ActiveBefore (fromInteger (getINTEGER $3)) }
-        | '[' '~' ']'                   { NeverActive }
+rule_explicit_activation                        -- In brackets
+        : '[' INTEGER ']'
+        | '[' '~' INTEGER ']'
+        | '[' '~' ']'
+;
 
-rule_forall :: { [RuleBndr RdrName] }
-        : 'forall' rule_var_list '.'            { $2 }
-        | {- empty -}                           { [] }
+rule_forall
+        : 'forall' rule_var_list '.'
+        | {- empty -}
+;
 
-rule_var_list :: { [RuleBndr RdrName] }
-        : rule_var                              { [$1] }
-        | rule_var rule_var_list                { $1 : $2 }
+rule_var_list
+        : rule_var
+        | rule_var rule_var_list
+;
 
-rule_var :: { RuleBndr RdrName }
-        : varid                                 { RuleBndr $1 }
-        | '(' varid '::' ctype ')'              { RuleBndrSig $2 (mkHsWithBndrs $4) }
+rule_var
+        : varid
+        | '(' varid '::' ctype ')'
+;
 
 -----------------------------------------------------------------------------
 -- Warnings and deprecations (c.f. rules)
 
-warnings :: { OrdList (LHsDecl RdrName) }
-        : warnings ';' warning          { $1 `appOL` $3 }
-        | warnings ';'                  { $1 }
-        | warning                               { $1 }
-        | {- empty -}                           { nilOL }
+warnings
+        : warnings ';' warning
+        | warnings ';'
+        | warning
+        | {- empty -}
+;
 
 -- SUP: TEMPORARY HACK, not checking for `module Foo'
-warning :: { OrdList (LHsDecl RdrName) }
+warning
         : namelist strings
-                { toOL [ sLL $1 $> $ WarningD (Warning n (WarningTxt $ unLoc $2))
-                       | n <- unLoc $1 ] }
+;
 
-deprecations :: { OrdList (LHsDecl RdrName) }
-        : deprecations ';' deprecation          { $1 `appOL` $3 }
-        | deprecations ';'                      { $1 }
-        | deprecation                           { $1 }
-        | {- empty -}                           { nilOL }
+deprecations
+        : deprecations ';' deprecation
+        | deprecations ';'
+        | deprecation
+        | {- empty -}
+;
 
 -- SUP: TEMPORARY HACK, not checking for `module Foo'
-deprecation :: { OrdList (LHsDecl RdrName) }
+deprecation
         : namelist strings
-                { toOL [ sLL $1 $> $ WarningD (Warning n (DeprecatedTxt $ unLoc $2))
-                       | n <- unLoc $1 ] }
--}
+;
 
 strings
     : STRING
@@ -750,46 +753,44 @@ stringlist
     : stringlist ',' STRING
     | STRING
 ;
-{-
+
 -----------------------------------------------------------------------------
 -- Annotations
-annotation :: { LHsDecl RdrName }
-    : '{-# ANN' name_var aexp '#-}'      { sLL $1 $> (AnnD $ HsAnnotation (ValueAnnProvenance (unLoc $2)) $3) }
-    | '{-# ANN' 'type' tycon aexp '#-}'  { sLL $1 $> (AnnD $ HsAnnotation (TypeAnnProvenance (unLoc $3)) $4) }
-    | '{-# ANN' 'module' aexp '#-}'      { sLL $1 $> (AnnD $ HsAnnotation ModuleAnnProvenance $3) }
-
+annotation
+    : '{-# ANN' name_var aexp '#-}'
+    | '{-# ANN' 'type' tycon aexp '#-}'
+    | '{-# ANN' 'module' aexp '#-}'
+;
 
 -----------------------------------------------------------------------------
 -- Foreign import and export declarations
 
-fdecl :: { LHsDecl RdrName }
 fdecl : 'import' callconv safety fspec
-                {% mkImport $2 $3 (unLoc $4) >>= return.sLL $1 $> }
       | 'import' callconv        fspec
-                {% do { d <- mkImport $2 PlaySafe (unLoc $3);
-                        return (sLL $1 $> d) } }
       | 'export' callconv fspec
-                {% mkExport $2 (unLoc $3) >>= return.sLL $1 $> }
+;
 
-callconv :: { CCallConv }
-          : 'stdcall'                   { StdCallConv }
-          | 'ccall'                     { CCallConv   }
-          | 'capi'                      { CApiConv    }
-          | 'prim'                      { PrimCallConv}
-          | 'javascript'                { JavaScriptCallConv }
+callconv
+          : 'stdcall'
+          | 'ccall'
+          | 'capi'
+          | 'prim'
+          | 'javascript'
+;
 
-safety :: { Safety }
-        : 'unsafe'                      { PlayRisky }
-        | 'safe'                        { PlaySafe }
-        | 'interruptible'               { PlayInterruptible }
+safety
+        : 'unsafe'
+        | 'safe'
+        | 'interruptible'
+;
 
-fspec :: { Located (Located FastString, Located RdrName, LHsType RdrName) }
-       : STRING var '::' sigtypedoc     { sLL $1 $> (L (getLoc $1) (getSTRING $1), $2, $4) }
-       |        var '::' sigtypedoc     { sLL $1 $> (noLoc nilFS, $1, $3) }
+fspec
+       : STRING var '::' sigtypedoc
+       |        var '::' sigtypedoc
          -- if the entity string is missing, it defaults to the empty string;
          -- the meaning of an empty entity string depends on the calling
          -- convention
--}
+;
 
 -----------------------------------------------------------------------------
 -- Type signatures
@@ -1366,16 +1367,14 @@ cvtopdecls0
         | cvtopdecls
 ;
 
-{-
 -----------------------------------------------------------------------------
 -- Tuple expressions
 
 -- "texp" is short for tuple expressions:
 -- things that can appear unparenthesized as long as they're
 -- inside parens or delimitted by commas
-texp :: { LHsExpr RdrName }
-        : exp                           { $1 }
-
+texp
+        : exp
         -- Note [Parsing sections]
         -- ~~~~~~~~~~~~~~~~~~~~~~~
         -- We include left and right sections here, which isn't
@@ -1387,26 +1386,28 @@ texp :: { LHsExpr RdrName }
         -- Then when converting expr to pattern we unravel it again
         -- Meanwhile, the renamer checks that real sections appear
         -- inside parens.
-        | infixexp qop        { sLL $1 $> $ SectionL $1 $2 }
-        | qopm infixexp       { sLL $1 $> $ SectionR $1 $2 }
-
+        | infixexp qop
+        | qopm infixexp
        -- View patterns get parenthesized above
-        | exp '->' texp   { sLL $1 $> $ EViewPat $1 $3 }
+        | exp '->' texp
+;
 
 -- Always at least one comma
-tup_exprs :: { [HsTupArg RdrName] }
-           : texp commas_tup_tail  { Present $1 : $2 }
-           | commas tup_tail       { replicate $1 missingTupArg ++ $2 }
+tup_exprs
+           : texp commas_tup_tail
+           | commas tup_tail
+;
 
 -- Always starts with commas; always follows an expr
-commas_tup_tail :: { [HsTupArg RdrName] }
-commas_tup_tail : commas tup_tail  { replicate ($1-1) missingTupArg ++ $2 }
+commas_tup_tail : commas tup_tail
+;
 
 -- Always follows a comma
-tup_tail :: { [HsTupArg RdrName] }
-          : texp commas_tup_tail        { Present $1 : $2 }
-          | texp                        { [Present $1] }
-          | {- empty -}                 { [missingTupArg] }
+tup_tail
+          : texp commas_tup_tail
+          | texp
+          | {- empty -}
+;
 
 -----------------------------------------------------------------------------
 -- List expressions
@@ -1414,51 +1415,41 @@ tup_tail :: { [HsTupArg RdrName] }
 -- The rules below are little bit contorted to keep lexps left-recursive while
 -- avoiding another shift/reduce-conflict.
 
-list :: { LHsExpr RdrName }
-        : texp    { sL1 $1 $ ExplicitList placeHolderType Nothing [$1] }
-        | lexps   { sL1 $1 $ ExplicitList placeHolderType Nothing
-                                                   (reverse (unLoc $1)) }
-        | texp '..'             { sLL $1 $> $ ArithSeq noPostTcExpr Nothing (From $1) }
-        | texp ',' exp '..'     { sLL $1 $> $ ArithSeq noPostTcExpr Nothing (FromThen $1 $3) }
-        | texp '..' exp         { sLL $1 $> $ ArithSeq noPostTcExpr Nothing (FromTo $1 $3) }
-        | texp ',' exp '..' exp { sLL $1 $> $ ArithSeq noPostTcExpr Nothing (FromThenTo $1 $3 $5) }
+list
+        : texp
+        | lexps
+        | texp '..'
+        | texp ',' exp '..'
+        | texp '..' exp
+        | texp ',' exp '..' exp
         | texp '|' flattenedpquals
-             {% checkMonadComp >>= \ ctxt ->
-                return (sL (comb2 $1 $>) $
-                        mkHsComp ctxt (unLoc $3) $1) }
+;
 
-lexps :: { Located [LHsExpr RdrName] }
-        : lexps ',' texp                { sLL $1 $> (((:) $! $3) $! unLoc $1) }
-        | texp ',' texp                 { sLL $1 $> [$3,$1] }
-
+lexps
+        : lexps ',' texp
+        | texp ',' texp
+;
 -----------------------------------------------------------------------------
 -- List Comprehensions
 
-flattenedpquals :: { Located [LStmt RdrName (LHsExpr RdrName)] }
-    : pquals   { case (unLoc $1) of
-                    [qs] -> sL1 $1 qs
-                    -- We just had one thing in our "parallel" list so
-                    -- we simply return that thing directly
+flattenedpquals
+    : pquals
+;
 
-                    qss -> sL1 $1 [sL1 $1 $ ParStmt [ParStmtBlock qs [] noSyntaxExpr |
-                                            qs <- qss]
-                                            noSyntaxExpr noSyntaxExpr]
-                    -- We actually found some actual parallel lists so
-                    -- we wrap them into as a ParStmt
-                }
+pquals
+    : squals '|' pquals
+    | squals
+;
 
-pquals :: { Located [[LStmt RdrName (LHsExpr RdrName)]] }
-    : squals '|' pquals     { L (getLoc $2) (reverse (unLoc $1) : unLoc $3) }
-    | squals                { L (getLoc $1) [reverse (unLoc $1)] }
-
-squals :: { Located [LStmt RdrName (LHsExpr RdrName)] }   -- In reverse order, because the last
+squals
                                         -- one can "grab" the earlier ones
-    : squals ',' transformqual               { sLL $1 $> [L (getLoc $3) ((unLoc $3) (reverse (unLoc $1)))] }
-    | squals ',' qual                        { sLL $1 $> ($3 : unLoc $1) }
-    | transformqual                          { sLL $1 $> [L (getLoc $1) ((unLoc $1) [])] }
-    | qual                                   { sL1 $1 [$1] }
---  | transformquals1 ',' '{|' pquals '|}'   { sLL $1 $> ($4 : unLoc $1) }
---  | '{|' pquals '|}'                       { sL1 $1 [$2] }
+    : squals ',' transformqual
+    | squals ',' qual
+    | transformqual
+    | qual
+--  | transformquals1 ',' '{|' pquals '|}'
+--  | '{|' pquals '|}'
+;
 
 
 -- It is possible to enable bracketing (associating) qualifier lists
@@ -1466,12 +1457,13 @@ squals :: { Located [LStmt RdrName (LHsExpr RdrName)] }   -- In reverse order, b
 -- consensus on the syntax, this feature is not being used until we
 -- get user demand.
 
-transformqual :: { Located ([LStmt RdrName (LHsExpr RdrName)] -> Stmt RdrName (LHsExpr RdrName)) }
+transformqual
                         -- Function is applied to a list of stmts *in order*
-    : 'then' exp                           { sLL $1 $> $ \ss -> (mkTransformStmt    ss $2)    }
-    | 'then' exp 'by' exp                  { sLL $1 $> $ \ss -> (mkTransformByStmt  ss $2 $4) }
-    | 'then' 'group' 'using' exp           { sLL $1 $> $ \ss -> (mkGroupUsingStmt   ss $4)    }
-    | 'then' 'group' 'by' exp 'using' exp  { sLL $1 $> $ \ss -> (mkGroupByUsingStmt ss $4 $6) }
+    : 'then' exp
+    | 'then' exp 'by' exp
+    | 'then' 'group' 'using' exp
+    | 'then' 'group' 'by' exp 'using' exp
+;
 
 -- Note that 'group' is a special_id, which means that you can enable
 -- TransformListComp while still using Data.List.group. However, this
@@ -1486,153 +1478,173 @@ transformqual :: { Located ([LStmt RdrName (LHsExpr RdrName)] -> Stmt RdrName (L
 -- Moreover, we allow explicit arrays with no element (represented by the nil
 -- constructor in the list case).
 
-parr :: { LHsExpr RdrName }
-        :                               { noLoc (ExplicitPArr placeHolderType []) }
-        | texp                          { sL1 $1 $ ExplicitPArr placeHolderType [$1] }
-        | lexps                         { sL1 $1 $ ExplicitPArr placeHolderType
-                                                       (reverse (unLoc $1)) }
-        | texp '..' exp                 { sLL $1 $> $ PArrSeq noPostTcExpr (FromTo $1 $3) }
-        | texp ',' exp '..' exp         { sLL $1 $> $ PArrSeq noPostTcExpr (FromThenTo $1 $3 $5) }
-        | texp '|' flattenedpquals      { sLL $1 $> $ mkHsComp PArrComp (unLoc $3) $1 }
+parr
+        :
+        | texp
+        | lexps
+        | texp '..' exp
+        | texp ',' exp '..' exp
+        | texp '|' flattenedpquals
+;
 
 -- We are reusing `lexps' and `flattenedpquals' from the list case.
 
 -----------------------------------------------------------------------------
 -- Guards
 
-guardquals :: { Located [LStmt RdrName (LHsExpr RdrName)] }
-    : guardquals1           { L (getLoc $1) (reverse (unLoc $1)) }
-
-guardquals1 :: { Located [LStmt RdrName (LHsExpr RdrName)] }
-    : guardquals1 ',' qual  { sLL $1 $> ($3 : unLoc $1) }
-    | qual                  { sL1 $1 [$1] }
+guardquals
+    : guardquals1
+;
+guardquals1
+    : guardquals1 ',' qual
+    | qual
+;
 
 -----------------------------------------------------------------------------
 -- Case alternatives
 
-altslist :: { Located [LMatch RdrName (LHsExpr RdrName)] }
-        : '{'            alts '}'       { sLL $1 $> (reverse (unLoc $2)) }
-        |     vocurly    alts  close    { L (getLoc $2) (reverse (unLoc $2)) }
-        | '{'                 '}'       { noLoc [] }
-        |     vocurly          close    { noLoc [] }
+altslist
+        : '{'            alts '}'
+        |     vocurly    alts  close
+        | '{'                 '}'
+        |     vocurly          close
+;
 
-alts    :: { Located [LMatch RdrName (LHsExpr RdrName)] }
-        : alts1                         { sL1 $1 (unLoc $1) }
-        | ';' alts                      { sLL $1 $> (unLoc $2) }
+alts
+        : alts1
+        | ';' alts
+;
 
-alts1   :: { Located [LMatch RdrName (LHsExpr RdrName)] }
-        : alts1 ';' alt                 { sLL $1 $> ($3 : unLoc $1) }
-        | alts1 ';'                     { sLL $1 $> (unLoc $1) }
-        | alt                           { sL1 $1 [$1] }
+alts1
+        : alts1 ';' alt
+        | alts1 ';'
+        | alt
+;
 
-alt     :: { LMatch RdrName (LHsExpr RdrName) }
-        : pat opt_sig alt_rhs           { sLL $1 $> (Match [$1] $2 (unLoc $3)) }
+alt
+        : pat opt_sig alt_rhs
+;
 
-alt_rhs :: { Located (GRHSs RdrName (LHsExpr RdrName)) }
-        : ralt wherebinds               { sLL $1 $> (GRHSs (unLoc $1) (unLoc $2)) }
+alt_rhs
+        : ralt wherebinds
+;
 
-ralt :: { Located [LGRHS RdrName (LHsExpr RdrName)] }
-        : '->' exp                      { sLL $1 $> (unguardedRHS $2) }
-        | gdpats                        { sL1 $1 (reverse (unLoc $1)) }
+ralt
+        : '->' exp
+        | gdpats
+;
 
-gdpats :: { Located [LGRHS RdrName (LHsExpr RdrName)] }
-        : gdpats gdpat                  { sLL $1 $> ($2 : unLoc $1) }
-        | gdpat                         { sL1 $1 [$1] }
+gdpats
+        : gdpats gdpat
+        | gdpat
+;
 
 -- optional semi-colons between the guards of a MultiWayIf, because we use
 -- layout here, but we don't need (or want) the semicolon as a separator (#7783).
-gdpatssemi :: { Located [LGRHS RdrName (LHsExpr RdrName)] }
-        : gdpatssemi gdpat optSemi      { sL (comb2 $1 $2) ($2 : unLoc $1) }
-        | gdpat optSemi                 { sL1 $1 [$1] }
+gdpatssemi
+        : gdpatssemi gdpat optSemi
+        | gdpat optSemi
+;
 
 -- layout for MultiWayIf doesn't begin with an open brace, because it's hard to
 -- generate the open brace in addition to the vertical bar in the lexer, and
 -- we don't need it.
-ifgdpats :: { Located [LGRHS RdrName (LHsExpr RdrName)] }
-         : '{' gdpatssemi '}'              { sLL $1 $> (unLoc $2) }
-         |     gdpatssemi close            { $1 }
+ifgdpats
+         : '{' gdpatssemi '}'
+         |     gdpatssemi close
+;
 
-gdpat   :: { LGRHS RdrName (LHsExpr RdrName) }
-        : '|' guardquals '->' exp               { sL (comb2 $1 $>) $ GRHS (unLoc $2) $4 }
+gdpat
+        : '|' guardquals '->' exp
+;
 
 -- 'pat' recognises a pattern, including one with a bang at the top
 --      e.g.  "!x" or "!(x,y)" or "C a b" etc
 -- Bangs inside are parsed as infix operator applications, so that
 -- we parse them right when bang-patterns are off
-pat     :: { LPat RdrName }
-pat     :  exp                  {% checkPattern empty $1 }
-        | '!' aexp              {% checkPattern empty (sLL $1 $> (SectionR (sL1 $1 (HsVar bang_RDR)) $2)) }
+pat     :  exp
+        | '!' aexp
+;
 
-bindpat :: { LPat RdrName }
-bindpat :  exp                  {% checkPattern (text "Possibly caused by a missing 'do'?") $1 }
-        | '!' aexp              {% checkPattern (text "Possibly caused by a missing 'do'?") (sLL $1 $> (SectionR (sL1 $1 (HsVar bang_RDR)) $2)) }
+bindpat :  exp
+        | '!' aexp
+;
 
-apat   :: { LPat RdrName }
-apat    : aexp                  {% checkPattern empty $1 }
-        | '!' aexp              {% checkPattern empty (sLL $1 $> (SectionR (sL1 $1 (HsVar bang_RDR)) $2)) }
+apat    : aexp
+        | '!' aexp
+;
 
-apats  :: { [LPat RdrName] }
-        : apat apats            { $1 : $2 }
-        | {- empty -}           { [] }
+apats
+        : apat apats
+        | {- empty -}
+;
 
 -----------------------------------------------------------------------------
 -- Statement sequences
 
-stmtlist :: { Located [LStmt RdrName (LHsExpr RdrName)] }
-        : '{'           stmts '}'       { sLL $1 $> (unLoc $2) }
-        |     vocurly   stmts close     { $2 }
+stmtlist
+        : '{'           stmts '}'
+        |     vocurly   stmts close
+;
 
 --      do { ;; s ; s ; ; s ;; }
 -- The last Stmt should be an expression, but that's hard to enforce
 -- here, because we need too much lookahead if we see do { e ; }
 -- So we use BodyStmts throughout, and switch the last one over
 -- in ParseUtils.checkDo instead
-stmts :: { Located [LStmt RdrName (LHsExpr RdrName)] }
-        : stmt stmts_help               { sLL $1 $> ($1 : unLoc $2) }
-        | ';' stmts                     { sLL $1 $> (unLoc $2) }
-        | {- empty -}                   { noLoc [] }
+stmts
+        : stmt stmts_help
+        | ';' stmts
+        | {- empty -}
+;
 
-stmts_help :: { Located [LStmt RdrName (LHsExpr RdrName)] } -- might be empty
-        : ';' stmts                     { sLL $1 $> (unLoc $2) }
-        | {- empty -}                   { noLoc [] }
+stmts_help                             -- might be empty
+        : ';' stmts
+        | {- empty -}
+;
 
 -- For typing stmts at the GHCi prompt, where
 -- the input may consist of just comments.
-maybe_stmt :: { Maybe (LStmt RdrName (LHsExpr RdrName)) }
-        : stmt                          { Just $1 }
-        | {- nothing -}                 { Nothing }
+maybe_stmt
+        : stmt
+        | {- nothing -}
+;
 
-stmt  :: { LStmt RdrName (LHsExpr RdrName) }
-        : qual                          { $1 }
-        | 'rec' stmtlist                { sLL $1 $> $ mkRecStmt (unLoc $2) }
+stmt
+        : qual
+        | 'rec' stmtlist
+;
 
-qual  :: { LStmt RdrName (LHsExpr RdrName) }
-    : bindpat '<-' exp                  { sLL $1 $> $ mkBindStmt $1 $3 }
-    | exp                               { sL1 $1 $ mkBodyStmt $1 }
-    | 'let' binds                       { sLL $1 $> $ LetStmt (unLoc $2) }
+qual
+    : bindpat '<-' exp
+    | exp
+    | 'let' binds
+;
 
 -----------------------------------------------------------------------------
 -- Record Field Update/Construction
 
-fbinds  :: { ([HsRecField RdrName (LHsExpr RdrName)], Bool) }
-        : fbinds1                       { $1 }
-        | {- empty -}                   { ([], False) }
+fbinds
+        : fbinds1
+        | {- empty -}
+;
 
-fbinds1 :: { ([HsRecField RdrName (LHsExpr RdrName)], Bool) }
-        : fbind ',' fbinds1             { case $3 of (flds, dd) -> ($1 : flds, dd) }
-        | fbind                         { ([$1], False) }
-        | '..'                          { ([],   True) }
+fbinds1 : fbind ',' fbinds1
+        | fbind
+        | '..'
+;
 
-fbind   :: { HsRecField RdrName (LHsExpr RdrName) }
-        : qvar '=' texp { HsRecField $1 $3                False }
+fbind
+        : qvar '=' texp
                         -- RHS is a 'texp', allowing view patterns (Trac #6038)
                         -- and, incidentaly, sections.  Eg
                         -- f (R { x = show -> s }) = ...
 
-        | qvar          { HsRecField $1 placeHolderPunRhs True }
+        | qvar
                         -- In the punning case, use a place-holder
                         -- The renamer fills in the final value
--}
+;
+
 -----------------------------------------------------------------------------
 -- Implicit Parameter Bindings
 
