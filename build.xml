@@ -36,14 +36,6 @@
         </sequential>
     </target>
 
-    <target name="compile.haskell.kit.lexer">
-        <sequential>
-            <delete file="grammar/src/lexer/_KitHaskellLexer.java"/>
-            <jflex file="grammar/src/lexer/Haskell.flex"
-                   skeleton="tools/idea-flex.skeleton"/>
-        </sequential>
-    </target>
-
     <target name="compile.grammar.lexer">
         <sequential>
             <delete file="./generator/src/org/jetbrains/generator/GrammarLexer.java"/>
