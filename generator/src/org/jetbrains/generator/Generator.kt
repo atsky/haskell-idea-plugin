@@ -28,8 +28,11 @@ class Generator(val grammar: Grammar) {
 
 
         for (token in grammar.tokens) {
-            tokens[token.name] = token;
-            tokens[token.text] = token;
+            if (token.useText) {
+                tokens["'${token.text}'"] = token;
+            } else {
+                tokens[token.text] = token;
+            }
         }
 
         for (rule in grammar.rules) {
@@ -135,10 +138,10 @@ class Generator(val grammar: Grammar) {
             line("import org.jetbrains.grammar.dumb.Rule")
             line()
             line()
-            line("public class HaskellParser(state : ParserState) : BaseHaskellParser(state) {")
+            line("public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {")
 
             indent {
-                line("override fun getGrammar() : List<Rule> {")
+                line("override fun getGrammar() : Map<String, Rule> {")
                 indent {
                     line("return grammar {")
                         indent {
@@ -200,8 +203,8 @@ class Generator(val grammar: Grammar) {
                 if (!first) {
                     builder.append(", ")
                 }
-                if (tokens.contains(atom.text)) {
-                    val tokenDescription = tokens[atom.text]!!
+                if (tokens.containsKey(atom.toString())) {
+                    val tokenDescription = tokens[atom.toString()]!!
                     builder.append(tokenDescription.name.toUpperCase())
                 } else {
                     builder.append("\"" + atom.text + "\"")
