@@ -80,6 +80,9 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant()
         variant(FAMILY)
       }
+      rule("conid") {
+        variant(CONID)
+      }
       rule("docnext") {
         variant(DOCCOMMENTNEXT)
       }
@@ -104,12 +107,12 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("qtyconsym")
         variant(BACKQUOTE, "qtycon", BACKQUOTE)
       }
-      rule("maybe_src") {
-        variant(SOURCE_PRAG, CLOSE_PRAG)
-        variant()
-      }
       rule("maybe_docnext") {
         variant("docnext")
+        variant()
+      }
+      rule("maybe_src") {
+        variant(SOURCE_PRAG, CLOSE_PRAG)
         variant()
       }
       rule("prec") {
@@ -142,8 +145,17 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant()
         variant(DCOLON, "atype")
       }
+      rule("qcon") {
+        variant("qconid")
+        variant(OPAREN, "qconsym", CPAREN)
+        variant("sysdcon")
+      }
       rule("cvtopdecls") {
         variant("topdecls")
+      }
+      rule("qconop") {
+        variant("qconsym")
+        variant(BACKQUOTE, "qconid", BACKQUOTE)
       }
       rule("header_body2") {
         variant(OCURLY, "importdecls")
@@ -190,13 +202,13 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant()
         variant("varid", "vars0")
       }
+      rule("docsection") {
+        variant(DOCSECTION)
+      }
       rule("qvar") {
         variant("qvarid")
         variant(OPAREN, "varsym", CPAREN)
         variant(OPAREN, "qvarsym1", CPAREN)
-      }
-      rule("docsection") {
-        variant(DOCSECTION)
       }
       rule("body2") {
         variant(OCURLY, "top", CCURLY)
@@ -215,6 +227,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant(OCURLY, "decls", CCURLY)
         variant(VOCURLY, "decls", "close")
       }
+      rule("name_boolformula") {
+        variant("name_boolformula_and")
+        variant("name_boolformula_and", VBAR, "name_boolformula")
+      }
       rule("fds1") {
         variant("fds1", COMMA, "fd")
         variant("fd")
@@ -226,6 +242,11 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("modid") {
         variant(CONID)
         variant(QCONID)
+      }
+      rule("con") {
+        variant("conid")
+        variant(OPAREN, "consym", CPAREN)
+        variant("sysdcon")
       }
       rule("body") {
         variant(OCURLY, "top", CCURLY)
@@ -357,6 +378,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("importdecls", SEMI, "cvtopdecls")
         variant("cvtopdecls")
       }
+      rule("conop") {
+        variant("consym")
+        variant(BACKQUOTE, "conid", BACKQUOTE)
+      }
       rule("export") {
         variant("qcname_ext", "export_subspec")
         variant(MODULE, "modid")
@@ -375,6 +400,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("context", DARROW, "ctype")
         variant("ipvar", DCOLON, "type")
         variant("type")
+      }
+      rule("name_boolformula_atom") {
+        variant(OPAREN, "name_boolformula", CPAREN)
+        variant("name_var")
       }
       rule("inst_types1") {
         variant("inst_type")
@@ -424,6 +453,11 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("importdecl") {
         variant(IMPORT, "maybe_src", "maybe_safe", "optqualified", "maybe_pkg", "modid", "maybeas", "maybeimpspec")
       }
+      rule("qconid") {
+        variant("conid")
+        variant(QCONID)
+        variant(PREFIXQCONSYM)
+      }
       rule("varids0") {
         variant()
         variant("varids0", "tyvar")
@@ -445,6 +479,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant(INFIX)
         variant(INFIXL)
         variant(INFIXR)
+      }
+      rule("name_boolformula_opt") {
+        variant("name_boolformula")
+        variant()
       }
       rule("pattern_synonym_decl") {
         variant(PATTERN, "pat", EQUAL, "pat")
@@ -468,13 +506,13 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("ops", COMMA, "op")
         variant("op")
       }
-      rule("where_decls") {
-        variant(WHERE, OCURLY, "decls", CCURLY)
-        variant(WHERE, VOCURLY, "decls", "close")
-      }
       rule("maybe_docprev") {
         variant("docprev")
         variant()
+      }
+      rule("where_decls") {
+        variant(WHERE, OCURLY, "decls", CCURLY)
+        variant(WHERE, VOCURLY, "decls", "close")
       }
       rule("inst_decl") {
         variant(INSTANCE, "overlap_pragma", "inst_type", "where_inst")
@@ -586,9 +624,20 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("{-# INCOHERENT", CLOSE_PRAG)
         variant()
       }
+      rule("name_var") {
+        variant("var")
+        variant("con")
+      }
       rule("cvtopbody") {
         variant(OCURLY, "cvtopdecls0", CCURLY)
         variant(VOCURLY, "cvtopdecls0", "close")
+      }
+      rule("sysdcon") {
+        variant(OPAREN, CPAREN)
+        variant(OPAREN, "commas", CPAREN)
+        variant(OUBXPAREN, CUBXPAREN)
+        variant(OUBXPAREN, "commas", CUBXPAREN)
+        variant(OBRACK, CBRACK)
       }
       rule("kind") {
         variant("bkind")
@@ -612,6 +661,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("maybedocheader", MODULE, "modid", "maybemodwarning", "maybeexports", WHERE, "body")
         variant("body2")
       }
+      rule("consym") {
+        variant(CONSYM)
+        variant(COLON)
+      }
       rule("decl_no_th") {
         variant("sigdecl")
         variant(BANG, "aexp", "rhs")
@@ -625,6 +678,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       }
       rule("acmd") {
         variant("aexp2")
+      }
+      rule("qconsym") {
+        variant("consym")
+        variant(QCONSYM)
       }
       rule("fielddecl") {
         variant("maybe_docnext", "sig_vars", DCOLON, "ctype", "maybe_docprev")
@@ -751,6 +808,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant(FORALL, "tv_bndrs", DOT)
         variant()
       }
+      rule("con_list") {
+        variant("con")
+        variant("con", COMMA, "con_list")
+      }
       rule("data_or_newtype") {
         variant(DATA)
         variant(NEWTYPE)
@@ -773,6 +834,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant(DEPRECATED_PRAG, "strings", CLOSE_PRAG)
         variant(WARNING_PRAG, "strings", CLOSE_PRAG)
         variant()
+      }
+      rule("name_boolformula_and") {
+        variant("name_boolformula_atom")
+        variant("name_boolformula_atom", COMMA, "name_boolformula_and")
       }
       rule("capi_ctype") {
         variant(CTYPE, STRING, STRING, CLOSE_PRAG)
@@ -867,6 +932,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("header_body") {
         variant(OCURLY, "importdecls")
         variant(VOCURLY, "importdecls")
+      }
+      rule("namelist") {
+        variant("name_var")
+        variant("name_var", COMMA, "namelist")
       }
       rule("optSemi") {
         variant(SEMI)

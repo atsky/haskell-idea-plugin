@@ -65,7 +65,7 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
         if (currentType == term.tokenType) {
             newStates.add(state.nextToken());
         } else {
-            println("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
+            //println("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
         }
     }
 
