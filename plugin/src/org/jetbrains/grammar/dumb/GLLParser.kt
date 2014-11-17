@@ -43,6 +43,8 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
                             val currentType = tokens[state.termIndex]
                             if (currentType == term.tokenType) {
                                 newStates.add(state.nextToken());
+                            } else {
+                                println("index=${state.termIndex}, ${currentType} != ${term.tokenType}, rule = ${state.rule.name}")
                             }
                         }
                         is NotTerminal ->
@@ -52,9 +54,6 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
             }
             states = newStates;
             System.out.println("-----${states.size}-----")
-            for (state in states) {
-                System.out.println(state)
-            }
         }
     }
 

@@ -11,6 +11,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.token.NEW_LINE
 import org.jetbrains.grammar.dumb.GLLParser
+import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 
 /**
  * Created by atsky on 15/11/14.
@@ -18,7 +19,7 @@ import org.jetbrains.grammar.dumb.GLLParser
 fun main(args : Array<String>) {
     val data = readData()
 
-    val lexer = HaskellLexer()
+    val lexer = HaskellIndentLexer()
     lexer.start(data)
 
     val tokens = ArrayList<IElementType>()
@@ -34,11 +35,12 @@ fun main(args : Array<String>) {
         lexer.advance();
     }
     System.out.println()
+    System.out.println(tokens)
 
     val grammar = HaskellParser(null).getGrammar()
-    //for(rule in grammar) {
-    //    System.out.println(rule)
-    //}
+    for(rule in grammar) {
+        System.out.println(rule)
+    }
 
     GLLParser(grammar, tokens).parse()
 }

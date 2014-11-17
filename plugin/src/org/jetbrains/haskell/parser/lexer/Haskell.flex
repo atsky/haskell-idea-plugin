@@ -5,6 +5,7 @@ import com.intellij.lexer.*;
 import com.intellij.psi.*;
 import org.jetbrains.haskell.parser.token.*;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.grammar.HaskellLexerTokens;
 
 %%
 
@@ -197,4 +198,6 @@ EOL_COMMENT = "--"[^\n]*
 "'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
 {large}{idchar}*      { return TokenPackage.getTYPE_OR_CONS();}
 {small}{idchar}*      { return TokenPackage.getID(); }
+({large}{idchar}*".")+{large}{idchar}*  { return HaskellLexerTokens.QCONID;}
+({large}{idchar}*".")+{small}{idchar}*  { return HaskellLexerTokens.QVARID; }
 .                     { return TokenType.BAD_CHARACTER; }
