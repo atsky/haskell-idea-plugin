@@ -645,23 +645,22 @@ where_inst  -- Reversed
         | {- empty -}
 ;
 
-{-
+
 -- Declarations in binding groups other than classes and instances
 --
-decls   :: { Located (OrdList (LHsDecl RdrName)) }
-        : decls ';' decl                { let { this = unLoc $3;
-                                    rest = unLoc $1;
-                                    these = rest `appOL` this }
-                              in rest `seq` this `seq` these `seq`
-                                    sLL $1 $> these }
-        | decls ';'                     { sLL $1 $> (unLoc $1) }
-        | decl                          { $1 }
-        | {- empty -}                   { noLoc nilOL }
+decls
+        : decls ';' decl
+        | decls ';'
+        | decl
+        | {- empty -}
+;
 
-decllist :: { Located (OrdList (LHsDecl RdrName)) }
-        : '{'            decls '}'      { sLL $1 $> (unLoc $2) }
-        |     vocurly    decls close    { $2 }
+decllist
+        : '{'            decls '}'
+        |     vocurly    decls close
+;
 
+{-
 -- Binding groups other than those of class and instance declarations
 --
 binds   ::  { Located (HsLocalBinds RdrName) }          -- May have implicit parameters
