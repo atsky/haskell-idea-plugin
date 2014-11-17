@@ -9,6 +9,7 @@ class ParserState(val rule : Rule,
                   val variant : Variant,
                   val ruleIndex : Int,
                   val termIndex : Int,
+                  val trees : List<ResultTree>,
                   val parent : ParserState?) {
 
     {
@@ -17,9 +18,18 @@ class ParserState(val rule : Rule,
         }
     }
 
-    fun next(termIndex: Int) = ParserState(rule, variant, ruleIndex + 1, termIndex, parent)
+    fun next(termIndex: Int,
+             next: NonTerminalTree): ParserState {
+        val newTrees = ArrayList(trees);
+        newTrees.add(next)
+        return ParserState(rule, variant, ruleIndex + 1, termIndex, newTrees, parent)
+    }
 
-    fun nextToken() = ParserState(rule, variant, ruleIndex + 1, termIndex + 1, parent)
+    fun nextToken() : ParserState {
+        val newTrees = ArrayList(trees);
+        newTrees.add(TerminalTree((variant.terms[ruleIndex] as Terminal).tokenType))
+        return ParserState(rule, variant, ruleIndex + 1, termIndex + 1, newTrees, parent)
+    }
 
     fun getStack() : List<String> {
         val stack = ArrayList<String>()

@@ -16,7 +16,7 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
         var states = ArrayList<ParserState>();
 
         for (variant in rule.variants) {
-            states.add(ParserState(rule, variant, 0, 0, null))
+            states.add(ParserState(rule, variant, 0, 0, listOf(), null))
         }
 
         @main_loop
@@ -25,30 +25,28 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
 
 
             for (state in states) {
-                if (tokens.size == state.termIndex) {
-                    System.out.println("done!")
-                    break@main_loop
-                }
                 if (state.variant.terms.size == state.ruleIndex) {
-                    if (state.rule.name == "topdecls") {
-                        println()
-                    }
+                    val tree = NonTerminalTree(state.rule.name, state.trees)
                     for (left in state.rule.left) {
-                        newStates.add(ParserState(state.rule, left, 1, state.termIndex, state.parent))
+                        newStates.add(ParserState(state.rule, left, 1, state.termIndex, listOf(tree), state.parent))
                     }
                     val parent = state.parent
                     if (parent != null) {
-                        newStates.add(parent.next(state.termIndex));
+                        newStates.add(parent.next(state.termIndex, tree));
                         println("done ${state.termIndex}, stack = ${state.getStack()}")
                     } else {
-                        throw RuntimeException()
+                        println(tree)
+                        break@main_loop
                     }
                 } else {
                     val term = state.variant.terms[state.ruleIndex]
 
                     when (term) {
-                        is Terminal ->
-                            addTerm(newStates, state, term)
+                        is Terminal -> {
+                            if (state.termIndex < tokens.size) {
+                                addTerm(newStates, state, term)
+                            }
+                        }
 
                         is NotTerminal ->
                             addNonTerminal(term, state, newStates)
@@ -67,20 +65,17 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
         if (currentType == term.tokenType) {
             newStates.add(state.nextToken());
         } else {
-            //println("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
+            println("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
         }
     }
 
     private fun addNonTerminal(term: NotTerminal,
                                state : ParserState,
                                newStates: HashSet<ParserState>) {
-        if ("module" == term.rule) {
-            println();
-        }
         val nextRule = grammar[term.rule]
         if (nextRule != null) {
             for (variant in nextRule.variants) {
-                val nextState = ParserState(nextRule, variant, 0, state.termIndex, state)
+                val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), state)
                 newStates.add(nextState)
             }
         } else {

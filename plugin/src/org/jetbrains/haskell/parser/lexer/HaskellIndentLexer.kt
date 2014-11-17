@@ -45,6 +45,8 @@ public class HaskellIndentLexer() : LexerBase() {
 
 
             if (tokenType != NEW_LINE &&
+                tokenType != TokenType.WHITE_SPACE &&
+                tokenType != NEW_LINE &&
                 tokenType != BLOCK_COMMENT) {
                 if (writeIndent) {
                     val indent = tokenStart - lineStart
@@ -68,11 +70,18 @@ public class HaskellIndentLexer() : LexerBase() {
                             text.add("")
                         }
                         if (indentStack!!.head > indent) {
+                            // TODO: Fix this
                             tokens.add(HaskellLexerTokens.VCCURLY)
                             starts.add(tokenStart)
                             ends.add(tokenStart)
                             text.add("")
+
                             indentStack = indentStack!!.tail
+
+                            tokens.add(HaskellLexerTokens.SEMI)
+                            starts.add(tokenStart)
+                            ends.add(tokenStart)
+                            text.add("")
                         }
                     }
                 }

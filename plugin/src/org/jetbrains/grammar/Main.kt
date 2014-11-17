@@ -12,6 +12,8 @@ import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.token.NEW_LINE
 import org.jetbrains.grammar.dumb.GLLParser
 import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
+import org.jetbrains.haskell.parser.token.COMMENTS
+import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
 
 /**
  * Created by atsky on 15/11/14.
@@ -28,7 +30,8 @@ fun main(args : Array<String>) {
         val tokenType = lexer.getTokenType()
         System.out.print(tokenType)
         if (tokenType != TokenType.WHITE_SPACE &&
-            tokenType != NEW_LINE) {
+            tokenType != NEW_LINE &&
+            tokenType != BLOCK_COMMENT) {
             tokens.add(tokenType)
         }
         System.out.print(" ")

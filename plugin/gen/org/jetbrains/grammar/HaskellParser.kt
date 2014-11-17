@@ -24,6 +24,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("tyvar")
         variant(OPAREN, "tyvar", DCOLON, "kind", CPAREN)
       }
+      rule("qop") {
+        variant("qvarop")
+        variant("qconop")
+      }
       rule("cvtopdecls0") {
         variant()
         variant("cvtopdecls")
@@ -39,6 +43,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("decllist_inst") {
         variant(OCURLY, "decls_inst", CCURLY)
         variant(VOCURLY, "decls_inst", "close")
+      }
+      rule("qvaropm") {
+        variant("qvarsym_no_minus")
+        variant(BACKQUOTE, "qvarid", BACKQUOTE)
       }
       rule("qvarsym1") {
         variant(QVARSYM)
@@ -211,6 +219,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("fds1", COMMA, "fd")
         variant("fd")
       }
+      rule("qvarop") {
+        variant("qvarsym")
+        variant(BACKQUOTE, "qvarid", BACKQUOTE)
+      }
       rule("modid") {
         variant(CONID)
         variant(QCONID)
@@ -287,6 +299,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("where_cls") {
         variant(WHERE, "decllist_cls")
         variant()
+      }
+      rule("varop") {
+        variant("varsym")
+        variant(BACKQUOTE, "varid", BACKQUOTE)
       }
       rule("at_decl_cls") {
         variant(DATA, "opt_family", "type", "opt_kind_sig")
@@ -470,6 +486,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("con_list", DCOLON, "sigtype")
         variant("oqtycon", OCURLY, "fielddecls", CCURLY, DCOLON, "sigtype")
       }
+      rule("op") {
+        variant("varop")
+        variant("conop")
+      }
       rule("sig_vars") {
         variant("sig_vars", COMMA, "var")
         variant("var")
@@ -502,6 +522,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
       rule("maybeimpspec") {
         variant("impspec")
         variant()
+      }
+      rule("qopm") {
+        variant("qvaropm")
+        variant("qconop")
       }
       rule("docdecld") {
         variant("docnext")

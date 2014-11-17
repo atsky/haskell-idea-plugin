@@ -1767,34 +1767,40 @@ tyconsym
         | '*'
         | '-'
 ;
-{-
+
 -----------------------------------------------------------------------------
 -- Operators
 
-op      :: { Located RdrName }   -- used in infix decls
-        : varop                 { $1 }
-        | conop                 { $1 }
+op                               -- used in infix decls
+        : varop
+        | conop
+;
 
-varop   :: { Located RdrName }
-        : varsym                { $1 }
-        | '`' varid '`'         { sLL $1 $> (unLoc $2) }
+varop
+        : varsym
+        | '`' varid '`'
+;
 
-qop     :: { LHsExpr RdrName }   -- used in sections
-        : qvarop                { sL1 $1 $ HsVar (unLoc $1) }
-        | qconop                { sL1 $1 $ HsVar (unLoc $1) }
+qop                              -- used in sections
+        : qvarop
+        | qconop
+;
 
-qopm    :: { LHsExpr RdrName }   -- used in sections
-        : qvaropm               { sL1 $1 $ HsVar (unLoc $1) }
-        | qconop                { sL1 $1 $ HsVar (unLoc $1) }
+qopm                             -- used in sections
+        : qvaropm
+        | qconop
+;
 
-qvarop :: { Located RdrName }
-        : qvarsym               { $1 }
-        | '`' qvarid '`'        { sLL $1 $> (unLoc $2) }
+qvarop
+        : qvarsym
+        | '`' qvarid '`'
+;
 
-qvaropm :: { Located RdrName }
-        : qvarsym_no_minus      { $1 }
-        | '`' qvarid '`'        { sLL $1 $> (unLoc $2) }
--}
+qvaropm
+        : qvarsym_no_minus
+        | '`' qvarid '`'
+;
+
 -----------------------------------------------------------------------------
 -- Type variables
 
