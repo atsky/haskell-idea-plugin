@@ -1,9 +1,9 @@
 package org.jetbrains.grammar.dumb
 
 
-class Rule(val name : String,
-           val variants : List<Variant>,
-           val left : List<Variant>) {
+class Rule(public val name : String,
+           public val variants : List<Variant>,
+           public val left : List<Variant>) {
 
     override fun toString() : String {
         val n = name + ":\n"

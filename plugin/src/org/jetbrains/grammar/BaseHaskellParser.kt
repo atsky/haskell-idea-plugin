@@ -10,8 +10,8 @@ import org.jetbrains.grammar.dumb.GrammarBuilder
 
 open class BaseHaskellParser(val state : ParserState?) {
 
-    open fun getGrammar() : List<Rule> {
-        return listOf()
+    open fun getGrammar() : Map<String, Rule> {
+        return mapOf()
     }
 
     fun makeMark() : ParserMarker {
@@ -27,7 +27,7 @@ open class BaseHaskellParser(val state : ParserState?) {
         return false;
     }
 
-    fun grammar(body : GrammarBuilder.() -> Unit) : List<Rule> {
+    fun grammar(body : GrammarBuilder.() -> Unit) : Map<String, Rule> {
         val builder = GrammarBuilder()
         builder.body()
         return builder.rules;
