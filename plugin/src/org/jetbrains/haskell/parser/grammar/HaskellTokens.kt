@@ -25,6 +25,6 @@ val TYPE_TOKEN              = HaskellCompositeElementType("Type")
 val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")
 val CLASS_DECLARATION       = HaskellCompositeElementType("Class declaration", ::ClassDeclaration)
 val INSTANCE_DECLARATION    = HaskellCompositeElementType("Instance declaration", ::InstanceDeclaration)
-val VALUE_DECLARATION       = HaskellCompositeElementType("Value declaration", ::ValueDeclaration)
+val VALUE_SIGNATURE         = HaskellCompositeElementType("Value signature", ::ValueSignature)
 val VALUE_BODY              = HaskellCompositeElementType("Value body" , ::ValueBody)
 

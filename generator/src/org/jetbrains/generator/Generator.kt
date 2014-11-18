@@ -61,7 +61,7 @@ class Generator(val grammar: Grammar) {
 
     fun generate() {
         generateLexerTokens(grammar.tokens)
-        generateTokens()
+        //generateTokens()
         generateParser();
     }
 
@@ -132,13 +132,12 @@ class Generator(val grammar: Grammar) {
         with(result) {
             line("package org.jetbrains.grammar")
             line()
-            line("import org.jetbrains.grammar.HaskellTokens")
             line("import org.jetbrains.grammar.HaskellLexerTokens.*")
-            line("import org.jetbrains.haskell.parser.rules.ParserState")
+            line("import com.intellij.lang.PsiBuilder")
             line("import org.jetbrains.grammar.dumb.Rule")
             line()
             line()
-            line("public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {")
+            line("public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {")
 
             indent {
                 line("override fun getGrammar() : Map<String, Rule> {")

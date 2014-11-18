@@ -9,7 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class ClassDeclaration(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    fun getValueDeclarationList() : List<ValueDeclaration> {
+    fun getValueDeclarationList() : List<ValueSignature> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 }

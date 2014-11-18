@@ -1185,9 +1185,13 @@ decl_no_th
                                 -- Turn it all into an expression so that
                                 -- checkPattern can check that bangs are enabled
 
-        | infixexp opt_sig rhs
+        | pattern_decl
         | pattern_synonym_decl
         | docdecl
+;
+
+pattern_decl :
+        infixexp opt_sig rhs
 ;
 
 decl

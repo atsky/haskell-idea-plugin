@@ -356,13 +356,13 @@ public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {
         variant(CORE_PRAG, STRING, CLOSE_PRAG, "exp")
         variant("fexp")
       }
+      rule("dbind") {
+        variant("ipvar", EQUAL, "exp")
+      }
       rule("gadt_constrlist") {
         variant(WHERE, OCURLY, "gadt_constrs", CCURLY)
         variant(WHERE, VOCURLY, "gadt_constrs", "close")
         variant()
-      }
-      rule("dbind") {
-        variant("ipvar", EQUAL, "exp")
       }
       rule("opt_kind_sig") {
         variant()
@@ -821,7 +821,7 @@ public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {
       rule("decl_no_th") {
         variant("sigdecl")
         variant(BANG, "aexp", "rhs")
-        variant("infixexp", "opt_sig", "rhs")
+        variant("pattern_decl")
         variant("pattern_synonym_decl")
         variant("docdecl")
       }
@@ -925,6 +925,9 @@ public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {
       }
       rule("docdecl") {
         variant("docdecld")
+      }
+      rule("pattern_decl") {
+        variant("infixexp", "opt_sig", "rhs")
       }
       rule("tycon") {
         variant(CONID)
