@@ -3,7 +3,6 @@ package org.jetbrains.grammar
 import java.io.File
 import java.io.FileReader
 import org.jetbrains.haskell.parser.lexer.HaskellLexer
-import org.jetbrains.haskell.parser.rules.ParserState
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.impl.PsiBuilderImpl
 import java.util.ArrayList

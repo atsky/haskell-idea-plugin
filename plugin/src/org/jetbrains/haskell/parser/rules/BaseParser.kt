@@ -3,30 +3,6 @@ package org.jetbrains.haskell.parser.rules
 import com.intellij.lang.PsiBuilder
 import com.intellij.psi.tree.IElementType
 
-inline fun atom(state: ParserState, body: () -> Boolean): Boolean {
-    val marker = state.mark()
-    val result = body()
-    if (result) {
-        marker.drop();
-    } else {
-        marker.rollbackTo()
-    }
-    return result
-}
-
-
-public fun notEmptyList(element : Rule, separator : Rule? = null) : Rule = ListRule(element, separator, false)
-
-public fun aList(element : Rule, separator : Rule? = null) : Rule = ListRule(element, separator, true)
-
-public fun maybe(rule : Rule) : Rule = object : Rule {
-
-    override fun parse(state: ParserState): Boolean {
-        rule.parse(state)
-        return true
-    }
-}
-
 public open class BaseParser(public val root: IElementType, public val builder: PsiBuilder) {
 
     fun done(marker: PsiBuilder.Marker, result: Boolean, elementType: IElementType): Boolean {

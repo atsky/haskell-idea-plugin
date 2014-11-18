@@ -113,7 +113,7 @@ public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
         VERTICAL_BAR,
         UNDERSCORE)
 
-public val CHARACTER: HaskellToken            = HaskellToken("character")
+public val CHARACTER: HaskellToken            = HaskellLexerTokens.CHAR
 public val BLOCK_COMMENT: HaskellToken        = HaskellToken("COMMENT")
 public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")
 public val ID : HaskellToken                  = HaskellLexerTokens.VARID
@@ -123,8 +123,8 @@ public val OPERATOR_CONS: HaskellToken        = HaskellLexerTokens.CONSYM
 public val PRAGMA : HaskellToken              = HaskellToken("PRAGMA")
 public val STRING : HaskellToken              = HaskellLexerTokens.STRING
 public val TYPE_OR_CONS: HaskellToken         = HaskellLexerTokens.CONID
-public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellToken("VIRTUAL_LEFT_PAREN")
-public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellToken("VIRTUAL_RIGHT_PAREN")
+public val VIRTUAL_LEFT_PAREN : HaskellToken  = HaskellLexerTokens.VOCURLY
+public val VIRTUAL_RIGHT_PAREN : HaskellToken = HaskellLexerTokens.VCCURLY
 public val VIRTUAL_SEMICOLON : HaskellToken   = HaskellToken("VIRTUAL_SEMICOLON")
 
 public val TH_VAR_QUOTE : HaskellToken        = HaskellToken("'")

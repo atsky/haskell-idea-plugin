@@ -1,7 +1,6 @@
 package org.jetbrains.grammar
 
 import org.jetbrains.grammar.HaskellLexerTokens.*
-import org.jetbrains.haskell.parser.rules.ParserState
 import org.jetbrains.grammar.dumb.Rule
 import com.intellij.lang.PsiBuilder
 

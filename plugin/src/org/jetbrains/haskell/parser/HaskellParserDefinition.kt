@@ -18,12 +18,17 @@ import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 import org.jetbrains.haskell.parser.token.*
 import com.intellij.extapi.psi.ASTWrapperPsiElement
+//import org.jetbrains.grammar.HaskellTokens
+import org.jetbrains.haskell.psi.Module
+import java.util.ArrayList
+import org.jetbrains.grammar.dumb.GLLParser
+import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 
 
 public class HaskellParserDefinition() : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
-    override fun createLexer(project: Project?): Lexer = HaskellLexer()
+    override fun createLexer(project: Project?): Lexer = HaskellIndentLexer()
 
     override fun getFileNodeType(): IFileElementType = HASKELL_FILE
 
@@ -37,7 +42,7 @@ public class HaskellParserDefinition() : ParserDefinition {
     override fun createParser(project: Project?): PsiParser =
         object : PsiParser {
             override fun parse(root: IElementType?, builder: PsiBuilder?): ASTNode {
-                return HaskellParser(root!!, builder!!).parse()
+                return org.jetbrains.grammar.HaskellParser(builder!!).parse(root!!)
             }
         }
 
@@ -57,7 +62,6 @@ public class HaskellParserDefinition() : ParserDefinition {
                 return constructor(node)
             }
         }
-
         return ASTWrapperPsiElement(node)
     }
 

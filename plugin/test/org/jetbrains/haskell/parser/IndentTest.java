@@ -1,7 +1,6 @@
 package org.jetbrains.haskell.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.cabal.parser.CaballParserDefinition;
 import org.junit.Test;
 
 public class IndentTest extends ParsingTestCase {
