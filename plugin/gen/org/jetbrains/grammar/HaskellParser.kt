@@ -761,10 +761,10 @@ public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
         variant("tycon")
       }
       rule("overlap_pragma") {
-        variant("{-# OVERLAPPABLE", CLOSE_PRAG)
-        variant("{-# OVERLAPPING", CLOSE_PRAG)
-        variant("{-# OVERLAPS", CLOSE_PRAG)
-        variant("{-# INCOHERENT", CLOSE_PRAG)
+        variant(OVERLAPPABLE, CLOSE_PRAG)
+        variant(OVERLAPPING, CLOSE_PRAG)
+        variant(OVERLAPS, CLOSE_PRAG)
+        variant(INCOHERENT, CLOSE_PRAG)
         variant()
       }
       rule("name_var") {

@@ -65,6 +65,10 @@ tokens {
  '{-# NOVECTORISE'       novect_prag
  '{-# MINIMAL'           minimal_prag
  '{-# CTYPE'             ctype
+ '{-# OVERLAPPABLE'      overlappable
+ '{-# OVERLAPPING'       overlapping
+ '{-# OVERLAPS'          overlaps
+ '{-# INCOHERENT'        incoherent
  '#-}'                   close_prag
 
  '..'           dotdot              -- reserved symbols

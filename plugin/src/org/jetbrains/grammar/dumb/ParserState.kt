@@ -10,10 +10,10 @@ class ParserState(val rule : Rule,
                   val ruleIndex : Int,
                   val termIndex : Int,
                   val trees : List<ResultTree>,
-                  val parent : ParserState?) {
+                  val parents: List<ParserState>) {
 
     {
-        if (rule.name == "module" && parent != null) {
+        if (rule.name == "module" && parents != null) {
             println()
         }
     }
@@ -22,22 +22,22 @@ class ParserState(val rule : Rule,
              next: NonTerminalTree): ParserState {
         val newTrees = ArrayList(trees);
         newTrees.add(next)
-        return ParserState(rule, variant, ruleIndex + 1, termIndex, newTrees, parent)
+        return ParserState(rule, variant, ruleIndex + 1, termIndex, newTrees, parents)
     }
 
     fun nextToken() : ParserState {
         val newTrees = ArrayList(trees);
         newTrees.add(TerminalTree((variant.terms[ruleIndex] as Terminal).tokenType))
-        return ParserState(rule, variant, ruleIndex + 1, termIndex + 1, newTrees, parent)
+        return ParserState(rule, variant, ruleIndex + 1, termIndex + 1, newTrees, parents)
     }
 
     fun getStack() : List<String> {
         val stack = ArrayList<String>()
         var currentState : ParserState? = this;
-        while (currentState != null) {
+        //while (currentState != null) {
             stack.add(currentState!!.rule.name)
-            currentState = currentState!!.parent
-        }
+        //    currentState = currentState!!.parent
+        //}
         return stack;
     }
 
@@ -62,7 +62,7 @@ class ParserState(val rule : Rule,
         if (termIndex !=  other.termIndex) {
             return false;
         }
-        if (parent !=  other.parent) {
+        if (parents !=  other.parents) {
             return false;
         }
         return true;
@@ -73,7 +73,7 @@ class ParserState(val rule : Rule,
         result = result * 31 + variant.hashCode()
         result = result * 31 + ruleIndex
         result = result * 31 + termIndex
-        result = result * 31 + (parent?.hashCode() ?: 0)
+        result = result * 31 + (parents?.hashCode() ?: 0)
         return result;
     }
 }

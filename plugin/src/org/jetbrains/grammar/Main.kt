@@ -45,7 +45,8 @@ fun main(args : Array<String>) {
     println("\n-------------------")
 
     val grammar = HaskellParser(null).getGrammar()
-    GLLParser(grammar, tokens).parse()
+    val tree = GLLParser(grammar, tokens).parse()
+    println(tree?.prettyPrint(0))
 }
 
 

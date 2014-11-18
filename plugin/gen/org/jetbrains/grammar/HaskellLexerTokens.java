@@ -69,6 +69,10 @@ public interface HaskellLexerTokens {
   public static HaskellToken NOVECT_PRAG = new HaskellToken("{-# NOVECTORISE");
   public static HaskellToken MINIMAL_PRAG = new HaskellToken("{-# MINIMAL");
   public static HaskellToken CTYPE = new HaskellToken("{-# CTYPE");
+  public static HaskellToken OVERLAPPABLE = new HaskellToken("{-# OVERLAPPABLE");
+  public static HaskellToken OVERLAPPING = new HaskellToken("{-# OVERLAPPING");
+  public static HaskellToken OVERLAPS = new HaskellToken("{-# OVERLAPS");
+  public static HaskellToken INCOHERENT = new HaskellToken("{-# INCOHERENT");
   public static HaskellToken CLOSE_PRAG = new HaskellToken("#-}");
   public static HaskellToken DOTDOT = new HaskellToken("..");
   public static HaskellToken COLON = new HaskellToken(":");

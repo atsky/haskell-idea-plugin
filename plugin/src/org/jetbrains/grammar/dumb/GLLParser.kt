@@ -4,20 +4,23 @@ import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import com.intellij.psi.tree.IElementType
 import java.util.ArrayList
 import java.util.HashSet
+import java.util.HashMap
 
 /**
  * Created by atsky on 11/17/14.
  */
-class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>) {
+class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) {
 
-    fun parse() {
+    fun parse(): NonTerminalTree? {
         val rule = grammar["module"]!!
 
         var states = ArrayList<ParserState>();
 
         for (variant in rule.variants) {
-            states.add(ParserState(rule, variant, 0, 0, listOf(), null))
+            states.add(ParserState(rule, variant, 0, 0, listOf(), listOf()))
         }
+
+        val rules = HashMap<Int, Map<String, List<ParserState>>>()
 
         @main_loop
         while (states.notEmpty) {
@@ -27,15 +30,16 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
                 if (state.variant.terms.size == state.ruleIndex) {
                     val tree = NonTerminalTree(state.rule.name, state.trees)
                     for (left in state.rule.left) {
-                        newStates.add(ParserState(state.rule, left, 1, state.termIndex, listOf(tree), state.parent))
+                        newStates.add(ParserState(state.rule, left, 1, state.termIndex, listOf(tree), state.parents))
                     }
-                    val parent = state.parent
-                    if (parent != null) {
-                        newStates.add(parent.next(state.termIndex, tree));
-                        //println("done ${state.termIndex}, stack = ${state.getStack()}")
+                    val parents = state.parents
+                    if (!parents.empty) {
+                        for (parent in parents) {
+                            newStates.add(parent.next(state.termIndex, tree));
+                            //println("done ${state.termIndex}, stack = ${state.getStack()}")
+                        }
                     } else {
-                        println(tree.prettyPrint(0))
-                        break@main_loop
+                        return tree;
                     }
                 } else {
                     val term = state.variant.terms[state.ruleIndex]
@@ -48,13 +52,28 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
                         }
 
                         is NotTerminal ->
-                            addNonTerminal(term, state, newStates)
+                            addNonTerminal(term, state, rules)
                     }
                 }
             }
+            for (m in rules.values()) {
+                for ((ruleName, prevStates) in m) {
+                    val statesSet = HashSet(prevStates)
+
+                    val state = prevStates[0]
+                    val nextRule = grammar[ruleName]!!
+                    for (variant in nextRule.variants) {
+                        val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), ArrayList(statesSet))
+                        newStates.add(nextState)
+                    }
+
+                }
+            }
+            rules.clear();
             states = ArrayList(newStates)
             System.out.println("-----${states.size}-----")
         }
+        return null;
     }
 
     private fun addTerm(newStates: HashSet<ParserState>,
@@ -69,16 +88,18 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
     }
 
     private fun addNonTerminal(term: NotTerminal,
-                               state : ParserState,
-                               newStates: HashSet<ParserState>) {
-        val nextRule = grammar[term.rule]
+                               state: ParserState,
+                               rules: HashMap<Int, Map<String, List<ParserState>>>) {
+        val ruleName = term.rule
+        val nextRule = grammar[ruleName]
         if (nextRule != null) {
-            for (variant in nextRule.variants) {
-                val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), state)
-                newStates.add(nextState)
-            }
+            val map = HashMap(rules[state.termIndex] ?: HashMap<String, List<ParserState>>())
+            val list = ArrayList(map[ruleName] ?: listOf())
+            list.add(state)
+            map[ruleName] = list
+            rules[state.termIndex] = map;
         } else {
-            println("index=${state.termIndex} no rule ${term.rule}");
+            println("index=${state.termIndex} no rule ${ruleName}");
         }
     }
 }
