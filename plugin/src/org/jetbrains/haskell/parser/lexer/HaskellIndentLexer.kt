@@ -17,12 +17,11 @@ import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
  * Created by atsky on 26/06/14.
  */
 
-
 public class HaskellIndentLexer() : LexerBase() {
-    val indentTokens = HashSet<IElementType>(Arrays.asList(HaskellLexerTokens.WHERE,
-                                                           HaskellLexerTokens.OF,
-                                                           HaskellLexerTokens.LET,
-                                                           HaskellLexerTokens.DO))
+    val indentTokens = HashSet<IElementType>(listOf(HaskellLexerTokens.WHERE,
+                                                    HaskellLexerTokens.OF,
+                                                    HaskellLexerTokens.LET,
+                                                    HaskellLexerTokens.DO))
 
     var buffer: CharSequence? = null
     val tokens: MutableList<IElementType> = ArrayList();
@@ -66,21 +65,15 @@ public class HaskellIndentLexer() : LexerBase() {
                     firstOnLine = false;
 
                     if (indentStack != null) {
-                        if (indentStack!!.head == indent) {
-                            tokens.add(HaskellLexerTokens.SEMI)
-                            starts.add(tokenStart)
-                            ends.add(tokenStart)
-                            text.add("")
-                        }
-                        if (indentStack!!.head > indent) {
-                            // TODO: Fix this
+                        while (indentStack!!.head > indent) {
                             tokens.add(HaskellLexerTokens.VCCURLY)
                             starts.add(tokenStart)
                             ends.add(tokenStart)
                             text.add("")
 
                             indentStack = indentStack!!.tail
-
+                        }
+                        if (indentStack!!.head == indent) {
                             tokens.add(HaskellLexerTokens.SEMI)
                             starts.add(tokenStart)
                             ends.add(tokenStart)
