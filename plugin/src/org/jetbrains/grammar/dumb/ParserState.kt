@@ -12,12 +12,6 @@ class ParserState(val rule : Rule,
                   val trees : List<ResultTree>,
                   val parents: List<ParserState>) {
 
-    {
-        if (rule.name == "module" && parents != null) {
-            println()
-        }
-    }
-
     fun next(termIndex: Int,
              next: NonTerminalTree): ParserState {
         val newTrees = ArrayList(trees);

@@ -99,7 +99,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
             map[ruleName] = list
             rules[state.termIndex] = map;
         } else {
-            println("index=${state.termIndex} no rule ${ruleName}");
+            //println("index=${state.termIndex} no rule ${ruleName}");
         }
     }
 }
