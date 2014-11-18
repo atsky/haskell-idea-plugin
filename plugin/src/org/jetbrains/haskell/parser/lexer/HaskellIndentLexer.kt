@@ -19,7 +19,10 @@ import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
 
 
 public class HaskellIndentLexer() : LexerBase() {
-    val indentTokens = HashSet<IElementType>(Arrays.asList(HaskellLexerTokens.WHERE))
+    val indentTokens = HashSet<IElementType>(Arrays.asList(HaskellLexerTokens.WHERE,
+                                                           HaskellLexerTokens.OF,
+                                                           HaskellLexerTokens.LET,
+                                                           HaskellLexerTokens.DO))
 
     var buffer: CharSequence? = null
     val tokens: MutableList<IElementType> = ArrayList();
@@ -112,7 +115,6 @@ public class HaskellIndentLexer() : LexerBase() {
             text.add("")
             indentStack = indentStack!!.tail
         }
-        println(tokens)
     }
 
     override fun getState(): Int {

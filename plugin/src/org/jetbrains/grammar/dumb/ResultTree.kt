@@ -21,4 +21,20 @@ class NonTerminalTree(val rule : String, val children : List<ResultTree>) : Resu
         }
         return rule + "{" + builder + "}"
     }
+
+    fun prettyPrint(level : Int): String {
+        val builder = StringBuilder()
+        for (r in children) {
+            builder.append("\n")
+            for (i in 1..level) {
+                builder.append(" ")
+            }
+            if (r is NonTerminalTree) {
+                builder.append(r.prettyPrint(level + 1))
+            } else {
+                builder.append(r.toString())
+            }
+        }
+        return rule + "{" + builder + "}"
+    }
 }

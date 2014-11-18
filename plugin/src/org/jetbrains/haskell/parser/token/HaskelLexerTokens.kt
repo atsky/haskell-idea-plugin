@@ -64,7 +64,6 @@ public val DOUBLE_COLON : HaskellToken        = HaskellLexerTokens.DCOLON
 public val COMMA : HaskellToken               = HaskellLexerTokens.COMMA
 public val DOT : HaskellToken                 = HaskellLexerTokens.DOT
 public val DOT_DOT : HaskellToken             = HaskellLexerTokens.DOTDOT
-public val DOLLAR : HaskellToken              = HaskellToken("$")
 public val BACK_SLASH: HaskellToken           = HaskellLexerTokens.LAM
 public val VERTICAL_BAR : HaskellToken        = HaskellLexerTokens.VBAR
 public val SEMICOLON : HaskellToken           = HaskellLexerTokens.SEMI
@@ -72,7 +71,7 @@ public val AT : HaskellToken                  = HaskellLexerTokens.AT
 public val QUESTION : HaskellToken            = HaskellToken("?")
 public val HASH : HaskellToken                = HaskellToken("#")
 public val TILDE : HaskellToken               = HaskellLexerTokens.TILDE
-public val DOUBLE_ARROW : HaskellToken        = HaskellToken("=>")
+public val DOUBLE_ARROW : HaskellToken        = HaskellLexerTokens.DARROW
 public val EXCLAMATION : HaskellToken         = HaskellLexerTokens.BANG
 public val UNDERSCORE : HaskellToken          = HaskellLexerTokens.UNDERSCORE
 public val BACKQUOTE : HaskellToken           = HaskellLexerTokens.BACKQUOTE
@@ -111,7 +110,6 @@ public val OPERATORS : List<HaskellToken> = listOf<HaskellToken>(
         LEFT_ARROW,
         SEMICOLON,
         COLON,
-        DOLLAR,
         VERTICAL_BAR,
         UNDERSCORE)
 
@@ -120,8 +118,8 @@ public val BLOCK_COMMENT: HaskellToken        = HaskellToken("COMMENT")
 public val END_OF_LINE_COMMENT : HaskellToken = HaskellToken("--")
 public val ID : HaskellToken                  = HaskellLexerTokens.VARID
 public val NUMBER : HaskellToken              = HaskellLexerTokens.INTEGER
-public val OPERATOR_ID: HaskellToken          = HaskellToken("opertor")
-public val OPERATOR_CONS: HaskellToken        = HaskellToken("opertor cons")
+public val OPERATOR_ID: HaskellToken          = HaskellLexerTokens.VARSYM
+public val OPERATOR_CONS: HaskellToken        = HaskellLexerTokens.CONSYM
 public val PRAGMA : HaskellToken              = HaskellToken("PRAGMA")
 public val STRING : HaskellToken              = HaskellLexerTokens.STRING
 public val TYPE_OR_CONS: HaskellToken         = HaskellLexerTokens.CONID

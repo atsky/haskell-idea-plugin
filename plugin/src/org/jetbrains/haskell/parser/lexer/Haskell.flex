@@ -134,7 +134,6 @@ EOL_COMMENT = "--"[^\n]*
 ";"                   { return TokenPackage.getSEMICOLON();}
 "."                   { return TokenPackage.getDOT(); }
 ".."                  { return TokenPackage.getDOT_DOT(); }
-"$"                   { return TokenPackage.getDOLLAR(); }
 ","                   { return TokenPackage.getCOMMA(); }
 "="                   { return TokenPackage.getEQUALS(); }
 "|"                   { return TokenPackage.getVERTICAL_BAR();}
@@ -150,8 +149,8 @@ EOL_COMMENT = "--"[^\n]*
 "=>"                  { return TokenPackage.getDOUBLE_ARROW(); }
 "!"                   { return TokenPackage.getEXCLAMATION(); }
 "_"                   { return TokenPackage.getUNDERSCORE(); }
-":"{symbol}+          { return TokenPackage.getOPERATOR_CONS(); }
 {symbol}+             { return TokenPackage.getOPERATOR_ID(); }
+":"{symbol}+          { return TokenPackage.getOPERATOR_CONS(); }
 
 // - Keywords
 

@@ -23,7 +23,6 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
         while (states.notEmpty) {
             val newStates = HashSet<ParserState>();
 
-
             for (state in states) {
                 if (state.variant.terms.size == state.ruleIndex) {
                     val tree = NonTerminalTree(state.rule.name, state.trees)
@@ -33,9 +32,9 @@ class GLLParser(val grammar : Map<String, Rule>, val tokens : List<IElementType>
                     val parent = state.parent
                     if (parent != null) {
                         newStates.add(parent.next(state.termIndex, tree));
-                        println("done ${state.termIndex}, stack = ${state.getStack()}")
+                        //println("done ${state.termIndex}, stack = ${state.getStack()}")
                     } else {
-                        println(tree)
+                        println(tree.prettyPrint(0))
                         break@main_loop
                     }
                 } else {

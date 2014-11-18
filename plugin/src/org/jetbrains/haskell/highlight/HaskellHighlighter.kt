@@ -58,7 +58,6 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
         keys1.put(TYPE_OR_CONS, CONSTRUCTOR)
         keys1.put(OPERATOR_CONS, CONSTRUCTOR)
         keys1.put(OPERATOR_ID, HASKELL_OPERATOR)
-        keys1.put(DOLLAR, HASKELL_OPERATOR)
         keys1.put(COLON, CONSTRUCTOR)
         keys1.put(STRING, STRING_LITERAL)
         keys1.put(CHARACTER, STRING_LITERAL)

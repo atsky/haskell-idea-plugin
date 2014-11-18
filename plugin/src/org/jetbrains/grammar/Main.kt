@@ -14,6 +14,7 @@ import org.jetbrains.grammar.dumb.GLLParser
 import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 import org.jetbrains.haskell.parser.token.COMMENTS
 import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
+import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 
 /**
  * Created by atsky on 15/11/14.
@@ -26,25 +27,24 @@ fun main(args : Array<String>) {
 
     val tokens = ArrayList<IElementType>()
 
+    println("-------------------")
     while (lexer.getTokenType() != null) {
         val tokenType = lexer.getTokenType()
-        System.out.print(tokenType)
         if (tokenType != TokenType.WHITE_SPACE &&
             tokenType != NEW_LINE &&
+            tokenType != END_OF_LINE_COMMENT &&
             tokenType != BLOCK_COMMENT) {
             tokens.add(tokenType)
+            print("${tokenType} ")
         }
-        System.out.print(" ")
+        if (tokenType == NEW_LINE) {
+            println()
+        }
         lexer.advance();
     }
-    System.out.println()
-    System.out.println(tokens)
+    println("\n-------------------")
 
     val grammar = HaskellParser(null).getGrammar()
-    for(rule in grammar) {
-        System.out.println(rule)
-    }
-
     GLLParser(grammar, tokens).parse()
 }
 
