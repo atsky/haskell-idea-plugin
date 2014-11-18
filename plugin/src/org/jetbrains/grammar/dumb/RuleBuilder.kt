@@ -14,7 +14,7 @@ public class RuleBuilder(val name : String) {
         val terms = ArrayList<Term>()
         for (arg in args) {
             if (arg is String) {
-                terms.add(NotTerminal(arg))
+                terms.add(NonTerminal(arg))
             }
             if (arg is HaskellToken) {
                 terms.add(Terminal(arg))

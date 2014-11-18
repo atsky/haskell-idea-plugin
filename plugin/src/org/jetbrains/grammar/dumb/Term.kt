@@ -13,6 +13,6 @@ public class Terminal(val tokenType: HaskellToken) : Term() {
 
 }
 
-public class NotTerminal(val rule: String) : Term() {
+public class NonTerminal(val rule: String) : Term() {
 
 }

@@ -51,7 +51,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
                             }
                         }
 
-                        is NotTerminal ->
+                        is NonTerminal ->
                             addNonTerminal(term, state, rules)
                     }
                 }
@@ -95,7 +95,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
         }
     }
 
-    private fun addNonTerminal(term: NotTerminal,
+    private fun addNonTerminal(term: NonTerminal,
                                state: ParserState,
                                rules: HashMap<Int, Map<String, List<ParserState>>>) {
         val ruleName = term.rule

@@ -11,7 +11,7 @@ class Variant(val terms : List<Term>) {
     override fun toString() : String {
         val builder = StringBuilder()
         for (term in terms) {
-            if (term is NotTerminal) {
+            if (term is NonTerminal) {
                 builder.append(" " + term.rule)
             } else if (term is Terminal) {
                 builder.append(" '" + term.tokenType + "'")

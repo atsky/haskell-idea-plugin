@@ -130,27 +130,34 @@ class Generator(val grammar: Grammar) {
     fun generateParser() {
         val result = TextGenerator()
         with(result) {
-            line("package org.jetbrains.grammar")
+            line("package org.jetbrains.grammar;")
             line()
-            line("import org.jetbrains.grammar.HaskellLexerTokens.*")
-            line("import com.intellij.lang.PsiBuilder")
-            line("import org.jetbrains.grammar.dumb.Rule")
+            line("import static org.jetbrains.grammar.HaskellLexerTokens.*;")
+            line("import com.intellij.lang.PsiBuilder;")
+            line("import org.jetbrains.annotations.NotNull;")
+            line("import org.jetbrains.grammar.dumb.*;")
             line()
+            line("import java.util.*;")
             line()
-            line("public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {")
+            line("public class HaskellParser extends BaseHaskellParser {")
 
             indent {
-                line("override fun getGrammar() : Map<String, Rule> {")
+                line("public HaskellParser(PsiBuilder builder) {")
+                line("  super(builder);")
+                line("}")
+                line()
+                line("@NotNull")
+                line("public Map<String, Rule> getGrammar() {")
                 indent {
-                    line("return grammar {")
-                        indent {
-                            for (rule in rules.values()) {
-                                if (rule is Rule) {
-                                    generateRule(this, rule)
-                                }
-                            }
+                    line("Map<String, Rule> grammar = new HashMap<String, Rule>();")
+
+                    for (rule in rules.values()) {
+                        if (rule is Rule) {
+                            generateRule(this, rule)
                         }
-                    line("}");
+                    }
+
+                    line("return grammar;");
                 }
                 line("}")
             }
@@ -161,7 +168,7 @@ class Generator(val grammar: Grammar) {
 
         val parent = File(MAIN_PATH)
         parent.mkdirs()
-        val writer = FileWriter(File(parent, "HaskellParser.kt"))
+        val writer = FileWriter(File(parent, "HaskellParser.java"))
         writer.write(result.toString())
         writer.close()
     }
@@ -169,11 +176,14 @@ class Generator(val grammar: Grammar) {
     fun generateRule(textGenerator: TextGenerator,
                      rule: Rule) {
         with(textGenerator) {
-            line("rule(\"${rule.name}\") {")
+            line("{")
             indent {
+                line("List<Variant> variants = new ArrayList<Variant>();")
+                line("List<Variant> left = new ArrayList<Variant>();")
                 for (varinant in rule.variants) {
                     generateVariant(this, rule, varinant);
                 }
+                line("grammar.put(\"${rule.name}\", new Rule(\"${rule.name}\", variants, left));")
             }
             line("}")
         }
@@ -193,7 +203,7 @@ class Generator(val grammar: Grammar) {
     }
 
     fun generateVariant(textGenerator: TextGenerator,
-                        rule : Rule,
+                        rule: Rule,
                         variant: Variant) {
         with(textGenerator) {
             val builder = StringBuilder()
@@ -204,13 +214,21 @@ class Generator(val grammar: Grammar) {
                 }
                 if (tokens.containsKey(atom.toString())) {
                     val tokenDescription = tokens[atom.toString()]!!
-                    builder.append(tokenDescription.name.toUpperCase())
+                    builder.append("new Terminal("+tokenDescription.name.toUpperCase()+")")
                 } else {
-                    builder.append("\"" + atom.text + "\"")
+                    builder.append("new NonTerminal(\"" + atom.text + "\")")
                 }
                 first = false;
             }
-            line("variant(${builder})")
+            if (variant.atoms.size > 0) {
+               if (variant.atoms.first.toString() == rule.name) {
+                   line("addVar(left, ${builder});")
+               } else {
+                   line("addVar(variants, ${builder});")
+               }
+            } else {
+                line("addVar(variants);")
+            }
         }
     }
 
