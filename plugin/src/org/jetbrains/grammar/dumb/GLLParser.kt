@@ -16,7 +16,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
 
         var states = ArrayList<ParserState>();
 
-        for (variant in rule.variants) {
+        for (variant in rule.variants.indices) {
             states.add(ParserState(rule, variant, 0, 0, listOf(), listOf()))
         }
 
@@ -27,10 +27,10 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
             val newStates = HashSet<ParserState>();
 
             for (state in states) {
-                if (state.variant.terms.size == state.ruleIndex) {
-                    val tree = NonTerminalTree(state.rule.name, state.trees)
-                    for (left in state.rule.left) {
-                        newStates.add(ParserState(state.rule, left, 1, state.termIndex, listOf(tree), state.parents))
+                if (state.variant().terms.size == state.ruleIndex) {
+                    val tree = NonTerminalTree(state.rule.name, state.variantIndex, state.trees)
+                    for (left in state.rule.left.indices) {
+                        newStates.add(ParserState(state.rule, left + state.rule.variants.size, 1, state.termIndex, listOf(tree), state.parents))
                     }
                     val parents = state.parents
                     if (!parents.empty) {
@@ -42,7 +42,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
                         return tree;
                     }
                 } else {
-                    val term = state.variant.terms[state.ruleIndex]
+                    val term = state.variant().terms[state.ruleIndex]
 
                     when (term) {
                         is Terminal -> {
@@ -62,8 +62,8 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
 
                     val state = prevStates[0]
                     val nextRule = grammar[ruleName]!!
-                    for (variant in nextRule.variants) {
-                        val first = variant.first
+                    for (variant in nextRule.variants.indices) {
+                        val first = nextRule.variants[variant].first
                         if (first == null || first.contains(tokens[state.termIndex])) {
                             val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), ArrayList(statesSet))
                             newStates.add(nextState)

@@ -13,13 +13,13 @@ class TerminalTree(val haskellToken: org.jetbrains.haskell.parser.HaskellToken) 
     }
 }
 
-class NonTerminalTree(val rule : String, val children : List<ResultTree>) : ResultTree() {
+class NonTerminalTree(val rule : String, val variant : Int, val children : List<ResultTree>) : ResultTree() {
     override fun toString(): String {
         val builder = StringBuilder()
         for (r in children) {
             builder.append(r.toString() + ", ")
         }
-        return rule + "{" + builder + "}"
+        return rule + "@" + variant + "{" + builder + "}"
     }
 
     fun prettyPrint(level : Int): String {
@@ -35,6 +35,6 @@ class NonTerminalTree(val rule : String, val children : List<ResultTree>) : Resu
                 builder.append(r.toString())
             }
         }
-        return rule + "{" + builder + "}"
+        return rule + "@" + variant + "{" + builder + "}"
     }
 }

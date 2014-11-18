@@ -24,7 +24,9 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
             Pair("cl_decl", CLASS_DECLARATION),
             Pair("inst_decl", INSTANCE_DECLARATION),
             Pair("sigdecl", VALUE_SIGNATURE),
-            Pair("pattern_decl", VALUE_BODY)
+            Pair("pattern_decl", VALUE_BODY),
+            Pair("atype", ATYPE),
+            Pair("qvar", QVAR)
     )
 
     abstract fun getGrammar() : Map<String, Rule>

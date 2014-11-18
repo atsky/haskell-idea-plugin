@@ -22,9 +22,12 @@ val MODULE_EXPORTS          = HaskellCompositeElementType("Module exports", ::Mo
 val MODULE                  = HaskellCompositeElementType("Module", ::Module)
 val MODULE_HEADER           = HaskellCompositeElementType("Module header", ::ModuleHeader)
 val TYPE_TOKEN              = HaskellCompositeElementType("Type")
-val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")
+
 val CLASS_DECLARATION       = HaskellCompositeElementType("Class declaration", ::ClassDeclaration)
 val INSTANCE_DECLARATION    = HaskellCompositeElementType("Instance declaration", ::InstanceDeclaration)
 val VALUE_SIGNATURE         = HaskellCompositeElementType("Value signature", ::ValueSignature)
 val VALUE_BODY              = HaskellCompositeElementType("Value body" , ::ValueBody)
+val QVAR                    = HaskellCompositeElementType("QVAR", ::Qvar)
+val ATYPE                   = HaskellCompositeElementType("A type")
+val HASKELL_TOKEN           = HaskellCompositeElementType("TOKEN")
 
