@@ -1,12 +1,12 @@
 package org.jetbrains.grammar
 
-import org.jetbrains.grammar.HaskellTokens
 import org.jetbrains.grammar.HaskellLexerTokens.*
 import org.jetbrains.haskell.parser.rules.ParserState
 import org.jetbrains.grammar.dumb.Rule
+import com.intellij.lang.PsiBuilder
 
 
-public class HaskellParser(state : ParserState?) : BaseHaskellParser(state) {
+public class HaskellParser(state : PsiBuilder?) : BaseHaskellParser(state) {
   override fun getGrammar() : Map<String, Rule> {
     return grammar {
       rule("strict_mark") {

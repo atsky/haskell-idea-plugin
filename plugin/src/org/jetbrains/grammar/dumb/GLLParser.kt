@@ -71,7 +71,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
             }
             rules.clear();
             states = ArrayList(newStates)
-            System.out.println("-----${states.size}-----")
+            //System.out.println("-----${states.size}-----")
         }
         return null;
     }

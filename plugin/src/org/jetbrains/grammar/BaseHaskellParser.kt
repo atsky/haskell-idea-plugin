@@ -7,24 +7,74 @@ import org.jetbrains.haskell.parser.rules.ParserState
 import org.jetbrains.haskell.parser.rules.ParserState.ParserMarker
 import org.jetbrains.grammar.dumb.Rule
 import org.jetbrains.grammar.dumb.GrammarBuilder
+import com.intellij.lang.ASTNode
+import org.jetbrains.haskell.parser.rules.BaseParser
+import java.util.ArrayList
+import org.jetbrains.grammar.dumb.GLLParser
+import org.jetbrains.grammar.dumb.NonTerminalTree
+import org.jetbrains.haskell.parser.grammar.MODULE
+import org.jetbrains.grammar.dumb.TerminalTree
+import org.jetbrains.haskell.parser.grammar.MODULE_NAME
+import org.jetbrains.haskell.parser.grammar.CLASS_DECLARATION
+import org.jetbrains.haskell.parser.grammar.INSTANCE_DECLARATION
+import org.jetbrains.haskell.parser.grammar.VALUE_DECLARATION
 
-open class BaseHaskellParser(val state : ParserState?) {
+abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
-    open fun getGrammar() : Map<String, Rule> {
-        return mapOf()
+    val ruleMap = mapOf(
+            Pair("module", MODULE),
+            Pair("modid", MODULE_NAME),
+            Pair("cl_decl", CLASS_DECLARATION),
+            Pair("inst_decl", INSTANCE_DECLARATION),
+            Pair("sigdecl", VALUE_DECLARATION)
+    )
+
+    abstract fun getGrammar() : Map<String, Rule>
+
+    fun mark() : Marker {
+        return builder!!.mark()!!
     }
 
-    fun makeMark() : ParserMarker {
-        return state!!.mark()
-    }
+    fun parse(root: IElementType): ASTNode {
+        val tokens = ArrayList<IElementType>()
 
-    fun token(element : IElementType) : Boolean {
-        val elementType = state!!.getTokenType()
-        if (elementType == element) {
-            state.advanceLexer()
-            return true;
+        val marker = builder!!.mark()
+        while(builder.getTokenType() != null) {
+            tokens.add(builder.getTokenType())
+            builder.advanceLexer();
         }
-        return false;
+        marker.rollbackTo();
+
+        val rootMarker = mark()
+
+        val tree = GLLParser(getGrammar(), tokens).parse()
+
+        if (tree != null) {
+            parserWithTree(tree)
+        }
+
+        while (!builder.eof()) {
+            builder.advanceLexer()
+        }
+        rootMarker.done(root)
+        return builder.getTreeBuilt()!!
+    }
+
+    fun parserWithTree(tree: NonTerminalTree) {
+        val ruleName = tree.rule
+        val type = ruleMap[ruleName]
+        val marker = if (type != null) builder!!.mark() else null
+
+        for (child in tree.children) {
+            when (child) {
+                is NonTerminalTree -> parserWithTree(child)
+                is TerminalTree -> {
+                    builder!!.advanceLexer()
+                }
+            }
+        }
+
+        marker?.done(type)
     }
 
     fun grammar(body : GrammarBuilder.() -> Unit) : Map<String, Rule> {

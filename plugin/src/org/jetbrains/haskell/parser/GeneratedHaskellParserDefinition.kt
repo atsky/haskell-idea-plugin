@@ -21,12 +21,15 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 //import org.jetbrains.grammar.HaskellTokens
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.parser.rules.ParserState
+import java.util.ArrayList
+import org.jetbrains.grammar.dumb.GLLParser
+import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 
 
 public class GeneratedHaskellParserDefinition() : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
-    override fun createLexer(project: Project?): Lexer = HaskellLexer()
+    override fun createLexer(project: Project?): Lexer = HaskellIndentLexer()
 
     override fun getFileNodeType(): IFileElementType = HASKELL_FILE
 
@@ -40,12 +43,7 @@ public class GeneratedHaskellParserDefinition() : ParserDefinition {
     override fun createParser(project: Project?): PsiParser =
         object : PsiParser {
             override fun parse(root: IElementType?, builder: PsiBuilder?): ASTNode {
-                val rootMarker = builder!!.mark()
-
-                val state = ParserState(builder);
-                //org.jetbrains.grammar.HaskellParser(state).parseModule()
-                rootMarker.done(root)
-                return builder.getTreeBuilt()!!
+                return org.jetbrains.grammar.HaskellParser(builder!!).parse(root!!)
             }
         }
 
@@ -59,10 +57,12 @@ public class GeneratedHaskellParserDefinition() : ParserDefinition {
 
     override fun createElement(node: ASTNode?): PsiElement {
         val elementType = node!!.getElementType()
-        //if (elementType == HaskellTokens.MODULE) {
-        //    return Module(node)
-        //}
-
+        if (elementType is HaskellCompositeElementType) {
+            val constructor = elementType.constructor
+            if (constructor != null) {
+                return constructor(node)
+            }
+        }
         return ASTWrapperPsiElement(node)
     }
 
