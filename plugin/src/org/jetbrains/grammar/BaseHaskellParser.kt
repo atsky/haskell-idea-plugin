@@ -75,9 +75,19 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
         marker?.done(type)
     }
 
+    fun findFirst(grammar : Map<String, Rule>) {
+        for (rule in grammar.values()) {
+            rule.updateFirst();
+        }
+    }
+
     fun grammar(body : GrammarBuilder.() -> Unit) : Map<String, Rule> {
         val builder = GrammarBuilder()
         builder.body()
-        return builder.rules;
+        val grammar = builder.rules
+
+        findFirst(grammar);
+
+        return grammar;
     }
 }

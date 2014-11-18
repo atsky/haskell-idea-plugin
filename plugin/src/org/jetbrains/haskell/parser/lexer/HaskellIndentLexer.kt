@@ -21,6 +21,7 @@ public class HaskellIndentLexer() : LexerBase() {
     val indentTokens = HashSet<IElementType>(listOf(HaskellLexerTokens.WHERE,
                                                     HaskellLexerTokens.OF,
                                                     HaskellLexerTokens.LET,
+                                                    HaskellLexerTokens.IN,
                                                     HaskellLexerTokens.DO))
 
     var buffer: CharSequence? = null
@@ -51,15 +52,18 @@ public class HaskellIndentLexer() : LexerBase() {
                 tokenType != NEW_LINE &&
                 tokenType != BLOCK_COMMENT) {
                 if (writeIndent) {
-                    val indent = tokenStart - lineStart
-                    indentStack = IntStack(indent, indentStack)
                     writeIndent = false;
-                    firstOnLine = false;
+                    if (tokenType != HaskellLexerTokens.OCURLY) {
+                        val indent = tokenStart - lineStart
+                        indentStack = IntStack(indent, indentStack)
 
-                    tokens.add(HaskellLexerTokens.VOCURLY)
-                    starts.add(tokenStart)
-                    ends.add(tokenStart)
-                    text.add("")
+                        firstOnLine = false;
+
+                        tokens.add(HaskellLexerTokens.VOCURLY)
+                        starts.add(tokenStart)
+                        ends.add(tokenStart)
+                        text.add("")
+                    }
                 } else if (firstOnLine) {
                     val indent = tokenStart - lineStart
                     firstOnLine = false;

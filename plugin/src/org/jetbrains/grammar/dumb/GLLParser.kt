@@ -36,7 +36,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
                     if (!parents.empty) {
                         for (parent in parents) {
                             newStates.add(parent.next(state.termIndex, tree));
-                            //println("done ${state.termIndex}, stack = ${state.getStack()}")
+                            log("done ${state.termIndex}, stack = ${state.getStack()}")
                         }
                     } else {
                         return tree;
@@ -63,18 +63,26 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
                     val state = prevStates[0]
                     val nextRule = grammar[ruleName]!!
                     for (variant in nextRule.variants) {
-                        val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), ArrayList(statesSet))
-                        newStates.add(nextState)
+                        val first = variant.first
+                        if (first == null || first.contains(tokens[state.termIndex])) {
+                            val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), ArrayList(statesSet))
+                            newStates.add(nextState)
+                        }
                     }
 
                 }
             }
             rules.clear();
             states = ArrayList(newStates)
-            //System.out.println("-----${states.size}-----")
+            log("-----${states.size}-----")
         }
         return null;
     }
+
+    fun log(line : String) {
+        println(line)
+    }
+
 
     private fun addTerm(newStates: HashSet<ParserState>,
                         state: ParserState,
@@ -83,7 +91,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
         if (currentType == term.tokenType) {
             newStates.add(state.nextToken());
         } else {
-            //println("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
+            log("index=${state.termIndex}, [${currentType}] != [${term.tokenType}], stack = ${state.getStack()}")
         }
     }
 
@@ -99,7 +107,7 @@ class GLLParser(val grammar: Map<String, Rule>, val tokens: List<IElementType>) 
             map[ruleName] = list
             rules[state.termIndex] = map;
         } else {
-            //println("index=${state.termIndex} no rule ${ruleName}");
+            log("index=${state.termIndex} no rule ${ruleName}");
         }
     }
 }
