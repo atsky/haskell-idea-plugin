@@ -1,5 +1,7 @@
 package org.jetbrains.grammar.dumb
 
+import com.intellij.psi.tree.IElementType
+
 /**
  * Created by atsky on 11/17/14.
  */
@@ -13,7 +15,10 @@ class TerminalTree(val haskellToken: org.jetbrains.haskell.parser.HaskellToken) 
     }
 }
 
-class NonTerminalTree(val rule : String, val variant : Int, val children : List<ResultTree>) : ResultTree() {
+class NonTerminalTree(val rule : String,
+                      val variant : Int,
+                      val elementType : IElementType?,
+                      val children : List<ResultTree>) : ResultTree() {
     override fun toString(): String {
         val builder = StringBuilder()
         for (r in children) {

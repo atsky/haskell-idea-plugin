@@ -8,11 +8,12 @@ import java.io.File
 import java.io.FileWriter
 import org.jetbrains.generator.grammar.*
 import java.util.HashMap
+import java.util.HashSet
 
 /**
  * Created by atsky on 11/7/14.
  */
-class Generator(val grammar: Grammar) {
+class ParserGenerator(val grammar: Grammar) {
     class object {
         val MAIN_PATH = "./plugin/gen/org/jetbrains/grammar/"
     }
@@ -61,7 +62,7 @@ class Generator(val grammar: Grammar) {
 
     fun generate() {
         generateLexerTokens(grammar.tokens)
-        //generateTokens()
+        generateTokens()
         generateParser();
     }
 
@@ -94,6 +95,14 @@ class Generator(val grammar: Grammar) {
 
     fun generateTokens() {
         val result = TextGenerator()
+        val elementSet = HashSet<String>()
+        for (token in grammar.rules) {
+            for (variant in token.variants) {
+                if (variant.elementName != null) {
+                    elementSet.add(variant.elementName);
+                }
+            }
+        }
         with(result) {
             line("package org.jetbrains.grammar")
             line()
@@ -102,20 +111,9 @@ class Generator(val grammar: Grammar) {
             line("import org.jetbrains.haskell.psi.*")
             line()
             line()
-            line("object HaskellTokens {")
-
-            indent {
-                for (token in grammar.rules) {
-                    val name = token.name.toUpperCase()
-                    val psiName = Character.toUpperCase(token.name[0]) + token.name.substring(1)
-                    if (psiName == "Module") {
-                        line("val ${name} = HaskellCompositeElementType(\"${token.name}\", ::${psiName})");
-                    } else {
-                        line("val ${name} = HaskellCompositeElementType(\"${token.name}\")");
-                    }
-                }
+            for (element in elementSet) {
+                line("public val ${camelCaseToUpperCase(element)} : IElementType = HaskellCompositeElementType(\"${element}\", ::${element})")
             }
-            line("}")
         }
 
 
@@ -126,6 +124,22 @@ class Generator(val grammar: Grammar) {
         writer.close()
     }
 
+    fun camelCaseToUpperCase(string: String): String {
+        val result = StringBuilder()
+        var first = true;
+        for (char in string) {
+            if (Character.isUpperCase(char)) {
+                if (!first) {
+                    result.append("_")
+                }
+                result.append(char)
+            } else {
+                result.append(Character.toUpperCase(char))
+            }
+            first = false;
+        }
+        return result.toString();
+    }
 
     fun generateParser() {
         val result = TextGenerator()
@@ -214,20 +228,25 @@ class Generator(val grammar: Grammar) {
                 }
                 if (tokens.containsKey(atom.toString())) {
                     val tokenDescription = tokens[atom.toString()]!!
-                    builder.append("new Terminal("+tokenDescription.name.toUpperCase()+")")
+                    builder.append("new Terminal(" + tokenDescription.name.toUpperCase() + ")")
                 } else {
                     builder.append("new NonTerminal(\"" + atom.text + "\")")
                 }
                 first = false;
             }
-            if (variant.atoms.size > 0) {
-               if (variant.atoms.first.toString() == rule.name) {
-                   line("addVar(left, ${builder});")
-               } else {
-                   line("addVar(variants, ${builder});")
-               }
+            val suffix = if (variant.elementName != null) {
+                ".setElementType(GrammarPackage.get${camelCaseToUpperCase(variant.elementName)}())"
             } else {
-                line("addVar(variants);")
+                ""
+            }
+            if (variant.atoms.size > 0) {
+                if (variant.atoms.first.toString() == rule.name) {
+                    line("addVar(left, ${builder})${suffix};")
+                } else {
+                    line("addVar(variants, ${builder})${suffix};")
+                }
+            } else {
+                line("addVar(variants)${suffix};")
             }
         }
     }

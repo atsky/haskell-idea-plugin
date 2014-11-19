@@ -551,11 +551,11 @@ class GrammarLexer {
           }
         case 17: break;
         case 4: 
-          { return TokenType.LEFT_BRACE;
+          { return TokenType.OBRACE;
           }
         case 18: break;
         case 5: 
-          { return TokenType.RIGHT_BRACE;
+          { return TokenType.CBRACE;
           }
         case 19: break;
         case 6: 

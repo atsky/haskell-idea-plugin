@@ -3,7 +3,7 @@ package org.jetbrains.generator.grammar
 /**
  * Created by atsky on 11/7/14.
  */
-class Variant(val atoms: List<RuleRef>) {
+class Variant(val atoms: List<RuleRef>, val elementName: String?) {
     override fun toString(): String {
         val result = StringBuilder()
 

@@ -30,7 +30,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
 
             for (state in states) {
                 if (state.variant().terms.size == state.ruleIndex) {
-                    val tree = NonTerminalTree(state.rule.name, state.variantIndex, state.trees)
+                    val tree = NonTerminalTree(state.rule.name, state.variantIndex, state.variant().elementType, state.trees)
                     for (left in state.rule.left.indices) {
                         newStates.add(ParserState(state.rule, left + state.rule.variants.size, 1, state.termIndex, listOf(tree), state.parents))
                     }

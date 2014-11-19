@@ -16,9 +16,9 @@ class GrammarParser(val tokens : List<Token>) {
 
     fun parseGrammar( ) : Grammar? {
         match("token")
-        match(LEFT_BRACE)
+        match(OBRACE)
         val tokens = parseTokens()
-        match(RIGHT_BRACE)
+        match(CBRACE)
 
         val rules = parseRules()
 
@@ -123,6 +123,14 @@ class GrammarParser(val tokens : List<Token>) {
                 break
             }
         }
-        return Variant(list);
+        val name = if (tryMatch(OBRACE)) {
+            match(TokenType.ID)
+            val text = text()
+            match(CBRACE)
+            text
+        } else {
+            null
+        }
+        return Variant(list, name);
     }
 }

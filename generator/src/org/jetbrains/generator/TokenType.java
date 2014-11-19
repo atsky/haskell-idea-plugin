@@ -4,8 +4,8 @@ package org.jetbrains.generator;
  * Created by atsky on 11/7/14.
  */
 public enum TokenType {
-    LEFT_BRACE,
-    RIGHT_BRACE,
+    OBRACE,
+    CBRACE,
     STRING,
     ID,
     BAD_CHARACTER,

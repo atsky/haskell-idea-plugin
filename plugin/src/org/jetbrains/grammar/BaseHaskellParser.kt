@@ -20,17 +20,6 @@ import org.jetbrains.grammar.dumb.Term
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
-    val ruleMap = mapOf(
-            Pair("module", MODULE),
-            Pair("modid", MODULE_NAME),
-            Pair("cl_decl", CLASS_DECLARATION),
-            Pair("inst_decl", INSTANCE_DECLARATION),
-            Pair("sigdecl", VALUE_SIGNATURE),
-            Pair("pattern_decl", VALUE_BODY),
-            Pair("atype", ATYPE),
-            Pair("qvar", QVAR)
-    )
-
     abstract fun getGrammar() : Map<String, Rule>
 
     fun mark() : Marker {
@@ -63,8 +52,8 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     }
 
     fun parserWithTree(tree: NonTerminalTree) {
-        val ruleName = tree.rule
-        val type = ruleMap[ruleName]
+        val type = tree.elementType
+
         val marker = if (type != null) builder!!.mark() else null
 
         for (child in tree.children) {
@@ -85,8 +74,10 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
         }
     }
 
-    fun addVar(variants : MutableList<Variant>, vararg terms : Term) {
-        variants.add(Variant(terms.toArrayList()));
+    fun addVar(variants : MutableList<Variant>, vararg terms : Term): Variant {
+        val variant = Variant(terms.toArrayList())
+        variants.add(variant);
+        return variant;
     }
 
     fun grammar(body : GrammarBuilder.() -> Unit) : Map<String, Rule> {

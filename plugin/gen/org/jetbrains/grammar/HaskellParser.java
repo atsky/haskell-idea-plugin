@@ -229,7 +229,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("cl_decl"));
+      addVar(variants, new NonTerminal("cl_decl")).setElementType(GrammarPackage.getCLASS_DECLARATION());
       addVar(variants, new NonTerminal("ty_decl"));
       addVar(variants, new NonTerminal("inst_decl"));
       addVar(variants, new NonTerminal("stand_alone_deriving"));
@@ -465,8 +465,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(CONID));
-      addVar(variants, new Terminal(QCONID));
+      addVar(variants, new Terminal(CONID)).setElementType(GrammarPackage.getMODULE_NAME());
+      addVar(variants, new Terminal(QCONID)).setElementType(GrammarPackage.getMODULE_NAME());
       grammar.put("modid", new Rule("modid", variants, left));
     }
     {
@@ -588,16 +588,16 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("ipvar"), new Terminal(EQUAL), new NonTerminal("exp"));
-      grammar.put("dbind", new Rule("dbind", variants, left));
-    }
-    {
-      List<Variant> variants = new ArrayList<Variant>();
-      List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new Terminal(WHERE), new Terminal(OCURLY), new NonTerminal("gadt_constrs"), new Terminal(CCURLY));
       addVar(variants, new Terminal(WHERE), new Terminal(VOCURLY), new NonTerminal("gadt_constrs"), new NonTerminal("close"));
       addVar(variants);
       grammar.put("gadt_constrlist", new Rule("gadt_constrlist", variants, left));
+    }
+    {
+      List<Variant> variants = new ArrayList<Variant>();
+      List<Variant> left = new ArrayList<Variant>();
+      addVar(variants, new NonTerminal("ipvar"), new Terminal(EQUAL), new NonTerminal("exp"));
+      grammar.put("dbind", new Rule("dbind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
@@ -1330,8 +1330,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("maybedocheader"), new Terminal(MODULE), new NonTerminal("modid"), new NonTerminal("maybemodwarning"), new NonTerminal("maybeexports"), new Terminal(WHERE), new NonTerminal("body"));
-      addVar(variants, new NonTerminal("body2"));
+      addVar(variants, new NonTerminal("maybedocheader"), new Terminal(MODULE), new NonTerminal("modid"), new NonTerminal("maybemodwarning"), new NonTerminal("maybeexports"), new Terminal(WHERE), new NonTerminal("body")).setElementType(GrammarPackage.getMODULE());
+      addVar(variants, new NonTerminal("body2")).setElementType(GrammarPackage.getMODULE());
       grammar.put("module", new Rule("module", variants, left));
     }
     {
@@ -1346,7 +1346,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("sigdecl"));
       addVar(variants, new Terminal(BANG), new NonTerminal("aexp"), new NonTerminal("rhs"));
-      addVar(variants, new NonTerminal("pattern_decl"));
+      addVar(variants, new NonTerminal("infixexp"), new NonTerminal("opt_sig"), new NonTerminal("rhs")).setElementType(GrammarPackage.getVALUE_BODY());
       addVar(variants, new NonTerminal("pattern_synonym_decl"));
       addVar(variants, new NonTerminal("docdecl"));
       grammar.put("decl_no_th", new Rule("decl_no_th", variants, left));
@@ -1511,12 +1511,6 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("docdecld"));
       grammar.put("docdecl", new Rule("docdecl", variants, left));
-    }
-    {
-      List<Variant> variants = new ArrayList<Variant>();
-      List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("infixexp"), new NonTerminal("opt_sig"), new NonTerminal("rhs"));
-      grammar.put("pattern_decl", new Rule("pattern_decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();

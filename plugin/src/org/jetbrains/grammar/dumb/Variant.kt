@@ -7,6 +7,7 @@ import com.intellij.psi.tree.IElementType
  */
 class Variant(val terms : List<Term>) {
     public var first : Set<IElementType>? = null;
+    public var elementType : IElementType? = null;
 
     override fun toString() : String {
         val builder = StringBuilder()

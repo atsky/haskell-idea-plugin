@@ -170,8 +170,8 @@ tokens {
 -- know what they are doing. :-)
 
 module
-        : maybedocheader 'module' modid maybemodwarning maybeexports 'where' body
-        | body2
+        : maybedocheader 'module' modid maybemodwarning maybeexports 'where' body { Module }
+        | body2                                                                   { Module }
 ;
 
 maybedocheader
@@ -363,7 +363,7 @@ topdecls
 ;
 
 topdecl
-        : cl_decl
+        : cl_decl                                                     { ClassDeclaration }
         | ty_decl
         | inst_decl
         | stand_alone_deriving
@@ -1185,13 +1185,9 @@ decl_no_th
                                 -- Turn it all into an expression so that
                                 -- checkPattern can check that bangs are enabled
 
-        | pattern_decl
+        | infixexp opt_sig rhs  { ValueBody }
         | pattern_synonym_decl
         | docdecl
-;
-
-pattern_decl :
-        infixexp opt_sig rhs
 ;
 
 decl
@@ -1985,8 +1981,8 @@ close
 -- Miscellaneous (mostly renamings)
 
 modid
-        : CONID
-        | QCONID
+        : CONID    { ModuleName }
+        | QCONID   { ModuleName }
 ;
 
 commas   -- One or more commas

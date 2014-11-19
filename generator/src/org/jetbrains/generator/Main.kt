@@ -31,6 +31,6 @@ fun main(args : Array<String>) {
 
     val grammarParser = GrammarParser(getTokens(lexer))
      val grammar = grammarParser.parseGrammar()!!
-    val generator = Generator(grammar)
+    val generator = ParserGenerator(grammar)
     generator.generate()
 }
