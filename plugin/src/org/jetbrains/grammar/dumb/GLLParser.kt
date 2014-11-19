@@ -16,7 +16,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
         val rule = grammar["module"]!!
 
         var states = ArrayList<ParserState>();
-        val wrongStates = HashSet<ParserState>()
+        val wrongStates = ArrayList<ParserState>()
 
         for (variant in rule.variants.indices) {
             states.add(ParserState(rule, variant, 0, 0, listOf(), listOf()))
@@ -26,7 +26,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
 
         @main_loop
         while (states.notEmpty) {
-            val newStates = HashSet<ParserState>();
+            val newStates = ArrayList<ParserState>();
 
             for (state in states) {
                 if (state.variant().terms.size == state.ruleIndex) {
@@ -60,7 +60,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
             }
             for (m in rules.values()) {
                 for ((ruleName, prevStates) in m) {
-                    val statesSet = HashSet(prevStates)
+                    val statesSet = ArrayList(prevStates)
 
                     val state = prevStates[0]
                     val nextRule = grammar[ruleName]!!
@@ -101,7 +101,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                             newStates.add(state)
                         }
                     }
-                    wrongStates.clear();
+                        wrongStates.clear();
                 }
             }
             states = ArrayList(newStates)
@@ -110,12 +110,12 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
     }
 
     fun log(line : String) {
-        println(line)
+        //println(line)
     }
 
 
-    private fun addTerm(newStates: HashSet<ParserState>,
-                        wrongStates: HashSet<ParserState>,
+    private fun addTerm(newStates: ArrayList<ParserState>,
+                        wrongStates: ArrayList<ParserState>,
                         state: ParserState,
                         term: Terminal) {
         val currentType = tokens[state.termIndex]
