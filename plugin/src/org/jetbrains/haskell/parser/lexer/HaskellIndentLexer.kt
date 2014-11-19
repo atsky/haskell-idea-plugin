@@ -21,7 +21,6 @@ public class HaskellIndentLexer() : LexerBase() {
     val indentTokens = HashSet<IElementType>(listOf(HaskellLexerTokens.WHERE,
                                                     HaskellLexerTokens.OF,
                                                     HaskellLexerTokens.LET,
-                                                    HaskellLexerTokens.IN,
                                                     HaskellLexerTokens.DO))
 
     var buffer: CharSequence? = null
