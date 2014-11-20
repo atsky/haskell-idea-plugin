@@ -7,14 +7,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.fileType.HaskellFile
-import org.jetbrains.haskell.psi.Constructor
+import org.jetbrains.haskell.psi.QCon
 import org.jetbrains.haskell.scope.ModuleScope
 import org.jetbrains.haskell.psi.ConstructorDeclaration
 
 /**
  * Created by atsky on 4/11/14.
  */
-class ConstructorReference(val constructor: Constructor) : PsiReferenceBase<Constructor>(
+class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
         constructor,
         TextRange(0, constructor.getTextRange()!!.getLength())) {
 

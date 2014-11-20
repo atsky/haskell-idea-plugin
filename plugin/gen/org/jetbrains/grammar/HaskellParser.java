@@ -201,8 +201,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("forall"), new NonTerminal("context"), new Terminal(DARROW), new NonTerminal("constr_stuff"), new NonTerminal("maybe_docprev"));
-      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("forall"), new NonTerminal("constr_stuff"), new NonTerminal("maybe_docprev"));
+      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("forall"), new NonTerminal("context"), new Terminal(DARROW), new NonTerminal("constr_stuff"), new NonTerminal("maybe_docprev")).setElementType(GrammarPackage.getCONSTRUCTOR_DECLARATION());
+      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("forall"), new NonTerminal("constr_stuff"), new NonTerminal("maybe_docprev")).setElementType(GrammarPackage.getCONSTRUCTOR_DECLARATION());
       grammar.put("constr", new Rule("constr", variants, left));
     }
     {
@@ -231,7 +231,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("cl_decl")).setElementType(GrammarPackage.getCLASS_DECLARATION());
       addVar(variants, new NonTerminal("ty_decl"));
-      addVar(variants, new NonTerminal("inst_decl"));
+      addVar(variants, new NonTerminal("inst_decl")).setElementType(GrammarPackage.getINSTANCE_DECLARATION());
       addVar(variants, new NonTerminal("stand_alone_deriving"));
       addVar(variants, new NonTerminal("role_annot"));
       addVar(variants, new Terminal(DEFAULT), new Terminal(OPAREN), new NonTerminal("comma_types0"), new Terminal(CPAREN));
@@ -261,7 +261,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("qconid"));
+      addVar(variants, new NonTerminal("qconid")).setElementType(GrammarPackage.getQ_CON());
       addVar(variants, new Terminal(OPAREN), new NonTerminal("qconsym"), new Terminal(CPAREN));
       addVar(variants, new NonTerminal("sysdcon"));
       grammar.put("qcon", new Rule("qcon", variants, left));
@@ -570,13 +570,13 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new Terminal(LAM), new NonTerminal("apat"), new NonTerminal("apats"), new NonTerminal("opt_asig"), new Terminal(RARROW), new NonTerminal("exp"));
-      addVar(variants, new Terminal(LET), new NonTerminal("binds"), new Terminal(IN), new NonTerminal("exp"));
+      addVar(variants, new Terminal(LET), new NonTerminal("binds"), new Terminal(IN), new NonTerminal("exp")).setElementType(GrammarPackage.getLET_EXPRESSION());
       addVar(variants, new Terminal(LAM), new Terminal(LCASE), new NonTerminal("altslist"));
       addVar(variants, new Terminal(IF), new NonTerminal("exp"), new NonTerminal("optSemi"), new Terminal(THEN), new NonTerminal("exp"), new NonTerminal("optSemi"), new Terminal(ELSE), new NonTerminal("exp"));
       addVar(variants, new Terminal(IF), new NonTerminal("ifgdpats"));
-      addVar(variants, new Terminal(CASE), new NonTerminal("exp"), new Terminal(OF), new NonTerminal("altslist"));
+      addVar(variants, new Terminal(CASE), new NonTerminal("exp"), new Terminal(OF), new NonTerminal("altslist")).setElementType(GrammarPackage.getCASE_EXPRESSION());
       addVar(variants, new Terminal(MINUS), new NonTerminal("fexp"));
-      addVar(variants, new Terminal(DO), new NonTerminal("stmtlist"));
+      addVar(variants, new Terminal(DO), new NonTerminal("stmtlist")).setElementType(GrammarPackage.getDO_EXPRESSION());
       addVar(variants, new Terminal(MDO), new NonTerminal("stmtlist"));
       addVar(variants, new NonTerminal("scc_annot"), new NonTerminal("exp"));
       addVar(variants, new NonTerminal("hpc_annot"), new NonTerminal("exp"));
@@ -832,7 +832,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("exportlist"), new Terminal(CPAREN));
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("exportlist"), new Terminal(CPAREN)).setElementType(GrammarPackage.getMODULE_EXPORTS());
       addVar(variants);
       grammar.put("maybeexports", new Rule("maybeexports", variants, left));
     }
@@ -906,14 +906,14 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new Terminal(TYPE), new NonTerminal("ty_fam_inst_eqn"));
-      addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("constrs"), new NonTerminal("deriving"));
+      addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("constrs"), new NonTerminal("deriving")).setElementType(GrammarPackage.getDATA_DECLARATION());
       addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("opt_kind_sig"), new NonTerminal("gadt_constrlist"), new NonTerminal("deriving"));
       grammar.put("at_decl_inst", new Rule("at_decl_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(AS), new NonTerminal("modid"));
+      addVar(variants, new Terminal(AS), new NonTerminal("modid")).setElementType(GrammarPackage.getIMPORT_AS_PART());
       addVar(variants);
       grammar.put("maybeas", new Rule("maybeas", variants, left));
     }
@@ -957,7 +957,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(IMPORT), new NonTerminal("maybe_src"), new NonTerminal("maybe_safe"), new NonTerminal("optqualified"), new NonTerminal("maybe_pkg"), new NonTerminal("modid"), new NonTerminal("maybeas"), new NonTerminal("maybeimpspec"));
+      addVar(variants, new Terminal(IMPORT), new NonTerminal("maybe_src"), new NonTerminal("maybe_safe"), new NonTerminal("optqualified"), new NonTerminal("maybe_pkg"), new NonTerminal("modid"), new NonTerminal("maybeas"), new NonTerminal("maybeimpspec")).setElementType(GrammarPackage.getIMPORT());
       grammar.put("importdecl", new Rule("importdecl", variants, left));
     }
     {
@@ -1344,7 +1344,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("sigdecl"));
+      addVar(variants, new NonTerminal("sigdecl")).setElementType(GrammarPackage.getSIGNATURE_DECLARATION());
       addVar(variants, new Terminal(BANG), new NonTerminal("aexp"), new NonTerminal("rhs"));
       addVar(variants, new NonTerminal("infixexp"), new NonTerminal("opt_sig"), new NonTerminal("rhs")).setElementType(GrammarPackage.getVALUE_BODY());
       addVar(variants, new NonTerminal("pattern_synonym_decl"));
@@ -1493,7 +1493,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new NonTerminal("btype"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("qtyconop"), new NonTerminal("type"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("tyvarop"), new NonTerminal("type"));
-      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctype"));
+      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctype")).setElementType(GrammarPackage.getARROW_TYPE());
       addVar(variants, new NonTerminal("btype"), new Terminal(TILDE), new NonTerminal("btype"));
       addVar(variants, new NonTerminal("btype"), new Terminal(SIMPLEQUOTE), new NonTerminal("qconop"), new NonTerminal("type"));
       addVar(variants, new NonTerminal("btype"), new Terminal(SIMPLEQUOTE), new NonTerminal("varop"), new NonTerminal("type"));
@@ -1947,7 +1947,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new Terminal(CHAR));
-      addVar(variants, new Terminal(STRING));
+      addVar(variants, new Terminal(STRING)).setElementType(GrammarPackage.getSTRING_LITERAL());
       addVar(variants, new Terminal(PRIMINT));
       addVar(variants, new Terminal(PRIMWORD));
       addVar(variants, new Terminal(PRIMCHAR));

@@ -9,8 +9,4 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class ModuleExports(node: ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun getSymbolExportList(): List<SymbolExport> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<SymbolExport>())
-    }
-
 }

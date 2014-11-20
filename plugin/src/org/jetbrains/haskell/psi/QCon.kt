@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 /**
  * Created by atsky on 10/04/14.
  */
-public class Constructor(node : ASTNode) : ASTWrapperPsiElement(node) {
+public class QCon(node : ASTNode) : ASTWrapperPsiElement(node) {
 
     override fun getReference(): PsiReference? {
         return ConstructorReference(this)

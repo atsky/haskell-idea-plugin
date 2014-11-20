@@ -232,7 +232,7 @@ header_body2
 -- The Export List
 
 maybeexports
-        :  '(' exportlist ')'
+        :  '(' exportlist ')'              { ModuleExports }
         |  {- empty -}
 ;
 
@@ -306,6 +306,7 @@ importdecls
 
 importdecl
         : 'import' maybe_src maybe_safe optqualified maybe_pkg modid maybeas maybeimpspec
+                                       { Import }
 ;
 maybe_src
         : '{-# SOURCE' '#-}'
@@ -324,7 +325,7 @@ optqualified
         | {- empty -}
 ;
 maybeas
-        : 'as' modid
+        : 'as' modid                   { ImportAsPart }
         | {- empty -}
 ;
 maybeimpspec
@@ -365,7 +366,7 @@ topdecls
 topdecl
         : cl_decl                                                     { ClassDeclaration }
         | ty_decl
-        | inst_decl
+        | inst_decl                                                   { InstanceDeclaration }
         | stand_alone_deriving
         | role_annot
         | 'default' '(' comma_types0 ')'
@@ -507,7 +508,7 @@ at_decl_inst
                 -- Note the use of type for the head; this allows
                 -- infix type constructors and type patterns
         -- data/newtype instance declaration
-        | data_or_newtype capi_ctype tycl_hdr constrs deriving
+        | data_or_newtype capi_ctype tycl_hdr constrs deriving            { DataDeclaration }
         -- GADT instance declaration
         | data_or_newtype capi_ctype tycl_hdr opt_kind_sig
                  gadt_constrlist
@@ -891,7 +892,7 @@ type
         : btype
         | btype qtyconop type
         | btype tyvarop  type
-        | btype '->'     ctype
+        | btype '->'     ctype          { ArrowType }
         | btype '~'      btype
                                         -- see Note [Promotion]
         | btype SIMPLEQUOTE qconop type
@@ -1094,8 +1095,8 @@ constrs1
 ;
 
 constr
-        : maybe_docnext forall context '=>' constr_stuff maybe_docprev
-        | maybe_docnext forall constr_stuff maybe_docprev
+        : maybe_docnext forall context '=>' constr_stuff maybe_docprev   { ConstructorDeclaration }
+        | maybe_docnext forall constr_stuff maybe_docprev                { ConstructorDeclaration }
 ;
 
 forall
@@ -1180,7 +1181,7 @@ docdecld
 ;
 
 decl_no_th
-        : sigdecl
+        : sigdecl               { SignatureDeclaration }
         | '!' aexp rhs
                                 -- Turn it all into an expression so that
                                 -- checkPattern can check that bangs are enabled
@@ -1262,13 +1263,13 @@ infixexp
 
 exp10
         : '\\' apat apats opt_asig '->' exp
-        | 'let' binds 'in' exp
+        | 'let' binds 'in' exp                { LetExpression }
         | '\\' 'lcase' altslist
         | 'if' exp optSemi 'then' exp optSemi 'else' exp
         | 'if' ifgdpats
-        | 'case' exp 'of' altslist
+        | 'case' exp 'of' altslist            { CaseExpression }
         | '-' fexp
-        | 'do' stmtlist
+        | 'do' stmtlist                       { DoExpression }
         | 'mdo' stmtlist
         | scc_annot exp
         | hpc_annot exp
@@ -1701,7 +1702,7 @@ name_var : var
 -----------------------------------------
 -- Data constructors
 qcon
-        : qconid
+        : qconid               { QCon }
         | '(' qconsym ')'
         | sysdcon
 -- The case of '[:' ':]' is part of the production `parr'
@@ -1961,7 +1962,7 @@ consym
 
 literal
         : CHAR
-        | STRING
+        | STRING                   { StringLiteral}
         | PRIMINTEGER
         | PRIMWORD
         | PRIMCHAR

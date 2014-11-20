@@ -67,9 +67,9 @@ public class HaskellCompletionContributor() : CompletionContributor() {
             for (import in list) {
                 val moduleExports = import.getModuleExports()
                 if (moduleExports != null) {
-                    for (export in moduleExports.getSymbolExportList()) {
-                        names.add(Pair(export.getText()!!, null))
-                    }
+                    //for (export in moduleExports.getSymbolExportList()) {
+                    //    names.add(Pair(export.getText()!!, null))
+                    //}
                 } else {
                     val moduleName = import.getModuleName()!!.getText()
                     for (name in GhcMod.getModuleContent(moduleName!!)) {

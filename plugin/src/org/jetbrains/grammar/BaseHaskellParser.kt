@@ -13,7 +13,6 @@ import org.jetbrains.grammar.dumb.NonTerminalTree
 
 import org.jetbrains.grammar.dumb.TerminalTree
 
-import org.jetbrains.haskell.parser.grammar.*;
 import org.jetbrains.grammar.dumb.Variant
 import org.jetbrains.grammar.dumb.Term
 

@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.scope
 
-import org.jetbrains.haskell.psi.ValueSignature
+import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.Module
 import java.util.ArrayList
 import org.jetbrains.haskell.psi.DataDeclaration
@@ -13,14 +13,14 @@ import org.jetbrains.haskell.psi.TypeName
 public class ModuleScope(val module : Module) {
 
 
-    fun getDeclaredValues() : List<ValueSignature> {
+    fun getDeclaredValues() : List<SignatureDeclaration> {
         val list = ArrayList(module.getValueDeclarationList())
 
-        list.addAll(module.getClassDeclarationList().flatMap { it.getValueDeclarationList() })
+        //list.addAll(module.getClassDeclarationList().flatMap { it.getValueDeclarationList() })
         return list
     }
 
-    fun getVisibleValues() : List<ValueSignature> {
+    fun getVisibleValues() : List<SignatureDeclaration> {
         val list = ArrayList(getDeclaredValues())
 
         list.addAll(module.getImportList().flatMap { ImportScope(it).getValues() })

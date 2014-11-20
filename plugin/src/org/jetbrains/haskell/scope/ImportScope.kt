@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.scope
 
 import org.jetbrains.haskell.psi.Import
-import org.jetbrains.haskell.psi.ValueSignature
+import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.Declaration
 import org.jetbrains.haskell.psi.DataDeclaration
 import com.intellij.psi.util.PsiTreeUtil
@@ -22,7 +22,7 @@ public class ImportScope(val import : Import) {
         return list
     }
 
-    fun getValues() : List<ValueSignature> {
+    fun getValues() : List<SignatureDeclaration> {
         val module = import.findModule()
         if (module != null) {
             return filterDeclarations(ModuleScope(module).getDeclaredValues())

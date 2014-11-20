@@ -31,9 +31,10 @@ public class HaskellUtils {
                 override fun run() {
                     lock.lock()
                     val hsFile = PsiManager.getInstance(project).findFile(file) as HaskellFile
-                    val header = hsFile.getModule()!!.getNode().findChildByType(org.jetbrains.haskell.parser.grammar.MODULE_HEADER)!!
-                    val moduleName = header.getChildren(null)!![2]
-                    name = moduleName.getText()!!
+                    throw UnsupportedOperationException() // TODO: Fixme
+                    //val header = hsFile.getModule()!!.getNode().findChildByType(org.jetbrains.haskell.parser.grammar.MODULE_HEADER)!!
+                    //val moduleName = header.getChildren(null)!![2]
+                    //name = moduleName.getText()!!
                     read = true
                     condition.signalAll()
                     lock.unlock()

@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.util.PsiTreeUtil
 
 
-public class ValueSignature(node : ASTNode) : Declaration(node) {
+public class SignatureDeclaration(node : ASTNode) : Declaration(node) {
 
     fun getNames(): List<ValueName> =
         PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())

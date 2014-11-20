@@ -17,7 +17,7 @@ public class ConstructorDeclaration(node : ASTNode) : Declaration(node), PsiName
     }
 
     override fun getDeclarationName(): String? {
-        return findChildByClass(javaClass<ConstructorName>())?.getText()
+        return null;//findChildByClass(javaClass<ConstructorName>())?.getText()
     }
 
 }
