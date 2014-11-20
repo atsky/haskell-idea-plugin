@@ -6,6 +6,7 @@ import com.intellij.psi.tree.IElementType
  * Created by atsky on 11/17/14.
  */
 abstract class ResultTree() {
+    abstract fun size(): Int
 
 }
 
@@ -13,6 +14,8 @@ class TerminalTree(val haskellToken: org.jetbrains.haskell.parser.HaskellToken) 
     override fun toString(): String {
         return "'" + haskellToken.myName + "'";
     }
+
+    override fun size(): Int = 1
 }
 
 class NonTerminalTree(val rule : String,
@@ -41,5 +44,13 @@ class NonTerminalTree(val rule : String,
             }
         }
         return rule + "@" + variant + "{" + builder + "}"
+    }
+
+    override fun size(): Int {
+        var size = 0;
+        for (child in children) {
+            size += child.size()
+        }
+        return size;
     }
 }

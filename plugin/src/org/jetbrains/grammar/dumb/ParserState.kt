@@ -10,7 +10,7 @@ class ParserState(val rule : Rule,
                   val ruleIndex : Int,
                   val termIndex : Int,
                   val trees : List<ResultTree>,
-                  val parents: List<ParserState>) {
+                  val parents: RuleCache?) {
 
     fun next(termIndex: Int,
              next: NonTerminalTree): ParserState {
