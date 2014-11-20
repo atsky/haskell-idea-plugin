@@ -4,7 +4,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.PsiBuilder.Marker
 import org.jetbrains.grammar.dumb.Rule
-import org.jetbrains.grammar.dumb.GrammarBuilder
 import com.intellij.lang.ASTNode
 import org.jetbrains.haskell.parser.rules.BaseParser
 import java.util.ArrayList
@@ -69,7 +68,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
     fun findFirst(grammar : Map<String, Rule>) {
         for (rule in grammar.values()) {
-            rule.updateFirst();
+            rule.makeAnalysis(grammar);
         }
     }
 
@@ -77,15 +76,5 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
         val variant = Variant(terms.toArrayList())
         variants.add(variant);
         return variant;
-    }
-
-    fun grammar(body : GrammarBuilder.() -> Unit) : Map<String, Rule> {
-        val builder = GrammarBuilder()
-        builder.body()
-        val grammar = builder.rules
-
-        findFirst(grammar);
-
-        return grammar;
     }
 }

@@ -12,6 +12,8 @@ import org.jetbrains.grammar.HaskellLexerTokens
  */
 class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) {
 
+    public var writeLog : Boolean = false;
+
     fun parse(): NonTerminalTree? {
         val rule = grammar["module"]!!
 
@@ -66,7 +68,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                     val nextRule = grammar[ruleName]!!
                     for (variant in nextRule.variants.indices) {
                         val first = nextRule.variants[variant].first
-                        if (first == null || first.contains(tokens[state.termIndex])) {
+                        if (first == null || nextRule.canBeEmpty || first.contains(tokens[state.termIndex])) {
                             val nextState = ParserState(nextRule, variant, 0, state.termIndex, listOf(), ArrayList(statesSet))
                             newStates.add(nextState)
                         } else {
@@ -110,7 +112,9 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
     }
 
     fun log(line : String) {
-        //println(line)
+        if (writeLog) {
+            println(line)
+        }
     }
 
 

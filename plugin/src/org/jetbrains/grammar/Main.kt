@@ -63,7 +63,9 @@ fun parseFile(inFile : File, outFile : File) {
     stream.println("\n-------------------")
 
     val grammar = HaskellParser(null).getGrammar()
-    val tree = GLLParser(grammar, tokens).parse()
+    val parser = GLLParser(grammar, tokens)
+    parser.writeLog = true;
+    val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()
 }

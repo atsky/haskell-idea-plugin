@@ -10,9 +10,13 @@ open class Term {
 }
 
 public class Terminal(val tokenType: HaskellToken) : Term() {
-
+    override fun toString(): String {
+        return "'" + tokenType.myName + "'"
+    }
 }
 
 public class NonTerminal(val rule: String) : Term() {
-
+    override fun toString(): String {
+        return rule
+    }
 }
