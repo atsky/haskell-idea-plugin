@@ -8,4 +8,4 @@ import com.intellij.psi.PsiElement
 /**
  * Created by atsky on 10/04/14.
  */
-public class ArrowType(node : ASTNode) : ASTWrapperPsiElement(node)
+public class FunctionType(node : ASTNode) : ASTWrapperPsiElement(node)

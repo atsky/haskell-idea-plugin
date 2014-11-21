@@ -11,6 +11,10 @@ import org.jetbrains.haskell.psi.reference.TypeReference
  */
 public class TypeVariable(node: ASTNode) : ASTWrapperPsiElement(node) {
 
+    fun getNameText() : String? {
+        return getText()
+    }
+
     override fun getReference(): PsiReference? {
         return TypeReference(this)
     }

@@ -16,8 +16,12 @@ public class ConstructorDeclaration(node : ASTNode) : Declaration(node), PsiName
         throw UnsupportedOperationException()
     }
 
+    fun getTypeVariable() : TypeVariable? {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).first
+    }
+
     override fun getDeclarationName(): String? {
-        return null;//findChildByClass(javaClass<ConstructorName>())?.getText()
+        return getTypeVariable()?.getText()
     }
 
 }

@@ -5,11 +5,18 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.util.PsiTreeUtil
 
 
-public class SignatureDeclaration(node : ASTNode) : Declaration(node) {
+public class SignatureDeclaration(node: ASTNode) : ASTWrapperPsiElement(node) {
 
-    override fun getDeclarationName(): String? {
-        return null;
+    fun getValuesList(): List<QVar> {
+        val qVar = getQNameExpression()?.getQVar()
+        if (qVar != null) {
+            return listOf(qVar)
+        }
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
+
+    fun getQNameExpression(): QNameExpression? =
+            findChildByClass(javaClass<QNameExpression>())
 
 
 }

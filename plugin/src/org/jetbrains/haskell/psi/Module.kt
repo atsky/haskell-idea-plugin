@@ -33,7 +33,7 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 
-    fun getValueDeclarationList() : List<SignatureDeclaration> {
+    fun getSignatureDeclarationsList() : List<SignatureDeclaration> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 

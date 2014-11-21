@@ -11,17 +11,23 @@ import org.jetbrains.haskell.psi.QNameExpression
 /**
  * Created by atsky on 4/25/14.
  */
-class ValueNameReference(val referenceExpression: QNameExpression) : PsiReferenceBase<QNameExpression>(
-        referenceExpression,
-        TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
+class QNameReference(val refExpression: QNameExpression) : PsiReferenceBase<QNameExpression>(
+        refExpression,
+        TextRange(0, refExpression.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
         val module = Module.findModule(getElement()!!)
         if (module == null) {
             return null
         }
-        //val values = ModuleScope(module).getDeclaredValues().flatMap { it.getNames() }
-        //return values.firstOrNull { it.getText() == getValue() }
+        if (refExpression.getQVar() != null) {
+            val values = ModuleScope(module).getVisibleSignatureDeclaration().flatMap { it.getValuesList() }
+            return values.firstOrNull { it.getText() == getValue() }
+        }
+        if (refExpression.getQCon() != null) {
+            val values = ModuleScope(module).getVisibleConstructors()
+            return values.firstOrNull { it.getDeclarationName() == getValue() }
+        }
         return null;
     }
 

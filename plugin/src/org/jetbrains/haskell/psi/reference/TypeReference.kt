@@ -18,11 +18,11 @@ class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
     override fun resolve(): PsiElement? {
         val module = Module.findModule(getElement()!!)
         if (module != null) {
-            //for (aType in  ModuleScope(module).getVisibleTypes()) {
-            //    if (aType.getName() == typeRef.getText()) {
-            //        return aType
-            //    }
-            //}
+            for (aType in  ModuleScope(module).getVisibleDataDeclarations()) {
+                if (aType.getDeclarationName() == typeRef.getText()) {
+                    return aType.getNameElement()
+                }
+            }
         }
 
         return null

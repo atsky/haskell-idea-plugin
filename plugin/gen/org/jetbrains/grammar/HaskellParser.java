@@ -115,7 +115,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new Terminal(TYPE), new NonTerminal("type"), new Terminal(EQUAL), new NonTerminal("ctypedoc"));
       addVar(variants, new Terminal(TYPE), new Terminal(FAMILY), new NonTerminal("type"), new NonTerminal("opt_kind_sig"), new NonTerminal("where_type_family"));
-      addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("constrs"), new NonTerminal("deriving"));
+      addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("constrs"), new NonTerminal("deriving")).setElementType(GrammarPackage.getDATA_DECLARATION());
       addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("opt_kind_sig"), new NonTerminal("gadt_constrlist"), new NonTerminal("deriving"));
       addVar(variants, new Terminal(DATA), new Terminal(FAMILY), new NonTerminal("type"), new NonTerminal("opt_kind_sig"));
       grammar.put("ty_decl", new Rule("ty_decl", variants, left));
@@ -1458,7 +1458,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new NonTerminal("btype"), new NonTerminal("qtyconop"), new NonTerminal("type"), new NonTerminal("docprev"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("tyvarop"), new NonTerminal("type"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("tyvarop"), new NonTerminal("type"), new NonTerminal("docprev"));
-      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctypedoc"));
+      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctypedoc")).setElementType(GrammarPackage.getFUNCTION_TYPE());
       addVar(variants, new NonTerminal("btype"), new NonTerminal("docprev"), new Terminal(RARROW), new NonTerminal("ctypedoc"));
       addVar(variants, new NonTerminal("btype"), new Terminal(TILDE), new NonTerminal("btype"));
       addVar(variants, new NonTerminal("btype"), new Terminal(SIMPLEQUOTE), new NonTerminal("qconop"), new NonTerminal("type"));
@@ -1493,7 +1493,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new NonTerminal("btype"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("qtyconop"), new NonTerminal("type"));
       addVar(variants, new NonTerminal("btype"), new NonTerminal("tyvarop"), new NonTerminal("type"));
-      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctype")).setElementType(GrammarPackage.getARROW_TYPE());
+      addVar(variants, new NonTerminal("btype"), new Terminal(RARROW), new NonTerminal("ctype")).setElementType(GrammarPackage.getFUNCTION_TYPE());
       addVar(variants, new NonTerminal("btype"), new Terminal(TILDE), new NonTerminal("btype"));
       addVar(variants, new NonTerminal("btype"), new Terminal(SIMPLEQUOTE), new NonTerminal("qconop"), new NonTerminal("type"));
       addVar(variants, new NonTerminal("btype"), new Terminal(SIMPLEQUOTE), new NonTerminal("varop"), new NonTerminal("type"));
@@ -1721,7 +1721,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new NonTerminal("literal"));
       addVar(variants, new Terminal(INTEGER));
       addVar(variants, new Terminal(RATIONAL));
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("texp"), new Terminal(CPAREN));
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("texp"), new Terminal(CPAREN)).setElementType(GrammarPackage.getPARENTHESIS_EXPRESSION());
       addVar(variants, new Terminal(OPAREN), new NonTerminal("tup_exprs"), new Terminal(CPAREN));
       addVar(variants, new Terminal(OUBXPAREN), new NonTerminal("texp"), new Terminal(CUBXPAREN));
       addVar(variants, new Terminal(OUBXPAREN), new NonTerminal("tup_exprs"), new Terminal(CUBXPAREN));

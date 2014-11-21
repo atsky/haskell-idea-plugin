@@ -12,15 +12,15 @@ import org.jetbrains.haskell.psi.ConstructorDeclaration
 public class ModuleScope(val module : Module) {
 
 
-    fun getDeclaredValues() : List<SignatureDeclaration> {
-        val list = ArrayList(module.getValueDeclarationList())
+    fun getVisibleSignatureDeclaration() : List<SignatureDeclaration> {
+        val list = ArrayList(module.getSignatureDeclarationsList())
 
         //list.addAll(module.getClassDeclarationList().flatMap { it.getValueDeclarationList() })
         return list
     }
 
     fun getVisibleValues() : List<SignatureDeclaration> {
-        val list = ArrayList(getDeclaredValues())
+        val list = ArrayList(getVisibleSignatureDeclaration())
 
         list.addAll(module.getImportList().flatMap { ImportScope(it).getValues() })
 

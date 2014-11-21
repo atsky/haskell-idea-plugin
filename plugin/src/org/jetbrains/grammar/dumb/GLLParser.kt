@@ -91,9 +91,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                 ruleCache.started = true;
 
                 val nextRule = grammar[ruleName]!!
-                if (ruleName == "qcon") {
-                    println()
-                }
+
                 for (variant in nextRule.variants.indices) {
                     val first = nextRule.variants[variant].first
                     val parserState = ParserState(nextRule, variant, 0, currentStep, listOf(), ruleCache)

@@ -10,8 +10,11 @@ import com.intellij.psi.util.PsiTreeUtil
 public class DataDeclaration(node : ASTNode) : Declaration(node) {
 
     override fun getDeclarationName(): String? {
-        return null;//simpleType?.getNameElement()?.getText()
+        return getNameElement()?.getNameText()
     }
+
+    fun getNameElement(): TypeVariable?  =
+        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).first
 
     fun getConstructorDeclarationList() : List<ConstructorDeclaration> =
         PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())

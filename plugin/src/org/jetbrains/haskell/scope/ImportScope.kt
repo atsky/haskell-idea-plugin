@@ -25,7 +25,7 @@ public class ImportScope(val import : Import) {
     fun getValues() : List<SignatureDeclaration> {
         val module = import.findModule()
         if (module != null) {
-            return filterDeclarations(ModuleScope(module).getDeclaredValues())
+            //return filterDeclarations(ModuleScope(module).getSignatureDeclaration())
         }
         return listOf()
     }

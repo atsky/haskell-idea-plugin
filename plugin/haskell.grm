@@ -418,6 +418,7 @@ ty_decl
         | data_or_newtype capi_ctype tycl_hdr constrs deriving
                                    -- We need the location on tycl_hdr in case
                                    -- constrs and deriving are both empty
+                                   { DataDeclaration }
 
           -- ordinary GADT declaration
         | data_or_newtype capi_ctype tycl_hdr opt_kind_sig
@@ -892,7 +893,7 @@ type
         : btype
         | btype qtyconop type
         | btype tyvarop  type
-        | btype '->'     ctype          { ArrowType }
+        | btype '->'     ctype            { FunctionType }
         | btype '~'      btype
                                         -- see Note [Promotion]
         | btype SIMPLEQUOTE qconop type
@@ -906,7 +907,7 @@ typedoc
         | btype qtyconop type docprev
         | btype tyvarop  type
         | btype tyvarop  type docprev
-        | btype '->'     ctypedoc
+        | btype '->'     ctypedoc         { FunctionType }
         | btype docprev '->' ctypedoc
         | btype '~'      btype
                                         -- see Note [Promotion]
@@ -1325,7 +1326,7 @@ aexp2
         -- This allows you to write, e.g., '(+ 3, 4 -)', which isn't
         -- correct Haskell (you'd have to write '((+ 3), (4 -))')
         -- but the less cluttered version fell out of having texps.
-        | '(' texp ')'
+        | '(' texp ')'                       { ParenthesisExpression }
         | '(' tup_exprs ')'
         | '(#' texp '#)'
         | '(#' tup_exprs '#)'
