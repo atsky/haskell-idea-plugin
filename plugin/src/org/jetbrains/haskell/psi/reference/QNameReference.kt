@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.scope.ModuleScope
 import org.jetbrains.haskell.psi.QNameExpression
+import org.jetbrains.haskell.scope.ExpressionScope
 
 /**
  * Created by atsky on 4/25/14.
@@ -21,8 +22,8 @@ class QNameReference(val refExpression: QNameExpression) : PsiReferenceBase<QNam
             return null
         }
         if (refExpression.getQVar() != null) {
-            val values = ModuleScope(module).getVisibleSignatureDeclaration().flatMap { it.getValuesList() }
-            return values.firstOrNull { it.getText() == getValue() }
+            return ExpressionScope(refExpression).getVisibleSignatureDeclarations().firstOrNull {
+                it.getValuesList().first?.getText() == getValue() }
         }
         if (refExpression.getQCon() != null) {
             val values = ModuleScope(module).getVisibleConstructors()

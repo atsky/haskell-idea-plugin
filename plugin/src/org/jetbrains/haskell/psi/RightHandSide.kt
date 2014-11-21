@@ -6,4 +6,8 @@ import com.intellij.lang.ASTNode
 /**
  * Created by atsky on 11/21/14.
  */
-public class RightHandSide(node : ASTNode) : ASTWrapperPsiElement(node)
+public class RightHandSide(node : ASTNode) : ASTWrapperPsiElement(node) {
+    fun getWhereBindings() : WhereBindings? =
+        findChildByClass(javaClass<WhereBindings>())
+
+}
