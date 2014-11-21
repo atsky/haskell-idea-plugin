@@ -9,6 +9,7 @@ import java.io.FileWriter
 import org.jetbrains.generator.grammar.*
 import java.util.HashMap
 import java.util.HashSet
+import java.util.TreeSet
 
 /**
  * Created by atsky on 11/7/14.
@@ -95,7 +96,7 @@ class ParserGenerator(val grammar: Grammar) {
 
     fun generateTokens() {
         val result = TextGenerator()
-        val elementSet = HashSet<String>()
+        val elementSet = TreeSet<String>()
         for (token in grammar.rules) {
             for (variant in token.variants) {
                 if (variant.elementName != null) {

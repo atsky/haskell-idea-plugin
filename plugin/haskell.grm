@@ -401,6 +401,7 @@ cl_decl
 ty_decl
            -- ordinary type synonyms
         : 'type' type '=' ctypedoc
+                                   { TypeSynonym }
                 -- Note ctype, not sigtype, on the right of '='
                 -- We allow an explicit for-all but we don't insert one
                 -- in   type Foo a = (b,b)
@@ -677,7 +678,7 @@ binds              -- May have implicit parameters
 ;
 wherebinds                                      -- May have implicit parameters
                                                 -- No type declarations
-        : 'where' binds
+        : 'where' binds                         { WhereBindings }
         | {- empty -}
 ;
 
@@ -1214,7 +1215,7 @@ gdrhs
 ;
 
 gdrh
-        : '|' guardquals '=' exp
+        : '|' guardquals '=' exp             { Guard }
 ;
 
 sigdecl
@@ -1530,7 +1531,7 @@ alts1
 ;
 
 alt
-        : pat opt_sig alt_rhs
+        : pat opt_sig alt_rhs           { CaseAlternative }
 ;
 
 alt_rhs

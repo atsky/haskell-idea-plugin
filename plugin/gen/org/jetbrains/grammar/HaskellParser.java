@@ -113,7 +113,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(TYPE), new NonTerminal("type"), new Terminal(EQUAL), new NonTerminal("ctypedoc"));
+      addVar(variants, new Terminal(TYPE), new NonTerminal("type"), new Terminal(EQUAL), new NonTerminal("ctypedoc")).setElementType(GrammarPackage.getTYPE_SYNONYM());
       addVar(variants, new Terminal(TYPE), new Terminal(FAMILY), new NonTerminal("type"), new NonTerminal("opt_kind_sig"), new NonTerminal("where_type_family"));
       addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("constrs"), new NonTerminal("deriving")).setElementType(GrammarPackage.getDATA_DECLARATION());
       addVar(variants, new NonTerminal("data_or_newtype"), new NonTerminal("capi_ctype"), new NonTerminal("tycl_hdr"), new NonTerminal("opt_kind_sig"), new NonTerminal("gadt_constrlist"), new NonTerminal("deriving"));
@@ -694,7 +694,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(WHERE), new NonTerminal("binds"));
+      addVar(variants, new Terminal(WHERE), new NonTerminal("binds")).setElementType(GrammarPackage.getWHERE_BINDINGS());
       addVar(variants);
       grammar.put("wherebinds", new Rule("wherebinds", variants, left));
     }
@@ -779,7 +779,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("pat"), new NonTerminal("opt_sig"), new NonTerminal("alt_rhs"));
+      addVar(variants, new NonTerminal("pat"), new NonTerminal("opt_sig"), new NonTerminal("alt_rhs")).setElementType(GrammarPackage.getCASE_ALTERNATIVE());
       grammar.put("alt", new Rule("alt", variants, left));
     }
     {
@@ -1191,7 +1191,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(VBAR), new NonTerminal("guardquals"), new Terminal(EQUAL), new NonTerminal("exp"));
+      addVar(variants, new Terminal(VBAR), new NonTerminal("guardquals"), new Terminal(EQUAL), new NonTerminal("exp")).setElementType(GrammarPackage.getGUARD());
       grammar.put("gdrh", new Rule("gdrh", variants, left));
     }
     {
