@@ -12,6 +12,7 @@ import com.intellij.lexer.Lexer
 import org.jetbrains.grammar.HaskellLexerTokens
 import org.jetbrains.haskell.parser.token.NEW_LINE
 import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
+import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 
 /**
  * Created by atsky on 26/06/14.
@@ -48,7 +49,7 @@ public class HaskellIndentLexer() : LexerBase() {
 
             if (tokenType != NEW_LINE &&
                 tokenType != TokenType.WHITE_SPACE &&
-                tokenType != NEW_LINE &&
+                tokenType != END_OF_LINE_COMMENT &&
                 tokenType != BLOCK_COMMENT) {
                 if (writeIndent) {
                     writeIndent = false;

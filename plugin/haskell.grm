@@ -1624,9 +1624,9 @@ stmt
 ;
 
 qual
-    : bindpat '<-' exp
-    | exp
-    | 'let' binds
+    : bindpat '<-' exp                 { BindStatement }
+    | exp                              { ExpressionStatement }
+    | 'let' binds                      { LetStatement }
 ;
 
 -----------------------------------------------------------------------------

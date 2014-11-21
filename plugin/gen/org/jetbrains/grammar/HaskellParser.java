@@ -457,9 +457,9 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("bindpat"), new Terminal(LARROW), new NonTerminal("exp"));
-      addVar(variants, new NonTerminal("exp"));
-      addVar(variants, new Terminal(LET), new NonTerminal("binds"));
+      addVar(variants, new NonTerminal("bindpat"), new Terminal(LARROW), new NonTerminal("exp")).setElementType(GrammarPackage.getBIND_STATEMENT());
+      addVar(variants, new NonTerminal("exp")).setElementType(GrammarPackage.getEXPRESSION_STATEMENT());
+      addVar(variants, new Terminal(LET), new NonTerminal("binds")).setElementType(GrammarPackage.getLET_STATEMENT());
       grammar.put("qual", new Rule("qual", variants, left));
     }
     {
