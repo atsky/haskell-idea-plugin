@@ -7,7 +7,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.CabalCompositeElementType
-import org.jetbrains.haskell.parser.HaskellToken
+import org.jetbrains.haskell.parser.HaskellTokenType
 import org.jetbrains.cabal.psi.*
 
 public trait CabalTokelTypes {
@@ -17,25 +17,25 @@ public trait CabalTokelTypes {
             ASTWrapperPsiElement(node)
         }
 
-        val COLON                  : IElementType  = HaskellToken(":")
-        val COMMA                  : IElementType  = HaskellToken(",")
-        val COMMENT                : IElementType  = HaskellToken("COMMENT")
-        val OPEN_PAREN             : IElementType  = HaskellToken("(")
-        val CLOSE_PAREN            : IElementType  = HaskellToken(")")
-        val SLASH                  : IElementType  = HaskellToken("/")
-        val END_OF_LINE_COMMENT    : IElementType  = HaskellToken("--")
-        val STRING                 : IElementType  = HaskellToken("string")
-        val NUMBER                 : IElementType  = HaskellToken("number")
-        val ID                     : IElementType  = HaskellToken("id")
-        val COMPARATOR             : IElementType  = HaskellToken("COMPARATOR")
-        val LOGIC                  : IElementType  = HaskellToken("LOGIC")
-        val EQ                     : IElementType  = HaskellToken("=")
-        val AND                    : IElementType  = HaskellToken("&")
-        val OR                     : IElementType  = HaskellToken("|")
-        val OPEN_CURLY             : IElementType  = HaskellToken("{")
-        val CLOSE_CURLY            : IElementType  = HaskellToken("}")
-        val TAB                    : IElementType  = HaskellToken("TAB")
-        val NEGATION               : IElementType  = HaskellToken("!")
+        val COLON                  : IElementType  = HaskellTokenType(":")
+        val COMMA                  : IElementType  = HaskellTokenType(",")
+        val COMMENT                : IElementType  = HaskellTokenType("COMMENT")
+        val OPEN_PAREN             : IElementType  = HaskellTokenType("(")
+        val CLOSE_PAREN            : IElementType  = HaskellTokenType(")")
+        val SLASH                  : IElementType  = HaskellTokenType("/")
+        val END_OF_LINE_COMMENT    : IElementType  = HaskellTokenType("--")
+        val STRING                 : IElementType  = HaskellTokenType("string")
+        val NUMBER                 : IElementType  = HaskellTokenType("number")
+        val ID                     : IElementType  = HaskellTokenType("id")
+        val COMPARATOR             : IElementType  = HaskellTokenType("COMPARATOR")
+        val LOGIC                  : IElementType  = HaskellTokenType("LOGIC")
+        val EQ                     : IElementType  = HaskellTokenType("=")
+        val AND                    : IElementType  = HaskellTokenType("&")
+        val OR                     : IElementType  = HaskellTokenType("|")
+        val OPEN_CURLY             : IElementType  = HaskellTokenType("{")
+        val CLOSE_CURLY            : IElementType  = HaskellTokenType("}")
+        val TAB                    : IElementType  = HaskellTokenType("TAB")
+        val NEGATION               : IElementType  = HaskellTokenType("!")
 
         val COMMENTS               : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)
         val WHITESPACES            : TokenSet = TokenSet.create(TokenType.WHITE_SPACE)

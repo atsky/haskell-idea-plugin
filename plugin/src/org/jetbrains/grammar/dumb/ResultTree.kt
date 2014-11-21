@@ -1,7 +1,7 @@
 package org.jetbrains.grammar.dumb
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.haskell.parser.HaskellToken
+import org.jetbrains.haskell.parser.HaskellTokenType
 
 /**
  * Created by atsky on 11/17/14.
@@ -11,7 +11,7 @@ abstract class ResultTree() {
 
 }
 
-class TerminalTree(val haskellToken: HaskellToken) : ResultTree() {
+class TerminalTree(val haskellToken: HaskellTokenType) : ResultTree() {
     override fun toString(): String {
         return "'" + haskellToken.myName + "'";
     }

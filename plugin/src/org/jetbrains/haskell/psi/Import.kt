@@ -4,12 +4,13 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.haskell.parser.token.*
+import org.jetbrains.grammar.HaskellLexerTokens
 
 
 public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
 
     public fun hasHiding() : Boolean {
-        return getNode().getChildren(TokenSet.create(HIDING_KW))!!.size > 0
+        return getNode().getChildren(TokenSet.create(HaskellLexerTokens.HIDING))!!.size > 0
     }
 
     public fun getModuleName() : ModuleName? =

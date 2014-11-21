@@ -23,6 +23,7 @@ import org.jetbrains.haskell.psi.Module
 import java.util.ArrayList
 import org.jetbrains.grammar.dumb.GLLParser
 import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
+import org.jetbrains.grammar.HaskellLexerTokens
 
 
 public class HaskellParserDefinition() : ParserDefinition {
@@ -36,7 +37,7 @@ public class HaskellParserDefinition() : ParserDefinition {
 
     override fun getCommentTokens(): TokenSet = COMMENTS
 
-    override fun getStringLiteralElements(): TokenSet = TokenSet.create(STRING)
+    override fun getStringLiteralElements(): TokenSet = TokenSet.create(HaskellLexerTokens.STRING)
 
 
     override fun createParser(project: Project?): PsiParser =

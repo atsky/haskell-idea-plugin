@@ -6,7 +6,7 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.HashMap
 import org.jetbrains.grammar.HaskellLexerTokens
-import org.jetbrains.haskell.parser.HaskellToken
+import org.jetbrains.haskell.parser.HaskellTokenType
 
 /**
  * Created by atsky on 11/17/14.
@@ -156,7 +156,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
         }
         val list = ArrayList<ResultTree>()
         for (i in start..end-1) {
-            list.add(TerminalTree(tokens[i] as HaskellToken))
+            list.add(TerminalTree(tokens[i] as HaskellTokenType))
         }
         val tree = NonTerminalTree("topdecl", 0, null, list);
         for (state in ruleCache.states) {

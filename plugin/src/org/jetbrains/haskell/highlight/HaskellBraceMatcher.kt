@@ -5,6 +5,7 @@ import com.intellij.lang.PairedBraceMatcher
 import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.haskell.parser.lexer.*
+import org.jetbrains.grammar.HaskellLexerTokens
 
 public class HaskellBraceMatcher() : PairedBraceMatcher {
 
@@ -22,8 +23,8 @@ public class HaskellBraceMatcher() : PairedBraceMatcher {
 
     class object {
         val PAIRS: Array<BracePair> = array<BracePair>(
-                BracePair(org.jetbrains.haskell.parser.token.LEFT_PAREN, org.jetbrains.haskell.parser.token.RIGHT_PAREN, true),
-                BracePair(org.jetbrains.haskell.parser.token.LEFT_BRACE, org.jetbrains.haskell.parser.token.RIGHT_BRACE, true),
-                BracePair(org.jetbrains.haskell.parser.token.LEFT_BRACKET, org.jetbrains.haskell.parser.token.RIGHT_BRACKET, true))
+                BracePair(HaskellLexerTokens.OPAREN, HaskellLexerTokens.CPAREN, true),
+                BracePair(HaskellLexerTokens.OCURLY, HaskellLexerTokens.CCURLY, true),
+                BracePair(HaskellLexerTokens.OBRACK, HaskellLexerTokens.CBRACK, true))
     }
 }

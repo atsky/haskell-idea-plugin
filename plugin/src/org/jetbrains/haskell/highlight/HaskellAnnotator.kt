@@ -7,6 +7,7 @@ import org.jetbrains.haskell.psi.Import
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.haskell.parser.token.*
 import com.intellij.lang.ASTNode
+import org.jetbrains.grammar.HaskellLexerTokens
 
 
 /**
@@ -15,10 +16,10 @@ import com.intellij.lang.ASTNode
 public class HaskellAnnotator() : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element is Import) {
-            for (node in element.getNode().getChildren(TokenSet.create(HIDING_KW, QUALIFIED_KW))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(HaskellLexerTokens.HIDING, HaskellLexerTokens.QUALIFIED))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
-            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS_KW)) ?: array<ASTNode>()) {
+            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(HaskellLexerTokens.AS)) ?: array<ASTNode>()) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
         }

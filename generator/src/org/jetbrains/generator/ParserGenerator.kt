@@ -71,7 +71,7 @@ class ParserGenerator(val grammar: Grammar) {
         with(result) {
             line("package org.jetbrains.grammar;")
             line()
-            line("import org.jetbrains.haskell.parser.HaskellToken;")
+            line("import org.jetbrains.haskell.parser.HaskellTokenType;")
             line()
             line()
             line("public interface HaskellLexerTokens {")
@@ -79,7 +79,7 @@ class ParserGenerator(val grammar: Grammar) {
             indent {
                 for (token in tokens) {
                     val name = token.name.toUpperCase()
-                    line("public static HaskellToken ${name} = new HaskellToken(\"${token.text}\");");
+                    line("public static HaskellTokenType ${name} = new HaskellTokenType(\"${token.text}\");");
                 }
             }
             line("}")

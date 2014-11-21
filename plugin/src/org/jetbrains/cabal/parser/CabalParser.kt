@@ -7,7 +7,7 @@ import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.haskell.parser.rules.BaseParser
-import org.jetbrains.haskell.parser.HaskellToken
+import org.jetbrains.haskell.parser.HaskellTokenType
 import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
 
 

@@ -12,9 +12,10 @@ import com.intellij.psi.StringEscapesTokenTypes
 import com.intellij.psi.tree.IElementType
 import gnu.trove.THashMap
 import org.jetbrains.haskell.parser.lexer.*
-import org.jetbrains.haskell.parser.HaskellToken
+import org.jetbrains.haskell.parser.HaskellTokenType
 import java.awt.*
 import org.jetbrains.haskell.parser.token.*
+import org.jetbrains.grammar.HaskellLexerTokens
 
 
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
@@ -55,13 +56,13 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
             keys1.put(keyword, HASKELL_KEYWORD)
         }
         keys1.put(PRAGMA, HASKELL_PRAGMA)
-        keys1.put(TYPE_OR_CONS, CONSTRUCTOR)
-        keys1.put(OPERATOR_CONS, CONSTRUCTOR)
-        keys1.put(OPERATOR_ID, HASKELL_OPERATOR)
-        keys1.put(COLON, CONSTRUCTOR)
-        keys1.put(STRING, STRING_LITERAL)
-        keys1.put(CHARACTER, STRING_LITERAL)
-        keys1.put(NUMBER, DefaultLanguageHighlighterColors.NUMBER)
+        keys1.put(HaskellLexerTokens.CONID, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.CONSYM, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.VARSYM, HASKELL_OPERATOR)
+        keys1.put(HaskellLexerTokens.COLON, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.STRING, STRING_LITERAL)
+        keys1.put(HaskellLexerTokens.CHAR, STRING_LITERAL)
+        keys1.put(HaskellLexerTokens.INTEGER, DefaultLanguageHighlighterColors.NUMBER)
         keys1.put(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, PROPERTIES_VALID_STRING_ESCAPE)
         keys1.put(StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)
         keys1.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)

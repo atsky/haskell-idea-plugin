@@ -123,80 +123,78 @@ EOL_COMMENT = "--"[^\n]*
 {white_no_nl}+        { return TokenType.WHITE_SPACE; }
 "\n"                  { return TokenPackage.getNEW_LINE(); }
 {EOL_COMMENT}         { return TokenPackage.getEND_OF_LINE_COMMENT(); }
-"{"                   { return TokenPackage.getLEFT_BRACE(); }
-"}"                   { return TokenPackage.getRIGHT_BRACE(); }
-"["                   { return TokenPackage.getLEFT_BRACKET(); }
-"]"                   { return TokenPackage.getRIGHT_BRACKET(); }
-"("                   { return TokenPackage.getLEFT_PAREN(); }
-")"                   { return TokenPackage.getRIGHT_PAREN(); }
-":"                   { return TokenPackage.getCOLON();}
-"::"                  { return TokenPackage.getDOUBLE_COLON(); }
-";"                   { return TokenPackage.getSEMICOLON();}
-"."                   { return TokenPackage.getDOT(); }
-".."                  { return TokenPackage.getDOT_DOT(); }
-","                   { return TokenPackage.getCOMMA(); }
-"="                   { return TokenPackage.getEQUALS(); }
-"|"                   { return TokenPackage.getVERTICAL_BAR();}
-"\\"                  { return TokenPackage.getBACK_SLASH(); }
-"<-"                  { return TokenPackage.getLEFT_ARROW(); }
-(->)|(\u2192)         { return TokenPackage.getRIGHT_ARROW(); }
+"{"                   { return HaskellLexerTokens.OCURLY; }
+"}"                   { return HaskellLexerTokens.CCURLY; }
+"["                   { return HaskellLexerTokens.OBRACK; }
+"]"                   { return HaskellLexerTokens.CBRACK; }
+"("                   { return HaskellLexerTokens.OPAREN; }
+")"                   { return HaskellLexerTokens.CPAREN; }
+":"                   { return HaskellLexerTokens.COLON;}
+"::"                  { return HaskellLexerTokens.DCOLON; }
+";"                   { return HaskellLexerTokens.SEMI;}
+"."                   { return HaskellLexerTokens.DOT; }
+".."                  { return HaskellLexerTokens.DOTDOT; }
+","                   { return HaskellLexerTokens.COMMA; }
+"="                   { return HaskellLexerTokens.EQUAL; }
+"|"                   { return HaskellLexerTokens.VBAR;}
+"\\"                  { return HaskellLexerTokens.LAM; }
+"<-"                  { return HaskellLexerTokens.LARROW; }
+(->)|(\u2192)         { return HaskellLexerTokens.RARROW; }
 
-"?"                   { return TokenPackage.getQUESTION(); }
-"#"                   { return TokenPackage.getHASH(); }
-"@"                   { return TokenPackage.getAT(); }
-"~"                   { return TokenPackage.getTILDE(); }
-"`"                   { return TokenPackage.getBACKQUOTE(); }
-"=>"                  { return TokenPackage.getDOUBLE_ARROW(); }
-"!"                   { return TokenPackage.getEXCLAMATION(); }
-"_"                   { return TokenPackage.getUNDERSCORE(); }
-{symbol}+             { return TokenPackage.getOPERATOR_ID(); }
-":"{symbol}+          { return TokenPackage.getOPERATOR_CONS(); }
+"@"                   { return HaskellLexerTokens.AT; }
+"~"                   { return HaskellLexerTokens.TILDE; }
+"`"                   { return HaskellLexerTokens.BACKQUOTE; }
+"=>"                  { return HaskellLexerTokens.DARROW; }
+"!"                   { return HaskellLexerTokens.BANG; }
+"_"                   { return HaskellLexerTokens.UNDERSCORE; }
+{symbol}+             { return HaskellLexerTokens.VARSYM; }
+":"{symbol}+          { return HaskellLexerTokens.CONSYM; }
 
 // - Keywords
 
-"as"                  { return TokenPackage.getAS_KW(); }
-"case"                { return TokenPackage.getCASE_KW(); }
-"class"               { return TokenPackage.getCLASS_KW(); }
-"data"                { return TokenPackage.getDATA_KW(); }
-"default"             { return TokenPackage.getDEFAULT_KW(); }
-"deriving"            { return TokenPackage.getDERIVING_KW(); }
-"do"                  { return TokenPackage.getDO_KW(); }
-"else"                { return TokenPackage.getELSE_KW(); }
-"export"              { return TokenPackage.getEXPORT(); }
-"hiding"              { return TokenPackage.getHIDING_KW(); }
-"if"                  { return TokenPackage.getIF_KW(); }
-"import"              { return TokenPackage.getIMPORT_KW(); }
-"in"                  { return TokenPackage.getIN_KW(); }
-"infix"               { return TokenPackage.getINFIX_KW(); }
-"infixl"              { return TokenPackage.getINFIXL_KW(); }
-"infixr"              { return TokenPackage.getINFIXR_KW(); }
-"instance"            { return TokenPackage.getINSTANCE_KW(); }
-("forall")|(\u2200)   { return TokenPackage.getFORALL_KW(); }
-"foreign"             { return TokenPackage.getFOREIGN_KW(); }
-"let"                 { return TokenPackage.getLET_KW(); }
-"module"              { return TokenPackage.getMODULE_KW(); }
-"newtype"             { return TokenPackage.getNEWTYPE_KW(); }
-"of"                  { return TokenPackage.getOF_KW(); }
-"then"                { return TokenPackage.getTHEN_KW(); }
-"qualified"           { return TokenPackage.getQUALIFIED_KW(); }
-"safe"                { return TokenPackage.getSAFE(); }
-"type"                { return TokenPackage.getTYPE_KW(); }
-"unsafe"              { return TokenPackage.getUNSAFE(); }
-"where"               { return TokenPackage.getWHERE_KW(); }
+"as"                  { return HaskellLexerTokens.AS; }
+"case"                { return HaskellLexerTokens.CASE; }
+"class"               { return HaskellLexerTokens.CLASS; }
+"data"                { return HaskellLexerTokens.DATA; }
+"default"             { return HaskellLexerTokens.DEFAULT; }
+"deriving"            { return HaskellLexerTokens.DERIVING; }
+"do"                  { return HaskellLexerTokens.DO; }
+"else"                { return HaskellLexerTokens.ELSE; }
+"export"              { return HaskellLexerTokens.EXPORT; }
+"hiding"              { return HaskellLexerTokens.HIDING; }
+"if"                  { return HaskellLexerTokens.IF; }
+"import"              { return HaskellLexerTokens.IMPORT; }
+"in"                  { return HaskellLexerTokens.IN; }
+"infix"               { return HaskellLexerTokens.INFIX; }
+"infixl"              { return HaskellLexerTokens.INFIXL; }
+"infixr"              { return HaskellLexerTokens.INFIXR; }
+"instance"            { return HaskellLexerTokens.INSTANCE; }
+("forall")|(\u2200)   { return HaskellLexerTokens.FORALL; }
+"foreign"             { return HaskellLexerTokens.FOREIGN; }
+"let"                 { return HaskellLexerTokens.LET; }
+"module"              { return HaskellLexerTokens.MODULE; }
+"newtype"             { return HaskellLexerTokens.NEWTYPE; }
+"of"                  { return HaskellLexerTokens.OF; }
+"then"                { return HaskellLexerTokens.THEN; }
+"qualified"           { return HaskellLexerTokens.QUALIFIED; }
+"safe"                { return HaskellLexerTokens.SAFE; }
+"type"                { return HaskellLexerTokens.TYPE; }
+"unsafe"              { return HaskellLexerTokens.UNSAFE; }
+"where"               { return HaskellLexerTokens.WHERE; }
 "{-#".*"#-}"          { return TokenPackage.getPRAGMA(); }
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
-({digit}+)            { return TokenPackage.getNUMBER(); }
+({digit}+)            { return HaskellLexerTokens.INTEGER; }
 
-{character}           { return TokenPackage.getCHARACTER(); }
-{string}              { return TokenPackage.getSTRING();}
+{character}           { return HaskellLexerTokens.CHAR; }
+{string}              { return HaskellLexerTokens.STRING;}
 
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
 "''"                  { return TokenPackage.getTH_TY_QUOTE(); }
 "'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
-{large}{idchar}*      { return TokenPackage.getTYPE_OR_CONS();}
-{small}{idchar}*      { return TokenPackage.getID(); }
+{large}{idchar}*      { return HaskellLexerTokens.CONID; }
+{small}{idchar}*      { return HaskellLexerTokens.VARID; }
 ({large}{idchar}*".")+{large}{idchar}*  { return HaskellLexerTokens.QCONID;}
 ({large}{idchar}*".")+{small}{idchar}*  { return HaskellLexerTokens.QVARID; }
 .                     { return TokenType.BAD_CHARACTER; }

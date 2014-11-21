@@ -5,7 +5,7 @@ import org.jetbrains.haskell.HaskellLanguage
 import org.jetbrains.annotations.NonNls
 import com.intellij.lang.PsiBuilder
 
-public class HaskellToken(debugName: String) : IElementType(debugName, HaskellLanguage.INSTANCE) {
+public class HaskellTokenType(debugName: String) : IElementType(debugName, HaskellLanguage.INSTANCE) {
     public val myName: String = debugName
 
 }
