@@ -915,7 +915,7 @@ typedoc
 ;
 
 btype
-        : btype atype
+        : btype atype                     { ApplicationType }
         | atype
 ;
 
@@ -1186,7 +1186,7 @@ decl_no_th
                                 -- Turn it all into an expression so that
                                 -- checkPattern can check that bangs are enabled
 
-        | infixexp opt_sig rhs  { ValueBody }
+        | infixexp opt_sig rhs  { ValueDefinition }
         | pattern_synonym_decl
         | docdecl
 ;
@@ -1201,8 +1201,8 @@ decl
 ;
 
 rhs
-        : '=' exp wherebinds
-        | gdrhs wherebinds
+        : '=' exp wherebinds                 { RightHandSide }
+        | gdrhs wherebinds                   { RightHandSide }
 ;
 
 gdrhs
@@ -1295,7 +1295,7 @@ hpc_annot
 ;
 
 fexp
-        : fexp aexp
+        : fexp aexp                            { Application }
         | aexp
 ;
 
@@ -1853,9 +1853,9 @@ var
 ;
 
 qvar
-        : qvarid
-        | '(' varsym ')'
-        | '(' qvarsym1 ')'
+        : qvarid                     { QVar }
+        | '(' varsym ')'             { QVar }
+        | '(' qvarsym1 ')'           { QVar }
 ;
 
 -- We've inlined qvarsym here so that the decision about

@@ -22,7 +22,7 @@ public class ValueName(node: ASTNode) : ASTWrapperPsiElement(node), PsiNamedElem
 
 
     override fun getReference(): PsiReference? {
-        if (getParent() is ValueBody) {
+        if (getParent() is ValueDefinition) {
             return ValueNameReference(this)
         }
         return null
