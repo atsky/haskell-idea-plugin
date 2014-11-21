@@ -22,22 +22,22 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         if (module != null) {
             val text = someId.getText()!!
             if (Character.isUpperCase(text.charAt(0))) {
-                for (function in ModuleScope(module).getVisibleTypes()) {
-                    if (function.getName() == text) {
-                        return function
-                    }
-                }
+                //for (function in ModuleScope(module).getVisibleTypes()) {
+                //    if (function.getName() == text) {
+                //        return function
+                //    }
+                //}
                 for (function in ModuleScope(module).getVisibleConstructors()) {
                     if (function.getDeclarationName() == text) {
                         return function
                     }
                 }
             } else {
-                for (function in ModuleScope(module).getVisibleValues().flatMap { it.getNames() }) {
-                    if (function.getText() == text) {
-                        return function
-                    }
-                }
+                //for (function in ModuleScope(module).getVisibleValues().flatMap { it.getNames() }) {
+                //    if (function.getText() == text) {
+                //        return function
+                //    }
+                //}
             }
         }
         return null;
@@ -48,9 +48,9 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         val module = Module.findModule(someId)
         var result = ArrayList<Any>()
         if (module != null) {
-            result.addAll(ModuleScope(module).getVisibleTypes())
+            //result.addAll(ModuleScope(module).getVisibleTypes())
             result.addAll(ModuleScope(module).getVisibleConstructors())
-            result.addAll(ModuleScope(module).getVisibleValues().flatMap { it.getNames() })
+            //result.addAll(ModuleScope(module).getVisibleValues().flatMap { it.getNames() })
         }
         return result.toArray().requireNoNulls()
     }

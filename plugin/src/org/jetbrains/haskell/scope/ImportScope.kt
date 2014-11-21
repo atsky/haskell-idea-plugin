@@ -5,7 +5,7 @@ import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.Declaration
 import org.jetbrains.haskell.psi.DataDeclaration
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.haskell.psi.TypeDeclaration
+import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
 
 public class ImportScope(val import : Import) {
 
@@ -41,7 +41,7 @@ public class ImportScope(val import : Import) {
     fun getTypeDeclarations() : List<TypeDeclaration> {
         val module = import.findModule()
         if (module != null) {
-            return filterDeclarations(module.getTypeDeclarationList())
+            //return filterDeclarations(module.getTypeDeclarationList())
         }
         return listOf()
     }

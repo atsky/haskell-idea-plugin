@@ -5,25 +5,20 @@ import com.intellij.psi.PsiReferenceBase
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
-import org.jetbrains.haskell.psi.ReferenceExpression
+import org.jetbrains.haskell.psi.QNameExpression
 
 /**
  * Created by atsky on 4/25/14.
  */
-class ValueReference(val referenceExpression: ReferenceExpression) : PsiReferenceBase<ReferenceExpression>(
+class ValueReference(val referenceExpression: QNameExpression) : PsiReferenceBase<QNameExpression>(
         referenceExpression,
         TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        for (value in getElement()!!.getVisibleValues()) {
-            if (value.getText() == referenceExpression.getText()) {
-                return value
-            }
-        }
         return null
     }
 
 
-    override fun getVariants(): Array<Any> = getElement()!!.getVisibleValues().copyToArray()
+    override fun getVariants(): Array<Any> = array()
 
 }

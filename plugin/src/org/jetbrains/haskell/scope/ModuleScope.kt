@@ -5,7 +5,6 @@ import org.jetbrains.haskell.psi.Module
 import java.util.ArrayList
 import org.jetbrains.haskell.psi.DataDeclaration
 import org.jetbrains.haskell.psi.ConstructorDeclaration
-import org.jetbrains.haskell.psi.TypeName
 
 /**
  * Created by atsky on 03/05/14.
@@ -26,18 +25,6 @@ public class ModuleScope(val module : Module) {
         list.addAll(module.getImportList().flatMap { ImportScope(it).getValues() })
 
         return list
-
-    }
-
-    fun getVisibleTypes() : List<TypeName> {
-        val list = ArrayList(module.getTypeDeclarationList())
-
-        list.addAll(module.getImportList().flatMap { ImportScope(it).getTypeDeclarations() })
-
-        val result = ArrayList<TypeName>();
-        result.addAll(list.map { it.getTypeName() }.filterNotNull())
-        result.addAll(getVisibleDataDeclarations().map { it.getTypeName() }.filterNotNull())
-        return result
 
     }
 

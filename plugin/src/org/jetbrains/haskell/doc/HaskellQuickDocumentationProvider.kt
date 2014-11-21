@@ -4,7 +4,6 @@ import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.Nullable
-import org.jetbrains.haskell.psi.ReferenceExpression
 
 /**
  * Created by atsky on 4/25/14.

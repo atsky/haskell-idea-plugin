@@ -7,12 +7,9 @@ import com.intellij.psi.util.PsiTreeUtil
 
 public class SignatureDeclaration(node : ASTNode) : Declaration(node) {
 
-    fun getNames(): List<ValueName> =
-        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+    override fun getDeclarationName(): String? {
+        return null;
+    }
 
-
-
-    override fun getDeclarationName(): String? =
-            findChildByClass(javaClass<ValueName>())?.getText()
 
 }

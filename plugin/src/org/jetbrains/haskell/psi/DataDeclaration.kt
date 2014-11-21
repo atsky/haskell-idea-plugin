@@ -9,14 +9,8 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class DataDeclaration(node : ASTNode) : Declaration(node) {
 
-    fun getTypeName() : TypeName? {
-        val simpleType = findChildByClass(javaClass<SimpleType>())
-        return simpleType?.getNameElement()
-    }
-
     override fun getDeclarationName(): String? {
-        val simpleType = findChildByClass(javaClass<SimpleType>())
-        return simpleType?.getNameElement()?.getText()
+        return null;//simpleType?.getNameElement()?.getText()
     }
 
     fun getConstructorDeclarationList() : List<ConstructorDeclaration> =

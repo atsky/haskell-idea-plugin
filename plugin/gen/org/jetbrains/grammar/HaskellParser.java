@@ -1205,8 +1205,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("ntgtycon"));
-      addVar(variants, new NonTerminal("tyvar"));
+      addVar(variants, new NonTerminal("ntgtycon")).setElementType(GrammarPackage.getTYPE_VARIABLE());
+      addVar(variants, new NonTerminal("tyvar")).setElementType(GrammarPackage.getTYPE_VARIABLE());
       addVar(variants, new NonTerminal("strict_mark"), new NonTerminal("atype"));
       addVar(variants, new Terminal(OCURLY), new NonTerminal("fielddecls"), new Terminal(CCURLY));
       addVar(variants, new Terminal(OPAREN), new Terminal(CPAREN));
@@ -1717,7 +1717,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("ipvar"));
-      addVar(variants, new NonTerminal("qcname"));
+      addVar(variants, new NonTerminal("qcname")).setElementType(GrammarPackage.getQ_NAME_EXPRESSION());
       addVar(variants, new NonTerminal("literal"));
       addVar(variants, new Terminal(INTEGER));
       addVar(variants, new Terminal(RATIONAL));

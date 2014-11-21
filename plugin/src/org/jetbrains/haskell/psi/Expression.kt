@@ -11,16 +11,5 @@ import org.jetbrains.haskell.scope.ModuleScope
  */
 public open class Expression(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun getVisibleValues() : List<ValueName> {
-        var current : PsiElement = this.getParent()!!;
-        if (current is Expression) {
-            return (current as Expression).getVisibleValues()
-        } else {
-            val module = Module.findModule(current)
-            if (module == null) {
-                return listOf()
-            }
-            return ModuleScope(module).getVisibleValues().flatMap { it.getNames() }
-        }
-    }
+
 }

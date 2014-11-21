@@ -921,7 +921,9 @@ btype
 
 atype
         : ntgtycon                        -- Not including unit tuples
+                                          { TypeVariable }
         | tyvar                           -- (See Note [Unit tuples])
+                                          { TypeVariable }
         | strict_mark atype               -- Constructor sigs only
         | '{' fielddecls '}'              -- Constructor sigs only
         | '(' ')'
@@ -1312,7 +1314,7 @@ aexp1
 
 aexp2
         : ipvar
-        | qcname
+        | qcname                             { QNameExpression }
         | literal
 -- This will enable overloaded strings permanently.  Normally the renamer turns HsString
 -- into HsOverLit when -foverloaded-strings is on.
