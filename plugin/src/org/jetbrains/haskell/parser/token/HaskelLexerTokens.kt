@@ -72,5 +72,5 @@ public val TH_VAR_QUOTE : HaskellTokenType = HaskellTokenType("'")
 public val TH_TY_QUOTE : HaskellTokenType = HaskellTokenType("''")
 public val NEW_LINE : HaskellTokenType = HaskellTokenType("NL")
 
-val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT)
+val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT, PRAGMA)
 val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, NEW_LINE)

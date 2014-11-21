@@ -57,6 +57,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
         }
         keys1.put(PRAGMA, HASKELL_PRAGMA)
         keys1.put(HaskellLexerTokens.CONID, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.QCONID, CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.CONSYM, CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.VARSYM, HASKELL_OPERATOR)
         keys1.put(HaskellLexerTokens.COLON, CONSTRUCTOR)

@@ -181,7 +181,30 @@ EOL_COMMENT = "--"[^\n]*
 "type"                { return HaskellLexerTokens.TYPE; }
 "unsafe"              { return HaskellLexerTokens.UNSAFE; }
 "where"               { return HaskellLexerTokens.WHERE; }
-"{-#".*"#-}"          { return TokenPackage.getPRAGMA(); }
+"{-# INLINE"            { return HaskellLexerTokens.INLINE_PRAG; }
+"{-# SPECIALISE"        { return HaskellLexerTokens.SPEC_PRAG; }
+"{-# SPECIALISE_INLINE" { return HaskellLexerTokens.SPEC_INLINE_PRAG; }
+"{-# SOURCE"            { return HaskellLexerTokens.SOURCE_PRAG; }
+"{-# RULES"             { return HaskellLexerTokens.RULES_PRAG; }
+"{-# CORE"              { return HaskellLexerTokens.CORE_PRAG; }
+"{-# SCC"               { return HaskellLexerTokens.SCC_PRAG; }
+"{-# GENERATED"         { return HaskellLexerTokens.GENERATED_PRAG; }
+"{-# DEPRECATED"        { return HaskellLexerTokens.DEPRECATED_PRAG; }
+"{-# WARNING"           { return HaskellLexerTokens.WARNING_PRAG; }
+"{-# UNPACK"            { return HaskellLexerTokens.UNPACK_PRAG; }
+"{-# NOUNPACK"          { return HaskellLexerTokens.NOUNPACK_PRAG; }
+"{-# ANN"               { return HaskellLexerTokens.ANN_PRAG; }
+"{-# VECTORISE"         { return HaskellLexerTokens.VECT_PRAG; }
+"{-# VECTORISE_SCALAR"  { return HaskellLexerTokens.VECT_SCALAR_PRAG; }
+"{-# NOVECTORISE"       { return HaskellLexerTokens.NOVECT_PRAG; }
+"{-# MINIMAL"           { return HaskellLexerTokens.MINIMAL_PRAG; }
+"{-# CTYPE"             { return HaskellLexerTokens.CTYPE; }
+"{-# OVERLAPPABLE"      { return HaskellLexerTokens.OVERLAPPABLE; }
+"{-# OVERLAPPING"       { return HaskellLexerTokens.OVERLAPPING; }
+"{-# OVERLAPS"          { return HaskellLexerTokens.OVERLAPS; }
+"{-# INCOHERENT"        { return HaskellLexerTokens.INCOHERENT; }
+"#-}"                   { return HaskellLexerTokens.CLOSE_PRAG; }
+"{-#".*"#-}"            { return TokenPackage.getPRAGMA(); }
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
 ({digit}+)            { return HaskellLexerTokens.INTEGER; }
