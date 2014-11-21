@@ -6,6 +6,7 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.HashMap
 import org.jetbrains.grammar.HaskellLexerTokens
+import org.jetbrains.haskell.parser.HaskellToken
 
 /**
  * Created by atsky on 11/17/14.
@@ -30,13 +31,13 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
 
         @main_loop
         while (states.notEmpty) {
-            val newStates = ArrayList<ParserState>();
+            val frontStates = ArrayList<ParserState>();
 
             for (state in states) {
                 if (state.variant().terms.size == state.ruleIndex) {
                     val tree = NonTerminalTree(state.rule.name, state.variantIndex, state.variant().elementType, state.trees)
                     for (left in state.rule.left.indices) {
-                        newStates.add(ParserState(state.rule, left + state.rule.variants.size, 1, state.termIndex, listOf(tree), state.parents))
+                        frontStates.add(ParserState(state.rule, left + state.rule.variants.size, 1, state.termIndex, listOf(tree), state.parents))
                         log("add left ${state.rule.name} ${state.termIndex}")
                     }
                     val parents = state.parents
@@ -46,7 +47,7 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                         }
                         parents.trees!!.add(tree);
                         for (parent in parents.states) {
-                            newStates.add(parent.next(state.termIndex, tree));
+                            frontStates.add(parent.next(state.termIndex, tree));
                             log("done ${state.termIndex}, ruleIndex = ${state.ruleIndex}, stack = ${state.getStack()}")
                         }
                     } else {
@@ -58,23 +59,30 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                     when (term) {
                         is Terminal -> {
                             if (state.termIndex < tokens.size) {
-                                addTerm(newStates, wrongStates, state, term)
+                                addTerm(frontStates, wrongStates, state, term)
                             }
                         }
 
                         is NonTerminal ->
-                            addNonTerminal(term, state, rules, newStates)
+                            addNonTerminal(term, state, rules, frontStates)
                     }
                 }
             }
             var active = false;
+
             for ((ruleName, ruleCache) in rules[currentStep]) {
                 if (!ruleCache.started) {
                     active = true;
                 }
             }
-            if (!active && newStates.isEmpty() && currentStep < rules.size - 1) {
+
+            while (!active && frontStates.isEmpty() && currentStep < rules.size - 1) {
                 currentStep++;
+                for ((ruleName, ruleCache) in rules[currentStep]) {
+                    if (!ruleCache.started) {
+                        active = true;
+                    }
+                }
             }
             for ((ruleName, ruleCache) in rules[currentStep]) {
                 if (ruleCache.started) {
@@ -83,11 +91,14 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
                 ruleCache.started = true;
 
                 val nextRule = grammar[ruleName]!!
+                if (ruleName == "qcon") {
+                    println()
+                }
                 for (variant in nextRule.variants.indices) {
                     val first = nextRule.variants[variant].first
                     val parserState = ParserState(nextRule, variant, 0, currentStep, listOf(), ruleCache)
                     if (first == null || nextRule.canBeEmpty || first.contains(tokens[currentStep])) {
-                        newStates.add(parserState)
+                        frontStates.add(parserState)
                     } else {
                         if (first.contains(HaskellLexerTokens.VCCURLY)) {
                             wrongStates.add(parserState)
@@ -97,32 +108,62 @@ class GLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) 
             }
 
             log("-----${states.size}-----")
-            if (newStates.isEmpty()) {
-                var maxIndex: Int = -1;
+            if (frontStates.isEmpty()) {
+                var hasRules = false
                 for (state in wrongStates) {
-                    maxIndex = Math.max(state.termIndex, maxIndex);
+                    if (state.termIndex == currentStep) {
+                        frontStates.add(state)
+                        hasRules = true;
+                    }
                 }
-                if (maxIndex > -1) {
+                if (hasRules) {
                     val newTokens = ArrayList<IElementType>(tokens);
-                    newTokens.add(maxIndex, HaskellLexerTokens.VCCURLY)
-                    for (index in (maxIndex + 1)..newTokens.size) {
+                    newTokens.add(currentStep, HaskellLexerTokens.VCCURLY)
+                    for (index in (currentStep + 1)..newTokens.size) {
                         if (newTokens[index] == HaskellLexerTokens.VCCURLY) {
                             newTokens.remove(index);
                             break
                         }
                     }
                     tokens = newTokens
-                    for (state in wrongStates) {
-                        if (state.termIndex == maxIndex) {
-                            newStates.add(state)
-                        }
-                    }
-                    wrongStates.clear();
+                } else {
+                    recover(currentStep, rules, frontStates)
                 }
+                wrongStates.clear();
             }
-            states = ArrayList(newStates)
+            states = ArrayList(frontStates)
         }
         return null;
+    }
+
+    fun recover(currentStep: Int,
+                rules: ArrayList<Map<String, RuleCache>>,
+                newStates: ArrayList<ParserState>) {
+        var start = currentStep;
+        while (start >= 0) {
+            if (rules[start].containsKey("topdecl")) {
+                break;
+            }
+            start--
+        }
+        val ruleCache = rules[start]["topdecl"]!!
+        var end = currentStep
+        while (end < tokens.size) {
+            val elementType = tokens[end]
+            if (elementType == HaskellLexerTokens.SEMI ||
+                    elementType == HaskellLexerTokens.VCCURLY) {
+                break;
+            }
+            end++
+        }
+        val list = ArrayList<ResultTree>()
+        for (i in start..end-1) {
+            list.add(TerminalTree(tokens[i] as HaskellToken))
+        }
+        val tree = NonTerminalTree("topdecl", 0, null, list);
+        for (state in ruleCache.states) {
+            newStates.add(state.next(end, tree));
+        }
     }
 
     fun log(line: String) {
