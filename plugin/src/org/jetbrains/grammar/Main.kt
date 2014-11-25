@@ -17,6 +17,7 @@ import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 import java.io.FilenameFilter
 import java.io.FileWriter
 import java.io.PrintStream
+import org.jetbrains.grammar.dumb.ll.SimpleLLParser
 
 /**
  * Created by atsky on 15/11/14.
@@ -25,7 +26,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith(".hs")
+            return name.endsWith("HelloWorld.hs")
         }
 
     }
@@ -63,7 +64,7 @@ fun parseFile(inFile : File, outFile : File) {
     stream.println("\n-------------------")
 
     val grammar = HaskellParser(null).getGrammar()
-    val parser = GLLParser(grammar, tokens)
+    val parser = SimpleLLParser(grammar, tokens)
     parser.writeLog = true;
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
