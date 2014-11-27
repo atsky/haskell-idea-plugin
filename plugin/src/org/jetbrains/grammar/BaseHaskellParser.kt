@@ -14,6 +14,7 @@ import org.jetbrains.grammar.dumb.TerminalTree
 
 import org.jetbrains.grammar.dumb.Variant
 import org.jetbrains.grammar.dumb.Term
+import org.jetbrains.grammar.dumb.ll.SimpleLLParser
 
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
@@ -36,7 +37,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
         val rootMarker = mark()
 
-        val tree = GLLParser(getGrammar(), tokens).parse()
+        val tree = SimpleLLParser(getGrammar(), tokens).parse()
 
         if (tree != null) {
             parserWithTree(tree)
