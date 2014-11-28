@@ -16,6 +16,8 @@ public class HaskellTest extends ParsingTestCase {
         return "data";
     }
 
+    public void testALotIndents() throws Exception { doTest(true); }
+
     public void testDataType() throws Exception { doTest(true); }
 
     public void testRecovery() throws Exception { doTest(true); }

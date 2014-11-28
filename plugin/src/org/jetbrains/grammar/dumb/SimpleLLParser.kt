@@ -35,8 +35,15 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                 if (lastSeen + 1 == lastCurlyPosition) {
                     val newTokens = ArrayList(tokens);
                     newTokens.add(lastCurlyPosition, HaskellLexerTokens.VCCURLY)
+                    var depth = 1;
                     for (index in (lastCurlyPosition + 1)..newTokens.size) {
+                        if (newTokens[index] == HaskellLexerTokens.VOCURLY) {
+                            depth += 1
+                        }
                         if (newTokens[index] == HaskellLexerTokens.VCCURLY) {
+                            depth -= 1
+                        }
+                        if (depth == 0) {
                             newTokens.remove(index);
                             break
                         }
