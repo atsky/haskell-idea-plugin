@@ -1,4 +1,4 @@
-package org.jetbrains.grammar.dumb.ll
+package org.jetbrains.grammar.dumb
 
 import org.jetbrains.grammar.dumb.Rule
 import org.jetbrains.grammar.dumb.ResultTree

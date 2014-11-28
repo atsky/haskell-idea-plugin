@@ -1,16 +1,9 @@
-package org.jetbrains.grammar.dumb.ll
+package org.jetbrains.grammar.dumb
 
-import org.jetbrains.grammar.dumb.Rule
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.grammar.dumb.NonTerminalTree
-import org.jetbrains.grammar.dumb.ResultTree
 import org.jetbrains.haskell.parser.HaskellTokenType
-import org.jetbrains.grammar.dumb.Variant
-import org.jetbrains.grammar.dumb.Terminal
-import org.jetbrains.grammar.dumb.NonTerminal
 import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
-import org.jetbrains.grammar.dumb.TerminalTree
 import java.util.HashMap
 
 class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) {

@@ -16,7 +16,7 @@ import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 import java.io.FilenameFilter
 import java.io.FileWriter
 import java.io.PrintStream
-import org.jetbrains.grammar.dumb.ll.SimpleLLParser
+import org.jetbrains.grammar.dumb.SimpleLLParser
 
 /**
  * Created by atsky on 15/11/14.

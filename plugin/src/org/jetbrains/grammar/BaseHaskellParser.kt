@@ -13,7 +13,7 @@ import org.jetbrains.grammar.dumb.TerminalTree
 
 import org.jetbrains.grammar.dumb.Variant
 import org.jetbrains.grammar.dumb.Term
-import org.jetbrains.grammar.dumb.ll.SimpleLLParser
+import org.jetbrains.grammar.dumb.SimpleLLParser
 
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
