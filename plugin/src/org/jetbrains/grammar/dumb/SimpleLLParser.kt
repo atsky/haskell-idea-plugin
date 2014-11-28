@@ -60,6 +60,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     }
                     val tree = NonTerminalTree("topdecl", 0, null, list);
                     state = nextVariant(recoveryState!!.parent, tree)
+                    recoveryState = null
                 } else {
                     return null;
                 }
@@ -112,7 +113,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                         0,
                         current.variant.elementType,
                         current.tree)
-                saveRule(ruleState, tree)
+
                 state = nextVariant(ruleState, tree)
             }
         }
@@ -188,6 +189,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                             ruleState.position + bestTree.size(),
                             nextRuleState)
                 }
+                saveRule(ruleState, bestTree)
                 return ruleDone(ruleState.rule, parent, bestTree)
             }
         }
@@ -198,7 +200,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                  tree: NonTerminalTree): VariantState {
 
         log("done ${rule.name} - ${variantState.position} size=${tree.size()}")
-        if ("importdecls" == rule.name) {
+        if ("fbind" == rule.name) {
             log("test")
         }
         var children = ArrayList(variantState.tree)
