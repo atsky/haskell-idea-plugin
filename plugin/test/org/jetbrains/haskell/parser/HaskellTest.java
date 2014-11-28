@@ -22,6 +22,8 @@ public class HaskellTest extends ParsingTestCase {
 
     public void testImports() throws Exception { doTest(true); }
 
+    public void testImportsWithData() throws Exception { doTest(true); }
+
     public void testHelloWorld() throws Exception { doTest(true); }
 
     public void testMaximum() throws Exception { doTest(true); }
