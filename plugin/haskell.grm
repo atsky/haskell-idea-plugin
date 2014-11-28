@@ -299,7 +299,7 @@ qcname                                  -- Variable or data constructor
 
 importdecls
         : importdecls ';' importdecl
-        | importdecls ';'
+--        | importdecls ';'              -- TODO Fix parser for this rule
         | importdecl
         | {- empty -}
 ;

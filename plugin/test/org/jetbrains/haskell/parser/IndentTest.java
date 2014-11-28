@@ -17,14 +17,16 @@ public class IndentTest extends ParsingTestCase {
         return "data";
     }
 
-    public void testSimpleIndent() throws Exception { doTest(true); }
-
     public void testBraces() throws Exception { doTest(true); }
 
     public void testClosingBrace() throws Exception { doTest(true); }
 
-    public void testLetIn() throws Exception { doTest(true); }
+    public void testImportsWithData() throws Exception { doTest(true); }
 
     public void testHelloWorld() throws Exception { doTest(true); }
+
+    public void testSimpleIndent() throws Exception { doTest(true); }
+
+    public void testLetIn() throws Exception { doTest(true); }
 
 }

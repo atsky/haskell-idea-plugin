@@ -1431,7 +1431,6 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(left, new NonTerminal("importdecls"), new Terminal(SEMI), new NonTerminal("importdecl"));
-      addVar(left, new NonTerminal("importdecls"), new Terminal(SEMI));
       addVar(variants, new NonTerminal("importdecl"));
       addVar(variants);
       grammar.put("importdecls", new Rule("importdecls", variants, left));
