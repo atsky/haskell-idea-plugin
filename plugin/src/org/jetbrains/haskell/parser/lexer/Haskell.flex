@@ -129,6 +129,8 @@ EOL_COMMENT = "--"[^\n]*
 "]"                   { return HaskellLexerTokens.CBRACK; }
 "("                   { return HaskellLexerTokens.OPAREN; }
 ")"                   { return HaskellLexerTokens.CPAREN; }
+"(#"                  { return HaskellLexerTokens.OUBXPAREN; }
+"#)"                  { return HaskellLexerTokens.CUBXPAREN; }
 ":"                   { return HaskellLexerTokens.COLON;}
 "::"                  { return HaskellLexerTokens.DCOLON; }
 ";"                   { return HaskellLexerTokens.SEMI;}
