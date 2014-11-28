@@ -1262,11 +1262,11 @@ exp
 
 infixexp
         : exp10
-        | infixexp qop exp10
+        | infixexp qop exp10                  { OperatorExpression }
 ;
 
 exp10
-        : '\\' apat apats opt_asig '->' exp
+        : '\\' apat apats opt_asig '->' exp   { LambdaExpression }
         | 'let' binds 'in' exp                { LetExpression }
         | '\\' 'lcase' altslist
         | 'if' exp optSemi 'then' exp optSemi 'else' exp
@@ -1579,8 +1579,8 @@ bindpat :  exp
         | '!' aexp
 ;
 
-apat    : aexp
-        | '!' aexp
+apat    : aexp             { Pattern }
+        | '!' aexp         { Pattern }
 ;
 
 apats

@@ -124,7 +124,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("exp10"));
-      addVar(left, new NonTerminal("infixexp"), new NonTerminal("qop"), new NonTerminal("exp10"));
+      addVar(left, new NonTerminal("infixexp"), new NonTerminal("qop"), new NonTerminal("exp10")).setElementType(GrammarPackage.getOPERATOR_EXPRESSION());
       grammar.put("infixexp", new Rule("infixexp", variants, left));
     }
     {
@@ -569,7 +569,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new Terminal(LAM), new NonTerminal("apat"), new NonTerminal("apats"), new NonTerminal("opt_asig"), new Terminal(RARROW), new NonTerminal("exp"));
+      addVar(variants, new Terminal(LAM), new NonTerminal("apat"), new NonTerminal("apats"), new NonTerminal("opt_asig"), new Terminal(RARROW), new NonTerminal("exp")).setElementType(GrammarPackage.getLAMBDA_EXPRESSION());
       addVar(variants, new Terminal(LET), new NonTerminal("binds"), new Terminal(IN), new NonTerminal("exp")).setElementType(GrammarPackage.getLET_EXPRESSION());
       addVar(variants, new Terminal(LAM), new Terminal(LCASE), new NonTerminal("altslist"));
       addVar(variants, new Terminal(IF), new NonTerminal("exp"), new NonTerminal("optSemi"), new Terminal(THEN), new NonTerminal("exp"), new NonTerminal("optSemi"), new Terminal(ELSE), new NonTerminal("exp"));
@@ -1293,8 +1293,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("aexp"));
-      addVar(variants, new Terminal(BANG), new NonTerminal("aexp"));
+      addVar(variants, new NonTerminal("aexp")).setElementType(GrammarPackage.getPATTERN());
+      addVar(variants, new Terminal(BANG), new NonTerminal("aexp")).setElementType(GrammarPackage.getPATTERN());
       grammar.put("apat", new Rule("apat", variants, left));
     }
     {
