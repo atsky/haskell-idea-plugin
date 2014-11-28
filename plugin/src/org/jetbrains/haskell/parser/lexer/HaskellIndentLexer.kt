@@ -85,6 +85,15 @@ public class HaskellIndentLexer() : LexerBase() {
                         }
                     }
                 }
+                if (tokenType == HaskellLexerTokens.OCURLY) {
+                    indentStack = IntStack(-1, indentStack)
+                }
+                if (tokenType == HaskellLexerTokens.CCURLY) {
+                    while (indentStack != null && indentStack!!.head > -1) {
+                        indentStack = indentStack!!.tail
+                    }
+                    indentStack = indentStack?.tail
+                }
             } else {
                 if (tokenType == NEW_LINE) {
                     lineStart = lexer.getTokenEnd()
