@@ -5,6 +5,8 @@ import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.Declaration
 import org.jetbrains.haskell.psi.DataDeclaration
 import com.intellij.psi.util.PsiTreeUtil
+import sun.reflect.generics.tree.TypeSignature
+import org.jetbrains.haskell.psi.TypeSynonym
 
 public class ImportScope(val import : Import) {
 
@@ -37,12 +39,12 @@ public class ImportScope(val import : Import) {
         return listOf()
     }
 
-    //fun getTypeDeclarations() : List<TypeDeclaration> {
-    //    val module = import.findModule()
-    //    if (module != null) {
-            //return filterDeclarations(module.getTypeDeclarationList())
-    //    }
-    //    return listOf()
-    //}
+    fun getTypeSynonym() : List<TypeSynonym> {
+        val module = import.findModule()
+        if (module != null) {
+            return filterDeclarations(module.getTypeSynonymList())
+        }
+        return listOf()
+    }
 
 }
