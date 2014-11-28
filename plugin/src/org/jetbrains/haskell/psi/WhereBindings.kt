@@ -11,4 +11,8 @@ public class WhereBindings(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getSignatureDeclarationsList() : List<SignatureDeclaration> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
+
+    fun getValueDefinitionList() : List<ValueDefinition> {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+    }
 }

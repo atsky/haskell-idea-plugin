@@ -22,8 +22,10 @@ class QNameReference(val refExpression: QNameExpression) : PsiReferenceBase<QNam
             return null
         }
         if (refExpression.getQVar() != null) {
-            return ExpressionScope(refExpression).getVisibleSignatureDeclarations().firstOrNull {
-                it.getValuesList().first?.getText() == getValue() }
+            return ExpressionScope(refExpression).getVisibleVariables().firstOrNull {
+                it.getText() == getValue()
+            }
+
         }
         if (refExpression.getQCon() != null) {
             val values = ModuleScope(module).getVisibleConstructors()
