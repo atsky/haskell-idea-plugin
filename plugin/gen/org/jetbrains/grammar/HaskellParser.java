@@ -1138,8 +1138,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("qvar"), new Terminal(EQUAL), new NonTerminal("texp"));
-      addVar(variants, new NonTerminal("qvar"));
+      addVar(variants, new NonTerminal("qvar"), new Terminal(EQUAL), new NonTerminal("texp")).setElementType(GrammarPackage.getFIELD_UPDATE());
+      addVar(variants, new NonTerminal("qvar")).setElementType(GrammarPackage.getFIELD_UPDATE());
       grammar.put("fbind", new Rule("fbind", variants, left));
     }
     {
@@ -1374,7 +1374,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("sig_vars"), new Terminal(DCOLON), new NonTerminal("ctype"), new NonTerminal("maybe_docprev"));
+      addVar(variants, new NonTerminal("maybe_docnext"), new NonTerminal("sig_vars"), new Terminal(DCOLON), new NonTerminal("ctype"), new NonTerminal("maybe_docprev")).setElementType(GrammarPackage.getFIELD_DECLARATION());
       grammar.put("fielddecl", new Rule("fielddecl", variants, left));
     }
     {

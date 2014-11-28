@@ -1133,6 +1133,7 @@ fielddecls1
 
 fielddecl               -- A list because of   f,g :: Int
         : maybe_docnext sig_vars '::' ctype maybe_docprev
+                                { FieldDeclaration }
 ;
 
 -- We allow the odd-looking 'inst_type' in a deriving clause, so that
@@ -1644,12 +1645,12 @@ fbinds1 : fbind ',' fbinds1
 ;
 
 fbind
-        : qvar '=' texp
+        : qvar '=' texp         { FieldUpdate }
                         -- RHS is a 'texp', allowing view patterns (Trac #6038)
                         -- and, incidentaly, sections.  Eg
                         -- f (R { x = show -> s }) = ...
 
-        | qvar
+        | qvar                  { FieldUpdate }
                         -- In the punning case, use a place-holder
                         -- The renamer fills in the final value
 ;
