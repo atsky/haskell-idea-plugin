@@ -2,7 +2,6 @@ package org.jetbrains.grammar.dumb.ll
 
 import org.jetbrains.grammar.dumb.Rule
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.grammar.dumb.RuleCache
 import org.jetbrains.grammar.dumb.NonTerminalTree
 import org.jetbrains.grammar.dumb.ResultTree
 import org.jetbrains.haskell.parser.HaskellTokenType
@@ -13,10 +12,9 @@ import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
 import org.jetbrains.grammar.dumb.TerminalTree
 import java.util.HashMap
-import org.jetbrains.grammar.dumb.ParserState
 
 class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) {
-    val rulesCache = ArrayList<MutableMap<String, RuleCache>>()
+    val rulesCache = ArrayList<MutableMap<String, NonTerminalTree>>()
 
     var lastSeen = 0;
     var lastCurlyPosition = -1
@@ -101,7 +99,17 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     }
                     is NonTerminal -> {
                         val ruleToParse = grammar[term.rule]!!
-                        state = startRuleParsing(ruleToParse, current)
+
+                        val tree = if (current.position < rulesCache.size) {
+                            rulesCache[current.position][ruleToParse.name]
+                        } else {
+                            null
+                        }
+                        state = if (tree != null) {
+                            ruleDone(ruleToParse, current, tree)
+                        } else {
+                            startRuleParsing(ruleToParse, current)
+                        }
                     }
                 }
             } else {
@@ -111,6 +119,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                         0,
                         current.variant.elementType,
                         current.tree)
+                saveRule(ruleState, tree)
                 state = nextVariant(ruleState, tree)
             }
         }
@@ -166,7 +175,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
             }
             if (bestTree == null) {
                 if (ruleState.firstNode != null) {
-                    return ruleDone(ruleState, parent, ruleState.firstNode)
+                    return ruleDone(ruleState.rule, parent, ruleState.firstNode)
                 } else {
                     return nextVariant(parent.parent, null)
                 }
@@ -186,31 +195,41 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                             ruleState.position + bestTree.size(),
                             nextRuleState)
                 }
-                return ruleDone(ruleState, parent, bestTree)
+                return ruleDone(ruleState.rule, parent, bestTree)
             }
         }
     }
 
-    fun ruleDone(ruleState: RuleState,
-                 parent: VariantState,
+    fun ruleDone(rule: Rule,
+                 variantState: VariantState,
                  tree: NonTerminalTree): VariantState {
 
-        log("done ${ruleState.rule.name} - ${ruleState.position} size=${tree.size()}")
-        if ("importdecls" == ruleState.rule.name) {
+        log("done ${rule.name} - ${variantState.position} size=${tree.size()}")
+        if ("importdecls" == rule.name) {
             log("test")
         }
-        var children = ArrayList(parent.tree)
+        var children = ArrayList(variantState.tree)
         children.add(tree)
-        return VariantState(parent.variant,
-                parent.termIndex + 1,
+        return VariantState(variantState.variant,
+                variantState.termIndex + 1,
                 children,
-                ruleState.position + tree.size(),
-                parent.parent)
+                variantState.position + tree.size(),
+                variantState.parent)
     }
 
     fun log(text: String) {
         if (writeLog) {
             println(text)
         }
+    }
+
+    fun saveRule(rule : RuleState, tree: NonTerminalTree) {
+        val name = rule.rule.name
+        val position = rule.position
+        while (position >= rulesCache.size) {
+            rulesCache.add(HashMap())
+        }
+
+        rulesCache[position][name] = tree
     }
 }

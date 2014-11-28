@@ -9,7 +9,6 @@ import java.util.ArrayList
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.token.NEW_LINE
-import org.jetbrains.grammar.dumb.GLLParser
 import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 import org.jetbrains.haskell.parser.token.COMMENTS
 import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
@@ -26,7 +25,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith("Poker.hs")
+            return name.endsWith(".hs")
         }
 
     }

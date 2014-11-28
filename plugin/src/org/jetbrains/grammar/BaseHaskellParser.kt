@@ -7,7 +7,6 @@ import org.jetbrains.grammar.dumb.Rule
 import com.intellij.lang.ASTNode
 import org.jetbrains.haskell.parser.rules.BaseParser
 import java.util.ArrayList
-import org.jetbrains.grammar.dumb.GLLParser
 import org.jetbrains.grammar.dumb.NonTerminalTree
 
 import org.jetbrains.grammar.dumb.TerminalTree
