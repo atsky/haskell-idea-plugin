@@ -79,7 +79,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                 val term = terms[current.termIndex]
                 when (term) {
                     is Terminal -> {
-                        if (tokens[current.position] == term.tokenType) {
+                        if (current.position < tokens.size && tokens[current.position] == term.tokenType) {
                             var children = ArrayList(current.tree)
                             children.add(TerminalTree(term.tokenType))
                             lastSeen = Math.max(lastSeen, current.position)
