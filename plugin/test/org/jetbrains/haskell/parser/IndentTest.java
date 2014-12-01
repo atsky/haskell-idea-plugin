@@ -29,4 +29,6 @@ public class IndentTest extends ParsingTestCase {
 
     public void testLetIn() throws Exception { doTest(true); }
 
+    public void testLetInSameIndent() throws Exception { doTest(true); }
+
 }

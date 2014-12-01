@@ -17,6 +17,8 @@ import java.io.FilenameFilter
 import java.io.FileWriter
 import java.io.PrintStream
 import org.jetbrains.grammar.dumb.SimpleLLParser
+import org.jetbrains.haskell.parser.getCachedTokens
+import org.jetbrains.haskell.parser.newParserState
 
 /**
  * Created by atsky on 15/11/14.
@@ -25,7 +27,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith(".hs")
+            return name.endsWith("ALotIndents.hs")
         }
 
     }
@@ -39,31 +41,20 @@ fun main(args : Array<String>) {
 fun parseFile(inFile : File, outFile : File) {
     val data = readData(inFile)
 
-    val lexer = HaskellIndentLexer()
+    val lexer = HaskellLexer()
     lexer.start(data)
 
-    val tokens = ArrayList<IElementType>()
-
     val stream = PrintStream(outFile)
-    stream.println("-------------------")
-    while (lexer.getTokenType() != null) {
-        val tokenType = lexer.getTokenType()
-        if (tokenType != TokenType.WHITE_SPACE &&
-                tokenType != NEW_LINE &&
-                tokenType != END_OF_LINE_COMMENT &&
-                tokenType != BLOCK_COMMENT) {
-            tokens.add(tokenType)
-            stream.print("${tokenType} ")
-        }
-        if (tokenType == NEW_LINE) {
-            stream.println()
-        }
-        lexer.advance();
+    val cachedTokens = getCachedTokens(lexer, stream)
+
+    var state = newParserState(cachedTokens)
+    while (state.getToken() != null) {
+        println(state.getToken());
+        state = state.next()
     }
-    stream.println("\n-------------------")
 
     val grammar = HaskellParser(null).getGrammar()
-    val parser = SimpleLLParser(grammar, tokens)
+    val parser = SimpleLLParser(grammar, cachedTokens)
     parser.writeLog = true;
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))

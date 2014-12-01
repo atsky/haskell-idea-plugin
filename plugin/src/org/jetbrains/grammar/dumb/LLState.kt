@@ -4,6 +4,7 @@ import org.jetbrains.grammar.dumb.Rule
 import org.jetbrains.grammar.dumb.ResultTree
 import org.jetbrains.grammar.dumb.NonTerminalTree
 import org.jetbrains.grammar.dumb.Variant
+import org.jetbrains.haskell.parser.ParserState
 
 /**
  * Created by atsky on 23/11/14.
@@ -11,8 +12,15 @@ import org.jetbrains.grammar.dumb.Variant
 class VariantState(val variant : Variant,
                    val termIndex : Int,
                    val tree : List<ResultTree>,
-                   val position : Int,
+                   val parserState: ParserState,
                    val parent : RuleState) {
+    fun dropIndent(): VariantState {
+        return VariantState(variant,
+                            termIndex,
+                            tree,
+                            parserState.dropIndent(),
+                            parent)
+    }
 
 }
 
@@ -21,7 +29,7 @@ class RuleState(val rule : Rule,
                 val left: Boolean,
                 val bestTree : NonTerminalTree?,
                 val firstNode : NonTerminalTree?,
-                val position : Int,
+                val parserState: ParserState,
                 val parent : VariantState?) {
 
 }

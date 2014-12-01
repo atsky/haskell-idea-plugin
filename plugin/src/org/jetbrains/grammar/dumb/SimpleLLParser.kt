@@ -5,8 +5,10 @@ import org.jetbrains.haskell.parser.HaskellTokenType
 import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
 import java.util.HashMap
+import org.jetbrains.haskell.parser.CachedTokens
+import org.jetbrains.haskell.parser.newParserState
 
-class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementType>) {
+class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     val rulesCache = ArrayList<MutableMap<String, NonTerminalTree>>()
 
     var lastSeen = 0;
@@ -20,8 +22,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
     fun parse(): NonTerminalTree? {
         val rule = grammar["module"]!!
 
-        val ruleState = RuleState(rule, 0, false, null, null, 0, null);
-        val variantState = VariantState(rule.variants[0], 0, listOf(), 0, ruleState)
+        val ruleState = RuleState(rule, 0, false, null, null, newParserState(cached), null);
+        val variantState = VariantState(rule.variants[0], 0, listOf(), newParserState(cached), ruleState)
         return parseState(variantState)
     }
 
@@ -33,28 +35,13 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     return result;
                 }
                 if (lastSeen + 1 == lastCurlyPosition) {
-                    val newTokens = ArrayList(tokens);
-                    newTokens.add(lastCurlyPosition, HaskellLexerTokens.VCCURLY)
-                    var depth = 1;
-                    for (index in (lastCurlyPosition + 1)..newTokens.size) {
-                        if (newTokens[index] == HaskellLexerTokens.VOCURLY) {
-                            depth += 1
-                        }
-                        if (newTokens[index] == HaskellLexerTokens.VCCURLY) {
-                            depth -= 1
-                        }
-                        if (depth == 0) {
-                            newTokens.remove(index);
-                            break
-                        }
-                    }
-                    tokens = newTokens
-                    state = lastCurlyState
+                    state = lastCurlyState!!.dropIndent()
                 } else if (recoveryState != null) {
+                    /*
                     val start = recoveryState!!.position;
                     var end = start + 1
-                    while (end < tokens.size) {
-                        val elementType = tokens[end]
+                    while (end < cached.tokens.size) {
+                        val elementType = cached.tokens[end]
                         if (elementType == HaskellLexerTokens.SEMI ||
                                 elementType == HaskellLexerTokens.VCCURLY) {
                             break;
@@ -63,11 +50,13 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     }
                     val list = ArrayList<ResultTree>()
                     for (i in start..end - 1) {
-                        list.add(TerminalTree(tokens[i] as HaskellTokenType))
+                        list.add(TerminalTree(cached.tokens[i] as HaskellTokenType))
                     }
                     val tree = NonTerminalTree("topdecl", 0, null, list);
                     state = nextVariant(recoveryState!!.parent, tree)
                     recoveryState = null
+                    */
+                    throw UnsupportedOperationException()
                 } else {
                     return null;
                 }
@@ -79,19 +68,19 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                 val term = terms[current.termIndex]
                 when (term) {
                     is Terminal -> {
-                        if (current.position < tokens.size && tokens[current.position] == term.tokenType) {
+                        if (current.parserState.match(term.tokenType)) {
                             var children = ArrayList(current.tree)
                             children.add(TerminalTree(term.tokenType))
-                            lastSeen = Math.max(lastSeen, current.position)
+                            lastSeen = Math.max(lastSeen, current.parserState.position)
                             state = VariantState(current.variant,
                                     current.termIndex + 1,
                                     children,
-                                    current.position + 1,
+                                    current.parserState.next(),
                                     current.parent)
                         } else {
                             if (term.tokenType == HaskellLexerTokens.VCCURLY) {
-                                if (current.position > lastCurlyPosition) {
-                                    lastCurlyPosition = current.position;
+                                if (current.parserState.position > lastCurlyPosition) {
+                                    lastCurlyPosition = current.parserState.position
                                     lastCurlyState = current;
                                 }
                             }
@@ -101,8 +90,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     is NonTerminal -> {
                         val ruleToParse = grammar[term.rule]!!
 
-                        val tree = if (current.position < rulesCache.size) {
-                            rulesCache[current.position][ruleToParse.name]
+                        val tree = if (current.parserState.position < rulesCache.size) {
+                            rulesCache[current.parserState.position][ruleToParse.name]
                         } else {
                             null
                         }
@@ -128,12 +117,12 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
 
     fun startRuleParsing(rule: Rule, state: VariantState): VariantState {
         //println("start ${rule.name} - pos: ${state.position}")
-        val ruleState = RuleState(rule, 0, false, null, null, state.position, state)
-        val variantState = VariantState(rule.variants.first!!, 0, listOf(), state.position, ruleState)
+        val ruleState = RuleState(rule, 0, false, null, null, state.parserState, state)
+        val variantState = VariantState(rule.variants.first!!, 0, listOf(), state.parserState, ruleState)
         if (rule.name == "topdecl") {
-            if (recoveryState == null || recoveryState!!.position < variantState.position) {
-                recoveryState = state
-            }
+            //if (recoveryState == null || recoveryState!!.parserState < variantState.parserState) {
+            //    recoveryState = state
+            //}
         }
         return variantState
     }
@@ -155,16 +144,16 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                     ruleState.left,
                     bestTree,
                     ruleState.firstNode,
-                    ruleState.position,
+                    ruleState.parserState,
                     ruleState.parent)
             if (ruleState.left) {
                 return VariantState(lefts[i],
                         1,
                         listOf(ruleState.firstNode!!),
-                        ruleState.position + ruleState.firstNode.size(),
+                        ruleState.parserState.skip(ruleState.firstNode.size()),
                         newRuleState)
             } else {
-                return VariantState(variants[i], 0, listOf(), ruleState.position, newRuleState)
+                return VariantState(variants[i], 0, listOf(), ruleState.parserState, newRuleState)
             }
 
         } else {
@@ -182,18 +171,18 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                 }
             } else {
                 if (ruleState.rule.left.isNotEmpty()) {
-                    log("left ${ruleState.rule.name} - ${ruleState.position} size=${bestTree.size()}")
+                    log("left ${ruleState.rule.name} - ${ruleState.parserState} size=${bestTree.size()}")
                     val nextRuleState = RuleState(ruleState.rule,
                             0,
                             true,
                             null,
                             bestTree,
-                            ruleState.position,
+                            ruleState.parserState,
                             ruleState.parent)
                     return VariantState(lefts[0],
                             1,
                             listOf(bestTree),
-                            ruleState.position + bestTree.size(),
+                            ruleState.parserState.skip(bestTree.size()),
                             nextRuleState)
                 }
                 saveRule(ruleState, bestTree)
@@ -206,8 +195,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
                  variantState: VariantState,
                  tree: NonTerminalTree): VariantState {
 
-        log("done ${rule.name} - ${variantState.position} size=${tree.size()}")
-        if ("fbind" == rule.name) {
+        log("done ${rule.name} - ${variantState.parserState} size=${tree.size()}")
+        if ("top" == rule.name) {
             log("test")
         }
         var children = ArrayList(variantState.tree)
@@ -215,7 +204,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
         return VariantState(variantState.variant,
                 variantState.termIndex + 1,
                 children,
-                variantState.position + tree.size(),
+                variantState.parserState.skip(tree.size()),
                 variantState.parent)
     }
 
@@ -227,7 +216,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, var tokens: List<IElementTy
 
     fun saveRule(rule : RuleState, tree: NonTerminalTree) {
         val name = rule.rule.name
-        val position = rule.position
+        val position = rule.parserState.position
         while (position >= rulesCache.size) {
             rulesCache.add(HashMap())
         }

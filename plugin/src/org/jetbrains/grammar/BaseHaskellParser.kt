@@ -14,6 +14,8 @@ import org.jetbrains.grammar.dumb.TerminalTree
 import org.jetbrains.grammar.dumb.Variant
 import org.jetbrains.grammar.dumb.Term
 import org.jetbrains.grammar.dumb.SimpleLLParser
+import org.jetbrains.haskell.parser.getCachedTokens
+import org.jetbrains.haskell.parser.token.NEW_LINE
 
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
@@ -25,18 +27,14 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     }
 
     fun parse(root: IElementType): ASTNode {
-        val tokens = ArrayList<IElementType>()
 
         val marker = builder!!.mark()
-        while(builder.getTokenType() != null) {
-            tokens.add(builder.getTokenType())
-            builder.advanceLexer();
-        }
+        val cachedTokens = getCachedTokens(builder)
         marker.rollbackTo();
 
         val rootMarker = mark()
 
-        val tree = SimpleLLParser(getGrammar(), tokens).parse()
+        val tree = SimpleLLParser(getGrammar(), cachedTokens).parse()
 
         if (tree != null) {
             parserWithTree(tree)
@@ -52,13 +50,21 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     fun parserWithTree(tree: NonTerminalTree) {
         val type = tree.elementType
 
-        val marker = if (type != null) builder!!.mark() else null
+        val builderNotNull = builder!!
+        val marker = if (type != null) builderNotNull.mark() else null
 
         for (child in tree.children) {
             when (child) {
                 is NonTerminalTree -> parserWithTree(child)
                 is TerminalTree -> {
-                    builder!!.advanceLexer()
+                    if (child.haskellToken != HaskellLexerTokens.VOCURLY &&
+                        child.haskellToken != HaskellLexerTokens.VCCURLY) {
+                        if (child.haskellToken == builderNotNull.getTokenType()) {
+                            builderNotNull.advanceLexer()
+                        } else if (child.haskellToken != HaskellLexerTokens.SEMI) {
+                            throw RuntimeException()
+                        }
+                    }
                 }
             }
         }

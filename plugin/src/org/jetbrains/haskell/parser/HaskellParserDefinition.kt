@@ -27,7 +27,7 @@ import org.jetbrains.grammar.HaskellLexerTokens
 public class HaskellParserDefinition() : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
-    override fun createLexer(project: Project?): Lexer = HaskellIndentLexer()
+    override fun createLexer(project: Project?): Lexer = HaskellLexer()
 
     override fun getFileNodeType(): IFileElementType = HASKELL_FILE
 
