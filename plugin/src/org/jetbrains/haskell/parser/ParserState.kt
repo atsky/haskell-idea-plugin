@@ -144,6 +144,12 @@ public class ParserState(val tokens: CachedTokens,
                     null,
                     indentStack)
         }
+        if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
+            return ParserState(tokens,
+                    position + 1,
+                    null,
+                    IntStack(-1, indentStack))
+        }
         if (INDENT_TOKENS.contains(tokens.tokens[position])) {
             val nextPosition = position + 1
             if (tokens.tokens[nextPosition] == HaskellLexerTokens.OCURLY) {
@@ -179,14 +185,25 @@ public class ParserState(val tokens: CachedTokens,
                 if (indentStack.indent == indent) {
                     return ParserState(tokens, nextPosition, HaskellLexerTokens.SEMI, indentStack)
                 } else if (indentStack.indent < indent) {
-                    return ParserState(tokens, nextPosition, null, indentStack)
+                    return checkCurly(nextPosition)
                 } else {
                     return ParserState(tokens, nextPosition, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
             }
         }
-        return ParserState(tokens, nextPosition, null, indentStack)
+        return checkCurly(nextPosition)
 
+    }
+
+    private fun checkCurly(nextPosition: Int): ParserState {
+        if (tokens.tokens[nextPosition] == HaskellLexerTokens.CCURLY) {
+            var stack = indentStack
+            while (stack != null && stack!!.indent > -1) {
+                stack = stack!!.parent
+            }
+            return ParserState(tokens, nextPosition, null, stack?.parent)
+        }
+        return ParserState(tokens, nextPosition, null, indentStack)
     }
 
     fun skip(tree: NonTerminalTree): ParserState {
@@ -224,6 +241,10 @@ public class ParserState(val tokens: CachedTokens,
             return tokens.tokens[position];
         }
         return null;
+    }
+
+    fun eof(): Boolean {
+        return currentToken == null && position == tokens.tokens.size;
     }
 
 

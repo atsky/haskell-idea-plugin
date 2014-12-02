@@ -37,26 +37,23 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 if (lastSeen + 1 == lastCurlyPosition) {
                     state = lastCurlyState!!.dropIndent()
                 } else if (recoveryState != null) {
-                    /*
-                    val start = recoveryState!!.position;
-                    var end = start + 1
-                    while (end < cached.tokens.size) {
-                        val elementType = cached.tokens[end]
+                    val start = recoveryState!!.parserState;
+                    var end = start
+                    val list = ArrayList<ResultTree>()
+                    while (! end.eof()) {
+                        val elementType = end.getToken()
                         if (elementType == HaskellLexerTokens.SEMI ||
                                 elementType == HaskellLexerTokens.VCCURLY) {
                             break;
                         }
-                        end++
+                        list.add(TerminalTree(elementType as HaskellTokenType))
+                        end = end.next()
                     }
-                    val list = ArrayList<ResultTree>()
-                    for (i in start..end - 1) {
-                        list.add(TerminalTree(cached.tokens[i] as HaskellTokenType))
-                    }
+
+
                     val tree = NonTerminalTree("topdecl", 0, null, list);
                     state = nextVariant(recoveryState!!.parent, tree)
                     recoveryState = null
-                    */
-                    throw UnsupportedOperationException()
                 } else {
                     return null;
                 }
@@ -119,11 +116,10 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         //println("start ${rule.name} - pos: ${state.position}")
         val ruleState = RuleState(rule, 0, false, null, null, state.parserState, state)
         val variantState = VariantState(rule.variants.first!!, 0, listOf(), state.parserState, ruleState)
-        if (rule.name == "wherebinds") {
-            log("test")
-            //if (recoveryState == null || recoveryState!!.parserState < variantState.parserState) {
-            //    recoveryState = state
-            //}
+        if (rule.name == "topdecl") {
+            if (recoveryState == null || recoveryState!!.parserState.position < variantState.parserState.position) {
+                recoveryState = state
+            }
         }
         return variantState
     }
@@ -197,9 +193,6 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                  tree: NonTerminalTree): VariantState {
 
         log("done ${rule.name} - ${variantState.parserState.position} size=${tree.size()}")
-        if ("exp" == rule.name) {
-            log("test")
-        }
         var children = ArrayList(variantState.tree)
         children.add(tree)
         return VariantState(variantState.variant,
