@@ -39,7 +39,8 @@ public class HaskellColorsAndFontsPage implements ColorSettingsPage {
     new AttributesDescriptor[]{
       new AttributesDescriptor("Keyword", HaskellHighlighter.HASKELL_KEYWORD),
       new AttributesDescriptor("Comment", HaskellHighlighter.COMMENT),
-      new AttributesDescriptor("Constructor or Type", HaskellHighlighter.CONSTRUCTOR),
+      new AttributesDescriptor("Constructor or Type", HaskellHighlighter.HASKELL_CONSTRUCTOR),
+      new AttributesDescriptor("Type", HaskellHighlighter.HASKELL_TYPE),
       new AttributesDescriptor("Number", DefaultLanguageHighlighterColors.NUMBER),
       new AttributesDescriptor("Operator", HaskellHighlighter.HASKELL_OPERATOR),
       new AttributesDescriptor("Pragma", HaskellHighlighter.HASKELL_PRAGMA),
@@ -65,7 +66,10 @@ public class HaskellColorsAndFontsPage implements ColorSettingsPage {
     return "<keyword>module</keyword> <cons>Main</cons> <keyword>where</keyword>\n" +
             "<pragma>{-# LANGUAGE CPP #-}</pragma>\n" +
             "<comment>-- Comment</comment>\n" +
-            "main :: <cons>IO</cons> ()\n" +
+            "\n" +
+            "data Maybe a = Nothing | Just a\n" +
+            "\n" +
+            "main :: <type>IO ()</type>\n" +
             "main = <keyword>do</keyword>\n" +
             "    putStrLn <string>\"Hello\"</string> <operator>++</operator> <string>\" world!!\"</string>\n"+
             "t = <number>5</number>\n";
@@ -76,7 +80,7 @@ public class HaskellColorsAndFontsPage implements ColorSettingsPage {
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     Map<String, TextAttributesKey> map = new HashMap<String, TextAttributesKey>();
     map.put("comment", HaskellHighlighter.COMMENT);
-    map.put("cons", HaskellHighlighter.CONSTRUCTOR);
+    map.put("type", HaskellHighlighter.HASKELL_TYPE);
     map.put("keyword", HaskellHighlighter.HASKELL_KEYWORD);
     map.put("number", DefaultLanguageHighlighterColors.NUMBER);
     map.put("pragma", HaskellHighlighter.HASKELL_PRAGMA);

@@ -21,11 +21,13 @@ import org.jetbrains.grammar.HaskellLexerTokens
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     class object {
+        public val HASKELL_PARENTHESIS: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_PARENTHESIS", DefaultLanguageHighlighterColors.PARENTHESES)
         public val STRING_LITERAL: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
         public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
         public val COMMENT: TextAttributesKey                          = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
         public val HASKELL_PRAGMA: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val CONSTRUCTOR: TextAttributesKey                      = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
+        public val HASKELL_CONSTRUCTOR: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
+        public val HASKELL_TYPE: TextAttributesKey                     = TextAttributesKey.createTextAttributesKey("HASKELL_TYPE")
         public val HASKELL_OPERATOR: TextAttributesKey                 = TextAttributesKey.createTextAttributesKey("HASKELL_OPERATOR", DefaultLanguageHighlighterColors.IDENTIFIER)
         public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey   = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
         public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
@@ -56,11 +58,11 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
             keys1.put(keyword, HASKELL_KEYWORD)
         }
         keys1.put(PRAGMA, HASKELL_PRAGMA)
-        keys1.put(HaskellLexerTokens.CONID, CONSTRUCTOR)
-        keys1.put(HaskellLexerTokens.QCONID, CONSTRUCTOR)
-        keys1.put(HaskellLexerTokens.CONSYM, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.CONID, HASKELL_CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.QCONID, HASKELL_CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.CONSYM, HASKELL_CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.VARSYM, HASKELL_OPERATOR)
-        keys1.put(HaskellLexerTokens.COLON, CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.COLON, HASKELL_CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.STRING, STRING_LITERAL)
         keys1.put(HaskellLexerTokens.CHAR, STRING_LITERAL)
         keys1.put(HaskellLexerTokens.INTEGER, DefaultLanguageHighlighterColors.NUMBER)

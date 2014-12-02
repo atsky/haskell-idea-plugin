@@ -928,14 +928,14 @@ atype
                                           { TypeVariable }
         | strict_mark atype               -- Constructor sigs only
         | '{' fielddecls '}'              -- Constructor sigs only
-        | '(' ')'
-        | '(' ctype ',' comma_types1 ')'
+        | '(' ')'                         { TupleType }
+        | '(' ctype ',' comma_types1 ')'  { TupleType }
         | '(#' '#)'
         | '(#' comma_types1 '#)'
-        | '[' ctype ']'
+        | '[' ctype ']'                   { ListType }
         | '[:' ctype ':]'
-        | '(' ctype ')'
-        | '(' ctype '::' kind ')'
+        | '(' ctype ')'                   { TupleType }
+        | '(' ctype '::' kind ')'         { TupleType }
         | quasiquote
         | '$(' exp ')'
         | TH_ID_SPLICE
@@ -944,7 +944,7 @@ atype
         | SIMPLEQUOTE  '(' ctype ',' comma_types1 ')'
         | SIMPLEQUOTE  '[' comma_types0 ']'
         | SIMPLEQUOTE var
-        | '[' ctype ',' comma_types1 ']'
+        | '[' ctype ',' comma_types1 ']'  { ListType }
         | INTEGER
         | STRING
 ;

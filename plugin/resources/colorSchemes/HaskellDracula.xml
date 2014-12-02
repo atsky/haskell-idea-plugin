@@ -5,6 +5,11 @@
             <option name="FOREGROUND" value="67daf0"/>
         </value>
     </option>
+    <option name="HASKELL_TYPE">
+        <value>
+            <option name="FOREGROUND" value="73e3d0"/>
+        </value>
+    </option>
     <option name="HASKELL_KEYWORD">
         <value>
             <option name="FOREGROUND" value="f9264c"/>

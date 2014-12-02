@@ -1209,14 +1209,14 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new NonTerminal("tyvar")).setElementType(GrammarPackage.getTYPE_VARIABLE());
       addVar(variants, new NonTerminal("strict_mark"), new NonTerminal("atype"));
       addVar(variants, new Terminal(OCURLY), new NonTerminal("fielddecls"), new Terminal(CCURLY));
-      addVar(variants, new Terminal(OPAREN), new Terminal(CPAREN));
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(COMMA), new NonTerminal("comma_types1"), new Terminal(CPAREN));
+      addVar(variants, new Terminal(OPAREN), new Terminal(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(COMMA), new NonTerminal("comma_types1"), new Terminal(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
       addVar(variants, new Terminal(OUBXPAREN), new Terminal(CUBXPAREN));
       addVar(variants, new Terminal(OUBXPAREN), new NonTerminal("comma_types1"), new Terminal(CUBXPAREN));
-      addVar(variants, new Terminal(OBRACK), new NonTerminal("ctype"), new Terminal(CBRACK));
+      addVar(variants, new Terminal(OBRACK), new NonTerminal("ctype"), new Terminal(CBRACK)).setElementType(GrammarPackage.getLIST_TYPE());
       addVar(variants, new Terminal(OPABRACK), new NonTerminal("ctype"), new Terminal(CPABRACK));
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(CPAREN));
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(DCOLON), new NonTerminal("kind"), new Terminal(CPAREN));
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(DCOLON), new NonTerminal("kind"), new Terminal(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
       addVar(variants, new NonTerminal("quasiquote"));
       addVar(variants, new Terminal(PARENESCAPE), new NonTerminal("exp"), new Terminal(CPAREN));
       addVar(variants, new Terminal(IDESCAPE));
@@ -1224,7 +1224,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, new Terminal(SIMPLEQUOTE), new Terminal(OPAREN), new NonTerminal("ctype"), new Terminal(COMMA), new NonTerminal("comma_types1"), new Terminal(CPAREN));
       addVar(variants, new Terminal(SIMPLEQUOTE), new Terminal(OBRACK), new NonTerminal("comma_types0"), new Terminal(CBRACK));
       addVar(variants, new Terminal(SIMPLEQUOTE), new NonTerminal("var"));
-      addVar(variants, new Terminal(OBRACK), new NonTerminal("ctype"), new Terminal(COMMA), new NonTerminal("comma_types1"), new Terminal(CBRACK));
+      addVar(variants, new Terminal(OBRACK), new NonTerminal("ctype"), new Terminal(COMMA), new NonTerminal("comma_types1"), new Terminal(CBRACK)).setElementType(GrammarPackage.getLIST_TYPE());
       addVar(variants, new Terminal(INTEGER));
       addVar(variants, new Terminal(STRING));
       grammar.put("atype", new Rule("atype", variants, left));
