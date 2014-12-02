@@ -119,7 +119,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         //println("start ${rule.name} - pos: ${state.position}")
         val ruleState = RuleState(rule, 0, false, null, null, state.parserState, state)
         val variantState = VariantState(rule.variants.first!!, 0, listOf(), state.parserState, ruleState)
-        if (rule.name == "topdecl") {
+        if (rule.name == "wherebinds") {
+            log("test")
             //if (recoveryState == null || recoveryState!!.parserState < variantState.parserState) {
             //    recoveryState = state
             //}
@@ -150,7 +151,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 return VariantState(lefts[i],
                         1,
                         listOf(ruleState.firstNode!!),
-                        ruleState.parserState.skip(ruleState.firstNode.size()),
+                        ruleState.parserState.skip(ruleState.firstNode),
                         newRuleState)
             } else {
                 return VariantState(variants[i], 0, listOf(), ruleState.parserState, newRuleState)
@@ -182,7 +183,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                     return VariantState(lefts[0],
                             1,
                             listOf(bestTree),
-                            ruleState.parserState.skip(bestTree.size()),
+                            ruleState.parserState.skip(bestTree),
                             nextRuleState)
                 }
                 saveRule(ruleState, bestTree)
@@ -204,7 +205,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         return VariantState(variantState.variant,
                 variantState.termIndex + 1,
                 children,
-                variantState.parserState.skip(tree.size()),
+                variantState.parserState.skip(tree),
                 variantState.parent)
     }
 

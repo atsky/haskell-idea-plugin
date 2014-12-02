@@ -13,6 +13,8 @@ import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
 import java.io.PrintStream
 import com.intellij.lang.PsiBuilder
 import com.intellij.lang.WhitespaceSkippedCallback
+import org.jetbrains.grammar.dumb.NonTerminalTree
+import org.jetbrains.grammar.dumb.TerminalTree
 
 val INDENT_TOKENS = HashSet<IElementType>(Arrays.asList(
         HaskellLexerTokens.DO,
@@ -165,11 +167,24 @@ public class ParserState(val tokens: CachedTokens,
         }
     }
 
-    fun skip(size: Int): ParserState {
+    fun skip(tree: NonTerminalTree): ParserState {
         var current: ParserState = this
-        for (i in 1..size) {
-            current = current.next()
+
+        for (child in tree.children) {
+            when (child) {
+                is TerminalTree -> {
+                    if (getToken() == child.haskellToken) {
+                        current = current.next()
+                    } else {
+                        current = current.dropIndent().next()
+                    }
+                }
+                is NonTerminalTree -> {
+                    current = current.skip(child)
+                }
+            }
         }
+
         return current
     }
 
