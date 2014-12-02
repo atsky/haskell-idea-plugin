@@ -9,7 +9,8 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotifica
 
 import java.io.File
 
-public class CabalTaskManager(): ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
+public class CabalTaskManager() : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
+
 
     throws(javaClass<ExternalSystemException>())
     override fun cancelTask(id: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener): Boolean {
@@ -17,12 +18,16 @@ public class CabalTaskManager(): ExternalSystemTaskManager<ExternalSystemExecuti
     }
 
     throws(javaClass<ExternalSystemException>())
-    public override fun executeTasks(id: ExternalSystemTaskId,
-                            taskNames: List<String>,
-                            projectPath: String,
-                            settings: ExternalSystemExecutionSettings?,
-                            vmOptions: String?,
-                            scriptParameters: String?,
-                            listener: ExternalSystemTaskNotificationListener): Unit { return }
+    public override fun executeTasks(
+            id: ExternalSystemTaskId,
+            taskNames: MutableList<String>,
+            projectPath: String,
+            settings: ExternalSystemExecutionSettings?,
+            vmOptions: MutableList<String>,
+            arg: MutableList<String>,
+            scriptParameters: String?,
+            listener: ExternalSystemTaskNotificationListener): Unit {
+        return
+    }
 }
 

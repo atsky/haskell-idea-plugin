@@ -22,10 +22,7 @@ import javax.swing.*
 //import java.util.List
 import java.net.URL
 
-/**
-* @author Denis Zhdanov
-* @since 4/10/13 1:19 PM
-*/
+
 public class CabalManager()
         : ExternalSystemManager<CabalProjectSettings, CabalSettingsListener, CabalSettings, CabalLocalSettings, ExternalSystemExecutionSettings> {
 
