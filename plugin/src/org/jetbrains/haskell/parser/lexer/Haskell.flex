@@ -129,6 +129,12 @@ EOL_COMMENT = "--"[^\n]*
 "]"                   { return HaskellLexerTokens.CBRACK; }
 "("                   { return HaskellLexerTokens.OPAREN; }
 ")"                   { return HaskellLexerTokens.CPAREN; }
+"[:"                  { return HaskellLexerTokens.OPABRACK; }
+":]"                  { return HaskellLexerTokens.CPABRACK; }
+
+"(|"                  { return HaskellLexerTokens.OPARENBAR; }
+"|)"                  { return HaskellLexerTokens.CPARENBAR; }
+
 "(#"                  { return HaskellLexerTokens.OUBXPAREN; }
 "#)"                  { return HaskellLexerTokens.CUBXPAREN; }
 ":"                   { return HaskellLexerTokens.COLON;}
@@ -161,11 +167,13 @@ EOL_COMMENT = "--"[^\n]*
 "data"                { return HaskellLexerTokens.DATA; }
 "default"             { return HaskellLexerTokens.DEFAULT; }
 "deriving"            { return HaskellLexerTokens.DERIVING; }
+"dynamic"             { return HaskellLexerTokens.DYNAMIC; }
 "do"                  { return HaskellLexerTokens.DO; }
 "else"                { return HaskellLexerTokens.ELSE; }
 "export"              { return HaskellLexerTokens.EXPORT; }
 "hiding"              { return HaskellLexerTokens.HIDING; }
 "if"                  { return HaskellLexerTokens.IF; }
+"interruptible"       { return HaskellLexerTokens.INTERRUPTIBLE; }
 "import"              { return HaskellLexerTokens.IMPORT; }
 "in"                  { return HaskellLexerTokens.IN; }
 "infix"               { return HaskellLexerTokens.INFIX; }
@@ -173,10 +181,14 @@ EOL_COMMENT = "--"[^\n]*
 "infixr"              { return HaskellLexerTokens.INFIXR; }
 "instance"            { return HaskellLexerTokens.INSTANCE; }
 ("forall")|(\u2200)   { return HaskellLexerTokens.FORALL; }
+"family"              { return HaskellLexerTokens.FAMILY; }
 "foreign"             { return HaskellLexerTokens.FOREIGN; }
 "let"                 { return HaskellLexerTokens.LET; }
 "module"              { return HaskellLexerTokens.MODULE; }
+"mdo"                 { return HaskellLexerTokens.MDO; }
 "newtype"             { return HaskellLexerTokens.NEWTYPE; }
+"label"               { return HaskellLexerTokens.LABEL; }
+"role"                { return HaskellLexerTokens.ROLE; }
 "of"                  { return HaskellLexerTokens.OF; }
 "then"                { return HaskellLexerTokens.THEN; }
 "qualified"           { return HaskellLexerTokens.QUALIFIED; }
@@ -184,6 +196,23 @@ EOL_COMMENT = "--"[^\n]*
 "type"                { return HaskellLexerTokens.TYPE; }
 "unsafe"              { return HaskellLexerTokens.UNSAFE; }
 "where"               { return HaskellLexerTokens.WHERE; }
+// Call convetions
+"stdcall"             { return HaskellLexerTokens.STDCALLCONV; }
+"ccall"               { return HaskellLexerTokens.CCALLCONV; }
+"capi"                { return HaskellLexerTokens.CAPICONV; }
+"prim"                { return HaskellLexerTokens.PRIMCALLCONV; }
+"javascript"          { return HaskellLexerTokens.JAVASCRIPTCALLCONV; }
+
+
+"proc"                { return HaskellLexerTokens.PROC; }
+"rec"                 { return HaskellLexerTokens.REC; }
+"group"               { return HaskellLexerTokens.GROUP; }
+"by"                  { return HaskellLexerTokens.BY; }
+"using"               { return HaskellLexerTokens.USING; }
+"pattern"             { return HaskellLexerTokens.PATTERN; }
+
+"lcase"               { return HaskellLexerTokens.LCASE; }
+
 "{-# INLINE"            { return HaskellLexerTokens.INLINE_PRAG; }
 "{-# SPECIALISE"        { return HaskellLexerTokens.SPEC_PRAG; }
 "{-# SPECIALISE_INLINE" { return HaskellLexerTokens.SPEC_INLINE_PRAG; }
@@ -208,6 +237,15 @@ EOL_COMMENT = "--"[^\n]*
 "{-# INCOHERENT"        { return HaskellLexerTokens.INCOHERENT; }
 "#-}"                   { return HaskellLexerTokens.CLOSE_PRAG; }
 "{-#".*"#-}"            { return TokenPackage.getPRAGMA(); }
+
+
+"*"                     { return HaskellLexerTokens.STAR; }
+
+"-<"                    { return HaskellLexerTokens.LARROWTAIL; }
+">-"                    { return HaskellLexerTokens.RARROWTAIL; }
+"-<<"                   { return HaskellLexerTokens.LLARROWTAIL; }
+">>-"                   { return HaskellLexerTokens.RRARROWTAIL; }
+
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
 ({digit}+)            { return HaskellLexerTokens.INTEGER; }
