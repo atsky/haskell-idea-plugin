@@ -31,7 +31,6 @@ FILE
           PsiWhiteSpace(' ')
           PsiElement(in)('in')
           PsiWhiteSpace(' ')
-          PsiElement(VARID)('t')
           QNameExpression(QNameExpression)
             QVar(QVar)
-              <empty list>
+              PsiElement(VARID)('t')

@@ -27,7 +27,7 @@ FILE
               PsiWhiteSpace(' ')
               StringLiteral(StringLiteral)
                 PsiElement(STRING)('"Hello World!!!"')
-          PsiWhiteSpace('\n')
+    PsiWhiteSpace('\n')
     ValueDefinition(ValueDefinition)
       QNameExpression(QNameExpression)
         QVar(QVar)
