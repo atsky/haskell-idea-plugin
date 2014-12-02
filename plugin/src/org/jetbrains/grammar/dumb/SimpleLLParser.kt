@@ -68,7 +68,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         if (current.parserState.match(term.tokenType)) {
                             var children = ArrayList(current.tree)
                             children.add(TerminalTree(term.tokenType))
-                            lastSeen = Math.max(lastSeen, current.parserState.position)
+                            lastSeen = Math.max(lastSeen, current.parserState.lexemNumber)
                             state = VariantState(current.variant,
                                     current.termIndex + 1,
                                     children,
@@ -76,8 +76,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                                     current.parent)
                         } else {
                             if (term.tokenType == HaskellLexerTokens.VCCURLY) {
-                                if (current.parserState.position > lastCurlyPosition) {
-                                    lastCurlyPosition = current.parserState.position
+                                if (current.parserState.lexemNumber > lastCurlyPosition) {
+                                    lastCurlyPosition = current.parserState.lexemNumber
                                     lastCurlyState = current;
                                 }
                             }
@@ -87,8 +87,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                     is NonTerminal -> {
                         val ruleToParse = grammar[term.rule]!!
 
-                        val tree = if (current.parserState.position < rulesCache.size) {
-                            rulesCache[current.parserState.position][ruleToParse.name]
+                        val tree = if (current.parserState.lexemNumber < rulesCache.size) {
+                            rulesCache[current.parserState.lexemNumber][ruleToParse.name]
                         } else {
                             null
                         }
@@ -117,7 +117,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         val ruleState = RuleState(rule, 0, false, null, null, state.parserState, state)
         val variantState = VariantState(rule.variants.first!!, 0, listOf(), state.parserState, ruleState)
         if (rule.name == "topdecl") {
-            if (recoveryState == null || recoveryState!!.parserState.position < variantState.parserState.position) {
+            if (recoveryState == null || recoveryState!!.parserState.lexemNumber < variantState.parserState.lexemNumber) {
                 recoveryState = state
             }
         }
@@ -168,7 +168,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 }
             } else {
                 if (ruleState.rule.left.isNotEmpty()) {
-                    log("left ${ruleState.rule.name} - ${ruleState.parserState.position} size=${bestTree.size()}")
+                    log("left ${ruleState.rule.name} - ${ruleState.parserState.lexemNumber} size=${bestTree.size()}")
                     val nextRuleState = RuleState(ruleState.rule,
                             0,
                             true,
@@ -192,7 +192,8 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                  variantState: VariantState,
                  tree: NonTerminalTree): VariantState {
 
-        log("done ${rule.name} - ${variantState.parserState.position} size=${tree.size()}")
+        log("done ${rule.name} - ${variantState.parserState.lexemNumber} size=${tree.size()}")
+
         var children = ArrayList(variantState.tree)
         children.add(tree)
         return VariantState(variantState.variant,
@@ -210,7 +211,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
 
     fun saveRule(rule : RuleState, tree: NonTerminalTree) {
         val name = rule.rule.name
-        val position = rule.parserState.position
+        val position = rule.parserState.lexemNumber
         while (position >= rulesCache.size) {
             rulesCache.add(HashMap())
         }

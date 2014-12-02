@@ -91,7 +91,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
 }
 
 public fun newParserState(tokens: CachedTokens): ParserState {
-    return ParserState(tokens, 0, null, null)
+    return ParserState(tokens, 0, 0, null, null)
 }
 
 public class CachedTokens(val tokens: List<IElementType>,
@@ -102,6 +102,7 @@ public class CachedTokens(val tokens: List<IElementType>,
 
 public class ParserState(val tokens: CachedTokens,
                          val position: Int,
+                         val lexemNumber: Int,
                          val currentToken: HaskellTokenType?,
                          val indentStack: IntStack?) {
 
@@ -122,31 +123,34 @@ public class ParserState(val tokens: CachedTokens,
                     return ParserState(
                             tokens,
                             position,
+                            lexemNumber + 1,
                             HaskellLexerTokens.VCCURLY,
                             indentStack.parent)
                 } else {
                     val indent = tokens.indents[position]
                     if (indentStack.indent == indent) {
-                        return ParserState(tokens, position, HaskellLexerTokens.SEMI, indentStack)
+                        return ParserState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
                     } else if (indentStack.indent < indent) {
-                        return ParserState(tokens, position, null, indentStack)
+                        return ParserState(tokens, position, lexemNumber + 1, null, indentStack)
                     } else {
-                        return ParserState(tokens, position, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                        return ParserState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                     }
                 }
             }
-            return ParserState(tokens, position, null, indentStack)
+            return ParserState(tokens, position, lexemNumber + 1, null, indentStack)
         }
         if (position == tokens.tokens.size) {
             return ParserState(
                     tokens,
                     position,
+                    lexemNumber + 1,
                     null,
                     indentStack)
         }
         if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
             return ParserState(tokens,
                     position + 1,
+                    lexemNumber + 1,
                     null,
                     IntStack(-1, indentStack))
         }
@@ -156,12 +160,14 @@ public class ParserState(val tokens: CachedTokens,
                 return ParserState(
                         tokens,
                         nextPosition,
+                        lexemNumber + 1,
                         null,
                         indentStack)
             }
             val indent = tokens.indents[nextPosition]
             return ParserState(tokens,
                     nextPosition,
+                    lexemNumber + 1,
                     HaskellLexerTokens.VOCURLY,
                     IntStack(indent, indentStack))
         }
@@ -170,11 +176,13 @@ public class ParserState(val tokens: CachedTokens,
             if (indentStack != null) {
                 return ParserState(tokens,
                         nextPosition,
+                        lexemNumber + 1,
                         HaskellLexerTokens.VCCURLY,
                         indentStack.parent)
             } else {
                 return ParserState(tokens,
                         nextPosition,
+                        lexemNumber + 1,
                         null,
                         null)
             }
@@ -183,11 +191,11 @@ public class ParserState(val tokens: CachedTokens,
             val indent = tokens.indents[nextPosition]
             if (indentStack != null) {
                 if (indentStack.indent == indent) {
-                    return ParserState(tokens, nextPosition, HaskellLexerTokens.SEMI, indentStack)
+                    return ParserState(tokens, nextPosition, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
                 } else if (indentStack.indent < indent) {
                     return checkCurly(nextPosition)
                 } else {
-                    return ParserState(tokens, nextPosition, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                    return ParserState(tokens, nextPosition, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
             }
         }
@@ -201,9 +209,9 @@ public class ParserState(val tokens: CachedTokens,
             while (stack != null && stack!!.indent > -1) {
                 stack = stack!!.parent
             }
-            return ParserState(tokens, nextPosition, null, stack?.parent)
+            return ParserState(tokens, nextPosition, lexemNumber + 1, null, stack?.parent)
         }
-        return ParserState(tokens, nextPosition, null, indentStack)
+        return ParserState(tokens, nextPosition, lexemNumber + 1, null, indentStack)
     }
 
     fun skip(tree: NonTerminalTree): ParserState {
@@ -230,6 +238,7 @@ public class ParserState(val tokens: CachedTokens,
     fun dropIndent() = ParserState(
             tokens,
             position,
+            lexemNumber + 1,
             HaskellLexerTokens.VCCURLY,
             indentStack!!.parent)
 
