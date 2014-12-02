@@ -32,4 +32,6 @@ public class HaskellTest extends ParsingTestCase {
 
     public void testMaximum() throws Exception { doTest(true); }
 
+    public void testNumbers() throws Exception { doTest(true); }
+
 }

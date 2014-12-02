@@ -149,6 +149,7 @@ EOL_COMMENT = "--"[^\n]*
 "=>"                  { return HaskellLexerTokens.DARROW; }
 "!"                   { return HaskellLexerTokens.BANG; }
 "_"                   { return HaskellLexerTokens.UNDERSCORE; }
+"-"                   { return HaskellLexerTokens.MINUS; }
 {symbol}+             { return HaskellLexerTokens.VARSYM; }
 ":"{symbol}+          { return HaskellLexerTokens.CONSYM; }
 
