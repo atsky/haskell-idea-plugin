@@ -2,13 +2,14 @@ package org.jetbrains.grammar.dumb
 
 import com.intellij.psi.tree.IElementType
 import java.util.HashSet
+import java.util.ArrayList
 
 /**
  * Created by atsky on 14/11/14.
  */
 class Variant(val terms: List<Term>) {
     public var canBeEmpty: Boolean = false;
-    public var first: Set<IElementType>? = null;
+    public var first: Set<List<IElementType>>? = null;
     public var elementType: IElementType? = null;
 
     override fun toString(): String {
@@ -40,21 +41,39 @@ class Variant(val terms: List<Term>) {
             }
         }
 
-        var firstBuffer = HashSet<IElementType>()
+        val result = HashSet<List<IElementType>>()
+
+        var prefixes = HashSet<List<IElementType>>()
+        prefixes.add(listOf())
 
         for (term in terms) {
+            val nextPrefixes = HashSet<List<IElementType>>()
+            val firstBuffer = HashSet<List<IElementType>>()
             if (term is Terminal) {
-                firstBuffer.add(term.tokenType)
-                break
+                firstBuffer.add(listOf(term.tokenType))
             } else {
                 val rule = grammar[(term as NonTerminal).rule]!!
-
-                firstBuffer.addAll(rule.first!!)
-                if (!rule.canBeEmpty) {
-                    break
+                //rule.makeAnalysis(grammar)
+                if (rule.first != null) {
+                    firstBuffer.addAll(rule.first!!)
                 }
             }
+            for (prefix in prefixes) {
+                for (next in firstBuffer) {
+                    val tmp = prefix + next
+                    if (tmp.size >= 2) {
+                        result.add(ArrayList(tmp.subList(0, 2)))
+                    } else {
+                        nextPrefixes.add(tmp)
+                    }
+                }
+            }
+            prefixes = nextPrefixes
+            if (prefixes.isEmpty()) {
+                break
+            }
         }
-        first = firstBuffer
+        result.addAll(prefixes)
+        first = result
     }
 }

@@ -20,16 +20,15 @@ fun main(args: Array<String>) {
         rule.makeAnalysis(grammar);
 
         if (hasConflicts(rule, grammar)) {
-            hasConflicts(rule, grammar)
             println("rule ${name} {")
             println("  can be empty: " + rule.canBeEmpty)
-            println("  first: " + rule.first)
+            //println("  first: " + rule.first)
 
 
             for (variant in rule.variants) {
                 println("  variant " + variant.terms)
                 println("    can be empty: " + variant.canBeEmpty)
-                println("    first: " + variant.first)
+                //println("    first: " + variant.first)
             }
             for (variant in rule.left) {
                 println("left  " + variant.terms)
@@ -40,8 +39,8 @@ fun main(args: Array<String>) {
 }
 
 
-
-fun hasConflict(variants : List<Variant>, index : Int, grammar : Map<String, Rule>) : Boolean {
+fun hasConflict(rule: Rule, variants: List<Variant>, index: Int): Boolean {
+    var conflict = false;
     val terms = HashMap<Term, MutableList<Variant>>()
     for (variant in variants) {
         if (variant.terms.size == 0) {
@@ -53,30 +52,28 @@ fun hasConflict(variants : List<Variant>, index : Int, grammar : Map<String, Rul
         }
         terms[term].add(variant)
     }
-    val first = HashSet<IElementType>()
+    val allFirst = HashSet<List<IElementType>>()
 
     for ((term, variants) in terms) {
-        if (term is Terminal) {
-            if (first.contains(term.tokenType)) {
-                return true
-            }
-            first.add(term.tokenType)
-        } else if (term is NonTerminal) {
-            val rule = grammar[term.rule]!!
-            for (elementType in rule.first!!) {
-               if (first.contains(elementType)) {
-                   return true
-               }
-            }
-            first.addAll(rule.first!!)
+        val firsts = HashSet<List<IElementType>>()
+        for (variant in variants) {
+            firsts.addAll(variant.first!!)
         }
+
+        for (f in firsts) {
+            if (allFirst.contains(f)) {
+                println("conflict: ${rule.name} - '${f}'")
+                conflict = true
+            }
+        }
+        allFirst.addAll(firsts)
     }
 
-    return false
+    return conflict
 }
 
-fun hasConflicts(rule: Rule, grammar : Map<String, Rule>): Boolean {
-    return hasConflict(rule.variants, 0, grammar)
+fun hasConflicts(rule: Rule): Boolean {
+    return hasConflict(rule, rule.variants, 0)
 }
 
 

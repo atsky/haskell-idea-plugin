@@ -11,7 +11,7 @@ class Rule(public val name : String,
 
     public var done : Boolean = false;
     public var canBeEmpty : Boolean = false;
-    public var first : List<IElementType>? = null;
+    public var first : List<List<IElementType>>? = null;
 
     override fun toString() : String {
         val n = name + ":\n"
@@ -32,7 +32,7 @@ class Rule(public val name : String,
             canBeEmpty = canBeEmpty || variant.canBeEmpty
         }
 
-        val result = HashSet<IElementType>()
+        val result = HashSet<List<IElementType>>()
 
         for (variant in variants) {
             if (variant.first != null) {
@@ -45,7 +45,7 @@ class Rule(public val name : String,
             for (variant in left) {
                 val term = variant.terms[1]
                 if (term is Terminal) {
-                    result.add(term.tokenType)
+                    //result.add(term.tokenType)
                 } else {
                     val ruleName = (term as NonTerminal).rule
                     val rule = grammar[ruleName]!!
