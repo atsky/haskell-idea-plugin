@@ -6,12 +6,12 @@ import java.util.HashSet
 /**
  * Created by atsky on 14/11/14.
  */
-class Variant(val terms : List<Term>) {
-    public var canBeEmpty : Boolean = false;
-    public var first : Set<IElementType>? = null;
-    public var elementType : IElementType? = null;
+class Variant(val terms: List<Term>) {
+    public var canBeEmpty: Boolean = false;
+    public var first: Set<IElementType>? = null;
+    public var elementType: IElementType? = null;
 
-    override fun toString() : String {
+    override fun toString(): String {
         val builder = StringBuilder()
         for (term in terms) {
             if (term is NonTerminal) {
@@ -23,30 +23,38 @@ class Variant(val terms : List<Term>) {
         return "{" + builder.toString() + " }"
     }
 
-    fun makeAnalysis(grammar : Map<String, Rule>) {
-        canBeEmpty = if (terms.size > 0) {
-            val term = terms[0]
+    fun makeAnalysis(grammar: Map<String, Rule>) {
+        canBeEmpty = true;
+        for (term in terms) {
             if (term is NonTerminal) {
                 val rule = grammar[term.rule]!!
 
                 rule.makeAnalysis(grammar)
-                rule.canBeEmpty
+                if (!rule.canBeEmpty) {
+                    canBeEmpty = false
+                    break
+                }
             } else {
-                false
+                canBeEmpty = false
+                break
             }
-        } else {
-            true
         }
 
-        if (terms.size == 0) {
-            first = setOf()
-        } else if (terms[0] is Terminal) {
-            first = setOf((terms[0] as Terminal).tokenType)
-        } else {
-            val rule = grammar[(terms[0] as NonTerminal).rule]!!
-            if (!rule.canBeEmpty) {
-                first = HashSet(rule.first)
+        var firstBuffer = HashSet<IElementType>()
+
+        for (term in terms) {
+            if (term is Terminal) {
+                firstBuffer.add(term.tokenType)
+                break
+            } else {
+                val rule = grammar[(term as NonTerminal).rule]!!
+
+                firstBuffer.addAll(rule.first!!)
+                if (!rule.canBeEmpty) {
+                    break
+                }
             }
         }
+        first = firstBuffer
     }
 }

@@ -41,6 +41,23 @@ class Rule(public val name : String,
                 return
             }
         }
+        if (canBeEmpty) {
+            for (variant in left) {
+                val term = variant.terms[1]
+                if (term is Terminal) {
+                    result.add(term.tokenType)
+                } else {
+                    val ruleName = (term as NonTerminal).rule
+                    val rule = grammar[ruleName]!!
+                    if (rule.canBeEmpty) {
+                        throw RuntimeException()
+                    } else {
+                        result.addAll(rule.first!!)
+                    }
+                }
+            }
+        }
+
         first = ArrayList(result)
     }
 }
