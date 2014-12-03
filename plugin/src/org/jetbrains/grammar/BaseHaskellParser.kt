@@ -16,6 +16,11 @@ import org.jetbrains.grammar.dumb.Term
 import org.jetbrains.grammar.dumb.SimpleLLParser
 import org.jetbrains.haskell.parser.getCachedTokens
 import org.jetbrains.haskell.parser.token.NEW_LINE
+import org.jetbrains.grammar.dumb.Terminal
+import org.jetbrains.haskell.parser.HaskellTokenType
+import org.jetbrains.grammar.dumb.NonTerminal
+import org.jetbrains.grammar.dumb.TerminalVariant
+import org.jetbrains.grammar.dumb.NonTerminalVariant
 
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
@@ -78,9 +83,24 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
         }
     }
 
-    fun addVar(variants : MutableList<Variant>, vararg terms : Term): Variant {
-        val variant = Variant(terms.toArrayList())
-        variants.add(variant);
-        return variant;
+    fun term(tokenType : HaskellTokenType): Terminal {
+        return Terminal(tokenType)
+    }
+
+    fun nonTerm(rule : String): NonTerminal {
+        return NonTerminal(rule)
+    }
+
+    fun addVar(variants : MutableList<Variant>, vararg terms : Term): TerminalVariant {
+        val termsList = terms.toArrayList()
+        val last = TerminalVariant()
+        var first : Variant = last
+
+        for (term in termsList.reverse()) {
+            first = NonTerminalVariant(term, listOf(first))
+        }
+
+        variants.add(first);
+        return last;
     }
 }

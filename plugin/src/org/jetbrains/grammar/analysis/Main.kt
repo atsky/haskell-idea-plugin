@@ -16,6 +16,7 @@ import org.jetbrains.grammar.dumb.Terminal
  */
 fun main(args: Array<String>) {
     val grammar = HaskellParser(null).getGrammar()
+    /*
     for ((name, rule) in grammar) {
         rule.makeAnalysis(grammar);
 
@@ -26,7 +27,7 @@ fun main(args: Array<String>) {
 
 
             for (variant in rule.variants) {
-                println("  variant " + variant.terms)
+                /println("  variant " + variant.terms)
                 println("    can be empty: " + variant.canBeEmpty)
                 //println("    first: " + variant.first)
             }
@@ -36,9 +37,10 @@ fun main(args: Array<String>) {
             println("}")
         }
     }
+    */
 }
 
-
+/*
 fun hasConflict(rule: Rule, variants: List<Variant>, index: Int): Boolean {
     var conflict = false;
     val terms = HashMap<Term, MutableList<Variant>>()
@@ -77,3 +79,4 @@ fun hasConflicts(rule: Rule): Boolean {
 }
 
 
+*/

@@ -55,7 +55,7 @@ fun parseFile(inFile : File, outFile : File) {
 
     val grammar = HaskellParser(null).getGrammar()
     val parser = SimpleLLParser(grammar, cachedTokens)
-    parser.writeLog = false;
+    parser.writeLog = true;
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()

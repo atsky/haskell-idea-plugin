@@ -7,45 +7,56 @@ import java.util.ArrayList
 /**
  * Created by atsky on 14/11/14.
  */
-class Variant(val terms: List<Term>) {
+
+public open class Variant {
+
+}
+
+public class TerminalVariant() : Variant() {
+    public var elementType: IElementType? = null;
+}
+
+public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Variant() {
     public var canBeEmpty: Boolean = false;
     public var first: Set<List<IElementType>>? = null;
-    public var elementType: IElementType? = null;
 
     override fun toString(): String {
         val builder = StringBuilder()
-        for (term in terms) {
-            if (term is NonTerminal) {
-                builder.append(" " + term.rule)
-            } else if (term is Terminal) {
-                builder.append(" '" + term.tokenType + "'")
-            }
+
+        if (term is NonTerminal) {
+            builder.append(" " + term.rule)
+        } else if (term is Terminal) {
+            builder.append(" '" + term.tokenType + "'")
         }
+
         return "{" + builder.toString() + " }"
     }
 
     fun makeAnalysis(grammar: Map<String, Rule>) {
         canBeEmpty = true;
-        for (term in terms) {
-            if (term is NonTerminal) {
-                val rule = grammar[term.rule]!!
 
-                rule.makeAnalysis(grammar)
-                if (!rule.canBeEmpty) {
-                    canBeEmpty = false
-                    break
-                }
-            } else {
+        if (term is NonTerminal) {
+            val rule = grammar[term.rule]!!
+
+            rule.makeAnalysis(grammar)
+            if (!rule.canBeEmpty) {
                 canBeEmpty = false
-                break
+            } else {
+                for (n in next) {
+                    //n.makeAnalysis(grammar)
+                    //canBeEmpty = canBeEmpty || n.canBeEmpty
+                }
             }
+        } else {
+            canBeEmpty = false
         }
+
 
         val result = HashSet<List<IElementType>>()
 
         var prefixes = HashSet<List<IElementType>>()
         prefixes.add(listOf())
-
+/*
         for (term in terms) {
             val nextPrefixes = HashSet<List<IElementType>>()
             val firstBuffer = HashSet<List<IElementType>>()
@@ -75,5 +86,6 @@ class Variant(val terms: List<Term>) {
         }
         result.addAll(prefixes)
         first = result
+        */
     }
 }

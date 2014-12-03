@@ -7,6 +7,7 @@ import org.jetbrains.grammar.HaskellLexerTokens
 import java.util.HashMap
 import org.jetbrains.haskell.parser.CachedTokens
 import org.jetbrains.haskell.parser.newParserState
+import org.jetbrains.haskell.parser.ParserState
 
 class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     val rulesCache = ArrayList<MutableMap<String, NonTerminalTree>>()
@@ -27,6 +28,50 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         return parseState(variantState)
     }
 
+    fun parseRule(rule : Rule, state : ParserState): NonTerminalTree? {
+        var bestTree : NonTerminalTree? = null;
+        for (variant in rule.variants) {
+            val tree = parseVariant(rule, variant, state)
+            if (tree != null && (bestTree == null || bestTree!!.size() < tree.size())) {
+                bestTree = tree
+            }
+        }
+        return bestTree;
+    }
+
+    fun parseVariant(rule : Rule,
+                     variant: Variant,
+                     state: ParserState): NonTerminalTree?  {
+        var currentState = state
+        var currentVariant : Variant = variant;
+
+        val children = ArrayList<ResultTree>()
+
+        while (true) {
+            if (currentVariant is TerminalVariant) {
+                val terminalVariant = currentVariant as TerminalVariant
+                return NonTerminalTree(rule.name, 0, terminalVariant.elementType, children)
+            } else {
+                val nonTerminalVariant = currentVariant as NonTerminalVariant
+                val term = nonTerminalVariant.term
+                when (term) {
+                    is Terminal -> {
+                        if (currentState.match(term.tokenType)) {
+                            currentState = currentState.next()
+                        } else {
+
+                        }
+                    }
+                    is NonTerminal -> {
+                        val ruleToParse = grammar[term.rule]!!
+
+
+                    }
+                }
+            }
+        }
+    }
+
     fun parseState(startState: VariantState): NonTerminalTree? {
         var state: VariantState? = startState;
         while (true ) {
@@ -34,6 +79,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 if (result != null) {
                     return result;
                 }
+                /*
                 if (lastSeen + 1 == lastCurlyPosition) {
                     state = lastCurlyState!!.dropIndent()
                 } else if (recoveryState != null) {
@@ -57,20 +103,21 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 } else {
                     return null;
                 }
-
+                */
+                return null
             }
             val current = state!!;
-            val terms = current.variant.terms
-            if (current.termIndex < terms.size) {
-                val term = terms[current.termIndex]
+            val currentVariant = current.variant
+            if (currentVariant is NonTerminalVariant) {
+                val term = currentVariant.term
                 when (term) {
                     is Terminal -> {
                         if (current.parserState.match(term.tokenType)) {
                             var children = ArrayList(current.tree)
                             children.add(TerminalTree(term.tokenType))
                             lastSeen = Math.max(lastSeen, current.parserState.lexemNumber)
-                            state = VariantState(current.variant,
-                                    current.termIndex + 1,
+                            state = VariantState(currentVariant.next.first!!,
+                                    0,
                                     children,
                                     current.parserState.next(),
                                     current.parent)
@@ -104,7 +151,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 val tree = NonTerminalTree(
                         ruleState.rule.name,
                         0,
-                        current.variant.elementType,
+                        (current.variant as TerminalVariant).elementType,
                         current.tree)
 
                 state = nextVariant(ruleState, tree)
@@ -196,8 +243,9 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
 
         var children = ArrayList(variantState.tree)
         children.add(tree)
-        return VariantState(variantState.variant,
-                variantState.termIndex + 1,
+        val nonTerminalVariant = variantState.variant as NonTerminalVariant
+        return VariantState(nonTerminalVariant.next.first!!,
+                0,
                 children,
                 variantState.parserState.skip(tree),
                 variantState.parent)
@@ -218,4 +266,6 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
 
         rulesCache[position][name] = tree
     }
+
+
 }

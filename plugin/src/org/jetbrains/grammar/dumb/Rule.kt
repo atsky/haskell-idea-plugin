@@ -21,6 +21,7 @@ class Rule(public val name : String,
     }
 
     fun makeAnalysis(grammar : Map<String, Rule>) {
+        /*
         if (done) {
             return
         }
@@ -59,5 +60,6 @@ class Rule(public val name : String,
         }
 
         first = ArrayList(result)
+        */
     }
 }

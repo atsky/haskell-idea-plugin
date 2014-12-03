@@ -10,13 +10,13 @@ import org.jetbrains.haskell.parser.ParserState
  * Created by atsky on 23/11/14.
  */
 class VariantState(val variant : Variant,
-                   val termIndex : Int,
+                   val childVariantIndex : Int,
                    val tree : List<ResultTree>,
                    val parserState: ParserState,
                    val parent : RuleState) {
     fun dropIndent(): VariantState {
         return VariantState(variant,
-                            termIndex,
+                            childVariantIndex,
                             tree,
                             parserState.dropIndent(),
                             parent)

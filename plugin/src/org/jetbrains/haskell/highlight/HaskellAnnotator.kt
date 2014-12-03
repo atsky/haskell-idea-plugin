@@ -52,7 +52,9 @@ public class HaskellAnnotator() : Annotator {
         if (element is SignatureDeclaration) {
             val qVar = element.getQNameExpression()?.getQVar()
             val node = qVar?.getNode()?.getFirstChildNode()
-            holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_SIGNATURE)
+            if (node != null) {
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_SIGNATURE)
+            }
         }
         if (element is TupleType) {
             for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN, COMMA))!!) {

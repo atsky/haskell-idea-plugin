@@ -229,9 +229,9 @@ class ParserGenerator(val grammar: Grammar) {
                 }
                 if (tokens.containsKey(atom.toString())) {
                     val tokenDescription = tokens[atom.toString()]!!
-                    builder.append("new Terminal(" + tokenDescription.name.toUpperCase() + ")")
+                    builder.append("term(" + tokenDescription.name.toUpperCase() + ")")
                 } else {
-                    builder.append("new NonTerminal(\"" + atom.text + "\")")
+                    builder.append("nonTerm(\"" + atom.text + "\")")
                 }
                 first = false;
             }
