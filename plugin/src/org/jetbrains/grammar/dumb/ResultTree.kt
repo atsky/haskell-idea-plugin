@@ -23,6 +23,17 @@ class NonTerminalTree(val rule : String,
                       val variant : Int,
                       val elementType : IElementType?,
                       val children : List<ResultTree>) : ResultTree() {
+
+    val mySize : Int;
+
+    {
+        var size = 0;
+        for (child in children) {
+            size += child.size()
+        }
+        mySize = size
+    }
+
     override fun toString(): String {
         val builder = StringBuilder()
         for (r in children) {
@@ -48,10 +59,6 @@ class NonTerminalTree(val rule : String,
     }
 
     override fun size(): Int {
-        var size = 0;
-        for (child in children) {
-            size += child.size()
-        }
-        return size;
+        return mySize;
     }
 }

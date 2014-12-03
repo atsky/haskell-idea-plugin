@@ -157,7 +157,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             val parent = ruleState.parent
             if (parent == null) {
                 result = bestTree;
-                log(bestTree.toString())
+                log({bestTree.toString()})
                 return null;
             }
             if (bestTree == null) {
@@ -168,7 +168,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 }
             } else {
                 if (ruleState.rule.left.isNotEmpty()) {
-                    log("left ${ruleState.rule.name} - ${ruleState.parserState.lexemNumber} size=${bestTree.size()}")
+                    log({"left ${ruleState.rule.name} - ${ruleState.parserState.lexemNumber} size=${bestTree.size()}"})
                     val nextRuleState = RuleState(ruleState.rule,
                             0,
                             true,
@@ -192,7 +192,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                  variantState: VariantState,
                  tree: NonTerminalTree): VariantState {
 
-        log("done ${rule.name} - ${variantState.parserState.lexemNumber} size=${tree.size()}")
+        log({"done ${rule.name} - ${variantState.parserState.lexemNumber} size=${tree.size()}"})
 
         var children = ArrayList(variantState.tree)
         children.add(tree)
@@ -203,9 +203,9 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 variantState.parent)
     }
 
-    fun log(text: String) {
+    fun log(text: () -> String) {
         if (writeLog) {
-            println(text)
+            println(text())
         }
     }
 
