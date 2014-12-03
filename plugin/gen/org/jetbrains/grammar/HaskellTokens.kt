@@ -35,6 +35,7 @@ public val PATTERN : IElementType = HaskellCompositeElementType("Pattern", ::Pat
 public val Q_CON : IElementType = HaskellCompositeElementType("QCon", ::QCon)
 public val Q_NAME_EXPRESSION : IElementType = HaskellCompositeElementType("QNameExpression", ::QNameExpression)
 public val Q_VAR : IElementType = HaskellCompositeElementType("QVar", ::QVar)
+public val Q_VAR_SYM : IElementType = HaskellCompositeElementType("QVarSym", ::QVarSym)
 public val RIGHT_HAND_SIDE : IElementType = HaskellCompositeElementType("RightHandSide", ::RightHandSide)
 public val SIGNATURE_DECLARATION : IElementType = HaskellCompositeElementType("SignatureDeclaration", ::SignatureDeclaration)
 public val STRING_LITERAL : IElementType = HaskellCompositeElementType("StringLiteral", ::StringLiteral)

@@ -1859,7 +1859,7 @@ var
 
 qvar
         : qvarid                     { QVar }
-        | '(' varsym ')'             { QVar }
+        | '(' varsym ')'             { QVarSym }
         | '(' qvarsym1 ')'           { QVar }
 ;
 

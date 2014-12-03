@@ -13,6 +13,7 @@ import org.jetbrains.haskell.psi.ListType
 import org.jetbrains.haskell.psi.FunctionType
 import org.jetbrains.haskell.psi.TypeVariable
 import org.jetbrains.haskell.psi.SignatureDeclaration
+import org.jetbrains.haskell.psi.QVarSym
 
 
 /**
@@ -38,8 +39,13 @@ public class HaskellAnnotator() : Annotator {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }
+        if (element is QVarSym) {
+            for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN))!!) {
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_OPERATOR)
+            }
+        }
         if (element is TypeVariable && !element.isConstructor()) {
-            for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID, QCONID, QVARID))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }

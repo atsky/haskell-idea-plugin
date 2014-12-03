@@ -392,7 +392,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, new NonTerminal("qvarid")).setElementType(GrammarPackage.getQ_VAR());
-      addVar(variants, new Terminal(OPAREN), new NonTerminal("varsym"), new Terminal(CPAREN)).setElementType(GrammarPackage.getQ_VAR());
+      addVar(variants, new Terminal(OPAREN), new NonTerminal("varsym"), new Terminal(CPAREN)).setElementType(GrammarPackage.getQ_VAR_SYM());
       addVar(variants, new Terminal(OPAREN), new NonTerminal("qvarsym1"), new Terminal(CPAREN)).setElementType(GrammarPackage.getQ_VAR());
       grammar.put("qvar", new Rule("qvar", variants, left));
     }
