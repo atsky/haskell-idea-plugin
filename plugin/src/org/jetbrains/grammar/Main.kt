@@ -27,7 +27,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith("IndentInParenthesis.hs")
+            return name.endsWith(".hs")
         }
 
     }
@@ -55,7 +55,7 @@ fun parseFile(inFile : File, outFile : File) {
 
     val grammar = HaskellParser(null).getGrammar()
     val parser = SimpleLLParser(grammar, cachedTokens)
-    parser.writeLog = true;
+    parser.writeLog = false;
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()

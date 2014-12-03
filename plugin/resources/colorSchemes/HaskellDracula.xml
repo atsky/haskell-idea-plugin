@@ -10,14 +10,14 @@
             <option name="FOREGROUND" value="73e3d0"/>
         </value>
     </option>
-    <option name="HASKELL_KEYWORD">
-        <value>
-            <option name="FOREGROUND" value="f9264c"/>
-        </value>
-    </option>
     <option name="HASKELL_OPERATOR">
         <value>
-            <option name="FOREGROUND" value="f9264c"/>
+            <option name="FOREGROUND" value="D5C42B"/>
+        </value>
+    </option>
+    <option name="HASKELL_SIGNATURE">
+        <value>
+            <option name="FOREGROUND" value="69CD16"/>
         </value>
     </option>
 </list>

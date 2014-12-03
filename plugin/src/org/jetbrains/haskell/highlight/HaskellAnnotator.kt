@@ -12,6 +12,7 @@ import org.jetbrains.haskell.psi.TupleType
 import org.jetbrains.haskell.psi.ListType
 import org.jetbrains.haskell.psi.FunctionType
 import org.jetbrains.haskell.psi.TypeVariable
+import org.jetbrains.haskell.psi.SignatureDeclaration
 
 
 /**
@@ -41,6 +42,11 @@ public class HaskellAnnotator() : Annotator {
             for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
+        }
+        if (element is SignatureDeclaration) {
+            val qVar = element.getQNameExpression()?.getQVar()
+            val node = qVar?.getNode()?.getFirstChildNode()
+            holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_SIGNATURE)
         }
         if (element is TupleType) {
             for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN, COMMA))!!) {

@@ -24,6 +24,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
         public val HASKELL_PARENTHESIS: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_PARENTHESIS", DefaultLanguageHighlighterColors.PARENTHESES)
         public val STRING_LITERAL: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
         public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+        public val HASKELL_SIGNATURE: TextAttributesKey                = TextAttributesKey.createTextAttributesKey("HASKELL_SIGNATURE")
         public val COMMENT: TextAttributesKey                          = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
         public val HASKELL_PRAGMA: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
         public val HASKELL_CONSTRUCTOR: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")

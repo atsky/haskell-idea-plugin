@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     for ((name, rule) in grammar) {
         rule.makeAnalysis(grammar);
 
-        if (hasConflicts(rule, grammar)) {
+        if (hasConflicts(rule)) {
             println("rule ${name} {")
             println("  can be empty: " + rule.canBeEmpty)
             //println("  first: " + rule.first)
