@@ -11,7 +11,7 @@ class Rule(public val name : String,
 
     public var done : Boolean = false;
     public var canBeEmpty : Boolean = false;
-    public var first : List<List<IElementType>>? = null;
+    public var first : List<IElementType>? = null;
 
     override fun toString() : String {
         val n = name + ":\n"
@@ -21,7 +21,6 @@ class Rule(public val name : String,
     }
 
     fun makeAnalysis(grammar : Map<String, Rule>) {
-        /*
         if (done) {
             return
         }
@@ -30,18 +29,21 @@ class Rule(public val name : String,
         }
 
         for (variant in variants) {
-            canBeEmpty = canBeEmpty || variant.canBeEmpty
+            canBeEmpty = canBeEmpty || variant.isCanBeEmpty()
         }
 
-        val result = HashSet<List<IElementType>>()
+        val result = HashSet<IElementType>()
 
         for (variant in variants) {
-            if (variant.first != null) {
-                result.addAll(variant.first!!)
-            } else {
-                return
+            if (variant is NonTerminalVariant) {
+                if (variant.first != null) {
+                    result.addAll(variant.first!!)
+                } else {
+                    return
+                }
             }
         }
+        /*
         if (canBeEmpty) {
             for (variant in left) {
                 val term = variant.terms[1]
@@ -58,8 +60,7 @@ class Rule(public val name : String,
                 }
             }
         }
-
+*/
         first = ArrayList(result)
-        */
     }
 }

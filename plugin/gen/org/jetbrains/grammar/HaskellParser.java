@@ -18,1941 +18,1820 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(BANG));
-      addVar(variants, term(UNPACK_PRAG), term(CLOSE_PRAG));
-      addVar(variants, term(NOUNPACK_PRAG), term(CLOSE_PRAG));
-      addVar(variants, term(UNPACK_PRAG), term(CLOSE_PRAG), term(BANG));
-      addVar(variants, term(NOUNPACK_PRAG), term(CLOSE_PRAG), term(BANG));
+      addVar(variants, end().add(BANG));
+      addVar(variants, many(CLOSE_PRAG, end(), end().add(BANG)).add(NOUNPACK_PRAG));
+      addVar(variants, many(CLOSE_PRAG, end(), end().add(BANG)).add(UNPACK_PRAG));
       grammar.put("strict_mark", new Rule("strict_mark", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(WHERE), nonTerm("decllist_inst"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("decllist_inst").add(WHERE));
       grammar.put("where_inst", new Rule("where_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("tyvar"));
-      addVar(variants, term(OPAREN), nonTerm("tyvar"), term(DCOLON), nonTerm("kind"), term(CPAREN));
+      addVar(variants, end().add("tyvar"));
+      addVar(variants, end().add(CPAREN).add("kind").add(DCOLON).add("tyvar").add(OPAREN));
       grammar.put("tv_bndr", new Rule("tv_bndr", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("squals"), term(COMMA), nonTerm("transformqual"));
-      addVar(left, nonTerm("squals"), term(COMMA), nonTerm("qual"));
-      addVar(variants, nonTerm("transformqual"));
-      addVar(variants, nonTerm("qual"));
+      addVar(variants, end().add("qual"));
+      addVar(variants, end().add("transformqual"));
+      addVar(left, many(COMMA, end().add("qual"), end().add("transformqual")).add("squals"));
       grammar.put("squals", new Rule("squals", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvarop"));
-      addVar(variants, nonTerm("qconop"));
+      addVar(variants, end().add("qvarop"));
+      addVar(variants, end().add("qconop"));
       grammar.put("qop", new Rule("qop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("cvtopdecls"));
+      addVar(variants, end());
+      addVar(variants, end().add("cvtopdecls"));
       grammar.put("cvtopdecls0", new Rule("cvtopdecls0", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("rule_var"));
-      addVar(variants, nonTerm("rule_var"), nonTerm("rule_var_list"));
+      addVar(variants, many("rule_var", end(), end().add("rule_var_list")));
       grammar.put("rule_var_list", new Rule("rule_var_list", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(SEMI), nonTerm("stmts"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("stmts").add(SEMI));
       grammar.put("stmts_help", new Rule("stmts_help", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VARID));
-      addVar(variants, term(UNDERSCORE));
+      addVar(variants, end().add(VARID));
+      addVar(variants, end().add(UNDERSCORE));
       grammar.put("role", new Rule("role", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(EQUAL), nonTerm("exp"), nonTerm("wherebinds")).setElementType(GrammarPackage.getRIGHT_HAND_SIDE());
-      addVar(variants, nonTerm("gdrhs"), nonTerm("wherebinds")).setElementType(GrammarPackage.getRIGHT_HAND_SIDE());
+      addVar(variants, end(GrammarPackage.getRIGHT_HAND_SIDE()).add("wherebinds").add("exp").add(EQUAL));
+      addVar(variants, end(GrammarPackage.getRIGHT_HAND_SIDE()).add("wherebinds").add("gdrhs"));
       grammar.put("rhs", new Rule("rhs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("decls_inst"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("decls_inst"), nonTerm("close"));
+      addVar(variants, end().add("close").add("decls_inst").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("decls_inst").add(OCURLY));
       grammar.put("decllist_inst", new Rule("decllist_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvarsym_no_minus"));
-      addVar(variants, term(BACKQUOTE), nonTerm("qvarid"), term(BACKQUOTE));
+      addVar(variants, end().add("qvarsym_no_minus"));
+      addVar(variants, end().add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
       grammar.put("qvaropm", new Rule("qvaropm", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(QVARSYM));
+      addVar(variants, end().add(QVARSYM));
       grammar.put("qvarsym1", new Rule("qvarsym1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(TYPE), nonTerm("type"), term(EQUAL), nonTerm("ctypedoc")).setElementType(GrammarPackage.getTYPE_SYNONYM());
-      addVar(variants, term(TYPE), term(FAMILY), nonTerm("type"), nonTerm("opt_kind_sig"), nonTerm("where_type_family"));
-      addVar(variants, nonTerm("data_or_newtype"), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("constrs"), nonTerm("deriving")).setElementType(GrammarPackage.getDATA_DECLARATION());
-      addVar(variants, nonTerm("data_or_newtype"), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("opt_kind_sig"), nonTerm("gadt_constrlist"), nonTerm("deriving"));
-      addVar(variants, term(DATA), term(FAMILY), nonTerm("type"), nonTerm("opt_kind_sig"));
+      addVar(variants, end().add("opt_kind_sig").add("type").add(FAMILY).add(DATA));
+      addVar(variants, many("tycl_hdr", end(GrammarPackage.getDATA_DECLARATION()).add("deriving").add("constrs"), end().add("deriving").add("gadt_constrlist").add("opt_kind_sig")).add("capi_ctype").add("data_or_newtype"));
+      addVar(variants, many(TYPE, end().add("where_type_family").add("opt_kind_sig").add("type").add(FAMILY), end(GrammarPackage.getTYPE_SYNONYM()).add("ctypedoc").add(EQUAL).add("type")));
       grammar.put("ty_decl", new Rule("ty_decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("exp10"));
-      addVar(left, nonTerm("infixexp"), nonTerm("qop"), nonTerm("exp10")).setElementType(GrammarPackage.getOPERATOR_EXPRESSION());
+      addVar(left, end(GrammarPackage.getOPERATOR_EXPRESSION()).add("exp10").add("qop").add("infixexp"));
+      addVar(variants, end().add("exp10"));
       grammar.put("infixexp", new Rule("infixexp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("topdecls"), term(SEMI), nonTerm("topdecl"));
-      addVar(left, nonTerm("topdecls"), term(SEMI));
-      addVar(variants, nonTerm("topdecl"));
+      addVar(variants, end().add("topdecl"));
+      addVar(left, many(SEMI, end(), end().add("topdecl")).add("topdecls"));
       grammar.put("topdecls", new Rule("topdecls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("docsection"));
-      addVar(variants, nonTerm("docnamed"));
-      addVar(variants, nonTerm("docnext"));
+      addVar(variants, end().add("docnext"));
+      addVar(variants, end().add("docnamed"));
+      addVar(variants, end().add("docsection"));
       grammar.put("exp_doc", new Rule("exp_doc", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("maybedocheader"), term(MODULE), nonTerm("modid"), nonTerm("maybemodwarning"), nonTerm("maybeexports"), term(WHERE), nonTerm("header_body"));
-      addVar(variants, nonTerm("header_body2"));
+      addVar(variants, end().add("header_body").add(WHERE).add("maybeexports").add("maybemodwarning").add("modid").add(MODULE).add("maybedocheader"));
+      addVar(variants, end().add("header_body2"));
       grammar.put("header", new Rule("header", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(FAMILY));
+      addVar(variants, end());
+      addVar(variants, end().add(FAMILY));
       grammar.put("opt_family", new Rule("opt_family", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CONID));
+      addVar(variants, end().add(CONID));
       grammar.put("conid", new Rule("conid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DOCCOMMENTNEXT));
+      addVar(variants, end().add(DOCCOMMENTNEXT));
       grammar.put("docnext", new Rule("docnext", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("ty_fam_inst_eqns"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("ty_fam_inst_eqns"), nonTerm("close"));
-      addVar(variants, term(OCURLY), term(DOTDOT), term(CCURLY));
-      addVar(variants, term(VOCURLY), term(DOTDOT), nonTerm("close"));
+      addVar(variants, many(VOCURLY, end().add("close").add("ty_fam_inst_eqns"), end().add("close").add(DOTDOT)));
+      addVar(variants, many(OCURLY, end().add(CCURLY).add("ty_fam_inst_eqns"), end().add(CCURLY).add(DOTDOT)));
       grammar.put("ty_fam_inst_eqn_list", new Rule("ty_fam_inst_eqn_list", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(GENERATED_PRAG), term(STRING), term(INTEGER), term(COLON), term(INTEGER), term(MINUS), term(INTEGER), term(COLON), term(INTEGER), term(CLOSE_PRAG));
+      addVar(variants, end().add(CLOSE_PRAG).add(INTEGER).add(COLON).add(INTEGER).add(MINUS).add(INTEGER).add(COLON).add(INTEGER).add(STRING).add(GENERATED_PRAG));
       grammar.put("hpc_annot", new Rule("hpc_annot", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("role"));
-      addVar(left, nonTerm("roles"), nonTerm("role"));
+      addVar(variants, end().add("role"));
+      addVar(left, end().add("role").add("roles"));
       grammar.put("roles", new Rule("roles", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qtyconsym"));
-      addVar(variants, term(BACKQUOTE), nonTerm("qtycon"), term(BACKQUOTE));
+      addVar(variants, end().add("qtyconsym"));
+      addVar(variants, end().add(BACKQUOTE).add("qtycon").add(BACKQUOTE));
       grammar.put("qtyconop", new Rule("qtyconop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("maybe_docnext"), nonTerm("forall"), nonTerm("context"), term(DARROW), nonTerm("constr_stuff"), nonTerm("maybe_docprev")).setElementType(GrammarPackage.getCONSTRUCTOR_DECLARATION());
-      addVar(variants, nonTerm("maybe_docnext"), nonTerm("forall"), nonTerm("constr_stuff"), nonTerm("maybe_docprev")).setElementType(GrammarPackage.getCONSTRUCTOR_DECLARATION());
+      addVar(variants, many("forall", end(GrammarPackage.getCONSTRUCTOR_DECLARATION()).add("maybe_docprev").add("constr_stuff"), end(GrammarPackage.getCONSTRUCTOR_DECLARATION()).add("maybe_docprev").add("constr_stuff").add(DARROW).add("context")).add("maybe_docnext"));
       grammar.put("constr", new Rule("constr", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("docnext"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("docnext"));
       grammar.put("maybe_docnext", new Rule("maybe_docnext", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(SOURCE_PRAG), term(CLOSE_PRAG));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(CLOSE_PRAG).add(SOURCE_PRAG));
       grammar.put("maybe_src", new Rule("maybe_src", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(INTEGER));
+      addVar(variants, end());
+      addVar(variants, end().add(INTEGER));
       grammar.put("prec", new Rule("prec", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("cl_decl")).setElementType(GrammarPackage.getCLASS_DECLARATION());
-      addVar(variants, nonTerm("ty_decl"));
-      addVar(variants, nonTerm("inst_decl")).setElementType(GrammarPackage.getINSTANCE_DECLARATION());
-      addVar(variants, nonTerm("stand_alone_deriving"));
-      addVar(variants, nonTerm("role_annot"));
-      addVar(variants, term(DEFAULT), term(OPAREN), nonTerm("comma_types0"), term(CPAREN));
-      addVar(variants, term(FOREIGN), nonTerm("fdecl"));
-      addVar(variants, term(DEPRECATED_PRAG), nonTerm("deprecations"), term(CLOSE_PRAG));
-      addVar(variants, term(WARNING_PRAG), nonTerm("warnings"), term(CLOSE_PRAG));
-      addVar(variants, term(RULES_PRAG), nonTerm("rules"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_PRAG), nonTerm("qvar"), term(EQUAL), nonTerm("exp"), term(CLOSE_PRAG));
-      addVar(variants, term(NOVECT_PRAG), nonTerm("qvar"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_PRAG), term(TYPE), nonTerm("gtycon"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_SCALAR_PRAG), term(TYPE), nonTerm("gtycon"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_PRAG), term(TYPE), nonTerm("gtycon"), term(EQUAL), nonTerm("gtycon"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_SCALAR_PRAG), term(TYPE), nonTerm("gtycon"), term(EQUAL), nonTerm("gtycon"), term(CLOSE_PRAG));
-      addVar(variants, term(VECT_PRAG), term(CLASS), nonTerm("gtycon"), term(CLOSE_PRAG));
-      addVar(variants, nonTerm("annotation"));
-      addVar(variants, nonTerm("decl_no_th"));
-      addVar(variants, nonTerm("infixexp"));
+      addVar(variants, end().add("annotation"));
+      addVar(variants, end().add(CLOSE_PRAG).add("qvar").add(NOVECT_PRAG));
+      addVar(variants, end().add("role_annot"));
+      addVar(variants, end().add(CLOSE_PRAG).add("warnings").add(WARNING_PRAG));
+      addVar(variants, end().add(CPAREN).add("comma_types0").add(OPAREN).add(DEFAULT));
+      addVar(variants, end().add("decl_no_th"));
+      addVar(variants, end(GrammarPackage.getCLASS_DECLARATION()).add("cl_decl"));
+      addVar(variants, many("gtycon", end().add(CLOSE_PRAG).add("gtycon").add(EQUAL), end().add(CLOSE_PRAG)).add(TYPE).add(VECT_SCALAR_PRAG));
+      addVar(variants, end().add(CLOSE_PRAG).add("deprecations").add(DEPRECATED_PRAG));
+      addVar(variants, end(GrammarPackage.getINSTANCE_DECLARATION()).add("inst_decl"));
+      addVar(variants, end().add(CLOSE_PRAG).add("rules").add(RULES_PRAG));
+      addVar(variants, many(VECT_PRAG, end().add(CLOSE_PRAG).add("gtycon").add(CLASS), end().add(CLOSE_PRAG).add("exp").add(EQUAL).add("qvar"), many("gtycon", end().add(CLOSE_PRAG).add("gtycon").add(EQUAL), end().add(CLOSE_PRAG)).add(TYPE)));
+      addVar(variants, end().add("ty_decl"));
+      addVar(variants, end().add("infixexp"));
+      addVar(variants, end().add("fdecl").add(FOREIGN));
+      addVar(variants, end().add("stand_alone_deriving"));
       grammar.put("topdecl", new Rule("topdecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(DCOLON), nonTerm("atype"));
+      addVar(variants, end());
+      addVar(variants, end().add("atype").add(DCOLON));
       grammar.put("opt_asig", new Rule("opt_asig", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qconid")).setElementType(GrammarPackage.getQ_CON());
-      addVar(variants, term(OPAREN), nonTerm("qconsym"), term(CPAREN));
-      addVar(variants, nonTerm("sysdcon"));
+      addVar(variants, end().add("sysdcon"));
+      addVar(variants, end(GrammarPackage.getQ_CON()).add("qconid"));
+      addVar(variants, end().add(CPAREN).add("qconsym").add(OPAREN));
       grammar.put("qcon", new Rule("qcon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qconsym"));
-      addVar(variants, term(BACKQUOTE), nonTerm("qconid"), term(BACKQUOTE));
+      addVar(variants, end().add("qconsym"));
+      addVar(variants, end().add(BACKQUOTE).add("qconid").add(BACKQUOTE));
       grammar.put("qconop", new Rule("qconop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("namelist"), nonTerm("strings"));
+      addVar(variants, end().add("strings").add("namelist"));
       grammar.put("deprecation", new Rule("deprecation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("topdecls"));
+      addVar(variants, end().add("topdecls"));
       grammar.put("cvtopdecls", new Rule("cvtopdecls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varsym_no_minus"));
-      addVar(variants, term(MINUS));
+      addVar(variants, end().add(MINUS));
+      addVar(variants, end().add("varsym_no_minus"));
       grammar.put("varsym", new Rule("varsym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("importdecls"));
-      addVar(variants, nonTerm("missing_module_keyword"), nonTerm("importdecls"));
+      addVar(variants, end().add("importdecls").add("missing_module_keyword"));
+      addVar(variants, end().add("importdecls").add(OCURLY));
       grammar.put("header_body2", new Rule("header_body2", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("at_decl_cls"));
-      addVar(variants, nonTerm("decl"));
-      addVar(variants, term(DEFAULT), nonTerm("infixexp"), term(DCOLON), nonTerm("sigtypedoc"));
+      addVar(variants, end().add("decl"));
+      addVar(variants, end().add("at_decl_cls"));
+      addVar(variants, end().add("sigtypedoc").add(DCOLON).add("infixexp").add(DEFAULT));
       grammar.put("decl_cls", new Rule("decl_cls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(TYPE), term(ROLE), nonTerm("oqtycon"), nonTerm("maybe_roles"));
+      addVar(variants, end().add("maybe_roles").add("oqtycon").add(ROLE).add(TYPE));
       grammar.put("role_annot", new Rule("role_annot", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("sigtype"));
+      addVar(variants, end().add("sigtype"));
       grammar.put("inst_type", new Rule("inst_type", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("qcnames"), term(COMMA), nonTerm("qcname_ext"));
-      addVar(variants, nonTerm("qcname_ext"));
+      addVar(variants, end().add("qcname_ext"));
+      addVar(left, end().add("qcname_ext").add(COMMA).add("qcnames"));
       grammar.put("qcnames", new Rule("qcnames", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("exp_doc"), nonTerm("expdoclist"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("expdoclist").add("exp_doc"));
       grammar.put("expdoclist", new Rule("expdoclist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DOCCOMMENTPREV));
+      addVar(variants, end().add(DOCCOMMENTPREV));
       grammar.put("docprev", new Rule("docprev", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("warnings"), term(SEMI), nonTerm("warning"));
-      addVar(left, nonTerm("warnings"), term(SEMI));
-      addVar(variants, nonTerm("warning"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("warning"));
+      addVar(left, many(SEMI, end(), end().add("warning")).add("warnings"));
       grammar.put("warnings", new Rule("warnings", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("decl_no_th"));
-      addVar(variants, nonTerm("splice_exp"));
+      addVar(variants, end().add("splice_exp"));
+      addVar(variants, end().add("decl_no_th"));
       grammar.put("decl", new Rule("decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varid"));
-      addVar(variants, term(OPAREN), nonTerm("varid"), term(DCOLON), nonTerm("ctype"), term(CPAREN));
+      addVar(variants, end().add(CPAREN).add("ctype").add(DCOLON).add("varid").add(OPAREN));
+      addVar(variants, end().add("varid"));
       grammar.put("rule_var", new Rule("rule_var", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("context"), term(DARROW), nonTerm("type"));
-      addVar(variants, nonTerm("type"));
+      addVar(variants, end().add("type"));
+      addVar(variants, end().add("type").add(DARROW).add("context"));
       grammar.put("tycl_hdr", new Rule("tycl_hdr", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("varid"), nonTerm("vars0"));
+      addVar(variants, end());
+      addVar(variants, end().add("vars0").add("varid"));
       grammar.put("vars0", new Rule("vars0", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varids0"), term(RARROW), nonTerm("varids0"));
+      addVar(variants, end().add("varids0").add(RARROW).add("varids0"));
       grammar.put("fd", new Rule("fd", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DOCSECTION));
+      addVar(variants, end().add(DOCSECTION));
       grammar.put("docsection", new Rule("docsection", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvarid")).setElementType(GrammarPackage.getQ_VAR());
-      addVar(variants, term(OPAREN), nonTerm("varsym"), term(CPAREN)).setElementType(GrammarPackage.getQ_VAR_SYM());
-      addVar(variants, term(OPAREN), nonTerm("qvarsym1"), term(CPAREN)).setElementType(GrammarPackage.getQ_VAR());
+      addVar(variants, end(GrammarPackage.getQ_VAR()).add("qvarid"));
+      addVar(variants, many(OPAREN, end(GrammarPackage.getQ_VAR()).add(CPAREN).add("qvarsym1"), end(GrammarPackage.getQ_VAR_SYM()).add(CPAREN).add("varsym")));
       grammar.put("qvar", new Rule("qvar", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("top"), term(CCURLY));
-      addVar(variants, nonTerm("missing_module_keyword"), nonTerm("top"), nonTerm("close"));
+      addVar(variants, end().add("close").add("top").add("missing_module_keyword"));
+      addVar(variants, end().add(CCURLY).add("top").add(OCURLY));
       grammar.put("body2", new Rule("body2", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qtycon"));
-      addVar(variants, term(OPAREN), term(CPAREN));
-      addVar(variants, term(OPAREN), nonTerm("kind"), term(COMMA), nonTerm("comma_kinds1"), term(CPAREN));
-      addVar(variants, term(OBRACK), nonTerm("kind"), term(CBRACK));
+      addVar(variants, end().add("qtycon"));
+      addVar(variants, end().add(CBRACK).add("kind").add(OBRACK));
+      addVar(variants, many(OPAREN, end().add(CPAREN).add("comma_kinds1").add(COMMA).add("kind"), end().add(CPAREN)));
       grammar.put("pkind", new Rule("pkind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("type"), term(EQUAL), nonTerm("ctype"));
+      addVar(variants, end().add("ctype").add(EQUAL).add("type"));
       grammar.put("ty_fam_inst_eqn", new Rule("ty_fam_inst_eqn", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("decls"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("decls"), nonTerm("close"));
+      addVar(variants, end().add("close").add("decls").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("decls").add(OCURLY));
       grammar.put("decllist", new Rule("decllist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("fbind"), term(COMMA), nonTerm("fbinds1"));
-      addVar(variants, nonTerm("fbind"));
-      addVar(variants, term(DOTDOT));
+      addVar(variants, end().add(DOTDOT));
+      addVar(variants, many("fbind", end(), end().add("fbinds1").add(COMMA)));
       grammar.put("fbinds1", new Rule("fbinds1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("name_boolformula_and"));
-      addVar(variants, nonTerm("name_boolformula_and"), term(VBAR), nonTerm("name_boolformula"));
+      addVar(variants, many("name_boolformula_and", end(), end().add("name_boolformula").add(VBAR)));
       grammar.put("name_boolformula", new Rule("name_boolformula", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvarsym"));
-      addVar(variants, term(BACKQUOTE), nonTerm("qvarid"), term(BACKQUOTE));
+      addVar(variants, end().add("qvarsym"));
+      addVar(variants, end().add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
       grammar.put("qvarop", new Rule("qvarop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("fds1"), term(COMMA), nonTerm("fd"));
-      addVar(variants, nonTerm("fd"));
+      addVar(variants, end().add("fd"));
+      addVar(left, end().add("fd").add(COMMA).add("fds1"));
       grammar.put("fds1", new Rule("fds1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("bindpat"), term(LARROW), nonTerm("exp")).setElementType(GrammarPackage.getBIND_STATEMENT());
-      addVar(variants, nonTerm("exp")).setElementType(GrammarPackage.getEXPRESSION_STATEMENT());
-      addVar(variants, term(LET), nonTerm("binds")).setElementType(GrammarPackage.getLET_STATEMENT());
+      addVar(variants, end(GrammarPackage.getBIND_STATEMENT()).add("exp").add(LARROW).add("bindpat"));
+      addVar(variants, end(GrammarPackage.getEXPRESSION_STATEMENT()).add("exp"));
+      addVar(variants, end(GrammarPackage.getLET_STATEMENT()).add("binds").add(LET));
       grammar.put("qual", new Rule("qual", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CONID)).setElementType(GrammarPackage.getMODULE_NAME());
-      addVar(variants, term(QCONID)).setElementType(GrammarPackage.getMODULE_NAME());
+      addVar(variants, end(GrammarPackage.getMODULE_NAME()).add(CONID));
+      addVar(variants, end(GrammarPackage.getMODULE_NAME()).add(QCONID));
       grammar.put("modid", new Rule("modid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("texp"));
-      addVar(variants, nonTerm("lexps"));
-      addVar(variants, nonTerm("texp"), term(DOTDOT), nonTerm("exp"));
-      addVar(variants, nonTerm("texp"), term(COMMA), nonTerm("exp"), term(DOTDOT), nonTerm("exp"));
-      addVar(variants, nonTerm("texp"), term(VBAR), nonTerm("flattenedpquals"));
+      addVar(variants, end());
+      addVar(variants, many("texp", end(), end().add("exp").add(DOTDOT), end().add("exp").add(DOTDOT).add("exp").add(COMMA), end().add("flattenedpquals").add(VBAR)));
+      addVar(variants, end().add("lexps"));
       grammar.put("parr", new Rule("parr", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("conid"));
-      addVar(variants, term(OPAREN), nonTerm("consym"), term(CPAREN));
-      addVar(variants, nonTerm("sysdcon"));
+      addVar(variants, end().add("sysdcon"));
+      addVar(variants, end().add("conid"));
+      addVar(variants, end().add(CPAREN).add("consym").add(OPAREN));
       grammar.put("con", new Rule("con", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("top"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("top"), nonTerm("close"));
+      addVar(variants, end().add("close").add("top").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("top").add(OCURLY));
       grammar.put("body", new Rule("body", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("squals"), term(VBAR), nonTerm("pquals"));
-      addVar(variants, nonTerm("squals"));
+      addVar(variants, many("squals", end(), end().add("pquals").add(VBAR)));
       grammar.put("pquals", new Rule("pquals", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VCCURLY));
+      addVar(variants, end().add(VCCURLY));
       grammar.put("close", new Rule("close", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("pquals"));
+      addVar(variants, end().add("pquals"));
       grammar.put("flattenedpquals", new Rule("flattenedpquals", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("fexp"), nonTerm("aexp")).setElementType(GrammarPackage.getAPPLICATION());
-      addVar(variants, nonTerm("aexp"));
+      addVar(left, end(GrammarPackage.getAPPLICATION()).add("aexp").add("fexp"));
+      addVar(variants, end().add("aexp"));
       grammar.put("fexp", new Rule("fexp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ctype"));
-      addVar(variants, nonTerm("ctype"), term(COMMA), nonTerm("comma_types1"));
+      addVar(variants, many("ctype", end(), end().add("comma_types1").add(COMMA)));
       grammar.put("comma_types1", new Rule("comma_types1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvar"));
-      addVar(variants, nonTerm("qcon"));
+      addVar(variants, end().add("qcon"));
+      addVar(variants, end().add("qvar"));
       grammar.put("qcname", new Rule("qcname", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(AS));
-      addVar(variants, term(QUALIFIED));
-      addVar(variants, term(HIDING));
-      addVar(variants, term(EXPORT));
-      addVar(variants, term(LABEL));
-      addVar(variants, term(DYNAMIC));
-      addVar(variants, term(STDCALLCONV));
-      addVar(variants, term(CCALLCONV));
-      addVar(variants, term(CAPICONV));
-      addVar(variants, term(PRIMCALLCONV));
-      addVar(variants, term(JAVASCRIPTCALLCONV));
-      addVar(variants, term(GROUP));
+      addVar(variants, end().add(LABEL));
+      addVar(variants, end().add(JAVASCRIPTCALLCONV));
+      addVar(variants, end().add(HIDING));
+      addVar(variants, end().add(DYNAMIC));
+      addVar(variants, end().add(AS));
+      addVar(variants, end().add(CAPICONV));
+      addVar(variants, end().add(QUALIFIED));
+      addVar(variants, end().add(CCALLCONV));
+      addVar(variants, end().add(PRIMCALLCONV));
+      addVar(variants, end().add(STDCALLCONV));
+      addVar(variants, end().add(EXPORT));
+      addVar(variants, end().add(GROUP));
       grammar.put("special_id", new Rule("special_id", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("comma_types1"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("comma_types1"));
       grammar.put("comma_types0", new Rule("comma_types0", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("expdoclist"), term(COMMA), nonTerm("expdoclist"));
-      addVar(variants, nonTerm("exportlist1"));
+      addVar(variants, end().add("exportlist1"));
+      addVar(variants, end().add("expdoclist").add(COMMA).add("expdoclist"));
       grammar.put("exportlist", new Rule("exportlist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(LAM), nonTerm("apat"), nonTerm("apats"), nonTerm("opt_asig"), term(RARROW), nonTerm("exp")).setElementType(GrammarPackage.getLAMBDA_EXPRESSION());
-      addVar(variants, term(LET), nonTerm("binds"), term(IN), nonTerm("exp")).setElementType(GrammarPackage.getLET_EXPRESSION());
-      addVar(variants, term(LAM), term(LCASE), nonTerm("altslist"));
-      addVar(variants, term(IF), nonTerm("exp"), nonTerm("optSemi"), term(THEN), nonTerm("exp"), nonTerm("optSemi"), term(ELSE), nonTerm("exp"));
-      addVar(variants, term(IF), nonTerm("ifgdpats"));
-      addVar(variants, term(CASE), nonTerm("exp"), term(OF), nonTerm("altslist")).setElementType(GrammarPackage.getCASE_EXPRESSION());
-      addVar(variants, term(MINUS), nonTerm("fexp"));
-      addVar(variants, term(DO), nonTerm("stmtlist")).setElementType(GrammarPackage.getDO_EXPRESSION());
-      addVar(variants, term(MDO), nonTerm("stmtlist"));
-      addVar(variants, nonTerm("scc_annot"), nonTerm("exp"));
-      addVar(variants, nonTerm("hpc_annot"), nonTerm("exp"));
-      addVar(variants, term(PROC), nonTerm("aexp"), term(RARROW), nonTerm("exp"));
-      addVar(variants, term(CORE_PRAG), term(STRING), term(CLOSE_PRAG), nonTerm("exp"));
-      addVar(variants, nonTerm("fexp"));
+      addVar(variants, many(LAM, end().add("altslist").add(LCASE), end(GrammarPackage.getLAMBDA_EXPRESSION()).add("exp").add(RARROW).add("opt_asig").add("apats").add("apat")));
+      addVar(variants, end().add("exp").add(RARROW).add("aexp").add(PROC));
+      addVar(variants, end().add("exp").add("hpc_annot"));
+      addVar(variants, end(GrammarPackage.getCASE_EXPRESSION()).add("altslist").add(OF).add("exp").add(CASE));
+      addVar(variants, end().add("fexp"));
+      addVar(variants, end().add("exp").add("scc_annot"));
+      addVar(variants, end(GrammarPackage.getDO_EXPRESSION()).add("stmtlist").add(DO));
+      addVar(variants, end().add("fexp").add(MINUS));
+      addVar(variants, end(GrammarPackage.getLET_EXPRESSION()).add("exp").add(IN).add("binds").add(LET));
+      addVar(variants, end().add("stmtlist").add(MDO));
+      addVar(variants, end().add("exp").add(CLOSE_PRAG).add(STRING).add(CORE_PRAG));
+      addVar(variants, many(IF, end().add("ifgdpats"), end().add("exp").add(ELSE).add("optSemi").add("exp").add(THEN).add("optSemi").add("exp")));
       grammar.put("exp10", new Rule("exp10", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(WHERE), term(OCURLY), nonTerm("gadt_constrs"), term(CCURLY));
-      addVar(variants, term(WHERE), term(VOCURLY), nonTerm("gadt_constrs"), nonTerm("close"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, many(WHERE, end().add("close").add("gadt_constrs").add(VOCURLY), end().add(CCURLY).add("gadt_constrs").add(OCURLY)));
       grammar.put("gadt_constrlist", new Rule("gadt_constrlist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ipvar"), term(EQUAL), nonTerm("exp"));
+      addVar(variants, end().add("exp").add(EQUAL).add("ipvar"));
       grammar.put("dbind", new Rule("dbind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(DCOLON), nonTerm("kind"));
+      addVar(variants, end());
+      addVar(variants, end().add("kind").add(DCOLON));
       grammar.put("opt_kind_sig", new Rule("opt_kind_sig", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(WHERE), nonTerm("decllist_cls"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("decllist_cls").add(WHERE));
       grammar.put("where_cls", new Rule("where_cls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("exp"));
-      addVar(variants, nonTerm("infixexp"), nonTerm("qop"));
-      addVar(variants, nonTerm("qopm"), nonTerm("infixexp"));
-      addVar(variants, nonTerm("exp"), term(RARROW), nonTerm("texp"));
+      addVar(variants, many("exp", end(), end().add("texp").add(RARROW)));
+      addVar(variants, end().add("qop").add("infixexp"));
+      addVar(variants, end().add("infixexp").add("qopm"));
       grammar.put("texp", new Rule("texp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VBAR), nonTerm("guardquals"), term(RARROW), nonTerm("exp"));
+      addVar(variants, end().add("exp").add(RARROW).add("guardquals").add(VBAR));
       grammar.put("gdpat", new Rule("gdpat", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varsym"));
-      addVar(variants, term(BACKQUOTE), nonTerm("varid"), term(BACKQUOTE));
+      addVar(variants, end().add("varsym"));
+      addVar(variants, end().add(BACKQUOTE).add("varid").add(BACKQUOTE));
       grammar.put("varop", new Rule("varop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("gdpatssemi"), nonTerm("gdpat"), nonTerm("optSemi"));
-      addVar(variants, nonTerm("gdpat"), nonTerm("optSemi"));
+      addVar(left, end().add("optSemi").add("gdpat").add("gdpatssemi"));
+      addVar(variants, end().add("optSemi").add("gdpat"));
       grammar.put("gdpatssemi", new Rule("gdpatssemi", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("deprecations"), term(SEMI), nonTerm("deprecation"));
-      addVar(left, nonTerm("deprecations"), term(SEMI));
-      addVar(variants, nonTerm("deprecation"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("deprecation"));
+      addVar(left, many(SEMI, end(), end().add("deprecation")).add("deprecations"));
       grammar.put("deprecations", new Rule("deprecations", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OBRACK), term(INTEGER), term(CBRACK));
-      addVar(variants, term(OBRACK), term(TILDE), term(INTEGER), term(CBRACK));
-      addVar(variants, term(OBRACK), term(TILDE), term(CBRACK));
+      addVar(variants, many(OBRACK, end().add(CBRACK).add(INTEGER), many(TILDE, end().add(CBRACK).add(INTEGER), end().add(CBRACK))));
       grammar.put("rule_explicit_activation", new Rule("rule_explicit_activation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(RARROW), nonTerm("exp"));
-      addVar(variants, nonTerm("gdpats"));
+      addVar(variants, end().add("exp").add(RARROW));
+      addVar(variants, end().add("gdpats"));
       grammar.put("ralt", new Rule("ralt", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DATA), nonTerm("opt_family"), nonTerm("type"), nonTerm("opt_kind_sig"));
-      addVar(variants, term(TYPE), nonTerm("type"), nonTerm("opt_kind_sig"));
-      addVar(variants, term(TYPE), term(FAMILY), nonTerm("type"), nonTerm("opt_kind_sig"));
-      addVar(variants, term(TYPE), nonTerm("ty_fam_inst_eqn"));
-      addVar(variants, term(TYPE), term(INSTANCE), nonTerm("ty_fam_inst_eqn"));
+      addVar(variants, end().add("opt_kind_sig").add("type").add("opt_family").add(DATA));
+      addVar(variants, many(TYPE, end().add("ty_fam_inst_eqn"), end().add("ty_fam_inst_eqn").add(INSTANCE), end().add("opt_kind_sig").add("type").add(FAMILY), end().add("opt_kind_sig").add("type")));
       grammar.put("at_decl_cls", new Rule("at_decl_cls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("alts"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("alts"), nonTerm("close"));
-      addVar(variants, term(OCURLY), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("close"));
+      addVar(variants, many(VOCURLY, end().add("close").add("alts"), end().add("close")));
+      addVar(variants, many(OCURLY, end().add(CCURLY).add("alts"), end().add(CCURLY)));
       grammar.put("altslist", new Rule("altslist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DOCCOMMENTNEXT));
+      addVar(variants, end().add(DOCCOMMENTNEXT));
       grammar.put("moduleheader", new Rule("moduleheader", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(WHERE), nonTerm("binds")).setElementType(GrammarPackage.getWHERE_BINDINGS());
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end(GrammarPackage.getWHERE_BINDINGS()).add("binds").add(WHERE));
       grammar.put("wherebinds", new Rule("wherebinds", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(QUASIQUOTE));
-      addVar(variants, term(QQUASIQUOTE));
+      addVar(variants, end().add(QQUASIQUOTE));
+      addVar(variants, end().add(QUASIQUOTE));
       grammar.put("quasiquote", new Rule("quasiquote", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varid"));
-      addVar(variants, term(OPAREN), nonTerm("varsym"), term(CPAREN));
+      addVar(variants, end().add(CPAREN).add("varsym").add(OPAREN));
+      addVar(variants, end().add("varid"));
       grammar.put("var", new Rule("var", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STRING));
-      addVar(variants, term(OBRACK), nonTerm("stringlist"), term(CBRACK));
+      addVar(variants, end().add(CBRACK).add("stringlist").add(OBRACK));
+      addVar(variants, end().add(STRING));
       grammar.put("strings", new Rule("strings", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(VBAR), nonTerm("fds1"));
+      addVar(variants, end());
+      addVar(variants, end().add("fds1").add(VBAR));
       grammar.put("fds", new Rule("fds", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("sigtype"));
-      addVar(variants, nonTerm("sigtype"), term(COMMA), nonTerm("sigtypes1"));
+      addVar(variants, many("sigtype", end(), end().add("sigtypes1").add(COMMA)));
       grammar.put("sigtypes1", new Rule("sigtypes1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("stmt"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("stmt"));
       grammar.put("maybe_stmt", new Rule("maybe_stmt", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("tv_bndr"), nonTerm("tv_bndrs"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("tv_bndrs").add("tv_bndr"));
       grammar.put("tv_bndrs", new Rule("tv_bndrs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("infixexp"), term(DCOLON), nonTerm("sigtypedoc"));
-      addVar(variants, nonTerm("var"), term(COMMA), nonTerm("sig_vars"), term(DCOLON), nonTerm("sigtypedoc"));
-      addVar(variants, nonTerm("infix"), nonTerm("prec"), nonTerm("ops"));
-      addVar(variants, term(INLINE_PRAG), nonTerm("activation"), nonTerm("qvar"), term(CLOSE_PRAG));
-      addVar(variants, term(SPEC_PRAG), nonTerm("activation"), nonTerm("qvar"), term(DCOLON), nonTerm("sigtypes1"), term(CLOSE_PRAG));
-      addVar(variants, term(SPEC_INLINE_PRAG), nonTerm("activation"), nonTerm("qvar"), term(DCOLON), nonTerm("sigtypes1"), term(CLOSE_PRAG));
-      addVar(variants, term(SPEC_PRAG), term(INSTANCE), nonTerm("inst_type"), term(CLOSE_PRAG));
-      addVar(variants, term(MINIMAL_PRAG), nonTerm("name_boolformula_opt"), term(CLOSE_PRAG));
+      addVar(variants, end().add("ops").add("prec").add("infix"));
+      addVar(variants, end().add(CLOSE_PRAG).add("qvar").add("activation").add(INLINE_PRAG));
+      addVar(variants, many(SPEC_PRAG, end().add(CLOSE_PRAG).add("inst_type").add(INSTANCE), end().add(CLOSE_PRAG).add("sigtypes1").add(DCOLON).add("qvar").add("activation")));
+      addVar(variants, end().add("sigtypedoc").add(DCOLON).add("sig_vars").add(COMMA).add("var"));
+      addVar(variants, end().add(CLOSE_PRAG).add("sigtypes1").add(DCOLON).add("qvar").add("activation").add(SPEC_INLINE_PRAG));
+      addVar(variants, end().add("sigtypedoc").add(DCOLON).add("infixexp"));
+      addVar(variants, end().add(CLOSE_PRAG).add("name_boolformula_opt").add(MINIMAL_PRAG));
       grammar.put("sigdecl", new Rule("sigdecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(THEN), nonTerm("exp"));
-      addVar(variants, term(THEN), nonTerm("exp"), term(BY), nonTerm("exp"));
-      addVar(variants, term(THEN), term(GROUP), term(USING), nonTerm("exp"));
-      addVar(variants, term(THEN), term(GROUP), term(BY), nonTerm("exp"), term(USING), nonTerm("exp"));
+      addVar(variants, many(THEN, many("exp", end(), end().add("exp").add(BY)), many(GROUP, end().add("exp").add(USING), end().add("exp").add(USING).add("exp").add(BY))));
       grammar.put("transformqual", new Rule("transformqual", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("exp"));
-      addVar(variants, term(BANG), nonTerm("aexp"));
+      addVar(variants, end().add("aexp").add(BANG));
+      addVar(variants, end().add("exp"));
       grammar.put("pat", new Rule("pat", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("pat"), nonTerm("opt_sig"), nonTerm("alt_rhs")).setElementType(GrammarPackage.getCASE_ALTERNATIVE());
+      addVar(variants, end(GrammarPackage.getCASE_ALTERNATIVE()).add("alt_rhs").add("opt_sig").add("pat"));
       grammar.put("alt", new Rule("alt", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(FORALL), nonTerm("rule_var_list"), term(DOT));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(DOT).add("rule_var_list").add(FORALL));
       grammar.put("rule_forall", new Rule("rule_forall", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STDCALLCONV));
-      addVar(variants, term(CCALLCONV));
-      addVar(variants, term(CAPICONV));
-      addVar(variants, term(PRIMCALLCONV));
-      addVar(variants, term(JAVASCRIPTCALLCONV));
+      addVar(variants, end().add(JAVASCRIPTCALLCONV));
+      addVar(variants, end().add(CAPICONV));
+      addVar(variants, end().add(CCALLCONV));
+      addVar(variants, end().add(PRIMCALLCONV));
+      addVar(variants, end().add(STDCALLCONV));
       grammar.put("callconv", new Rule("callconv", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STRING), nonTerm("var"), term(DCOLON), nonTerm("sigtypedoc"));
-      addVar(variants, nonTerm("var"), term(DCOLON), nonTerm("sigtypedoc"));
+      addVar(variants, end().add("sigtypedoc").add(DCOLON).add("var"));
+      addVar(variants, end().add("sigtypedoc").add(DCOLON).add("var").add(STRING));
       grammar.put("fspec", new Rule("fspec", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("consym"));
-      addVar(variants, term(BACKQUOTE), nonTerm("conid"), term(BACKQUOTE));
+      addVar(variants, end().add("consym"));
+      addVar(variants, end().add(BACKQUOTE).add("conid").add(BACKQUOTE));
       grammar.put("conop", new Rule("conop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("importdecls"));
-      addVar(variants, nonTerm("importdecls"), term(SEMI), nonTerm("cvtopdecls"));
-      addVar(variants, nonTerm("cvtopdecls"));
+      addVar(variants, end().add("cvtopdecls"));
+      addVar(variants, many("importdecls", end(), end().add("cvtopdecls").add(SEMI)));
       grammar.put("top", new Rule("top", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qcname_ext"), nonTerm("export_subspec"));
-      addVar(variants, term(MODULE), nonTerm("modid"));
-      addVar(variants, term(PATTERN), nonTerm("qcon"));
+      addVar(variants, end().add("export_subspec").add("qcname_ext"));
+      addVar(variants, end().add("modid").add(MODULE));
+      addVar(variants, end().add("qcon").add(PATTERN));
       grammar.put("export", new Rule("export", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OPAREN), nonTerm("exportlist"), term(CPAREN)).setElementType(GrammarPackage.getMODULE_EXPORTS());
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end(GrammarPackage.getMODULE_EXPORTS()).add(CPAREN).add("exportlist").add(OPAREN));
       grammar.put("maybeexports", new Rule("maybeexports", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("gdrhs"), nonTerm("gdrh"));
-      addVar(variants, nonTerm("gdrh"));
+      addVar(variants, end().add("gdrh"));
+      addVar(left, end().add("gdrh").add("gdrhs"));
       grammar.put("gdrhs", new Rule("gdrhs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qual"));
-      addVar(variants, term(REC), nonTerm("stmtlist"));
+      addVar(variants, end().add("qual"));
+      addVar(variants, end().add("stmtlist").add(REC));
       grammar.put("stmt", new Rule("stmt", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(FORALL), nonTerm("tv_bndrs"), term(DOT), nonTerm("ctype"));
-      addVar(variants, nonTerm("context"), term(DARROW), nonTerm("ctype"));
-      addVar(variants, nonTerm("ipvar"), term(DCOLON), nonTerm("type"));
-      addVar(variants, nonTerm("type"));
+      addVar(variants, end().add("ctype").add(DOT).add("tv_bndrs").add(FORALL));
+      addVar(variants, end().add("type").add(DCOLON).add("ipvar"));
+      addVar(variants, end().add("type"));
+      addVar(variants, end().add("ctype").add(DARROW).add("context"));
       grammar.put("ctype", new Rule("ctype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OPAREN), nonTerm("name_boolformula"), term(CPAREN));
-      addVar(variants, nonTerm("name_var"));
+      addVar(variants, end().add("name_var"));
+      addVar(variants, end().add(CPAREN).add("name_boolformula").add(OPAREN));
       grammar.put("name_boolformula_atom", new Rule("name_boolformula_atom", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(IMPORT), nonTerm("callconv"), nonTerm("safety"), nonTerm("fspec"));
-      addVar(variants, term(IMPORT), nonTerm("callconv"), nonTerm("fspec"));
-      addVar(variants, term(EXPORT), nonTerm("callconv"), nonTerm("fspec"));
+      addVar(variants, end().add("fspec").add("callconv").add(EXPORT));
+      addVar(variants, many("callconv", end().add("fspec"), end().add("fspec").add("safety")).add(IMPORT));
       grammar.put("fdecl", new Rule("fdecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("inst_type"));
-      addVar(variants, nonTerm("inst_type"), term(COMMA), nonTerm("inst_types1"));
+      addVar(variants, many("inst_type", end(), end().add("inst_types1").add(COMMA)));
       grammar.put("inst_types1", new Rule("inst_types1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("oqtycon"));
-      addVar(variants, term(OPAREN), nonTerm("commas"), term(CPAREN));
-      addVar(variants, term(OUBXPAREN), nonTerm("commas"), term(CUBXPAREN));
-      addVar(variants, term(OPAREN), term(RARROW), term(CPAREN));
-      addVar(variants, term(OBRACK), term(CBRACK));
-      addVar(variants, term(OPABRACK), term(CPABRACK));
-      addVar(variants, term(OPAREN), term(TILDEHSH), term(CPAREN));
+      addVar(variants, end().add(CPABRACK).add(OPABRACK));
+      addVar(variants, end().add("oqtycon"));
+      addVar(variants, end().add(CBRACK).add(OBRACK));
+      addVar(variants, many(OPAREN, end().add(CPAREN).add(TILDEHSH), end().add(CPAREN).add("commas"), end().add(CPAREN).add(RARROW)));
+      addVar(variants, end().add(CUBXPAREN).add("commas").add(OUBXPAREN));
       grammar.put("ntgtycon", new Rule("ntgtycon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("decls_cls"), term(SEMI), nonTerm("decl_cls"));
-      addVar(left, nonTerm("decls_cls"), term(SEMI));
-      addVar(variants, nonTerm("decl_cls"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(left, many(SEMI, end(), end().add("decl_cls")).add("decls_cls"));
+      addVar(variants, end().add("decl_cls"));
       grammar.put("decls_cls", new Rule("decls_cls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(TYPE), nonTerm("ty_fam_inst_eqn"));
-      addVar(variants, nonTerm("data_or_newtype"), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("constrs"), nonTerm("deriving")).setElementType(GrammarPackage.getDATA_DECLARATION());
-      addVar(variants, nonTerm("data_or_newtype"), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("opt_kind_sig"), nonTerm("gadt_constrlist"), nonTerm("deriving"));
+      addVar(variants, many("tycl_hdr", end(GrammarPackage.getDATA_DECLARATION()).add("deriving").add("constrs"), end().add("deriving").add("gadt_constrlist").add("opt_kind_sig")).add("capi_ctype").add("data_or_newtype"));
+      addVar(variants, end().add("ty_fam_inst_eqn").add(TYPE));
       grammar.put("at_decl_inst", new Rule("at_decl_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(AS), nonTerm("modid")).setElementType(GrammarPackage.getIMPORT_AS_PART());
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end(GrammarPackage.getIMPORT_AS_PART()).add("modid").add(AS));
       grammar.put("maybeas", new Rule("maybeas", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STAR));
-      addVar(variants, term(OPAREN), nonTerm("kind"), term(CPAREN));
-      addVar(variants, nonTerm("pkind"));
-      addVar(variants, nonTerm("tyvar"));
+      addVar(variants, end().add("tyvar"));
+      addVar(variants, end().add("pkind"));
+      addVar(variants, end().add(STAR));
+      addVar(variants, end().add(CPAREN).add("kind").add(OPAREN));
       grammar.put("akind", new Rule("akind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("roles"));
+      addVar(variants, end());
+      addVar(variants, end().add("roles"));
       grammar.put("maybe_roles", new Rule("maybe_roles", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(SCC_PRAG), term(STRING), term(CLOSE_PRAG));
-      addVar(variants, term(SCC_PRAG), term(VARID), term(CLOSE_PRAG));
+      addVar(variants, many(SCC_PRAG, end().add(CLOSE_PRAG).add(VARID), end().add(CLOSE_PRAG).add(STRING)));
       grammar.put("scc_annot", new Rule("scc_annot", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CLASS), nonTerm("tycl_hdr"), nonTerm("fds"), nonTerm("where_cls"));
+      addVar(variants, end().add("where_cls").add("fds").add("tycl_hdr").add(CLASS));
       grammar.put("cl_decl", new Rule("cl_decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("conid"));
-      addVar(variants, term(QCONID));
-      addVar(variants, term(PREFIXQCONSYM));
+      addVar(variants, end().add("conid"));
+      addVar(variants, end().add(PREFIXQCONSYM));
+      addVar(variants, end().add(QCONID));
       grammar.put("qconid", new Rule("qconid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(IMPORT), nonTerm("maybe_src"), nonTerm("maybe_safe"), nonTerm("optqualified"), nonTerm("maybe_pkg"), nonTerm("modid"), nonTerm("maybeas"), nonTerm("maybeimpspec")).setElementType(GrammarPackage.getIMPORT());
+      addVar(variants, end(GrammarPackage.getIMPORT()).add("maybeimpspec").add("maybeas").add("modid").add("maybe_pkg").add("optqualified").add("maybe_safe").add("maybe_src").add(IMPORT));
       grammar.put("importdecl", new Rule("importdecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("texp"), nonTerm("commas_tup_tail"));
-      addVar(variants, nonTerm("commas"), nonTerm("tup_tail"));
+      addVar(variants, end().add("commas_tup_tail").add("texp"));
+      addVar(variants, end().add("tup_tail").add("commas"));
       grammar.put("tup_exprs", new Rule("tup_exprs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DOCCOMMENTNAMED));
+      addVar(variants, end().add(DOCCOMMENTNAMED));
       grammar.put("docnamed", new Rule("docnamed", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(left, nonTerm("varids0"), nonTerm("tyvar"));
+      addVar(variants, end());
+      addVar(left, end().add("tyvar").add("varids0"));
       grammar.put("varids0", new Rule("varids0", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("ty_fam_inst_eqns"), term(SEMI), nonTerm("ty_fam_inst_eqn"));
-      addVar(left, nonTerm("ty_fam_inst_eqns"), term(SEMI));
-      addVar(variants, nonTerm("ty_fam_inst_eqn"));
+      addVar(variants, end().add("ty_fam_inst_eqn"));
+      addVar(left, many(SEMI, end(), end().add("ty_fam_inst_eqn")).add("ty_fam_inst_eqns"));
       grammar.put("ty_fam_inst_eqns", new Rule("ty_fam_inst_eqns", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qtycon"));
-      addVar(variants, term(OPAREN), nonTerm("qtyconsym"), term(CPAREN));
-      addVar(variants, term(OPAREN), term(TILDE), term(CPAREN));
+      addVar(variants, end().add("qtycon"));
+      addVar(variants, many(OPAREN, end().add(CPAREN).add("qtyconsym"), end().add(CPAREN).add(TILDE)));
       grammar.put("oqtycon", new Rule("oqtycon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(ANN_PRAG), nonTerm("name_var"), nonTerm("aexp"), term(CLOSE_PRAG));
-      addVar(variants, term(ANN_PRAG), term(TYPE), nonTerm("tycon"), nonTerm("aexp"), term(CLOSE_PRAG));
-      addVar(variants, term(ANN_PRAG), term(MODULE), nonTerm("aexp"), term(CLOSE_PRAG));
+      addVar(variants, many(ANN_PRAG, end().add(CLOSE_PRAG).add("aexp").add("name_var"), end().add(CLOSE_PRAG).add("aexp").add(MODULE), end().add(CLOSE_PRAG).add("aexp").add("tycon").add(TYPE)));
       grammar.put("annotation", new Rule("annotation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("guardquals1"));
+      addVar(variants, end().add("guardquals1"));
       grammar.put("guardquals", new Rule("guardquals", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(INFIX));
-      addVar(variants, term(INFIXL));
-      addVar(variants, term(INFIXR));
+      addVar(variants, end().add(INFIX));
+      addVar(variants, end().add(INFIXL));
+      addVar(variants, end().add(INFIXR));
       grammar.put("infix", new Rule("infix", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("name_boolformula"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("name_boolformula"));
       grammar.put("name_boolformula_opt", new Rule("name_boolformula_opt", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(PATTERN), nonTerm("pat"), term(EQUAL), nonTerm("pat"));
-      addVar(variants, term(PATTERN), nonTerm("pat"), term(LARROW), nonTerm("pat"));
-      addVar(variants, term(PATTERN), nonTerm("pat"), term(LARROW), nonTerm("pat"), nonTerm("where_decls"));
+      addVar(variants, many("pat", end().add("pat").add(EQUAL), many("pat", end(), end().add("where_decls")).add(LARROW)).add(PATTERN));
       grammar.put("pattern_synonym_decl", new Rule("pattern_synonym_decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ctypedoc"));
+      addVar(variants, end().add("ctypedoc"));
       grammar.put("sigtypedoc", new Rule("sigtypedoc", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CONSYM));
-      addVar(variants, term(VARSYM));
-      addVar(variants, term(STAR));
-      addVar(variants, term(MINUS));
+      addVar(variants, end().add(CONSYM));
+      addVar(variants, end().add(MINUS));
+      addVar(variants, end().add(STAR));
+      addVar(variants, end().add(VARSYM));
       grammar.put("tyconsym", new Rule("tyconsym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OBRACK), term(INTEGER), term(CBRACK));
-      addVar(variants, term(OBRACK), term(TILDE), term(INTEGER), term(CBRACK));
+      addVar(variants, many(OBRACK, end().add(CBRACK).add(INTEGER), end().add(CBRACK).add(INTEGER).add(TILDE)));
       grammar.put("explicit_activation", new Rule("explicit_activation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("ops"), term(COMMA), nonTerm("op"));
-      addVar(variants, nonTerm("op"));
+      addVar(left, end().add("op").add(COMMA).add("ops"));
+      addVar(variants, end().add("op"));
       grammar.put("ops", new Rule("ops", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("docprev"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("docprev"));
       grammar.put("maybe_docprev", new Rule("maybe_docprev", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(WHERE), term(OCURLY), nonTerm("decls"), term(CCURLY));
-      addVar(variants, term(WHERE), term(VOCURLY), nonTerm("decls"), nonTerm("close"));
+      addVar(variants, many(WHERE, end().add("close").add("decls").add(VOCURLY), end().add(CCURLY).add("decls").add(OCURLY)));
       grammar.put("where_decls", new Rule("where_decls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(INSTANCE), nonTerm("overlap_pragma"), nonTerm("inst_type"), nonTerm("where_inst"));
-      addVar(variants, term(TYPE), term(INSTANCE), nonTerm("ty_fam_inst_eqn"));
-      addVar(variants, nonTerm("data_or_newtype"), term(INSTANCE), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("constrs"), nonTerm("deriving"));
-      addVar(variants, nonTerm("data_or_newtype"), term(INSTANCE), nonTerm("capi_ctype"), nonTerm("tycl_hdr"), nonTerm("opt_kind_sig"), nonTerm("gadt_constrlist"), nonTerm("deriving"));
+      addVar(variants, end().add("where_inst").add("inst_type").add("overlap_pragma").add(INSTANCE));
+      addVar(variants, many("tycl_hdr", end().add("deriving").add("constrs"), end().add("deriving").add("gadt_constrlist").add("opt_kind_sig")).add("capi_ctype").add(INSTANCE).add("data_or_newtype"));
+      addVar(variants, end().add("ty_fam_inst_eqn").add(INSTANCE).add(TYPE));
       grammar.put("inst_decl", new Rule("inst_decl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("con_list"), term(DCOLON), nonTerm("sigtype"));
-      addVar(variants, nonTerm("oqtycon"), term(OCURLY), nonTerm("fielddecls"), term(CCURLY), term(DCOLON), nonTerm("sigtype"));
+      addVar(variants, end().add("sigtype").add(DCOLON).add("con_list"));
+      addVar(variants, end().add("sigtype").add(DCOLON).add(CCURLY).add("fielddecls").add(OCURLY).add("oqtycon"));
       grammar.put("gadt_constr", new Rule("gadt_constr", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varop"));
-      addVar(variants, nonTerm("conop"));
+      addVar(variants, end().add("conop"));
+      addVar(variants, end().add("varop"));
       grammar.put("op", new Rule("op", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("sig_vars"), term(COMMA), nonTerm("var"));
-      addVar(variants, nonTerm("var"));
+      addVar(variants, end().add("var"));
+      addVar(left, end().add("var").add(COMMA).add("sig_vars"));
       grammar.put("sig_vars", new Rule("sig_vars", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varsym"));
-      addVar(variants, nonTerm("qvarsym1"));
+      addVar(variants, end().add("qvarsym1"));
+      addVar(variants, end().add("varsym"));
       grammar.put("qvarsym", new Rule("qvarsym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("tyvarid"));
+      addVar(variants, end().add("tyvarid"));
       grammar.put("tyvar", new Rule("tyvar", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("akind"));
-      addVar(left, nonTerm("bkind"), nonTerm("akind"));
+      addVar(variants, end().add("akind"));
+      addVar(left, end().add("akind").add("bkind"));
       grammar.put("bkind", new Rule("bkind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(DERIVING), nonTerm("qtycon"));
-      addVar(variants, term(DERIVING), term(OPAREN), term(CPAREN));
-      addVar(variants, term(DERIVING), term(OPAREN), nonTerm("inst_types1"), term(CPAREN));
+      addVar(variants, end());
+      addVar(variants, many(DERIVING, end().add("qtycon"), many(OPAREN, end().add(CPAREN).add("inst_types1"), end().add(CPAREN))));
       grammar.put("deriving", new Rule("deriving", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvar"), term(EQUAL), nonTerm("texp")).setElementType(GrammarPackage.getFIELD_UPDATE());
-      addVar(variants, nonTerm("qvar")).setElementType(GrammarPackage.getFIELD_UPDATE());
+      addVar(variants, many("qvar", end(GrammarPackage.getFIELD_UPDATE()), end(GrammarPackage.getFIELD_UPDATE()).add("texp").add(EQUAL)));
       grammar.put("fbind", new Rule("fbind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(DCOLON), nonTerm("sigtype"));
+      addVar(variants, end());
+      addVar(variants, end().add("sigtype").add(DCOLON));
       grammar.put("opt_sig", new Rule("opt_sig", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("moduleheader"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("moduleheader"));
       grammar.put("maybedocheader", new Rule("maybedocheader", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvaropm"));
-      addVar(variants, nonTerm("qconop"));
+      addVar(variants, end().add("qvaropm"));
+      addVar(variants, end().add("qconop"));
       grammar.put("qopm", new Rule("qopm", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("impspec"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("impspec"));
       grammar.put("maybeimpspec", new Rule("maybeimpspec", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("docnext"));
-      addVar(variants, nonTerm("docprev"));
-      addVar(variants, nonTerm("docnamed"));
-      addVar(variants, nonTerm("docsection"));
+      addVar(variants, end().add("docnext"));
+      addVar(variants, end().add("docnamed"));
+      addVar(variants, end().add("docprev"));
+      addVar(variants, end().add("docsection"));
       grammar.put("docdecld", new Rule("docdecld", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("decls_inst"), term(SEMI), nonTerm("decl_inst"));
-      addVar(left, nonTerm("decls_inst"), term(SEMI));
-      addVar(variants, nonTerm("decl_inst"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(left, many(SEMI, end(), end().add("decl_inst")).add("decls_inst"));
+      addVar(variants, end().add("decl_inst"));
       grammar.put("decls_inst", new Rule("decls_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VBAR), nonTerm("guardquals"), term(EQUAL), nonTerm("exp")).setElementType(GrammarPackage.getGUARD());
+      addVar(variants, end(GrammarPackage.getGUARD()).add("exp").add(EQUAL).add("guardquals").add(VBAR));
       grammar.put("gdrh", new Rule("gdrh", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("decllist"));
-      addVar(variants, term(OCURLY), nonTerm("dbinds"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("dbinds"), nonTerm("close"));
+      addVar(variants, end().add("decllist"));
+      addVar(variants, end().add("close").add("dbinds").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("dbinds").add(OCURLY));
       grammar.put("binds", new Rule("binds", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ntgtycon")).setElementType(GrammarPackage.getTYPE_VARIABLE());
-      addVar(variants, nonTerm("tyvar")).setElementType(GrammarPackage.getTYPE_VARIABLE());
-      addVar(variants, nonTerm("strict_mark"), nonTerm("atype"));
-      addVar(variants, term(OCURLY), nonTerm("fielddecls"), term(CCURLY));
-      addVar(variants, term(OPAREN), term(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
-      addVar(variants, term(OPAREN), nonTerm("ctype"), term(COMMA), nonTerm("comma_types1"), term(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
-      addVar(variants, term(OUBXPAREN), term(CUBXPAREN));
-      addVar(variants, term(OUBXPAREN), nonTerm("comma_types1"), term(CUBXPAREN));
-      addVar(variants, term(OBRACK), nonTerm("ctype"), term(CBRACK)).setElementType(GrammarPackage.getLIST_TYPE());
-      addVar(variants, term(OPABRACK), nonTerm("ctype"), term(CPABRACK));
-      addVar(variants, term(OPAREN), nonTerm("ctype"), term(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
-      addVar(variants, term(OPAREN), nonTerm("ctype"), term(DCOLON), nonTerm("kind"), term(CPAREN)).setElementType(GrammarPackage.getTUPLE_TYPE());
-      addVar(variants, nonTerm("quasiquote"));
-      addVar(variants, term(PARENESCAPE), nonTerm("exp"), term(CPAREN));
-      addVar(variants, term(IDESCAPE));
-      addVar(variants, term(SIMPLEQUOTE), nonTerm("qcon"));
-      addVar(variants, term(SIMPLEQUOTE), term(OPAREN), nonTerm("ctype"), term(COMMA), nonTerm("comma_types1"), term(CPAREN));
-      addVar(variants, term(SIMPLEQUOTE), term(OBRACK), nonTerm("comma_types0"), term(CBRACK));
-      addVar(variants, term(SIMPLEQUOTE), nonTerm("var"));
-      addVar(variants, term(OBRACK), nonTerm("ctype"), term(COMMA), nonTerm("comma_types1"), term(CBRACK)).setElementType(GrammarPackage.getLIST_TYPE());
-      addVar(variants, term(INTEGER));
-      addVar(variants, term(STRING));
+      addVar(variants, end().add("quasiquote"));
+      addVar(variants, end().add(INTEGER));
+      addVar(variants, many("ctype", end(GrammarPackage.getLIST_TYPE()).add(CBRACK).add("comma_types1").add(COMMA), end(GrammarPackage.getLIST_TYPE()).add(CBRACK)).add(OBRACK));
+      addVar(variants, end().add(CCURLY).add("fielddecls").add(OCURLY));
+      addVar(variants, many(SIMPLEQUOTE, end().add("var"), end().add("qcon"), end().add(CBRACK).add("comma_types0").add(OBRACK), end().add(CPAREN).add("comma_types1").add(COMMA).add("ctype").add(OPAREN)));
+      addVar(variants, end(GrammarPackage.getTYPE_VARIABLE()).add("tyvar"));
+      addVar(variants, end().add(CPABRACK).add("ctype").add(OPABRACK));
+      addVar(variants, end().add(IDESCAPE));
+      addVar(variants, end().add("atype").add("strict_mark"));
+      addVar(variants, end().add(STRING));
+      addVar(variants, many(OPAREN, end(GrammarPackage.getTUPLE_TYPE()).add(CPAREN), many("ctype", end(GrammarPackage.getTUPLE_TYPE()).add(CPAREN), end(GrammarPackage.getTUPLE_TYPE()).add(CPAREN).add("comma_types1").add(COMMA), end(GrammarPackage.getTUPLE_TYPE()).add(CPAREN).add("kind").add(DCOLON))));
+      addVar(variants, many(OUBXPAREN, end().add(CUBXPAREN), end().add(CUBXPAREN).add("comma_types1")));
+      addVar(variants, end().add(CPAREN).add("exp").add(PARENESCAPE));
+      addVar(variants, end(GrammarPackage.getTYPE_VARIABLE()).add("ntgtycon"));
       grammar.put("atype", new Rule("atype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ctype"));
+      addVar(variants, end().add("ctype"));
       grammar.put("sigtype", new Rule("sigtype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(QCONID));
-      addVar(variants, term(PREFIXQCONSYM));
-      addVar(variants, nonTerm("tycon"));
+      addVar(variants, end().add("tycon"));
+      addVar(variants, end().add(PREFIXQCONSYM));
+      addVar(variants, end().add(QCONID));
       grammar.put("qtycon", new Rule("qtycon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OVERLAPPABLE), term(CLOSE_PRAG));
-      addVar(variants, term(OVERLAPPING), term(CLOSE_PRAG));
-      addVar(variants, term(OVERLAPS), term(CLOSE_PRAG));
-      addVar(variants, term(INCOHERENT), term(CLOSE_PRAG));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(CLOSE_PRAG).add(OVERLAPPING));
+      addVar(variants, end().add(CLOSE_PRAG).add(OVERLAPPABLE));
+      addVar(variants, end().add(CLOSE_PRAG).add(OVERLAPS));
+      addVar(variants, end().add(CLOSE_PRAG).add(INCOHERENT));
       grammar.put("overlap_pragma", new Rule("overlap_pragma", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("var"));
-      addVar(variants, nonTerm("con"));
+      addVar(variants, end().add("con"));
+      addVar(variants, end().add("var"));
       grammar.put("name_var", new Rule("name_var", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("cvtopdecls0"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("cvtopdecls0"), nonTerm("close"));
+      addVar(variants, end().add("close").add("cvtopdecls0").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("cvtopdecls0").add(OCURLY));
       grammar.put("cvtopbody", new Rule("cvtopbody", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("commas"), nonTerm("tup_tail"));
+      addVar(variants, end().add("tup_tail").add("commas"));
       grammar.put("commas_tup_tail", new Rule("commas_tup_tail", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OPAREN), term(CPAREN));
-      addVar(variants, term(OPAREN), nonTerm("commas"), term(CPAREN));
-      addVar(variants, term(OUBXPAREN), term(CUBXPAREN));
-      addVar(variants, term(OUBXPAREN), nonTerm("commas"), term(CUBXPAREN));
-      addVar(variants, term(OBRACK), term(CBRACK));
+      addVar(variants, end().add(CBRACK).add(OBRACK));
+      addVar(variants, many(OPAREN, end().add(CPAREN).add("commas"), end().add(CPAREN)));
+      addVar(variants, many(OUBXPAREN, end().add(CUBXPAREN).add("commas"), end().add(CUBXPAREN)));
       grammar.put("sysdcon", new Rule("sysdcon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("bkind"));
-      addVar(variants, nonTerm("bkind"), term(RARROW), nonTerm("kind"));
+      addVar(variants, many("bkind", end(), end().add("kind").add(RARROW)));
       grammar.put("kind", new Rule("kind", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("aexp")).setElementType(GrammarPackage.getPATTERN());
-      addVar(variants, term(BANG), nonTerm("aexp")).setElementType(GrammarPackage.getPATTERN());
+      addVar(variants, end(GrammarPackage.getPATTERN()).add("aexp").add(BANG));
+      addVar(variants, end(GrammarPackage.getPATTERN()).add("aexp"));
       grammar.put("apat", new Rule("apat", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(BACKQUOTE), nonTerm("tyvarid"), term(BACKQUOTE));
-      addVar(variants, term(DOT));
+      addVar(variants, end().add(DOT));
+      addVar(variants, end().add(BACKQUOTE).add("tyvarid").add(BACKQUOTE));
       grammar.put("tyvarop", new Rule("tyvarop", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("at_decl_inst"));
-      addVar(variants, nonTerm("decl"));
+      addVar(variants, end().add("decl"));
+      addVar(variants, end().add("at_decl_inst"));
       grammar.put("decl_inst", new Rule("decl_inst", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("fbinds1"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("fbinds1"));
       grammar.put("fbinds", new Rule("fbinds", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(FORALL), nonTerm("tv_bndrs"), term(DOT), nonTerm("ctypedoc"));
-      addVar(variants, nonTerm("context"), term(DARROW), nonTerm("ctypedoc"));
-      addVar(variants, nonTerm("ipvar"), term(DCOLON), nonTerm("type"));
-      addVar(variants, nonTerm("typedoc"));
+      addVar(variants, end().add("ctypedoc").add(DOT).add("tv_bndrs").add(FORALL));
+      addVar(variants, end().add("type").add(DCOLON).add("ipvar"));
+      addVar(variants, end().add("ctypedoc").add(DARROW).add("context"));
+      addVar(variants, end().add("typedoc"));
       grammar.put("ctypedoc", new Rule("ctypedoc", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("maybedocheader"), term(MODULE), nonTerm("modid"), nonTerm("maybemodwarning"), nonTerm("maybeexports"), term(WHERE), nonTerm("body")).setElementType(GrammarPackage.getMODULE());
-      addVar(variants, nonTerm("body2")).setElementType(GrammarPackage.getMODULE());
+      addVar(variants, end(GrammarPackage.getMODULE()).add("body2"));
+      addVar(variants, end(GrammarPackage.getMODULE()).add("body").add(WHERE).add("maybeexports").add("maybemodwarning").add("modid").add(MODULE).add("maybedocheader"));
       grammar.put("module", new Rule("module", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CONSYM));
-      addVar(variants, term(COLON));
+      addVar(variants, end().add(CONSYM));
+      addVar(variants, end().add(COLON));
       grammar.put("consym", new Rule("consym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("sigdecl")).setElementType(GrammarPackage.getSIGNATURE_DECLARATION());
-      addVar(variants, term(BANG), nonTerm("aexp"), nonTerm("rhs"));
-      addVar(variants, nonTerm("infixexp"), nonTerm("opt_sig"), nonTerm("rhs")).setElementType(GrammarPackage.getVALUE_DEFINITION());
-      addVar(variants, nonTerm("pattern_synonym_decl"));
-      addVar(variants, nonTerm("docdecl"));
+      addVar(variants, end().add("rhs").add("aexp").add(BANG));
+      addVar(variants, end().add("docdecl"));
+      addVar(variants, end(GrammarPackage.getVALUE_DEFINITION()).add("rhs").add("opt_sig").add("infixexp"));
+      addVar(variants, end(GrammarPackage.getSIGNATURE_DECLARATION()).add("sigdecl"));
+      addVar(variants, end().add("pattern_synonym_decl"));
       grammar.put("decl_no_th", new Rule("decl_no_th", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(WHERE), nonTerm("ty_fam_inst_eqn_list"));
+      addVar(variants, end());
+      addVar(variants, end().add("ty_fam_inst_eqn_list").add(WHERE));
       grammar.put("where_type_family", new Rule("where_type_family", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("consym"));
-      addVar(variants, term(QCONSYM));
+      addVar(variants, end().add("consym"));
+      addVar(variants, end().add(QCONSYM));
       grammar.put("qconsym", new Rule("qconsym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("aexp2"));
+      addVar(variants, end().add("aexp2"));
       grammar.put("acmd", new Rule("acmd", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("maybe_docnext"), nonTerm("sig_vars"), term(DCOLON), nonTerm("ctype"), nonTerm("maybe_docprev")).setElementType(GrammarPackage.getFIELD_DECLARATION());
+      addVar(variants, end(GrammarPackage.getFIELD_DECLARATION()).add("maybe_docprev").add("ctype").add(DCOLON).add("sig_vars").add("maybe_docnext"));
       grammar.put("fielddecl", new Rule("fielddecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("btype"));
-      addVar(variants, nonTerm("btype"), nonTerm("conop"), nonTerm("btype"));
+      addVar(variants, many("btype", end(), end().add("btype").add("conop")));
       grammar.put("constr_stuff", new Rule("constr_stuff", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STRING));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(STRING));
       grammar.put("maybe_pkg", new Rule("maybe_pkg", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VARSYM));
-      addVar(variants, nonTerm("special_sym"));
+      addVar(variants, end().add(VARSYM));
+      addVar(variants, end().add("special_sym"));
       grammar.put("varsym_no_minus", new Rule("varsym_no_minus", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(BANG));
-      addVar(variants, term(DOT));
-      addVar(variants, term(STAR));
+      addVar(variants, end().add(BANG));
+      addVar(variants, end().add(STAR));
+      addVar(variants, end().add(DOT));
       grammar.put("special_sym", new Rule("special_sym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("expdoclist"), nonTerm("export"), nonTerm("expdoclist"), term(COMMA), nonTerm("exportlist1"));
-      addVar(variants, nonTerm("expdoclist"), nonTerm("export"), nonTerm("expdoclist"));
-      addVar(variants, nonTerm("expdoclist"));
+      addVar(variants, many("expdoclist", end(), many("expdoclist", end(), end().add("exportlist1").add(COMMA)).add("export")));
       grammar.put("exportlist1", new Rule("exportlist1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VARID));
-      addVar(variants, nonTerm("special_id"));
-      addVar(variants, term(UNSAFE));
-      addVar(variants, term(SAFE));
-      addVar(variants, term(INTERRUPTIBLE));
-      addVar(variants, term(FORALL));
-      addVar(variants, term(FAMILY));
-      addVar(variants, term(ROLE));
+      addVar(variants, end().add(INTERRUPTIBLE));
+      addVar(variants, end().add(SAFE));
+      addVar(variants, end().add(UNSAFE));
+      addVar(variants, end().add(FORALL));
+      addVar(variants, end().add(VARID));
+      addVar(variants, end().add("special_id"));
+      addVar(variants, end().add(FAMILY));
+      addVar(variants, end().add(ROLE));
       grammar.put("varid", new Rule("varid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("importdecls"), term(SEMI), nonTerm("importdecl"));
-      addVar(variants, nonTerm("importdecl"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(left, end().add("importdecl").add(SEMI).add("importdecls"));
+      addVar(variants, end().add("importdecl"));
       grammar.put("importdecls", new Rule("importdecls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(QUALIFIED));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(QUALIFIED));
       grammar.put("optqualified", new Rule("optqualified", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("namelist"), nonTerm("strings"));
+      addVar(variants, end().add("strings").add("namelist"));
       grammar.put("warning", new Rule("warning", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("btype"));
-      addVar(variants, nonTerm("btype"), nonTerm("docprev"));
-      addVar(variants, nonTerm("btype"), nonTerm("qtyconop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), nonTerm("qtyconop"), nonTerm("type"), nonTerm("docprev"));
-      addVar(variants, nonTerm("btype"), nonTerm("tyvarop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), nonTerm("tyvarop"), nonTerm("type"), nonTerm("docprev"));
-      addVar(variants, nonTerm("btype"), term(RARROW), nonTerm("ctypedoc")).setElementType(GrammarPackage.getFUNCTION_TYPE());
-      addVar(variants, nonTerm("btype"), nonTerm("docprev"), term(RARROW), nonTerm("ctypedoc"));
-      addVar(variants, nonTerm("btype"), term(TILDE), nonTerm("btype"));
-      addVar(variants, nonTerm("btype"), term(SIMPLEQUOTE), nonTerm("qconop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), term(SIMPLEQUOTE), nonTerm("varop"), nonTerm("type"));
+      addVar(variants, many("btype", end(), many("type", end(), end().add("docprev")).add("tyvarop"), many("type", end(), end().add("docprev")).add("qtyconop"), many("docprev", end(), end().add("ctypedoc").add(RARROW)), end(GrammarPackage.getFUNCTION_TYPE()).add("ctypedoc").add(RARROW), end().add("btype").add(TILDE), many(SIMPLEQUOTE, end().add("type").add("varop"), end().add("type").add("qconop"))));
       grammar.put("typedoc", new Rule("typedoc", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qvar"), term(AT), nonTerm("aexp"));
-      addVar(variants, term(TILDE), nonTerm("aexp"));
-      addVar(variants, nonTerm("aexp1"));
+      addVar(variants, end().add("aexp").add(AT).add("qvar"));
+      addVar(variants, end().add("aexp").add(TILDE));
+      addVar(variants, end().add("aexp1"));
       grammar.put("aexp", new Rule("aexp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("stringlist"), term(COMMA), term(STRING));
-      addVar(variants, term(STRING));
+      addVar(variants, end().add(STRING));
+      addVar(left, end().add(STRING).add(COMMA).add("stringlist"));
       grammar.put("stringlist", new Rule("stringlist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("gdpatssemi"), term(CCURLY));
-      addVar(variants, nonTerm("gdpatssemi"), nonTerm("close"));
+      addVar(variants, end().add("close").add("gdpatssemi"));
+      addVar(variants, end().add(CCURLY).add("gdpatssemi").add(OCURLY));
       grammar.put("ifgdpats", new Rule("ifgdpats", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("btype"));
-      addVar(variants, nonTerm("btype"), nonTerm("qtyconop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), nonTerm("tyvarop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), term(RARROW), nonTerm("ctype")).setElementType(GrammarPackage.getFUNCTION_TYPE());
-      addVar(variants, nonTerm("btype"), term(TILDE), nonTerm("btype"));
-      addVar(variants, nonTerm("btype"), term(SIMPLEQUOTE), nonTerm("qconop"), nonTerm("type"));
-      addVar(variants, nonTerm("btype"), term(SIMPLEQUOTE), nonTerm("varop"), nonTerm("type"));
+      addVar(variants, many("btype", end(), end().add("type").add("tyvarop"), end().add("type").add("qtyconop"), end(GrammarPackage.getFUNCTION_TYPE()).add("ctype").add(RARROW), end().add("btype").add(TILDE), many(SIMPLEQUOTE, end().add("type").add("varop"), end().add("type").add("qconop"))));
       grammar.put("type", new Rule("type", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("commas"), term(COMMA));
-      addVar(variants, term(COMMA));
+      addVar(left, end().add(COMMA).add("commas"));
+      addVar(variants, end().add(COMMA));
       grammar.put("commas", new Rule("commas", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("docdecld"));
+      addVar(variants, end().add("docdecld"));
       grammar.put("docdecl", new Rule("docdecl", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CONID));
+      addVar(variants, end().add(CONID));
       grammar.put("tycon", new Rule("tycon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("apat"), nonTerm("apats"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("apats").add("apat"));
       grammar.put("apats", new Rule("apats", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varsym_no_minus"));
-      addVar(variants, nonTerm("qvarsym1"));
+      addVar(variants, end().add("qvarsym1"));
+      addVar(variants, end().add("varsym_no_minus"));
       grammar.put("qvarsym_no_minus", new Rule("qvarsym_no_minus", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DUPIPVARID));
+      addVar(variants, end().add(DUPIPVARID));
       grammar.put("ipvar", new Rule("ipvar", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("varid"));
-      addVar(variants, term(QVARID));
-      addVar(variants, term(PREFIXQVARSYM));
+      addVar(variants, end().add(PREFIXQVARSYM));
+      addVar(variants, end().add("varid"));
+      addVar(variants, end().add(QVARID));
       grammar.put("qvarid", new Rule("qvarid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(QCONSYM));
-      addVar(variants, term(QVARSYM));
-      addVar(variants, nonTerm("tyconsym"));
+      addVar(variants, end().add("tyconsym"));
+      addVar(variants, end().add(QCONSYM));
+      addVar(variants, end().add(QVARSYM));
       grammar.put("qtyconsym", new Rule("qtyconsym", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(VARID));
-      addVar(variants, nonTerm("special_id"));
-      addVar(variants, term(UNSAFE));
-      addVar(variants, term(SAFE));
-      addVar(variants, term(INTERRUPTIBLE));
+      addVar(variants, end().add(INTERRUPTIBLE));
+      addVar(variants, end().add(SAFE));
+      addVar(variants, end().add(UNSAFE));
+      addVar(variants, end().add(VARID));
+      addVar(variants, end().add("special_id"));
       grammar.put("tyvarid", new Rule("tyvarid", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("btype"), nonTerm("atype")).setElementType(GrammarPackage.getAPPLICATION_TYPE());
-      addVar(variants, nonTerm("atype"));
+      addVar(variants, end().add("atype"));
+      addVar(left, end(GrammarPackage.getAPPLICATION_TYPE()).add("atype").add("btype"));
       grammar.put("btype", new Rule("btype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OPAREN), nonTerm("exportlist"), term(CPAREN));
-      addVar(variants, term(HIDING), term(OPAREN), nonTerm("exportlist"), term(CPAREN));
+      addVar(variants, end().add(CPAREN).add("exportlist").add(OPAREN).add(HIDING));
+      addVar(variants, end().add(CPAREN).add("exportlist").add(OPAREN));
       grammar.put("impspec", new Rule("impspec", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DERIVING), term(INSTANCE), nonTerm("overlap_pragma"), nonTerm("inst_type"));
+      addVar(variants, end().add("inst_type").add("overlap_pragma").add(INSTANCE).add(DERIVING));
       grammar.put("stand_alone_deriving", new Rule("stand_alone_deriving", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ralt"), nonTerm("wherebinds"));
+      addVar(variants, end().add("wherebinds").add("ralt"));
       grammar.put("alt_rhs", new Rule("alt_rhs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(FORALL), nonTerm("tv_bndrs"), term(DOT));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(DOT).add("tv_bndrs").add(FORALL));
       grammar.put("forall", new Rule("forall", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("con"));
-      addVar(variants, nonTerm("con"), term(COMMA), nonTerm("con_list"));
+      addVar(variants, many("con", end(), end().add("con_list").add(COMMA)));
       grammar.put("con_list", new Rule("con_list", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DATA));
-      addVar(variants, term(NEWTYPE));
+      addVar(variants, end().add(NEWTYPE));
+      addVar(variants, end().add(DATA));
       grammar.put("data_or_newtype", new Rule("data_or_newtype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("infixexp"), term(DCOLON), nonTerm("sigtype"));
-      addVar(variants, nonTerm("infixexp"), term(LARROWTAIL), nonTerm("exp"));
-      addVar(variants, nonTerm("infixexp"), term(RARROWTAIL), nonTerm("exp"));
-      addVar(variants, nonTerm("infixexp"), term(LLARROWTAIL), nonTerm("exp"));
-      addVar(variants, nonTerm("infixexp"), term(RRARROWTAIL), nonTerm("exp"));
-      addVar(variants, nonTerm("infixexp"));
+      addVar(variants, many("infixexp", end(), end().add("exp").add(RRARROWTAIL), end().add("exp").add(RARROWTAIL), end().add("exp").add(LLARROWTAIL), end().add("exp").add(LARROWTAIL), end().add("sigtype").add(DCOLON)));
       grammar.put("exp", new Rule("exp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(IDESCAPE));
-      addVar(variants, term(PARENESCAPE), nonTerm("exp"), term(CPAREN));
-      addVar(variants, term(IDTYESCAPE));
-      addVar(variants, term(PARENTYESCAPE), nonTerm("exp"), term(CPAREN));
+      addVar(variants, end().add(CPAREN).add("exp").add(PARENTYESCAPE));
+      addVar(variants, end().add(IDESCAPE));
+      addVar(variants, end().add(IDTYESCAPE));
+      addVar(variants, end().add(CPAREN).add("exp").add(PARENESCAPE));
       grammar.put("splice_exp", new Rule("splice_exp", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("exp"));
-      addVar(variants, term(BANG), nonTerm("aexp"));
+      addVar(variants, end().add("aexp").add(BANG));
+      addVar(variants, end().add("exp"));
       grammar.put("bindpat", new Rule("bindpat", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(DEPRECATED_PRAG), nonTerm("strings"), term(CLOSE_PRAG));
-      addVar(variants, term(WARNING_PRAG), nonTerm("strings"), term(CLOSE_PRAG));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(CLOSE_PRAG).add("strings").add(DEPRECATED_PRAG));
+      addVar(variants, end().add(CLOSE_PRAG).add("strings").add(WARNING_PRAG));
       grammar.put("maybemodwarning", new Rule("maybemodwarning", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("name_boolformula_atom"));
-      addVar(variants, nonTerm("name_boolformula_atom"), term(COMMA), nonTerm("name_boolformula_and"));
+      addVar(variants, many("name_boolformula_atom", end(), end().add("name_boolformula_and").add(COMMA)));
       grammar.put("name_boolformula_and", new Rule("name_boolformula_and", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CTYPE), term(STRING), term(STRING), term(CLOSE_PRAG));
-      addVar(variants, term(CTYPE), term(STRING), term(CLOSE_PRAG));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, many(STRING, end().add(CLOSE_PRAG).add(STRING), end().add(CLOSE_PRAG)).add(CTYPE));
       grammar.put("capi_ctype", new Rule("capi_ctype", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("gadt_constr"), term(SEMI), nonTerm("gadt_constrs"));
-      addVar(variants, nonTerm("gadt_constr"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, many("gadt_constr", end(), end().add("gadt_constrs").add(SEMI)));
       grammar.put("gadt_constrs", new Rule("gadt_constrs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("stmts"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("stmts"), nonTerm("close"));
+      addVar(variants, end().add("close").add("stmts").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("stmts").add(OCURLY));
       grammar.put("stmtlist", new Rule("stmtlist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(SAFE));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(SAFE));
       grammar.put("maybe_safe", new Rule("maybe_safe", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("decls_cls"), term(CCURLY));
-      addVar(variants, term(VOCURLY), nonTerm("decls_cls"), nonTerm("close"));
+      addVar(variants, end().add("close").add("decls_cls").add(VOCURLY));
+      addVar(variants, end().add(CCURLY).add("decls_cls").add(OCURLY));
       grammar.put("decllist_cls", new Rule("decllist_cls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("dbinds"), term(SEMI), nonTerm("dbind"));
-      addVar(left, nonTerm("dbinds"), term(SEMI));
-      addVar(variants, nonTerm("dbind"));
+      addVar(variants, end().add("dbind"));
+      addVar(left, many(SEMI, end(), end().add("dbind")).add("dbinds"));
       grammar.put("dbinds", new Rule("dbinds", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("stmt"), nonTerm("stmts_help"));
-      addVar(variants, term(SEMI), nonTerm("stmts"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("stmts_help").add("stmt"));
+      addVar(variants, end().add("stmts").add(SEMI));
       grammar.put("stmts", new Rule("stmts", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("qcname"));
-      addVar(variants, term(TYPE), nonTerm("qcname"));
+      addVar(variants, end().add("qcname").add(TYPE));
+      addVar(variants, end().add("qcname"));
       grammar.put("qcname_ext", new Rule("qcname_ext", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ipvar"));
-      addVar(variants, nonTerm("qcname")).setElementType(GrammarPackage.getQ_NAME_EXPRESSION());
-      addVar(variants, nonTerm("literal"));
-      addVar(variants, term(INTEGER));
-      addVar(variants, term(RATIONAL));
-      addVar(variants, term(OPAREN), nonTerm("texp"), term(CPAREN)).setElementType(GrammarPackage.getPARENTHESIS_EXPRESSION());
-      addVar(variants, term(OPAREN), nonTerm("tup_exprs"), term(CPAREN));
-      addVar(variants, term(OUBXPAREN), nonTerm("texp"), term(CUBXPAREN));
-      addVar(variants, term(OUBXPAREN), nonTerm("tup_exprs"), term(CUBXPAREN));
-      addVar(variants, term(OBRACK), nonTerm("list"), term(CBRACK));
-      addVar(variants, term(OPABRACK), nonTerm("parr"), term(CPABRACK));
-      addVar(variants, term(UNDERSCORE));
-      addVar(variants, nonTerm("splice_exp"));
-      addVar(variants, term(SIMPLEQUOTE), nonTerm("qvar"));
-      addVar(variants, term(SIMPLEQUOTE), nonTerm("qcon"));
-      addVar(variants, term(TYQUOTE), nonTerm("tyvar"));
-      addVar(variants, term(TYQUOTE), nonTerm("gtycon"));
-      addVar(variants, term(OPENEXPQUOTE), nonTerm("exp"), term(CLOSEQUOTE));
-      addVar(variants, term(OPENTEXPQUOTE), nonTerm("exp"), term(CLOSETEXPQUOTE));
-      addVar(variants, term(OPENTYPQUOTE), nonTerm("ctype"), term(CLOSEQUOTE));
-      addVar(variants, term(OPENPATQUOTE), nonTerm("infixexp"), term(CLOSEQUOTE));
-      addVar(variants, term(OPENDECQUOTE), nonTerm("cvtopbody"), term(CLOSEQUOTE));
-      addVar(variants, nonTerm("quasiquote"));
-      addVar(variants, term(OPARENBAR), nonTerm("aexp2"), nonTerm("cmdargs"), term(CPARENBAR));
+      addVar(variants, end().add(CLOSEQUOTE).add("cvtopbody").add(OPENDECQUOTE));
+      addVar(variants, end().add("quasiquote"));
+      addVar(variants, end().add(INTEGER));
+      addVar(variants, end().add(RATIONAL));
+      addVar(variants, end().add(CBRACK).add("list").add(OBRACK));
+      addVar(variants, end().add(CLOSETEXPQUOTE).add("exp").add(OPENTEXPQUOTE));
+      addVar(variants, end(GrammarPackage.getQ_NAME_EXPRESSION()).add("qcname"));
+      addVar(variants, end().add(UNDERSCORE));
+      addVar(variants, many(SIMPLEQUOTE, end().add("qcon"), end().add("qvar")));
+      addVar(variants, end().add(CLOSEQUOTE).add("ctype").add(OPENTYPQUOTE));
+      addVar(variants, end().add(CLOSEQUOTE).add("exp").add(OPENEXPQUOTE));
+      addVar(variants, end().add(CPABRACK).add("parr").add(OPABRACK));
+      addVar(variants, many(TYQUOTE, end().add("gtycon"), end().add("tyvar")));
+      addVar(variants, end().add("ipvar"));
+      addVar(variants, end().add("literal"));
+      addVar(variants, end().add("splice_exp"));
+      addVar(variants, many(OPAREN, end(GrammarPackage.getPARENTHESIS_EXPRESSION()).add(CPAREN).add("texp"), end().add(CPAREN).add("tup_exprs")));
+      addVar(variants, end().add(CLOSEQUOTE).add("infixexp").add(OPENPATQUOTE));
+      addVar(variants, many(OUBXPAREN, end().add(CUBXPAREN).add("texp"), end().add(CUBXPAREN).add("tup_exprs")));
+      addVar(variants, end().add(CPARENBAR).add("cmdargs").add("aexp2").add(OPARENBAR));
       grammar.put("aexp2", new Rule("aexp2", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("aexp1"), term(OCURLY), nonTerm("fbinds"), term(CCURLY));
-      addVar(variants, nonTerm("aexp2"));
+      addVar(variants, end().add("aexp2"));
+      addVar(left, end().add(CCURLY).add("fbinds").add(OCURLY).add("aexp1"));
       grammar.put("aexp1", new Rule("aexp1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("ntgtycon"));
-      addVar(variants, term(OPAREN), term(CPAREN));
-      addVar(variants, term(OUBXPAREN), term(CUBXPAREN));
+      addVar(variants, end().add(CPAREN).add(OPAREN));
+      addVar(variants, end().add(CUBXPAREN).add(OUBXPAREN));
+      addVar(variants, end().add("ntgtycon"));
       grammar.put("gtycon", new Rule("gtycon", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("alts1"));
-      addVar(variants, term(SEMI), nonTerm("alts"));
+      addVar(variants, end().add("alts1"));
+      addVar(variants, end().add("alts").add(SEMI));
       grammar.put("alts", new Rule("alts", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("kind"));
-      addVar(variants, nonTerm("kind"), term(COMMA), nonTerm("comma_kinds1"));
+      addVar(variants, many("kind", end(), end().add("comma_kinds1").add(COMMA)));
       grammar.put("comma_kinds1", new Rule("comma_kinds1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("rule_explicit_activation"));
+      addVar(variants, end());
+      addVar(variants, end().add("rule_explicit_activation"));
       grammar.put("rule_activation", new Rule("rule_activation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(STRING), nonTerm("rule_activation"), nonTerm("rule_forall"), nonTerm("infixexp"), term(EQUAL), nonTerm("exp"));
+      addVar(variants, end().add("exp").add(EQUAL).add("infixexp").add("rule_forall").add("rule_activation").add(STRING));
       grammar.put("rule", new Rule("rule", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("cmdargs"), nonTerm("acmd"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(left, end().add("acmd").add("cmdargs"));
       grammar.put("cmdargs", new Rule("cmdargs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, term(OPAREN), term(DOTDOT), term(CPAREN));
-      addVar(variants, term(OPAREN), term(CPAREN));
-      addVar(variants, term(OPAREN), nonTerm("qcnames"), term(CPAREN));
+      addVar(variants, end());
+      addVar(variants, many(OPAREN, end().add(CPAREN).add("qcnames"), end().add(CPAREN), end().add(CPAREN).add(DOTDOT)));
       grammar.put("export_subspec", new Rule("export_subspec", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("explicit_activation"));
+      addVar(variants, end());
+      addVar(variants, end().add("explicit_activation"));
       grammar.put("activation", new Rule("activation", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("maybe_docnext"), term(EQUAL), nonTerm("constrs1"));
+      addVar(variants, end().add("constrs1").add(EQUAL).add("maybe_docnext"));
       grammar.put("constrs", new Rule("constrs", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
-      addVar(variants, nonTerm("fielddecls1"));
+      addVar(variants, end());
+      addVar(variants, end().add("fielddecls1"));
       grammar.put("fielddecls", new Rule("fielddecls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants);
+      addVar(variants, end());
       grammar.put("missing_module_keyword", new Rule("missing_module_keyword", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(OCURLY), nonTerm("importdecls"));
-      addVar(variants, term(VOCURLY), nonTerm("importdecls"));
+      addVar(variants, end().add("importdecls").add(VOCURLY));
+      addVar(variants, end().add("importdecls").add(OCURLY));
       grammar.put("header_body", new Rule("header_body", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("name_var"));
-      addVar(variants, nonTerm("name_var"), term(COMMA), nonTerm("namelist"));
+      addVar(variants, many("name_var", end(), end().add("namelist").add(COMMA)));
       grammar.put("namelist", new Rule("namelist", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("alts1"), term(SEMI), nonTerm("alt"));
-      addVar(left, nonTerm("alts1"), term(SEMI));
-      addVar(variants, nonTerm("alt"));
+      addVar(variants, end().add("alt"));
+      addVar(left, many(SEMI, end(), end().add("alt")).add("alts1"));
       grammar.put("alts1", new Rule("alts1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("texp"));
-      addVar(variants, nonTerm("lexps"));
-      addVar(variants, nonTerm("texp"), term(DOTDOT));
-      addVar(variants, nonTerm("texp"), term(COMMA), nonTerm("exp"), term(DOTDOT));
-      addVar(variants, nonTerm("texp"), term(DOTDOT), nonTerm("exp"));
-      addVar(variants, nonTerm("texp"), term(COMMA), nonTerm("exp"), term(DOTDOT), nonTerm("exp"));
-      addVar(variants, nonTerm("texp"), term(VBAR), nonTerm("flattenedpquals"));
+      addVar(variants, many("texp", end(), many(DOTDOT, end(), end().add("exp")), many(DOTDOT, end(), end().add("exp")).add("exp").add(COMMA), end().add("flattenedpquals").add(VBAR)));
+      addVar(variants, end().add("lexps"));
       grammar.put("list", new Rule("list", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(SEMI));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add(SEMI));
       grammar.put("optSemi", new Rule("optSemi", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("rules"), term(SEMI), nonTerm("rule"));
-      addVar(left, nonTerm("rules"), term(SEMI));
-      addVar(variants, nonTerm("rule"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(left, many(SEMI, end(), end().add("rule")).add("rules"));
+      addVar(variants, end().add("rule"));
       grammar.put("rules", new Rule("rules", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(UNSAFE));
-      addVar(variants, term(SAFE));
-      addVar(variants, term(INTERRUPTIBLE));
+      addVar(variants, end().add(INTERRUPTIBLE));
+      addVar(variants, end().add(SAFE));
+      addVar(variants, end().add(UNSAFE));
       grammar.put("safety", new Rule("safety", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("fielddecl"), nonTerm("maybe_docnext"), term(COMMA), nonTerm("maybe_docprev"), nonTerm("fielddecls1"));
-      addVar(variants, nonTerm("fielddecl"));
+      addVar(variants, many("fielddecl", end(), end().add("fielddecls1").add("maybe_docprev").add(COMMA).add("maybe_docnext")));
       grammar.put("fielddecls1", new Rule("fielddecls1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("guardquals1"), term(COMMA), nonTerm("qual"));
-      addVar(variants, nonTerm("qual"));
+      addVar(variants, end().add("qual"));
+      addVar(left, end().add("qual").add(COMMA).add("guardquals1"));
       grammar.put("guardquals1", new Rule("guardquals1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("texp"), nonTerm("commas_tup_tail"));
-      addVar(variants, nonTerm("texp"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, many("texp", end(), end().add("commas_tup_tail")));
       grammar.put("tup_tail", new Rule("tup_tail", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("lexps"), term(COMMA), nonTerm("texp"));
-      addVar(variants, nonTerm("texp"), term(COMMA), nonTerm("texp"));
+      addVar(variants, end().add("texp").add(COMMA).add("texp"));
+      addVar(left, end().add("texp").add(COMMA).add("lexps"));
       grammar.put("lexps", new Rule("lexps", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, nonTerm("btype"), term(TILDE), nonTerm("btype"));
-      addVar(variants, nonTerm("btype"));
+      addVar(variants, many("btype", end(), end().add("btype").add(TILDE)));
       grammar.put("context", new Rule("context", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("gdpats"), nonTerm("gdpat"));
-      addVar(variants, nonTerm("gdpat"));
+      addVar(variants, end().add("gdpat"));
+      addVar(left, end().add("gdpat").add("gdpats"));
       grammar.put("gdpats", new Rule("gdpats", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("decls"), term(SEMI), nonTerm("decl"));
-      addVar(left, nonTerm("decls"), term(SEMI));
-      addVar(variants, nonTerm("decl"));
-      addVar(variants);
+      addVar(variants, end());
+      addVar(variants, end().add("decl"));
+      addVar(left, many(SEMI, end(), end().add("decl")).add("decls"));
       grammar.put("decls", new Rule("decls", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(left, nonTerm("constrs1"), nonTerm("maybe_docnext"), term(VBAR), nonTerm("maybe_docprev"), nonTerm("constr"));
-      addVar(variants, nonTerm("constr"));
+      addVar(variants, end().add("constr"));
+      addVar(left, end().add("constr").add("maybe_docprev").add(VBAR).add("maybe_docnext").add("constrs1"));
       grammar.put("constrs1", new Rule("constrs1", variants, left));
     }
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, term(CHAR));
-      addVar(variants, term(STRING)).setElementType(GrammarPackage.getSTRING_LITERAL());
-      addVar(variants, term(PRIMINT));
-      addVar(variants, term(PRIMWORD));
-      addVar(variants, term(PRIMCHAR));
-      addVar(variants, term(PRIMSTRING));
-      addVar(variants, term(PRIMFLOAT));
-      addVar(variants, term(PRIMDOUBLE));
+      addVar(variants, end().add(PRIMFLOAT));
+      addVar(variants, end().add(PRIMCHAR));
+      addVar(variants, end().add(CHAR));
+      addVar(variants, end().add(PRIMWORD));
+      addVar(variants, end().add(PRIMDOUBLE));
+      addVar(variants, end().add(PRIMSTRING));
+      addVar(variants, end(GrammarPackage.getSTRING_LITERAL()).add(STRING));
+      addVar(variants, end().add(PRIMINT));
       grammar.put("literal", new Rule("literal", variants, left));
     }
     return grammar;

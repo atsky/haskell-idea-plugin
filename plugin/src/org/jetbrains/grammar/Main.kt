@@ -27,7 +27,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith(".hs")
+            return name.endsWith("HelloWorld.hs")
         }
 
     }
@@ -54,8 +54,17 @@ fun parseFile(inFile : File, outFile : File) {
     }
 
     val grammar = HaskellParser(null).getGrammar()
+
+    HaskellParser(null).findFirst(grammar)
+
     val parser = SimpleLLParser(grammar, cachedTokens)
-    parser.writeLog = true;
+    //parser.writeLog = true;
+    val start = System.currentTimeMillis()
+    //for (i in 1..1000) {
+    //    parser.parse()
+    //}
+    val time = System.currentTimeMillis() - start
+    println("time = ${time}")
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()

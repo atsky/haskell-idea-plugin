@@ -83,24 +83,30 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
         }
     }
 
-    fun term(tokenType : HaskellTokenType): Terminal {
-        return Terminal(tokenType)
+    fun end(): TerminalVariant {
+        return TerminalVariant(null)
+    }
+
+    fun end(elementType: IElementType): TerminalVariant {
+        return TerminalVariant(elementType)
+    }
+
+    fun many(str : String, vararg next : Variant): NonTerminalVariant {
+        val list = next.toArrayList()
+        return NonTerminalVariant(NonTerminal(str), list)
+    }
+
+    fun many(tokenType : HaskellTokenType, vararg next : Variant): NonTerminalVariant {
+        val list = next.toArrayList()
+        return NonTerminalVariant(Terminal(tokenType), list)
     }
 
     fun nonTerm(rule : String): NonTerminal {
         return NonTerminal(rule)
     }
 
-    fun addVar(variants : MutableList<Variant>, vararg terms : Term): TerminalVariant {
-        val termsList = terms.toArrayList()
-        val last = TerminalVariant()
-        var first : Variant = last
-
-        for (term in termsList.reverse()) {
-            first = NonTerminalVariant(term, listOf(first))
-        }
-
-        variants.add(first);
-        return last;
+    fun addVar(variants : MutableList<Variant>, variant : Variant): Variant {
+        variants.add(variant);
+        return variant;
     }
 }

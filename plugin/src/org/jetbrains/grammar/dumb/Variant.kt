@@ -3,22 +3,41 @@ package org.jetbrains.grammar.dumb
 import com.intellij.psi.tree.IElementType
 import java.util.HashSet
 import java.util.ArrayList
+import org.jetbrains.haskell.parser.HaskellTokenType
 
 /**
  * Created by atsky on 14/11/14.
  */
 
-public open class Variant {
+public abstract class Variant {
 
+    fun add(tokenType : HaskellTokenType): NonTerminalVariant {
+        return NonTerminalVariant(Terminal(tokenType), listOf(this))
+    }
+
+    fun add(rule: String): NonTerminalVariant {
+        return NonTerminalVariant(NonTerminal(rule), listOf(this))
+    }
+
+    open fun makeAnalysis(grammar: Map<String, Rule>) {
+    }
+
+    abstract fun isCanBeEmpty(): Boolean
 }
 
-public class TerminalVariant() : Variant() {
-    public var elementType: IElementType? = null;
+public class TerminalVariant(val elementType: IElementType?) : Variant() {
+    override fun isCanBeEmpty(): Boolean {
+        return true;
+    }
 }
 
 public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Variant() {
     public var canBeEmpty: Boolean = false;
-    public var first: Set<List<IElementType>>? = null;
+    public var first: Set<IElementType>? = null;
+
+    override fun isCanBeEmpty(): Boolean {
+        return canBeEmpty;
+    }
 
     override fun toString(): String {
         val builder = StringBuilder()
@@ -32,7 +51,7 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
         return "{" + builder.toString() + " }"
     }
 
-    fun makeAnalysis(grammar: Map<String, Rule>) {
+    override fun makeAnalysis(grammar: Map<String, Rule>) {
         canBeEmpty = true;
 
         if (term is NonTerminal) {
@@ -43,49 +62,31 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
                 canBeEmpty = false
             } else {
                 for (n in next) {
-                    //n.makeAnalysis(grammar)
-                    //canBeEmpty = canBeEmpty || n.canBeEmpty
+                    n.makeAnalysis(grammar)
+                    canBeEmpty = canBeEmpty || n.isCanBeEmpty()
                 }
             }
         } else {
             canBeEmpty = false
         }
 
+        if (term is NonTerminal) {
+            val result = HashSet<IElementType>()
 
-        val result = HashSet<List<IElementType>>()
+            val rule = grammar[term.rule]!!
 
-        var prefixes = HashSet<List<IElementType>>()
-        prefixes.add(listOf())
-/*
-        for (term in terms) {
-            val nextPrefixes = HashSet<List<IElementType>>()
-            val firstBuffer = HashSet<List<IElementType>>()
-            if (term is Terminal) {
-                firstBuffer.add(listOf(term.tokenType))
-            } else {
-                val rule = grammar[(term as NonTerminal).rule]!!
-                //rule.makeAnalysis(grammar)
-                if (rule.first != null) {
-                    firstBuffer.addAll(rule.first!!)
-                }
-            }
-            for (prefix in prefixes) {
-                for (next in firstBuffer) {
-                    val tmp = prefix + next
-                    if (tmp.size >= 2) {
-                        result.add(ArrayList(tmp.subList(0, 2)))
-                    } else {
-                        nextPrefixes.add(tmp)
+            result.addAll(rule.first!!)
+
+            if (rule.canBeEmpty) {
+                for (n in next) {
+                    if (n is NonTerminalVariant) {
+                        result.addAll(n.first!!)
                     }
                 }
             }
-            prefixes = nextPrefixes
-            if (prefixes.isEmpty()) {
-                break
-            }
+            first = result
+        } else {
+            first = setOf((term as Terminal).tokenType)
         }
-        result.addAll(prefixes)
-        first = result
-        */
     }
 }

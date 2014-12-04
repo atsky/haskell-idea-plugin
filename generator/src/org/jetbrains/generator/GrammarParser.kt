@@ -7,6 +7,8 @@ import org.jetbrains.generator.grammar.Rule
 import org.jetbrains.generator.TokenType.*
 import org.jetbrains.generator.grammar.Variant
 import org.jetbrains.generator.grammar.RuleRef
+import org.jetbrains.generator.grammar.NonFinalVariant
+import org.jetbrains.generator.grammar.FinalVariant
 
 /**
  * Created by atsky on 11/7/14.
@@ -131,6 +133,13 @@ class GrammarParser(val tokens : List<Token>) {
         } else {
             null
         }
-        return Variant(list, name);
+
+        var variant : Variant = FinalVariant(name);
+
+        for (ref in list.reverse()) {
+            variant = NonFinalVariant(ref, listOf(variant))
+        }
+
+        return variant;
     }
 }

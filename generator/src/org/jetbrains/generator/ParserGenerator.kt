@@ -41,21 +41,6 @@ class ParserGenerator(val grammar: Grammar) {
             rules[rule.name] = rule
         }
 
-        for (rule in grammar.rules) {
-            for (variant in rule.variants) {
-                for (ref in variant.atoms) {
-                    if (ref.isName) {
-                        val name = ref.text
-                        if (!tokens.contains(name) && !rules.contains(name)) {
-                            val rule = FakeRule(name)
-                            fakeRules.add(rule)
-                            rules[name] = rule;
-                        }
-                    }
-                }
-            }
-        }
-
         this.tokens = tokens;
         this.rules = rules;
         this.fakeRules = fakeRules;
@@ -99,9 +84,7 @@ class ParserGenerator(val grammar: Grammar) {
         val elementSet = TreeSet<String>()
         for (token in grammar.rules) {
             for (variant in token.variants) {
-                if (variant.elementName != null) {
-                    elementSet.add(variant.elementName);
-                }
+                variant.fillElements(elementSet)
             }
         }
         with(result) {
@@ -222,34 +205,51 @@ class ParserGenerator(val grammar: Grammar) {
                         variant: Variant) {
         with(textGenerator) {
             val builder = StringBuilder()
-            var first = true;
-            for (atom in variant.atoms) {
-                if (!first) {
-                    builder.append(", ")
-                }
-                if (tokens.containsKey(atom.toString())) {
-                    val tokenDescription = tokens[atom.toString()]!!
-                    builder.append("term(" + tokenDescription.name.toUpperCase() + ")")
-                } else {
-                    builder.append("nonTerm(\"" + atom.text + "\")")
-                }
-                first = false;
-            }
-            val suffix = if (variant.elementName != null) {
-                ".setElementType(GrammarPackage.get${camelCaseToUpperCase(variant.elementName)}())"
+
+            fillVariant(builder, variant)
+
+            if (variant is NonFinalVariant && variant.atom.toString() == rule.name) {
+                line("addVar(left, ${builder});")
             } else {
-                ""
-            }
-            if (variant.atoms.size > 0) {
-                if (variant.atoms.first.toString() == rule.name) {
-                    line("addVar(left, ${builder})${suffix};")
-                } else {
-                    line("addVar(variants, ${builder})${suffix};")
-                }
-            } else {
-                line("addVar(variants)${suffix};")
+                line("addVar(variants, ${builder});")
             }
         }
+    }
+
+    fun fillVariant(builder : StringBuilder, variant : Variant): StringBuilder {
+        if (variant is NonFinalVariant) {
+            if (variant.next.size == 1) {
+                fillVariant(builder, variant.next.first!!)
+                val atom = variant.atom
+                if (tokens.containsKey(atom.toString())) {
+                    val tokenDescription = tokens[atom.toString()]!!
+                    builder.append(".add(" + tokenDescription.name.toUpperCase() + ")")
+                } else {
+                    builder.append(".add(\"" + atom.text + "\")")
+                }
+            } else {
+                val atom = variant.atom
+                if (tokens.containsKey(atom.toString())) {
+                    val tokenDescription = tokens[atom.toString()]!!
+                    builder.append("many(" + tokenDescription.name.toUpperCase() + "")
+                } else {
+                    builder.append("many(\"" + atom.text + "\"")
+                }
+                for (variant in variant.next) {
+                    builder.append(", ")
+                    fillVariant(builder, variant)
+                }
+                builder.append(")")
+            }
+        } else {
+            val elementName = (variant as FinalVariant).elementName
+            builder.append(if (elementName != null) {
+                "end(GrammarPackage.get${camelCaseToUpperCase(elementName)}())"
+            } else {
+                "end()"
+            })
+        }
+        return builder
     }
 
     fun getParseFun(name: String): String =

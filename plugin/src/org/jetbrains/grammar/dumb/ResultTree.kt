@@ -20,7 +20,6 @@ class TerminalTree(val haskellToken: HaskellTokenType) : ResultTree() {
 }
 
 class NonTerminalTree(val rule : String,
-                      val variant : Int,
                       val elementType : IElementType?,
                       val children : List<ResultTree>) : ResultTree() {
 
@@ -39,7 +38,7 @@ class NonTerminalTree(val rule : String,
         for (r in children) {
             builder.append(r.toString() + ", ")
         }
-        return rule + "@" + variant + "{" + builder + "}"
+        return rule + "{" + builder + "}"
     }
 
     fun prettyPrint(level : Int): String {
@@ -55,7 +54,7 @@ class NonTerminalTree(val rule : String,
                 builder.append(r.toString())
             }
         }
-        return rule + "@" + variant + "{" + builder + "}"
+        return rule + "{" + builder + "}"
     }
 
     override fun size(): Int {

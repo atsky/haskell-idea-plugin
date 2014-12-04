@@ -4,32 +4,19 @@ import org.jetbrains.grammar.dumb.Rule
 import org.jetbrains.grammar.dumb.ResultTree
 import org.jetbrains.grammar.dumb.NonTerminalTree
 import org.jetbrains.grammar.dumb.Variant
-import org.jetbrains.haskell.parser.ParserState
+import org.jetbrains.haskell.parser.LexerState
 
 /**
  * Created by atsky on 23/11/14.
  */
-class VariantState(val variant : Variant,
-                   val childVariantIndex : Int,
-                   val tree : List<ResultTree>,
-                   val parserState: ParserState,
-                   val parent : RuleState) {
-    fun dropIndent(): VariantState {
-        return VariantState(variant,
-                            childVariantIndex,
-                            tree,
-                            parserState.dropIndent(),
-                            parent)
+abstract class ParserState() {
+    abstract fun next() : ParserState;
+}
+
+class FinalState(val result : NonTerminalTree?) : ParserState() {
+    override fun next(): ParserState {
+        throw UnsupportedOperationException()
     }
 
 }
 
-class RuleState(val rule : Rule,
-                val variant : Int,
-                val left: Boolean,
-                val bestTree : NonTerminalTree?,
-                val firstNode : NonTerminalTree?,
-                val parserState: ParserState,
-                val parent : VariantState?) {
-
-}
