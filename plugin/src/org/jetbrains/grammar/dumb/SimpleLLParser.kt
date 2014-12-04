@@ -22,7 +22,8 @@ class ParserResult(val children: List<ResultTree>,
 }
 
 abstract class TreeCallback() {
-    abstract fun produce(tree: NonTerminalTree?, lexerState: LexerState?): ParserState;
+    abstract fun done(tree: NonTerminalTree, lexerState: LexerState): ParserState;
+    abstract fun fail(): ParserState;
 }
 
 abstract class ParserResultCallBack() {
@@ -30,11 +31,12 @@ abstract class ParserResultCallBack() {
     abstract fun fail(): ParserState;
 }
 
+
+
 class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     var lastSeen = 0;
     var lastCurlyPosition = -1
-    var lastCurlyState: ParserState? = null;
-    var result: NonTerminalTree? = null;
+    var lastCurlyState: RecoveryCallback? = null;
     var recoveryState: ParserState? = null;
 
     public var writeLog: Boolean = false;
@@ -43,12 +45,21 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         val rule = grammar["module"]!!
 
         var state = parseRule(rule, newParserState(cached), object : TreeCallback() {
-            override fun produce(tree: NonTerminalTree?, lexerState: LexerState?) = FinalState(tree)
+            override fun done(tree: NonTerminalTree, lexerState: LexerState) = FinalState(tree)
+
+            override fun fail(): ParserState = FinalState(null)
         })
-        while (state !is FinalState) {
+        while (true) {
+            if (state is FinalState) {
+                if (lastSeen == lastCurlyPosition) {
+                    state = lastCurlyState!!.recover()
+                } else {
+                    return (state as FinalState).result
+                }
+            }
             state = state.next()
         }
-        return (state as FinalState).result
+
     }
 
     fun parseRule(rule: Rule,
@@ -63,11 +74,11 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 return if (rule.left.isNotEmpty()) {
                     parseLeft(rule, tree, result.state, next)
                 } else {
-                    next.produce(tree, result.state)
+                    next.done(tree, result.state)
                 }
             }
 
-            override fun fail(): ParserState = next.produce(null, null)
+            override fun fail(): ParserState = next.fail()
         })
     }
 
@@ -135,18 +146,27 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             val term = nonTerminalVariant.term
             when (term) {
                 is Terminal -> {
+                    if (lastSeen < state.lexemNumber) {
+                        lastSeen = state.lexemNumber
+                    }
                     return if (state.match(term.tokenType)) {
                         val nextChildren = ArrayList(children)
                         nextChildren.add(TerminalTree(term.tokenType))
                         parseVariants(state.next(), nonTerminalVariant.next, nextChildren, next)
                     } else {
+                        if (term.tokenType == HaskellLexerTokens.VCCURLY) {
+                            if (state.lexemNumber > lastCurlyPosition) {
+                                lastCurlyPosition = state.lexemNumber
+                                lastCurlyState = RecoveryCallback(state, nonTerminalVariant, children, next)
+                            }
+                        }
                         next.fail()
                     }
                 }
                 is NonTerminal -> {
                     val ruleToParse = grammar[term.rule]!!
                     //if (!ruleToParse.canBeEmpty && !ruleToParse.first!!.contains(state.getToken())) {
-                    //    next.fail()
+                    //    return next.fail()
                     //}
                     return parseRule(ruleToParse, state, NextVariantStateProducer(children, variant, next))
                 }
@@ -169,7 +189,7 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             }
 
             override fun fail(): ParserState {
-                return next.produce(leftTree, state)
+                return next.done(leftTree, state)
             }
         })
     }
@@ -181,17 +201,27 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         }
     }
 
+    inner class RecoveryCallback(val state: LexerState,
+                           val variant: NonTerminalVariant,
+                           val children: List<ResultTree>,
+                           val next: ParserResultCallBack) {
+        fun recover() : ParserState {
+            val lexerState = state.dropIndent().next()
+            val nextChildren = ArrayList(children)
+            nextChildren.add(TerminalTree(HaskellLexerTokens.VCCURLY))
+            return parseVariants(lexerState, variant.next, nextChildren, next)
+        }
+    }
+
     inner class NextVariantStateProducer(val children: List<ResultTree>,
                                          val variant: NonTerminalVariant,
                                          val next: ParserResultCallBack) : TreeCallback() {
-        override fun produce(tree: NonTerminalTree?, lexerState: LexerState?): ParserState {
-            return if (tree != null) {
-                val children = ArrayList(children)
-                children.add(tree)
-                parseVariants(lexerState!!, variant.next, children, next)
-            } else {
-                next.fail()
-            }
+        override fun fail(): ParserState = next.fail();
+
+        override fun done(tree: NonTerminalTree, lexerState: LexerState): ParserState {
+            val children = ArrayList(children)
+            children.add(tree)
+            return parseVariants(lexerState, variant.next, children, next)
         }
     }
 }

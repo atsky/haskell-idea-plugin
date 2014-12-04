@@ -16,28 +16,16 @@ import org.jetbrains.grammar.dumb.Terminal
  */
 fun main(args: Array<String>) {
     val grammar = HaskellParser(null).getGrammar()
-    /*
+
     for ((name, rule) in grammar) {
         rule.makeAnalysis(grammar);
-
-        if (hasConflicts(rule)) {
             println("rule ${name} {")
             println("  can be empty: " + rule.canBeEmpty)
-            //println("  first: " + rule.first)
-
-
-            for (variant in rule.variants) {
-                /println("  variant " + variant.terms)
-                println("    can be empty: " + variant.canBeEmpty)
-                //println("    first: " + variant.first)
-            }
-            for (variant in rule.left) {
-                println("left  " + variant.terms)
-            }
+            println("  first: " + rule.first)
             println("}")
-        }
+
     }
-    */
+
 }
 
 /*
