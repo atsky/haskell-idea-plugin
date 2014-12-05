@@ -631,7 +631,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, end().add("exp").add(RARROW));
+      addVar(variants, end(GrammarPackage.getUNGUARDED_R_H_S()).add("exp").add(RARROW));
       addVar(variants, end().add("gdpats"));
       grammar.put("ralt", new Rule("ralt", variants, left));
     }

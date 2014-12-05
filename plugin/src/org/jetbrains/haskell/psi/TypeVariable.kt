@@ -17,6 +17,11 @@ public class TypeVariable(node: ASTNode) : HaskellType(node), PsiNamedElement {
         return getText()
     }
 
+    override fun getLeftTypeVariable() : TypeVariable? {
+        return this;
+    }
+
+
     override fun setName(p0: String): PsiElement? {
         throw UnsupportedOperationException()
     }

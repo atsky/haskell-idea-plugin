@@ -42,6 +42,7 @@ public val STRING_LITERAL : IElementType = HaskellCompositeElementType("StringLi
 public val TUPLE_TYPE : IElementType = HaskellCompositeElementType("TupleType", ::TupleType)
 public val TYPE_SYNONYM : IElementType = HaskellCompositeElementType("TypeSynonym", ::TypeSynonym)
 public val TYPE_VARIABLE : IElementType = HaskellCompositeElementType("TypeVariable", ::TypeVariable)
+public val UNGUARDED_R_H_S : IElementType = HaskellCompositeElementType("UnguardedRHS", ::UnguardedRHS)
 public val VALUE_DEFINITION : IElementType = HaskellCompositeElementType("ValueDefinition", ::ValueDefinition)
 public val VARIABLE_OPERATION : IElementType = HaskellCompositeElementType("VariableOperation", ::VariableOperation)
 public val WHERE_BINDINGS : IElementType = HaskellCompositeElementType("WhereBindings", ::WhereBindings)

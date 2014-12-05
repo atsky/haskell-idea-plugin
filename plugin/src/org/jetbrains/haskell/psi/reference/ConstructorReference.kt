@@ -21,7 +21,7 @@ class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
     override fun resolve(): PsiElement? {
         for (declaration in getConstructorsList()) {
             if (declaration.getDeclarationName() == constructor.getText()) {
-                return declaration
+                return declaration.getTypeVariable()
             }
         }
 

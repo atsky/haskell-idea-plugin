@@ -10,4 +10,10 @@ import com.intellij.psi.util.PsiTreeUtil
 public class ApplicationType(node : ASTNode) : HaskellType(node) {
     fun getChildrenTypes() : List<HaskellType> =
             PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+
+
+    override fun getLeftTypeVariable() : TypeVariable? {
+        return getChildrenTypes().first?.getLeftTypeVariable();
+    }
+
 }

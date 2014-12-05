@@ -17,7 +17,7 @@ public class ConstructorDeclaration(node : ASTNode) : Declaration(node), PsiName
     }
 
     fun getTypeVariable() : TypeVariable? {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).first
+        return findChildByClass(javaClass<HaskellType>())?.getLeftTypeVariable()
     }
 
     override fun getDeclarationName(): String? {

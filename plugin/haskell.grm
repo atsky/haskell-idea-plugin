@@ -1540,7 +1540,7 @@ alt_rhs
 ;
 
 ralt
-        : '->' exp
+        : '->' exp                      { UnguardedRHS }
         | gdpats
 ;
 
