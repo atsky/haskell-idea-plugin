@@ -20,6 +20,8 @@ public class HaskellTest extends ParsingTestCase {
 
     public void testDataType() throws Exception { doTest(true); }
 
+    public void testDoNotation() throws Exception { doTest(true); }
+
     public void testGCD() throws Exception { doTest(true); }
 
     public void testRecovery() throws Exception { doTest(true); }
@@ -27,6 +29,8 @@ public class HaskellTest extends ParsingTestCase {
     public void testImports() throws Exception { doTest(true); }
 
     public void testImportsWithData() throws Exception { doTest(true); }
+
+    public void testInstance() throws Exception { doTest(true); }
 
     public void testFBind() throws Exception { doTest(true); }
 
