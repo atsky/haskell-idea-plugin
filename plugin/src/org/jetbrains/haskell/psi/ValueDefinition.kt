@@ -8,4 +8,7 @@ import com.intellij.psi.util.PsiTreeUtil
 public class ValueDefinition(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getQNameExpression(): QNameExpression? =
             findChildByClass(javaClass<QNameExpression>())
+
+    fun getExpression(): Expression? =
+            findChildByClass(javaClass<Expression>())
 }

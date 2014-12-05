@@ -5,4 +5,8 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.psi.PsiElement
 
 
-public class DoExpression(node : ASTNode) : Expression(node)
+public class DoExpression(node : ASTNode) : Expression(node) {
+    override fun traverse(visitor: (Expression) -> Unit) {
+        visitor(this)
+    }
+}

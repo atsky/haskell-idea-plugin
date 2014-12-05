@@ -10,6 +10,9 @@ import org.jetbrains.haskell.psi.reference.QNameReference
  */
 
 public class QNameExpression(node: ASTNode) : Expression(node) {
+    override fun traverse(visitor: (Expression) -> Unit) {
+        visitor(this)
+    }
 
     fun getQVar(): QVar? =
             findChildByClass(javaClass<QVar>())
