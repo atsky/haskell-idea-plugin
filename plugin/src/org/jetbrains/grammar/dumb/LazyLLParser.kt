@@ -51,7 +51,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         while (true) {
             if (state is FinalState) {
                 val result = (state as FinalState).result
-                if (result == null && lastSeen == lastCurlyPosition) {
+                if (result == null && lastSeen + 1 == lastCurlyPosition) {
                     state = lastCurlyState!!.recover()
                     lastCurlyPosition = -1
                     lastCurlyState = null
@@ -164,10 +164,10 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             val term = nonTerminalVariant.term
             when (term) {
                 is Terminal -> {
-                    if (lastSeen < state.lexemNumber) {
-                        lastSeen = state.lexemNumber
-                    }
                     return if (state.match(term.tokenType)) {
+                        if (lastSeen < state.lexemNumber) {
+                            lastSeen = state.lexemNumber
+                        }
                         val nextChildren = ArrayList(children)
                         nextChildren.add(TerminalTree(term.tokenType))
                         parseVariants(state.next(), nonTerminalVariant.next, nextChildren, next)
