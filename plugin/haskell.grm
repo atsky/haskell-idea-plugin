@@ -1808,7 +1808,7 @@ op                               -- used in infix decls
 
 varop
         : varsym
-        | '`' varid '`'
+        | '`' varid '`'           { VariableOperation }
 ;
 
 qop                              -- used in sections
@@ -1823,12 +1823,12 @@ qopm                             -- used in sections
 
 qvarop
         : qvarsym
-        | '`' qvarid '`'
+        | '`' qvarid '`'          { VariableOperation }
 ;
 
 qvaropm
         : qvarsym_no_minus
-        | '`' qvarid '`'
+        | '`' qvarid '`'          { VariableOperation }
 ;
 
 -----------------------------------------------------------------------------

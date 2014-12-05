@@ -14,6 +14,7 @@ import org.jetbrains.haskell.psi.FunctionType
 import org.jetbrains.haskell.psi.TypeVariable
 import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.QVarSym
+import org.jetbrains.haskell.psi.VariableOperation
 
 
 /**
@@ -47,6 +48,11 @@ public class HaskellAnnotator() : Annotator {
         if (element is TypeVariable && !element.isConstructor()) {
             for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID, QCONID, QVARID))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
+            }
+        }
+        if (element is VariableOperation) {
+            for (node in element.getNode().getChildren(null)) {
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_OPERATOR)
             }
         }
         if (element is SignatureDeclaration) {

@@ -97,7 +97,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, end().add("qvarsym_no_minus"));
-      addVar(variants, end().add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
+      addVar(variants, end(GrammarPackage.getVARIABLE_OPERATION()).add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
       grammar.put("qvaropm", new Rule("qvaropm", variants, left));
     }
     {
@@ -425,7 +425,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, end().add("qvarsym"));
-      addVar(variants, end().add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
+      addVar(variants, end(GrammarPackage.getVARIABLE_OPERATION()).add(BACKQUOTE).add("qvarid").add(BACKQUOTE));
       grammar.put("qvarop", new Rule("qvarop", variants, left));
     }
     {
@@ -604,7 +604,7 @@ public class HaskellParser extends BaseHaskellParser {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
       addVar(variants, end().add("varsym"));
-      addVar(variants, end().add(BACKQUOTE).add("varid").add(BACKQUOTE));
+      addVar(variants, end(GrammarPackage.getVARIABLE_OPERATION()).add(BACKQUOTE).add("varid").add(BACKQUOTE));
       grammar.put("varop", new Rule("varop", variants, left));
     }
     {
