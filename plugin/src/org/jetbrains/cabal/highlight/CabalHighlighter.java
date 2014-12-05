@@ -25,9 +25,9 @@ public class CabalHighlighter extends SyntaxHighlighterBase {
   static {
     keys1 = new THashMap<IElementType, TextAttributesKey>();
 
-    keys1.put(CabalTokelTypes.STRING, HaskellHighlighter.STRING_LITERAL);
-    keys1.put(CabalTokelTypes.END_OF_LINE_COMMENT, HaskellHighlighter.COMMENT);
-    keys1.put(CabalTokelTypes.COMMENT, HaskellHighlighter.COMMENT);
+    keys1.put(CabalTokelTypes.STRING, HaskellHighlighter.HASKELL_STRING_LITERAL);
+    keys1.put(CabalTokelTypes.END_OF_LINE_COMMENT, HaskellHighlighter.HASKELL_COMMENT);
+    keys1.put(CabalTokelTypes.COMMENT, HaskellHighlighter.HASKELL_COMMENT);
     keys1.put(CabalTokelTypes.TAB, HighlighterColors.BAD_CHARACTER);
 
 

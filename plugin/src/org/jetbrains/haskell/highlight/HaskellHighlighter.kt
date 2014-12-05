@@ -21,17 +21,22 @@ import org.jetbrains.grammar.HaskellLexerTokens
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     class object {
-        public val HASKELL_PARENTHESIS: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_PARENTHESIS", DefaultLanguageHighlighterColors.PARENTHESES)
-        public val STRING_LITERAL: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
-        public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
-        public val HASKELL_SIGNATURE: TextAttributesKey                = TextAttributesKey.createTextAttributesKey("HASKELL_SIGNATURE")
-        public val COMMENT: TextAttributesKey                          = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val HASKELL_PRAGMA: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val HASKELL_BRACKETS: TextAttributesKey                 = TextAttributesKey.createTextAttributesKey("HASKELL_BRACKETS", DefaultLanguageHighlighterColors.BRACES)
+        public val HASKELL_CLASS: TextAttributesKey                    = TextAttributesKey.createTextAttributesKey("HASKELL_CLASS")
         public val HASKELL_CONSTRUCTOR: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
+        public val HASKELL_CURLY: TextAttributesKey                    = TextAttributesKey.createTextAttributesKey("HASKELL_CURLY", DefaultLanguageHighlighterColors.BRACES)
+        public val HASKELL_DOUBLE_COLON: TextAttributesKey             = TextAttributesKey.createTextAttributesKey("HASKELL_DOUBLE_COLON")
+        public val HASKELL_EQUAL: TextAttributesKey                    = TextAttributesKey.createTextAttributesKey("HASKELL_EQUAL", DefaultLanguageHighlighterColors.IDENTIFIER)
+        public val HASKELL_KEYWORD: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+        public val HASKELL_PARENTHESIS: TextAttributesKey              = TextAttributesKey.createTextAttributesKey("HASKELL_PARENTHESIS", DefaultLanguageHighlighterColors.PARENTHESES)
+        public val HASKELL_STRING_LITERAL: TextAttributesKey           = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
+        public val HASKELL_SIGNATURE: TextAttributesKey                = TextAttributesKey.createTextAttributesKey("HASKELL_SIGNATURE")
+        public val HASKELL_COMMENT: TextAttributesKey                  = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val HASKELL_PRAGMA: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        public val HASKELL_NUMBER: TextAttributesKey                   = TextAttributesKey.createTextAttributesKey("HASKELL_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
         public val HASKELL_TYPE: TextAttributesKey                     = TextAttributesKey.createTextAttributesKey("HASKELL_TYPE")
         public val HASKELL_OPERATOR: TextAttributesKey                 = TextAttributesKey.createTextAttributesKey("HASKELL_OPERATOR", DefaultLanguageHighlighterColors.IDENTIFIER)
-        public val PROPERTIES_VALID_STRING_ESCAPE: TextAttributesKey   = TextAttributesKey.createTextAttributesKey("PROPERTIES.VALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE)
-        public val PROPERTIES_INVALID_STRING_ESCAPE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("PROPERTIES.INVALID_STRING_ESCAPE", DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
+        public val HASKELL_IDENTIFIER: TextAttributesKey               = TextAttributesKey.createTextAttributesKey("HASKELL_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
     }
 
     public override fun getHighlightingLexer(): Lexer {
@@ -51,34 +56,51 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
     {
         keys1 = THashMap<IElementType, TextAttributesKey>()
-        keys1.put(END_OF_LINE_COMMENT, COMMENT)
-        keys1.put(BLOCK_COMMENT, COMMENT)
+        keys1.put(END_OF_LINE_COMMENT, HASKELL_COMMENT)
+        keys1.put(BLOCK_COMMENT, HASKELL_COMMENT)
 
         for (keyword in org.jetbrains.haskell.parser.token.KEYWORDS)
         {
             keys1.put(keyword, HASKELL_KEYWORD)
         }
         keys1.put(PRAGMA, HASKELL_PRAGMA)
-        keys1.put(HaskellLexerTokens.CONID, HASKELL_CONSTRUCTOR)
+        // PARENTHESIS
+        keys1.put(HaskellLexerTokens.OPAREN, HASKELL_PARENTHESIS)
+        keys1.put(HaskellLexerTokens.CPAREN, HASKELL_PARENTHESIS)
+
+        keys1.put(HaskellLexerTokens.OCURLY, HASKELL_CURLY)
+        keys1.put(HaskellLexerTokens.CCURLY, HASKELL_CURLY)
+
+        keys1.put(HaskellLexerTokens.OBRACK, HASKELL_BRACKETS)
+        keys1.put(HaskellLexerTokens.CBRACK, HASKELL_BRACKETS)
+
+        keys1.put(HaskellLexerTokens.DCOLON, HASKELL_DOUBLE_COLON)
+        keys1.put(HaskellLexerTokens.EQUAL, HASKELL_EQUAL)
+
+        keys1.put(HaskellLexerTokens.AT,         HASKELL_IDENTIFIER)
+        keys1.put(HaskellLexerTokens.UNDERSCORE, HASKELL_IDENTIFIER)
+        keys1.put(HaskellLexerTokens.VARID,      HASKELL_IDENTIFIER)
+        keys1.put(HaskellLexerTokens.QVARID,     HASKELL_IDENTIFIER)
+
+        keys1.put(HaskellLexerTokens.CONID,  HASKELL_CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.QCONID, HASKELL_CONSTRUCTOR)
         keys1.put(HaskellLexerTokens.CONSYM, HASKELL_CONSTRUCTOR)
+        keys1.put(HaskellLexerTokens.COLON,  HASKELL_CONSTRUCTOR)
+
         keys1.put(HaskellLexerTokens.VARSYM, HASKELL_OPERATOR)
-        keys1.put(HaskellLexerTokens.COLON, HASKELL_CONSTRUCTOR)
-        keys1.put(HaskellLexerTokens.STRING, STRING_LITERAL)
-        keys1.put(HaskellLexerTokens.CHAR, STRING_LITERAL)
-        keys1.put(HaskellLexerTokens.INTEGER, DefaultLanguageHighlighterColors.NUMBER)
-        keys1.put(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, PROPERTIES_VALID_STRING_ESCAPE)
-        keys1.put(StringEscapesTokenTypes.INVALID_CHARACTER_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)
-        keys1.put(StringEscapesTokenTypes.INVALID_UNICODE_ESCAPE_TOKEN, PROPERTIES_INVALID_STRING_ESCAPE)
+        keys1.put(HaskellLexerTokens.MINUS,  HASKELL_OPERATOR)
+
+        keys1.put(HaskellLexerTokens.STRING, HASKELL_STRING_LITERAL)
+        keys1.put(HaskellLexerTokens.CHAR,   HASKELL_STRING_LITERAL)
+
+        keys1.put(HaskellLexerTokens.INTEGER, HASKELL_NUMBER)
     }
 
 
 
     {
         DISPLAY_NAMES.put(HASKELL_KEYWORD, Pair<String, HighlightSeverity>("Property value", null))
-        DISPLAY_NAMES.put(COMMENT, Pair<String, HighlightSeverity>("Comment", null))
-        DISPLAY_NAMES.put(PROPERTIES_VALID_STRING_ESCAPE, Pair<String, HighlightSeverity>("Valid string escape", null))
-        DISPLAY_NAMES.put(PROPERTIES_INVALID_STRING_ESCAPE, Pair("Invalid string escape", HighlightSeverity.WARNING))
+        DISPLAY_NAMES.put(HASKELL_COMMENT, Pair<String, HighlightSeverity>("Comment", null))
     }
 
 }
