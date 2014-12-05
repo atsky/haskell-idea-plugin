@@ -16,9 +16,12 @@ import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 import java.io.FilenameFilter
 import java.io.FileWriter
 import java.io.PrintStream
-import org.jetbrains.grammar.dumb.SimpleLLParser
+import org.jetbrains.grammar.dumb.LazyLLParser
 import org.jetbrains.haskell.parser.getCachedTokens
 import org.jetbrains.haskell.parser.newParserState
+import java.io.BufferedReader
+import org.jetbrains.haskell.parser.CachedTokens
+import org.jetbrains.grammar.dumb.Rule
 
 /**
  * Created by atsky on 15/11/14.
@@ -57,24 +60,25 @@ fun parseFile(inFile : File, outFile : File) {
 
     HaskellParser(null).findFirst(grammar)
 
-    val parser = SimpleLLParser(grammar, cachedTokens)
     //parser.writeLog = true;
     val start = System.currentTimeMillis()
-    //for (i in 1..1000) {
-    //    parser.parse()
-    //}
+    //evaluateManyTimes(cachedTokens, grammar)
     val time = System.currentTimeMillis() - start
     println("time = ${time}")
+    val parser = LazyLLParser(grammar, cachedTokens)
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()
 }
 
+private fun evaluateManyTimes(cachedTokens: CachedTokens, grammar: MutableMap<String, Rule>) {
+    for (i in 1..200) {
+        val parser = LazyLLParser(grammar, cachedTokens)
+        parser.parse()
+    }
+}
+
 fun readData(file: File): String {
-    val size = file.length()
-    val reader = FileReader(file)
-    val charArray = CharArray(size.toInt())
-    reader.read(charArray)
-    reader.close()
-    return String(charArray)
+    val reader = BufferedReader(FileReader(file))
+    return reader.readText()
 }

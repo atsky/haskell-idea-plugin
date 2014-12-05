@@ -11,7 +11,7 @@ class Rule(public val name : String,
 
     public var done : Boolean = false;
     public var canBeEmpty : Boolean = false;
-    public var first : List<IElementType>? = null;
+    public var first : Set<IElementType>? = null;
 
     override fun toString() : String {
         val n = name + ":\n"
@@ -43,24 +43,31 @@ class Rule(public val name : String,
                 }
             }
         }
-        /*
+
         if (canBeEmpty) {
-            for (variant in left) {
-                val term = variant.terms[1]
-                if (term is Terminal) {
-                    //result.add(term.tokenType)
-                } else {
-                    val ruleName = (term as NonTerminal).rule
-                    val rule = grammar[ruleName]!!
-                    if (rule.canBeEmpty) {
-                        throw RuntimeException()
+            for (lVariant in left) {
+                val next = (lVariant as NonTerminalVariant).next
+                for (variant in next) {
+                    val term = (variant as NonTerminalVariant).term
+                    if (term is Terminal){
+                        result.add(term.tokenType)
                     } else {
-                        result.addAll(rule.first!!)
+                        variant.makeAnalysis(grammar)
+                        result.addAll(variant.first!!)
                     }
                 }
             }
         }
-*/
-        first = ArrayList(result)
+
+        first = HashSet(result)
+    }
+
+    fun makeDeepAnalysis(grammar: Map<String, Rule>) {
+        for (variant in variants) {
+            variant.makeDeepAnalysis(grammar)
+        }
+        for (variant in left) {
+            variant.makeDeepAnalysis(grammar)
+        }
     }
 }

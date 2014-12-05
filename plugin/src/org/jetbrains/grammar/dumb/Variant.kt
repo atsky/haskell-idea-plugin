@@ -4,6 +4,7 @@ import com.intellij.psi.tree.IElementType
 import java.util.HashSet
 import java.util.ArrayList
 import org.jetbrains.haskell.parser.HaskellTokenType
+import org.jetbrains.grammar.HaskellLexerTokens
 
 /**
  * Created by atsky on 14/11/14.
@@ -23,11 +24,25 @@ public abstract class Variant {
     }
 
     abstract fun isCanBeEmpty(): Boolean
+
+    abstract fun makeDeepAnalysis(grammar: Map<String, Rule>);
+
+    abstract fun accepts(token: IElementType?): Boolean;
+
 }
 
 public class TerminalVariant(val elementType: IElementType?) : Variant() {
+
+
     override fun isCanBeEmpty(): Boolean {
         return true;
+    }
+
+    override fun makeDeepAnalysis(grammar: Map<String, Rule>) {
+    }
+
+    override fun accepts(token: IElementType?): Boolean {
+        return true
     }
 }
 
@@ -49,6 +64,19 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
         }
 
         return "{" + builder.toString() + " }"
+    }
+
+    override fun makeDeepAnalysis(grammar: Map<String, Rule>) {
+        if (first == null) {
+            makeAnalysis(grammar)
+        }
+        for (n in next) {
+            n.makeDeepAnalysis(grammar)
+        }
+    }
+
+    override fun accepts(token: IElementType?): Boolean {
+        return canBeEmpty || first!!.contains(token) || first!!.contains(HaskellLexerTokens.VCCURLY)
     }
 
     override fun makeAnalysis(grammar: Map<String, Rule>) {

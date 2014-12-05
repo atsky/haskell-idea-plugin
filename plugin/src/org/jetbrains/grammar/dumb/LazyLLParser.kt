@@ -32,8 +32,7 @@ abstract class ParserResultCallBack() {
 }
 
 
-
-class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
+class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     var lastSeen = 0;
     var lastCurlyPosition = -1
     var lastCurlyState: RecoveryCallback? = null;
@@ -51,10 +50,13 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         })
         while (true) {
             if (state is FinalState) {
-                if (lastSeen == lastCurlyPosition) {
+                val result = (state as FinalState).result
+                if (result == null && lastSeen == lastCurlyPosition) {
                     state = lastCurlyState!!.recover()
+                    lastCurlyPosition = -1
+                    lastCurlyState = null
                 } else {
-                    return (state as FinalState).result
+                    return result
                 }
             }
             state = state.next()
@@ -89,17 +91,25 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         if (variants.size == 1) {
             return parseVariant(state, variants.first!!, children, next)
         } else {
-            return ListCombineState(null, variants, 0, state, children, next)
+            var i = 0;
+            val token = state.getToken()
+            while (!variants[i].accepts(token)) {
+                i++
+                if (i == variants.size) {
+                    return next.fail()
+                }
+            }
+
+            return ListCombineState(null, variants, i, state, children, next)
         }
     }
 
-    inner class ListCombineState(
-            val bestResult: ParserResult?,
-            val variants: List<Variant>,
-            val index: Int,
-            val state: LexerState,
-            val children: List<ResultTree>,
-            val next: ParserResultCallBack) : ParserState() {
+    inner class ListCombineState(val bestResult: ParserResult?,
+                                 val variants: List<Variant>,
+                                 val index: Int,
+                                 val state: LexerState,
+                                 val children: List<ResultTree>,
+                                 val next: ParserResultCallBack) : ParserState() {
         override fun next(): ParserState {
             return if (index == variants.size) {
                 throw RuntimeException()
@@ -125,7 +135,15 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         } else {
                             bestResult
                         }
-                        return ListCombineState(nextResult, variants, index + 1, state, children, next)
+                        var nextIndex = index + 1;
+                        val token = state.getToken()
+                        while (!variants[nextIndex].accepts(token)) {
+                            nextIndex++
+                            if (nextIndex == variants.size) {
+                                return if (nextResult != null) next.done(nextResult) else next.fail()
+                            }
+                        }
+                        return ListCombineState(nextResult, variants, nextIndex, state, children, next)
                     }
 
                     override fun fail(): ParserState = ListCombineState(bestResult, variants, index + 1, state, children, next)
@@ -165,10 +183,18 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 }
                 is NonTerminal -> {
                     val ruleToParse = grammar[term.rule]!!
-                    //if (!ruleToParse.canBeEmpty && !ruleToParse.first!!.contains(state.getToken())) {
-                    //    return next.fail()
-                    //}
-                    return parseRule(ruleToParse, state, NextVariantStateProducer(children, variant, next))
+                    if (!ruleToParse.first!!.contains(state.getToken()) &&
+                            !ruleToParse.first!!.contains(HaskellLexerTokens.VCCURLY)) {
+                        if (ruleToParse.canBeEmpty) {
+                            val nextChildren = ArrayList(children)
+                            nextChildren.add(NonTerminalTree(ruleToParse.name, null, listOf()))
+                            return parseVariants(state, variant.next, nextChildren, next)
+                        } else {
+                            return next.fail()
+                        }
+                    } else {
+                        return parseRule(ruleToParse, state, NextVariantStateProducer(children, variant, next))
+                    }
                 }
                 else -> {
                     throw RuntimeException()
@@ -202,10 +228,10 @@ class SimpleLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     }
 
     inner class RecoveryCallback(val state: LexerState,
-                           val variant: NonTerminalVariant,
-                           val children: List<ResultTree>,
-                           val next: ParserResultCallBack) {
-        fun recover() : ParserState {
+                                 val variant: NonTerminalVariant,
+                                 val children: List<ResultTree>,
+                                 val next: ParserResultCallBack) {
+        fun recover(): ParserState {
             val lexerState = state.dropIndent().next()
             val nextChildren = ArrayList(children)
             nextChildren.add(TerminalTree(HaskellLexerTokens.VCCURLY))

@@ -13,7 +13,7 @@ import org.jetbrains.grammar.dumb.TerminalTree
 
 import org.jetbrains.grammar.dumb.Variant
 import org.jetbrains.grammar.dumb.Term
-import org.jetbrains.grammar.dumb.SimpleLLParser
+import org.jetbrains.grammar.dumb.LazyLLParser
 import org.jetbrains.haskell.parser.getCachedTokens
 import org.jetbrains.haskell.parser.token.NEW_LINE
 import org.jetbrains.grammar.dumb.Terminal
@@ -39,7 +39,9 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
         val rootMarker = mark()
 
-        val tree = SimpleLLParser(getGrammar(), cachedTokens).parse()
+        val grammar = getGrammar()
+        findFirst(grammar)
+        val tree = LazyLLParser(grammar, cachedTokens).parse()
 
         if (tree != null) {
             parserWithTree(tree)
@@ -80,6 +82,9 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     fun findFirst(grammar : Map<String, Rule>) {
         for (rule in grammar.values()) {
             rule.makeAnalysis(grammar);
+        }
+        for (rule in grammar.values()) {
+            rule.makeDeepAnalysis(grammar);
         }
     }
 

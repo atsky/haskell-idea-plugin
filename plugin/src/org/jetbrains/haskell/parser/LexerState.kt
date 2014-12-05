@@ -15,6 +15,7 @@ import com.intellij.lang.PsiBuilder
 import com.intellij.lang.WhitespaceSkippedCallback
 import org.jetbrains.grammar.dumb.NonTerminalTree
 import org.jetbrains.grammar.dumb.TerminalTree
+import org.jetbrains.haskell.parser.token.PRAGMA
 
 val INDENT_TOKENS = HashSet<IElementType>(Arrays.asList(
         HaskellLexerTokens.DO,
@@ -39,7 +40,8 @@ public fun getCachedTokens(lexer: HaskellLexer, stream: PrintStream): CachedToke
         val tokenType = lexer.getTokenType()
         if (tokenType != TokenType.WHITE_SPACE &&
                 tokenType != END_OF_LINE_COMMENT &&
-                tokenType != BLOCK_COMMENT) {
+                tokenType != BLOCK_COMMENT &&
+                tokenType != PRAGMA) {
             if (tokenType == NEW_LINE) {
                 lineStartOffset = lexer.getTokenEnd()
                 isLineStart = true
