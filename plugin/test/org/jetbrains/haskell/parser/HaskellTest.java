@@ -22,6 +22,8 @@ public class HaskellTest extends ParsingTestCase {
 
     public void testDoNotation() throws Exception { doTest(true); }
 
+    public void testGADT() throws Exception { doTest(true); }
+
     public void testGCD() throws Exception { doTest(true); }
 
     public void testRecovery() throws Exception { doTest(true); }
