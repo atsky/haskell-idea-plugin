@@ -4,6 +4,8 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiReference
 import org.jetbrains.haskell.psi.reference.QNameReference
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.PsiElement
 
 /**
  * Created by atsky on 11/21/14.

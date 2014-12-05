@@ -6,11 +6,20 @@ import com.intellij.psi.PsiReference
 import org.jetbrains.haskell.psi.reference.ValueReference
 import org.jetbrains.haskell.psi.reference.TypeReference
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
 
 /**
  * Created by atsky on 4/11/14.
  */
-public class TypeVariable(node: ASTNode) : HaskellType(node) {
+public class TypeVariable(node: ASTNode) : HaskellType(node), PsiNamedElement {
+
+    override fun getName(): String? {
+        return getText()
+    }
+
+    override fun setName(p0: String): PsiElement? {
+        throw UnsupportedOperationException()
+    }
 
     fun getNameText() : String? {
         return getText()
