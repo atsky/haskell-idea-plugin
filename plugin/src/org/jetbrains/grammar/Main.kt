@@ -30,7 +30,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith("TwoClosingBraces.hs")
+            return name.endsWith(".hs")
         }
 
     }
@@ -50,21 +50,13 @@ fun parseFile(inFile : File, outFile : File) {
     val stream = PrintStream(outFile)
     val cachedTokens = getCachedTokens(lexer, stream)
 
-    var state = newParserState(cachedTokens)
-    while (state.getToken() != null) {
-        println(state.getToken());
-        state = state.next()
-    }
-
     val grammar = HaskellParser(null).getGrammar()
 
     HaskellParser(null).findFirst(grammar)
 
-    //parser.writeLog = true;
-    val start = System.currentTimeMillis()
     //evaluateManyTimes(cachedTokens, grammar)
-    val time = System.currentTimeMillis() - start
-    println("time = ${time}")
+
+    //parser.writeLog = true;
     val parser = LazyLLParser(grammar, cachedTokens)
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
@@ -72,10 +64,13 @@ fun parseFile(inFile : File, outFile : File) {
 }
 
 private fun evaluateManyTimes(cachedTokens: CachedTokens, grammar: MutableMap<String, Rule>) {
+    val start = System.currentTimeMillis()
     for (i in 1..200) {
         val parser = LazyLLParser(grammar, cachedTokens)
         parser.parse()
     }
+    val time = System.currentTimeMillis() - start
+    println("time = ${time}")
 }
 
 fun readData(file: File): String {

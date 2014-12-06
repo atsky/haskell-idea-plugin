@@ -48,6 +48,7 @@ public class TerminalVariant(val elementType: IElementType?) : Variant() {
 
 public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Variant() {
     public var canBeEmpty: Boolean = false;
+    public var hasCurly: Boolean = false;
     public var first: Set<IElementType>? = null;
 
     override fun isCanBeEmpty(): Boolean {
@@ -70,13 +71,14 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
         if (first == null) {
             makeAnalysis(grammar)
         }
+        hasCurly = first!!.contains(HaskellLexerTokens.VCCURLY)
         for (n in next) {
             n.makeDeepAnalysis(grammar)
         }
     }
 
     override fun accepts(token: IElementType?): Boolean {
-        return canBeEmpty || first!!.contains(token) || first!!.contains(HaskellLexerTokens.VCCURLY)
+        return canBeEmpty || hasCurly || first!!.contains(token)
     }
 
     override fun makeAnalysis(grammar: Map<String, Rule>) {
