@@ -133,7 +133,7 @@ public class LexerState(val tokens: CachedTokens,
                     if (indentStack.indent == indent) {
                         return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
                     } else if (indentStack.indent < indent) {
-                        return LexerState(tokens, position, lexemNumber + 1, null, indentStack)
+                        return checkCurly(position)
                     } else {
                         return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                     }
@@ -207,11 +207,10 @@ public class LexerState(val tokens: CachedTokens,
 
     private fun checkCurly(nextPosition: Int): LexerState {
         if (tokens.tokens[nextPosition] == HaskellLexerTokens.CCURLY) {
-            var stack = indentStack
-            while (stack != null && stack!!.indent > -1) {
-                stack = stack!!.parent
+            if (indentStack!!.indent > -1) {
+                return LexerState(tokens, nextPosition - 1, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
             }
-            return LexerState(tokens, nextPosition, lexemNumber + 1, null, stack?.parent)
+            return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack.parent)
         }
         return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack)
     }

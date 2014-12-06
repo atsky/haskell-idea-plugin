@@ -27,6 +27,8 @@ public class IndentTest extends ParsingTestCase {
 
     public void testIndentInParenthesis() throws Exception { doTest(true); }
 
+    public void testIndentInBraces() throws Exception { doTest(true); }
+
     public void testSimpleIndent() throws Exception { doTest(true); }
 
     public void testLetIn() throws Exception { doTest(true); }
