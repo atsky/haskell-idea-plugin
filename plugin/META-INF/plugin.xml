@@ -120,6 +120,7 @@
         <!-- Cabal -->
         <lang.syntaxHighlighterFactory key="Cabal"
                                        implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
+        <colorSettingsPage implementation="org.jetbrains.cabal.highlight.CabalColorsAndFontsPage"/>
         <lang.parserDefinition language="Cabal"
                                implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
         <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator"/>
