@@ -23,10 +23,10 @@ public class ImportScope(val import : Import) {
         return list
     }
 
-    fun getValues() : List<SignatureDeclaration> {
+    fun getSignatureDeclarations() : List<SignatureDeclaration> {
         val module = import.findModule()
         if (module != null) {
-            //return filterDeclarations(ModuleScope(module).getSignatureDeclaration())
+            return filterDeclarations(module.getSignatureDeclarationsList())
         }
         return listOf()
     }

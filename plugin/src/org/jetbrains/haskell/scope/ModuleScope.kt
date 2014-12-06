@@ -16,17 +16,10 @@ public class ModuleScope(val module : Module) {
     fun getVisibleSignatureDeclaration() : List<SignatureDeclaration> {
         val list = ArrayList(module.getSignatureDeclarationsList())
 
-        //list.addAll(module.getClassDeclarationList().flatMap { it.getValueDeclarationList() })
-        return list
-    }
-
-    fun getVisibleValues() : List<SignatureDeclaration> {
-        val list = ArrayList(getVisibleSignatureDeclaration())
-
-        list.addAll(module.getImportList().flatMap { ImportScope(it).getValues() })
+        val importList = module.getImportList()
+        list.addAll(importList.flatMap { ImportScope(it).getSignatureDeclarations() })
 
         return list
-
     }
 
 
