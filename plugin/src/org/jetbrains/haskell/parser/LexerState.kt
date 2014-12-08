@@ -174,6 +174,12 @@ public class LexerState(val tokens: CachedTokens,
                 } else {
                     return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
+            } else {
+                if (0 == indent) {
+                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
+                } else {
+                    return checkCurly(position)
+                }
             }
         }
         return checkCurly(position)

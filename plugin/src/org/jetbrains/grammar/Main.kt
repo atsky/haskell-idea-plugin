@@ -27,7 +27,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith(".hs")
+            return name.endsWith("NoModuleKeyword.hs")
         }
 
     }
@@ -55,8 +55,8 @@ fun parseFile(inFile : File, outFile : File) {
 
     //evaluateManyTimes(cachedTokens, grammar)
 
-    //parser.writeLog = true;
     val parser = LazyLLParser(grammar, cachedTokens)
+    parser.writeLog = true;
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()

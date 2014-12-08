@@ -5,4 +5,19 @@
             <option name="FOREGROUND" value="006e6e"/>
         </value>
     </option>
+    <option name="HASKELL_TYPE">
+        <value>
+            <option name="FOREGROUND" value="216D6D"/>
+        </value>
+    </option>
+    <option name="HASKELL_OPERATOR">
+        <value>
+            <option name="FOREGROUND" value="6B5902"/>
+        </value>
+    </option>
+    <option name="HASKELL_SIGNATURE">
+        <value>
+            <option name="FOREGROUND" value="116611"/>
+        </value>
+    </option>
 </list>

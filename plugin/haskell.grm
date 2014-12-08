@@ -196,7 +196,7 @@ body
 
 body2
         :  '{' top '}'
-        |  missing_module_keyword top close
+        |  missing_module_keyword top  -- close TODO
 ;
 
 top
