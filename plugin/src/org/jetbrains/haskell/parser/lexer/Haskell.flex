@@ -254,10 +254,10 @@ EOL_COMMENT = "--"[^\n]*
 {character}           { return HaskellLexerTokens.CHAR; }
 {string}              { return HaskellLexerTokens.STRING;}
 
-"#if"                 { return CPPTokens.IF;}
-"#ifdef"              { return CPPTokens.IFDEF;}
-"#endif"              { return CPPTokens.ENDIF;}
-"#else"               { return CPPTokens.ELSE;}
+"#if"[^\n]*           { return CPPTokens.IF;}
+"#ifdef"[^\n]*        { return CPPTokens.IFDEF;}
+"#endif"[^\n]*        { return CPPTokens.ENDIF;}
+"#else"[^\n]*         { return CPPTokens.ELSE;}
 
 
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }

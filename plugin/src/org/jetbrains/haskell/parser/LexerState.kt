@@ -16,6 +16,7 @@ import com.intellij.lang.WhitespaceSkippedCallback
 import org.jetbrains.grammar.dumb.NonTerminalTree
 import org.jetbrains.grammar.dumb.TerminalTree
 import org.jetbrains.haskell.parser.token.PRAGMA
+import org.jetbrains.haskell.parser.token.COMMENTS
 
 val INDENT_TOKENS = HashSet<IElementType>(Arrays.asList(
         HaskellLexerTokens.DO,
@@ -38,10 +39,7 @@ public fun getCachedTokens(lexer: HaskellLexer, stream: PrintStream): CachedToke
     stream.println("-------------------")
     while (lexer.getTokenType() != null) {
         val tokenType = lexer.getTokenType()
-        if (tokenType != TokenType.WHITE_SPACE &&
-                tokenType != END_OF_LINE_COMMENT &&
-                tokenType != BLOCK_COMMENT &&
-                tokenType != PRAGMA) {
+        if (!COMMENTS.contains(tokenType) && tokenType != TokenType.WHITE_SPACE) {
             if (tokenType == NEW_LINE) {
                 lineStartOffset = lexer.getTokenEnd()
                 isLineStart = true
@@ -92,7 +90,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
     return CachedTokens(tokens, starts, indents, lineStarts)
 }
 
-public fun newParserState(tokens: CachedTokens): LexerState {
+public fun newLexerState(tokens: CachedTokens): LexerState {
     return LexerState(tokens, 0, 0, null, null)
 }
 
@@ -103,10 +101,10 @@ public class CachedTokens(val tokens: List<IElementType>,
 }
 
 public class LexerState(val tokens: CachedTokens,
-                         val position: Int,
-                         val lexemNumber: Int,
-                         val currentToken: HaskellTokenType?,
-                         val indentStack: IntStack?) {
+                        val position: Int,
+                        val lexemNumber: Int,
+                        val currentToken: HaskellTokenType?,
+                        val indentStack: IntStack?) {
 
     fun match(token: HaskellTokenType): Boolean {
         if (currentToken != null) {

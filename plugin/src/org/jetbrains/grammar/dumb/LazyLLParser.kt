@@ -6,7 +6,7 @@ import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
 import java.util.HashMap
 import org.jetbrains.haskell.parser.CachedTokens
-import org.jetbrains.haskell.parser.newParserState
+import org.jetbrains.haskell.parser.newLexerState
 import org.jetbrains.haskell.parser.LexerState
 
 class ParserResult(val children: List<ResultTree>,
@@ -43,7 +43,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
     fun parse(): NonTerminalTree? {
         val rule = grammar["module"]!!
 
-        var state = parseRule(rule, newParserState(cached), object : TreeCallback() {
+        var state = parseRule(rule, newLexerState(cached), object : TreeCallback() {
             override fun done(tree: NonTerminalTree, lexerState: LexerState) = FinalState(tree)
 
             override fun fail(): ParserState = FinalState(null)

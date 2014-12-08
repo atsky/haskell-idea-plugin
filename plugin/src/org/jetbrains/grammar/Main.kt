@@ -9,16 +9,13 @@ import java.util.ArrayList
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.TokenType
 import org.jetbrains.haskell.parser.token.NEW_LINE
-import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 import org.jetbrains.haskell.parser.token.COMMENTS
-import org.jetbrains.haskell.parser.token.BLOCK_COMMENT
-import org.jetbrains.haskell.parser.token.END_OF_LINE_COMMENT
 import java.io.FilenameFilter
 import java.io.FileWriter
 import java.io.PrintStream
 import org.jetbrains.grammar.dumb.LazyLLParser
 import org.jetbrains.haskell.parser.getCachedTokens
-import org.jetbrains.haskell.parser.newParserState
+import org.jetbrains.haskell.parser.newLexerState
 import java.io.BufferedReader
 import org.jetbrains.haskell.parser.CachedTokens
 import org.jetbrains.grammar.dumb.Rule
@@ -50,6 +47,8 @@ fun parseFile(inFile : File, outFile : File) {
     val stream = PrintStream(outFile)
     val cachedTokens = getCachedTokens(lexer, stream)
 
+    printTokens(cachedTokens)
+
     val grammar = HaskellParser(null).getGrammar()
 
     HaskellParser(null).findFirst(grammar)
@@ -61,6 +60,14 @@ fun parseFile(inFile : File, outFile : File) {
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()
+}
+
+private fun printTokens(cachedTokens: CachedTokens) {
+    var state = newLexerState(cachedTokens)
+    while (state.getToken() != null) {
+        println(state.getToken());
+        state = state.next()
+    }
 }
 
 private fun evaluateManyTimes(cachedTokens: CachedTokens, grammar: MutableMap<String, Rule>) {

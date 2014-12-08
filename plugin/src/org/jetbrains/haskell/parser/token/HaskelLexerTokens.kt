@@ -5,6 +5,7 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.TokenType
 import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
+import org.jetbrains.haskell.parser.cpp.CPPTokens
 
 /**
  * Created by atsky on 3/12/14.
@@ -39,7 +40,7 @@ public val KEYWORDS: List<HaskellTokenType> = listOf(
         HaskellLexerTokens.UNSAFE)
 
 
-public val OPERATORS : List<HaskellTokenType> = listOf<HaskellTokenType>(
+public val OPERATORS: List<HaskellTokenType> = listOf<HaskellTokenType>(
         HaskellLexerTokens.AT,
         HaskellLexerTokens.TILDE,
         HaskellLexerTokens.LAM,
@@ -65,12 +66,19 @@ public val OPERATORS : List<HaskellTokenType> = listOf<HaskellTokenType>(
 
 
 public val BLOCK_COMMENT: HaskellTokenType = HaskellTokenType("COMMENT")
-public val END_OF_LINE_COMMENT : HaskellTokenType = HaskellTokenType("--")
-public val PRAGMA : HaskellTokenType = HaskellTokenType("PRAGMA")
+public val END_OF_LINE_COMMENT: HaskellTokenType = HaskellTokenType("--")
+public val PRAGMA: HaskellTokenType = HaskellTokenType("PRAGMA")
 
-public val TH_VAR_QUOTE : HaskellTokenType = HaskellTokenType("'")
-public val TH_TY_QUOTE : HaskellTokenType = HaskellTokenType("''")
-public val NEW_LINE : HaskellTokenType = HaskellTokenType("NL")
+public val TH_VAR_QUOTE: HaskellTokenType = HaskellTokenType("'")
+public val TH_TY_QUOTE: HaskellTokenType = HaskellTokenType("''")
+public val NEW_LINE: HaskellTokenType = HaskellTokenType("NL")
 
-val COMMENTS: TokenSet = TokenSet.create(END_OF_LINE_COMMENT, BLOCK_COMMENT, PRAGMA)
+val COMMENTS: TokenSet = TokenSet.create(
+        END_OF_LINE_COMMENT,
+        BLOCK_COMMENT,
+        PRAGMA,
+        CPPTokens.IF,
+        CPPTokens.ENDIF,
+        CPPTokens.ELSE,
+        CPPTokens.IFDEF)
 val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE, NEW_LINE)
