@@ -20,7 +20,6 @@ import org.jetbrains.haskell.parser.token.*
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.haskell.psi.Module
 import java.util.ArrayList
-import org.jetbrains.haskell.parser.lexer.HaskellIndentLexer
 import org.jetbrains.grammar.HaskellLexerTokens
 
 

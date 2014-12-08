@@ -5,6 +5,7 @@ import com.intellij.lexer.*;
 import com.intellij.psi.*;
 import org.jetbrains.haskell.parser.token.*;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.haskell.parser.cpp.CPPTokens;
 import org.jetbrains.grammar.HaskellLexerTokens;
 
 %%
@@ -252,6 +253,12 @@ EOL_COMMENT = "--"[^\n]*
 
 {character}           { return HaskellLexerTokens.CHAR; }
 {string}              { return HaskellLexerTokens.STRING;}
+
+"#if"                 { return CPPTokens.IF;}
+"#ifdef"              { return CPPTokens.IFDEF;}
+"#endif"              { return CPPTokens.ENDIF;}
+"#else"               { return CPPTokens.ELSE;}
+
 
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
