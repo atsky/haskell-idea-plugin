@@ -121,33 +121,12 @@ public class LexerState(val tokens: CachedTokens,
     fun next(): LexerState {
         if (currentToken != null) {
             if (currentToken == HaskellLexerTokens.VCCURLY && indentStack != null) {
-                if (position == tokens.tokens.size) {
-                    return LexerState(
-                            tokens,
-                            position,
-                            lexemNumber + 1,
-                            HaskellLexerTokens.VCCURLY,
-                            indentStack.parent)
-                } else {
-                    val indent = tokens.indents[position]
-                    if (indentStack.indent == indent) {
-                        return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
-                    } else if (indentStack.indent < indent) {
-                        return checkCurly(position)
-                    } else {
-                        return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
-                    }
-                }
+                return checkIndent(position)
             }
             return LexerState(tokens, position, lexemNumber + 1, null, indentStack)
         }
         if (position == tokens.tokens.size) {
-            return LexerState(
-                    tokens,
-                    position,
-                    lexemNumber + 1,
-                    null,
-                    indentStack)
+            return last()
         }
         if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
             return LexerState(tokens,
@@ -156,16 +135,10 @@ public class LexerState(val tokens: CachedTokens,
                     null,
                     IntStack(-1, indentStack))
         }
-        if (INDENT_TOKENS.contains(tokens.tokens[position])) {
-            val nextPosition = position + 1
-            if (tokens.tokens[nextPosition] == HaskellLexerTokens.OCURLY) {
-                return LexerState(
-                        tokens,
-                        nextPosition,
-                        lexemNumber + 1,
-                        null,
-                        indentStack)
-            }
+        val nextPosition = position + 1
+        if (INDENT_TOKENS.contains(tokens.tokens[position]) &&
+                tokens.tokens[nextPosition] != HaskellLexerTokens.OCURLY) {
+
             val indent = tokens.indents[nextPosition]
             return LexerState(tokens,
                     nextPosition,
@@ -173,36 +146,39 @@ public class LexerState(val tokens: CachedTokens,
                     HaskellLexerTokens.VOCURLY,
                     IntStack(indent, indentStack))
         }
-        val nextPosition = position + 1;
-        if (nextPosition == tokens.tokens.size) {
-            if (indentStack != null) {
-                return LexerState(tokens,
-                        nextPosition,
-                        lexemNumber + 1,
-                        HaskellLexerTokens.VCCURLY,
-                        indentStack.parent)
-            } else {
-                return LexerState(tokens,
-                        nextPosition,
-                        lexemNumber + 1,
-                        null,
-                        null)
-            }
+
+        return checkIndent(nextPosition)
+    }
+
+    private fun last(): LexerState {
+        if (indentStack != null) {
+            return LexerState(tokens,
+                    tokens.tokens.size,
+                    lexemNumber + 1,
+                    HaskellLexerTokens.VCCURLY,
+                    indentStack.parent)
+        } else {
+            return LexerState(tokens, tokens.tokens.size, lexemNumber, null, null)
         }
-        if (tokens.lineStart[nextPosition]) {
-            val indent = tokens.indents[nextPosition]
+    }
+
+    private fun checkIndent(position: Int): LexerState {
+        if (position == tokens.tokens.size) {
+            return last()
+        }
+        if (tokens.lineStart[position]) {
+            val indent = tokens.indents[position]
             if (indentStack != null) {
                 if (indentStack.indent == indent) {
-                    return LexerState(tokens, nextPosition, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
+                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
                 } else if (indentStack.indent < indent) {
-                    return checkCurly(nextPosition)
+                    return checkCurly(position)
                 } else {
-                    return LexerState(tokens, nextPosition, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
             }
         }
-        return checkCurly(nextPosition)
-
+        return checkCurly(position)
     }
 
     private fun checkCurly(nextPosition: Int): LexerState {
@@ -213,27 +189,6 @@ public class LexerState(val tokens: CachedTokens,
             return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack.parent)
         }
         return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack)
-    }
-
-    fun skip(tree: NonTerminalTree): LexerState {
-        var current: LexerState = this
-
-        for (child in tree.children) {
-            when (child) {
-                is TerminalTree -> {
-                    if (current.getToken() == child.haskellToken) {
-                        current = current.next()
-                    } else {
-                        current = current.dropIndent().next()
-                    }
-                }
-                is NonTerminalTree -> {
-                    current = current.skip(child)
-                }
-            }
-        }
-
-        return current
     }
 
     fun dropIndent() = LexerState(
