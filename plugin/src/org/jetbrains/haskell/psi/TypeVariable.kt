@@ -7,6 +7,7 @@ import org.jetbrains.haskell.psi.reference.ValueReference
 import org.jetbrains.haskell.psi.reference.TypeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import org.jetbrains.haskell.psi.util.HaskellElementFactory
 
 /**
  * Created by atsky on 4/11/14.
@@ -21,18 +22,23 @@ public class TypeVariable(node: ASTNode) : HaskellType(node), PsiNamedElement {
         return this;
     }
 
-
-    override fun setName(p0: String): PsiElement? {
-        throw UnsupportedOperationException()
+    override fun setName(name: String): PsiElement? {
+        val qcon = HaskellElementFactory.createExpressionFromText(getProject(), name)
+        getFirstChild().replace(qcon)
+        return qcon
     }
 
     fun getNameText() : String? {
         return getText()
     }
 
-    override fun getReference(): PsiReference? {
-        return TypeReference(this)
-    }
+    override fun getReference(): PsiReference? =
+        if (!isConstructor()) {
+            TypeReference(this)
+        } else {
+            null
+        }
+
 
     fun isConstructor() : Boolean {
         var current : PsiElement? = this

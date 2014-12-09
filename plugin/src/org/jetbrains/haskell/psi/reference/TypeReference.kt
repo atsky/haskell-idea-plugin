@@ -7,6 +7,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.haskell.psi.Module
 import org.jetbrains.haskell.psi.TypeVariable
 import org.jetbrains.haskell.scope.ModuleScope
+import com.intellij.psi.ElementManipulator
+import org.jetbrains.haskell.psi.util.HaskellElementFactory
 
 /**
  * Created by atsky on 4/25/14.
@@ -37,4 +39,13 @@ class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
     override fun getVariants(): Array<Any> = array()
 
 
+    override fun handleElementRename(newElementName: String?): PsiElement? {
+        if (newElementName != null) {
+            val qcon = HaskellElementFactory.createExpressionFromText(getElement().getProject(), newElementName!!)
+            getElement().getFirstChild().replace(qcon)
+            return qcon
+        } else {
+            return null
+        }
+    }
 }
