@@ -383,7 +383,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, end().add("top").add("missing_module_keyword"));
+      addVar(variants, end().add("close").add("top").add("missing_module_keyword"));
       addVar(variants, end().add(CCURLY).add("top").add(OCURLY));
       grammar.put("body2", new Rule("body2", variants, left));
     }

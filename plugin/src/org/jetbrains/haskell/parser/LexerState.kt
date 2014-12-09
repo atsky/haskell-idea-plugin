@@ -200,7 +200,7 @@ public class LexerState(val tokens: CachedTokens,
             position,
             lexemNumber + 1,
             HaskellLexerTokens.VCCURLY,
-            indentStack!!.parent)
+            indentStack?.parent)
 
     fun getToken(): IElementType? {
         if (currentToken != null) {
