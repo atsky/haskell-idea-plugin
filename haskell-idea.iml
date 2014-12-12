@@ -35,5 +35,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="httpclient-4.3.6" level="project" />
   </component>
 </module>
