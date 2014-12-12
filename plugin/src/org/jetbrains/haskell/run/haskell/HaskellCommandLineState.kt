@@ -122,8 +122,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
         val command: ArrayList<String> = arrayListOf(ghciPath, filePath, "-i$srcDirPath")
         val depends = getDependencies()
-        command.add("-package")
-        command.add("network")
+
         for (dep in depends) {
             command.add("-package")
             command.add(dep.getBaseName())
