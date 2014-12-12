@@ -31,7 +31,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Arrays
 import javax.xml.bind.JAXBElement.GlobalScope
-import org.jetbrains.haskell.external.ghcfs.GhciFile
+import org.jetbrains.haskell.scope.GlobalScope
 
 /**
  * Created by atsky on 3/29/14.
@@ -70,11 +70,12 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
             return psiFile as HaskellFile
         }
 
-        val file = GhciFile(nameToFind)
+        val haskellFile = GlobalScope.getModule(getProject(), nameToFind)
+        if (haskellFile != null) {
+            return haskellFile
+        }
 
-        return file.getPsiFile(getProject()) as HaskellFile
-
-        //return null
+        return null
     }
 
 

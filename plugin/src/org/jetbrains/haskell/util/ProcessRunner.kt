@@ -39,7 +39,7 @@ public class ProcessRunner(workingDirectory: String? = null) {
         return data
     }
 
-    public fun getProcess(cmd: List<String>, path : String? = null): Process {
+    public fun getProcess(cmd: List<String>, path: String? = null): Process {
         val processBuilder: ProcessBuilder = ProcessBuilder(cmd)
 
         if (path != null) {
@@ -61,35 +61,34 @@ public class ProcessRunner(workingDirectory: String? = null) {
         return processBuilder.start()
     }
 
-    class object {
 
-        public open fun readData(input: InputStream, callback: Callback): Unit {
-            val reader = BufferedReader(InputStreamReader(input))
-            while (true) {
-                var line = reader.readLine()
-                if (line == null) {
-                    return
-                }
-
-                callback.call(line)
+    public fun readData(input: InputStream, callback: Callback): Unit {
+        val reader = BufferedReader(InputStreamReader(input))
+        while (true) {
+            var line = reader.readLine()
+            if (line == null) {
+                return
             }
-        }
-        private open fun readData(input: InputStream): String {
-            val builder = StringBuilder()
-            readData(input, object : Callback {
-                public override fun call(command: String?): Boolean {
-                    builder.append(command).append("\n")
-                    return true
-                }
 
-
-            })
-            return builder.toString()
-        }
-        public trait Callback {
-            public open fun call(command: String?): Boolean
-
-
+            callback.call(line)
         }
     }
+
+    private fun readData(input: InputStream): String {
+        val builder = StringBuilder()
+        readData(input, object : Callback {
+            public override fun call(command: String?): Boolean {
+                builder.append(command).append("\n")
+                return true
+            }
+        })
+        return builder.toString()
+    }
+
+    public trait Callback {
+        public open fun call(command: String?): Boolean
+
+
+    }
+
 }

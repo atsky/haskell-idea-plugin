@@ -13,17 +13,15 @@ import com.intellij.psi.PsiFile
 /**
  * Created by atsky on 11/12/14.
  */
-public class GhciFile(val moduleName: String) : VirtualFile() {
-
-    var content : String? = null
+public class RamFile(val fileName: String, val content : String) : VirtualFile() {
 
     override fun getName(): String {
-        return moduleName + ".hs"
+        return fileName
     }
 
-    override fun getFileSystem(): VirtualFileSystem = GhciVirtualFileSystem.INSTANCE
+    override fun getFileSystem(): VirtualFileSystem = RamVirtualFileSystem.INSTANCE
 
-    override fun getPath(): String = moduleName + ".hs"
+    override fun getPath(): String = fileName + ".hs"
 
     override fun isWritable() = false
 
@@ -44,8 +42,7 @@ public class GhciFile(val moduleName: String) : VirtualFile() {
     }
 
     override fun contentsToByteArray(): ByteArray {
-        doInit()
-        return content!!.toByteArray()
+        return content.toByteArray()
     }
 
     override fun getTimeStamp(): Long {
@@ -57,8 +54,7 @@ public class GhciFile(val moduleName: String) : VirtualFile() {
     }
 
     override fun getLength(): Long {
-        doInit()
-        return content!!.length().toLong()
+        return content.length().toLong()
     }
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {
@@ -66,14 +62,9 @@ public class GhciFile(val moduleName: String) : VirtualFile() {
     }
 
     override fun getInputStream(): InputStream? {
-        doInit()
-        return ByteArrayInputStream(content!!.toByteArray())
+        return ByteArrayInputStream(content.toByteArray())
     }
 
-    fun doInit() {
-        content = "module ${getName()} where\n" +
-                  " -- Content must be here"
-    }
 
     fun getPsiFile(project : Project) : PsiFile? =
         PsiManager.getInstance(project).findFile(this);

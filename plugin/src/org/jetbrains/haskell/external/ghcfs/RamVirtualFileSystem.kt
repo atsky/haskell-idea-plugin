@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 /**
  * Created by atsky on 09/05/14.
  */
-public class GhciVirtualFileSystem() : NewVirtualFileSystem() {
+public class RamVirtualFileSystem() : NewVirtualFileSystem() {
 
     fun getTarGzRootForLocalFile(entryVFile : VirtualFile) : VirtualFile {
 
@@ -113,6 +113,6 @@ public class GhciVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     class object {
-        public val INSTANCE : GhciVirtualFileSystem = GhciVirtualFileSystem()
+        public val INSTANCE : RamVirtualFileSystem = RamVirtualFileSystem()
     }
 }
