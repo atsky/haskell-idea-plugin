@@ -27,7 +27,7 @@ fun main(args : Array<String>) {
     val path = File("./data/haskellParserTests")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
-            return name.endsWith("NoModuleKeyword.hs")
+            return name.endsWith("Test.hs")
         }
 
     }
