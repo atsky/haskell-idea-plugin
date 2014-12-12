@@ -27,35 +27,45 @@ val INDENT_TOKENS = HashSet<IElementType>(Arrays.asList(
 class IntStack(val indent: Int,
                val parent: IntStack?)
 
-public fun getCachedTokens(lexer: HaskellLexer, stream: PrintStream): CachedTokens {
+public fun getCachedTokens(lexer: HaskellLexer, stream: PrintStream?): CachedTokens {
     val tokens = ArrayList<IElementType>()
     val starts = ArrayList<Int>()
     val indents = ArrayList<Int>()
     val lineStarts = ArrayList<Boolean>()
 
-    var lineStartOffset = 0
+    var currentIndent = 0
     var isLineStart = true
 
-    stream.println("-------------------")
+    stream?.println("-------------------")
     while (lexer.getTokenType() != null) {
         val tokenType = lexer.getTokenType()
         if (!COMMENTS.contains(tokenType) && tokenType != TokenType.WHITE_SPACE) {
             if (tokenType == NEW_LINE) {
-                lineStartOffset = lexer.getTokenEnd()
+                currentIndent = 0
                 isLineStart = true
-                stream.println()
+                stream?.println()
             } else {
                 tokens.add(tokenType)
                 starts.add(lexer.getTokenStart())
-                indents.add(lexer.getTokenStart() - lineStartOffset)
+                indents.add(currentIndent)
                 lineStarts.add(isLineStart)
                 isLineStart = false
-                stream.print("${tokenType} ")
+                stream?.print("${tokenType} ")
+            }
+        }
+
+        if (tokenType != NEW_LINE) {
+            for (ch in lexer.getTokenText()) {
+                if (ch == '\t') {
+                    currentIndent += 8;
+                } else {
+                    currentIndent += 1;
+                }
             }
         }
         lexer.advance();
     }
-    stream.println("-------------------")
+    stream?.println("-------------------")
     return CachedTokens(tokens, starts, indents, lineStarts)
 }
 
@@ -65,14 +75,22 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
     val indents = ArrayList<Int>()
     val lineStarts = ArrayList<Boolean>()
 
-    var lineStartOffset = 0
+    var currentIndent = 0
     var isLineStart = true
 
     builder.setWhitespaceSkippedCallback(object : WhitespaceSkippedCallback {
         override fun onSkip(type: IElementType?, start: Int, end: Int) {
             if (type == NEW_LINE) {
-                lineStartOffset = end
+                currentIndent = 0
                 isLineStart = true
+            } else {
+                for (ch in builder.getOriginalText().subSequence(start, end)!!) {
+                    if (ch == '\t') {
+                        currentIndent += 8;
+                    } else {
+                        currentIndent += 1;
+                    }
+                }
             }
         }
 
@@ -81,9 +99,12 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
     while (builder.getTokenType() != null) {
         tokens.add(builder.getTokenType())
         starts.add(builder.getCurrentOffset())
-        indents.add(builder.getCurrentOffset() - lineStartOffset)
+        indents.add(currentIndent)
         lineStarts.add(isLineStart)
         isLineStart = false
+
+        currentIndent += builder.getTokenText().size
+
         builder.advanceLexer()
     }
 
@@ -175,11 +196,11 @@ public class LexerState(val tokens: CachedTokens,
                     return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
             } else {
-                if (0 == indent) {
-                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
-                } else {
-                    return checkCurly(position)
-                }
+                //if (0 == indent) {
+                //    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
+                //} else {
+                //    return checkCurly(position)
+                //}
             }
         }
         return checkCurly(position)

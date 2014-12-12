@@ -33,6 +33,8 @@ public class IndentTest extends ParsingTestCase {
 
     public void testLetIn() throws Exception { doTest(true); }
 
+    public void testTabs() throws Exception { doTest(true); }
+
     public void testCaseInList() throws Exception { doTest(true); }
 
     public void testLetInSameIndent() throws Exception { doTest(true); }
