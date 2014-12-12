@@ -61,7 +61,7 @@ public fun getRelativePath(base: String, path: String): String {
     }
 }
 
-fun fileToIterable(file: File): Iterable<String> {
+fun readLines(file: File): Iterable<String> {
     return object : Iterable<String> {
         override fun iterator(): Iterator<String> {
             val br = BufferedReader(FileReader(file));

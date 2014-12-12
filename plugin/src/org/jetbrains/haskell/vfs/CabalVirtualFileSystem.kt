@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 /**
  * Created by atsky on 09/05/14.
  */
-public class TarGzVirtualFileSystem() : NewVirtualFileSystem() {
+public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
 
     fun getTarGzRootForLocalFile(entryVFile : VirtualFile) : VirtualFile {
 
@@ -118,6 +118,6 @@ public class TarGzVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     class object {
-        public val INSTANCE : TarGzVirtualFileSystem = TarGzVirtualFileSystem()
+        public val INSTANCE : CabalVirtualFileSystem = CabalVirtualFileSystem()
     }
 }

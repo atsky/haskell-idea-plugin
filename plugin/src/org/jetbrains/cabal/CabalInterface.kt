@@ -42,7 +42,7 @@ public class CabalPackageShort(
         val name: String,
         val availableVersions: List<String>,
         val isInstalled: Boolean
-){}
+) {}
 
 val cabalLock = Object()
 
@@ -73,18 +73,18 @@ public class CabalInterface(val project: Project) {
         }
     }
 
-    fun getProbramPath() : String {
+    fun getProgramPath(): String {
         return HaskellSettings.getInstance().getState().cabalPath!!
     }
 
-    fun getDataPath() : String {
+    fun getDataPath(): String {
         return HaskellSettings.getInstance().getState().cabalDataPath!!
     }
 
 
     private fun runCommand(canonicalPath: String, vararg commands: String): Process {
         val command = LinkedList<String>();
-        command.add(getProbramPath())
+        command.add(getProgramPath())
         for (c in commands) {
             command.add(c)
         }
@@ -111,11 +111,11 @@ public class CabalInterface(val project: Project) {
         return process
     }
 
-    public fun checkVersion() : Boolean {
+    public fun checkVersion(): Boolean {
         try {
-            ProcessRunner(null).executeOrFail(getProbramPath(), "-V")
+            ProcessRunner(null).executeOrFail(getProgramPath(), "-V")
             return true;
-        } catch (e : IOException) {
+        } catch (e: IOException) {
             return false;
         }
     }
@@ -160,23 +160,13 @@ public class CabalInterface(val project: Project) {
 
     public fun getPackagesList(): List<CabalPackageShort> {
         try {
-            val path = if (SystemInfo.isMac) {
-                joinPath(getDataPath(),
-                        "repo-cache",
-                        "hackage.haskell.org",
-                        "00-index.cache")
-            } else {
-                joinPath(getDataPath(),
-                        "packages",
-                        "hackage.haskell.org",
-                        "00-index.cache")
-            }
+            val path = joinPath(getRepo(), "00-index.cache")
 
             val result = ArrayList<CabalPackageShort>()
 
             val map = TreeMap<String, MutableList<String>>()
 
-            for (str in fileToIterable(File(path))) {
+            for (str in readLines(File(path))) {
                 val strings = str.split(' ')
                 if (strings[0] == "pkg:") {
                     val key = strings[1]
@@ -197,6 +187,18 @@ public class CabalInterface(val project: Project) {
             return listOf()
         }
     }
+
+    fun getRepo() =
+            if (SystemInfo.isMac) {
+                joinPath(getDataPath(),
+                        "repo-cache",
+                        "hackage.haskell.org")
+            } else {
+                joinPath(getDataPath(),
+                        "packages",
+                        "hackage.haskell.org")
+            }
+
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
@@ -237,9 +239,9 @@ public class CabalInterface(val project: Project) {
 
         } catch (e: IOException) {
             Notifications.Bus.notify(Notification("Cabal error",
-                                                  "cabal",
-                                                  "Can't read installed package list using ghc-pkg.",
-                                                  NotificationType.ERROR))
+                    "cabal",
+                    "Can't read installed package list using ghc-pkg.",
+                    NotificationType.ERROR))
             return listOf()
         }
     }

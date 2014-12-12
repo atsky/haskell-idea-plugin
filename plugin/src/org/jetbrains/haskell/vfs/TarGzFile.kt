@@ -13,17 +13,15 @@ import java.io.ByteArrayInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry
 import java.io.ByteArrayOutputStream
 import java.util.ArrayList
+import java.io.File
 
 /**
  * Created by atsky on 09/05/14.
  */
-public class TarGzFile(archiveFile: VirtualFile,
-                       path: String) : VirtualFile() {
+public class TarGzFile(val archiveFile: VirtualFile,
+                       val myPath: String) : VirtualFile() {
 
-    val myArchiveFile = archiveFile
-    val myPath: String = path
     var isInit = false;
-    var myEntry: TarArchiveEntry? = null
     var myData: ByteArray? = null
     val myChildren = ArrayList<String>()
 
@@ -31,7 +29,7 @@ public class TarGzFile(archiveFile: VirtualFile,
         if (isInit) {
             return true
         }
-        val archiveIns = getArchiveFile().getInputStream()
+        val archiveIns = archiveFile.getInputStream()
         val bin = BufferedInputStream(archiveIns : InputStream)
         val gzIn = GzipCompressorInputStream(bin);
 
@@ -45,7 +43,6 @@ public class TarGzFile(archiveFile: VirtualFile,
             }
             val entryName = entry.getName() ?: ""
             if (myPath == entryName) {
-                myEntry = entry
                 myData = readToArray(tarArchiveInputStream)
             } else if (entryName.startsWith(myPath)) {
                 val name = entryName.substring(myPath.size)
@@ -55,6 +52,7 @@ public class TarGzFile(archiveFile: VirtualFile,
             }
         }
         gzIn.close()
+        isInit = true
         return (myData != null)
     }
 
@@ -87,12 +85,10 @@ public class TarGzFile(archiveFile: VirtualFile,
         return myPath.substring(indexOf + 1)
     }
 
-    override fun getFileSystem(): VirtualFileSystem = TarGzVirtualFileSystem.INSTANCE
-
-    fun getArchiveFile() = myArchiveFile;
+    override fun getFileSystem(): VirtualFileSystem = CabalVirtualFileSystem.INSTANCE
 
     override fun getPath(): String =
-            getArchiveFile().getPath() + "!" + myPath
+            archiveFile.getPath() + "!" + myPath
 
     override fun isWritable() = false
 
@@ -110,12 +106,12 @@ public class TarGzFile(archiveFile: VirtualFile,
         if (indexOf == -1) {
             return null
         }
-        return TarGzFile(myArchiveFile, str.substring(0, indexOf + 1))
+        return TarGzFile(archiveFile, str.substring(0, indexOf + 1))
     }
 
     override fun getChildren(): Array<VirtualFile>? {
         doInit()
-        val files : List<VirtualFile> = myChildren.map { TarGzFile(myArchiveFile, myPath + it) }
+        val files : List<VirtualFile> = myChildren.map { TarGzFile(archiveFile, myPath + it) }
         return files.copyToArray()
     }
 
@@ -129,16 +125,16 @@ public class TarGzFile(archiveFile: VirtualFile,
     }
 
     override fun getTimeStamp(): Long {
-        return myArchiveFile.getTimeStamp()
+        return archiveFile.getTimeStamp()
     }
 
     override fun getModificationStamp(): Long {
-        return myArchiveFile.getModificationStamp()
+        return archiveFile.getModificationStamp()
     }
 
     override fun getLength(): Long {
         doInit()
-        return myEntry!!.getSize()
+        return myData!!.size.toLong()
     }
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {
