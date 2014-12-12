@@ -31,6 +31,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Arrays
 import javax.xml.bind.JAXBElement.GlobalScope
+import org.jetbrains.haskell.external.ghcfs.GhciFile
 
 /**
  * Created by atsky on 3/29/14.
@@ -69,12 +70,11 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
             return psiFile as HaskellFile
         }
 
-        //val haskellFile = HackageScope.INSTANCE.getModule(this, nameToFind)
-        //if (haskellFile != null) {
-        //    return haskellFile
-        //}
+        val file = GhciFile(nameToFind)
 
-        return null
+        return file.getPsiFile(getProject()) as HaskellFile
+
+        //return null
     }
 
 
