@@ -15,7 +15,7 @@ abstract class ParserState() {
 
 class FinalState(val result : NonTerminalTree?) : ParserState() {
     override fun next(): ParserState {
-        throw UnsupportedOperationException()
+        return this;
     }
 
 }
