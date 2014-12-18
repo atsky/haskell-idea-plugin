@@ -155,6 +155,11 @@ public class LexerState(val tokens: CachedTokens,
                     IntStack(-1, indentStack))
         }
         val nextPosition = position + 1
+
+        if (nextPosition == tokens.tokens.size) {
+            return last()
+        }
+
         if (INDENT_TOKENS.contains(tokens.tokens[position]) &&
                 tokens.tokens[nextPosition] != HaskellLexerTokens.OCURLY) {
 
