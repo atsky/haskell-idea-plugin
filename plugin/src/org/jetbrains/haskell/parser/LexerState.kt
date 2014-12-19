@@ -123,7 +123,7 @@ public class CachedTokens(val tokens: List<IElementType>,
 
 public class LexerState(val tokens: CachedTokens,
                         val position: Int,
-                        val lexemNumber: Int,
+                        val readedLexemNumber: Int,
                         val currentToken: HaskellTokenType?,
                         val indentStack: IntStack?) {
 
@@ -142,7 +142,7 @@ public class LexerState(val tokens: CachedTokens,
             if (currentToken == HaskellLexerTokens.VCCURLY && indentStack != null) {
                 return checkIndent(position)
             }
-            return LexerState(tokens, position, lexemNumber + 1, null, indentStack)
+            return LexerState(tokens, position, readedLexemNumber + 1, null, indentStack)
         }
         if (position == tokens.tokens.size) {
             return last()
@@ -150,7 +150,7 @@ public class LexerState(val tokens: CachedTokens,
         if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
             return LexerState(tokens,
                     position + 1,
-                    lexemNumber + 1,
+                    readedLexemNumber + 1,
                     null,
                     IntStack(-1, indentStack))
         }
@@ -166,7 +166,7 @@ public class LexerState(val tokens: CachedTokens,
             val indent = tokens.indents[nextPosition]
             return LexerState(tokens,
                     nextPosition,
-                    lexemNumber + 1,
+                    readedLexemNumber + 1,
                     HaskellLexerTokens.VOCURLY,
                     IntStack(indent, indentStack))
         }
@@ -178,11 +178,11 @@ public class LexerState(val tokens: CachedTokens,
         if (indentStack != null) {
             return LexerState(tokens,
                     tokens.tokens.size,
-                    lexemNumber + 1,
+                    readedLexemNumber + 1,
                     HaskellLexerTokens.VCCURLY,
                     indentStack.parent)
         } else {
-            return LexerState(tokens, tokens.tokens.size, lexemNumber, null, null)
+            return LexerState(tokens, tokens.tokens.size, readedLexemNumber, null, null)
         }
     }
 
@@ -194,11 +194,11 @@ public class LexerState(val tokens: CachedTokens,
             val indent = tokens.indents[position]
             if (indentStack != null) {
                 if (indentStack.indent == indent) {
-                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
+                    return LexerState(tokens, position, readedLexemNumber + 1, HaskellLexerTokens.SEMI, indentStack)
                 } else if (indentStack.indent < indent) {
                     return checkCurly(position)
                 } else {
-                    return LexerState(tokens, position, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                    return LexerState(tokens, position, readedLexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
                 }
             } else {
                 //if (0 == indent) {
@@ -214,17 +214,17 @@ public class LexerState(val tokens: CachedTokens,
     private fun checkCurly(nextPosition: Int): LexerState {
         if (tokens.tokens[nextPosition] == HaskellLexerTokens.CCURLY) {
             if (indentStack!!.indent > -1) {
-                return LexerState(tokens, nextPosition - 1, lexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                return LexerState(tokens, nextPosition - 1, readedLexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
             }
-            return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack.parent)
+            return LexerState(tokens, nextPosition, readedLexemNumber + 1, null, indentStack.parent)
         }
-        return LexerState(tokens, nextPosition, lexemNumber + 1, null, indentStack)
+        return LexerState(tokens, nextPosition, readedLexemNumber + 1, null, indentStack)
     }
 
     fun dropIndent() = LexerState(
             tokens,
             position,
-            lexemNumber + 1,
+            readedLexemNumber + 1,
             HaskellLexerTokens.VCCURLY,
             indentStack?.parent)
 

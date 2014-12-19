@@ -18,6 +18,8 @@ public class HaskellTest extends ParsingTestCase {
 
     public void testALotIndents() throws Exception { doTest(true); }
 
+    public void testBacktracking() throws Exception { doTest(true); }
+
     public void testDataType() throws Exception { doTest(true); }
 
     public void testDoNotation() throws Exception { doTest(true); }

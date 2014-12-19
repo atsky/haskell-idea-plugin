@@ -33,6 +33,7 @@ abstract class ParserResultCallBack() {
 
 
 class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
+    var cache = ArrayList<HashMap<String, Pair<NonTerminalTree, LexerState>>>()
     var lastSeen = 0;
     var lastCurlyPosition = -1
     var lastCurlyState: RecoveryCallback? = null;
@@ -69,6 +70,13 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                   next: TreeCallback): ParserState {
         //log({ "rule ${rule.name}, state = ${state.lexemNumber}" })
 
+        if (state.readedLexemNumber < cache.size) {
+            val pair = cache[state.readedLexemNumber][rule.name]
+            if (pair != null) {
+                return next.done(pair.first, pair.second)
+            }
+        }
+
         return parseVariants(state, rule.variants, listOf(), object : ParserResultCallBack() {
             override fun done(result: ParserResult): ParserState {
                 val tree = NonTerminalTree(rule.name, result.elementType, result.children)
@@ -76,6 +84,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 return if (rule.left.isNotEmpty()) {
                     parseLeft(rule, tree, result.state, next)
                 } else {
+                    putToCache(state, rule.name, tree, result.state)
                     next.done(tree, result.state)
                 }
             }
@@ -165,16 +174,16 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             when (term) {
                 is Terminal -> {
                     return if (state.match(term.tokenType)) {
-                        if (lastSeen < state.lexemNumber) {
-                            lastSeen = state.lexemNumber
+                        if (lastSeen < state.readedLexemNumber) {
+                            lastSeen = state.readedLexemNumber
                         }
                         val nextChildren = ArrayList(children)
                         nextChildren.add(TerminalTree(term.tokenType))
                         parseVariants(state.next(), nonTerminalVariant.next, nextChildren, next)
                     } else {
                         if (term.tokenType == HaskellLexerTokens.VCCURLY) {
-                            if (state.lexemNumber > lastCurlyPosition) {
-                                lastCurlyPosition = state.lexemNumber
+                            if (state.readedLexemNumber > lastCurlyPosition) {
+                                lastCurlyPosition = state.readedLexemNumber
                                 lastCurlyState = RecoveryCallback(state, nonTerminalVariant, children, next)
                             }
                         }
@@ -249,5 +258,17 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
             children.add(tree)
             return parseVariants(lexerState, variant.next, children, next)
         }
+    }
+
+    fun putToCache(start: LexerState,
+                   ruleName: String,
+                   tree: NonTerminalTree,
+                   end: LexerState) {
+        val lexemNumber = start.readedLexemNumber
+        while (lexemNumber >= cache.size) {
+            cache.add(HashMap())
+        }
+        val hashMap = cache[lexemNumber]
+        hashMap[ruleName] = Pair(tree, end)
     }
 }
