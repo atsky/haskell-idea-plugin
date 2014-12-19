@@ -40,6 +40,7 @@ special   = [\(\)\,\;\[\]\`\{\}]
 ascsymbol = [\!\#\$\%\&\*\+\.\/\<\=\>\?\@\\\^\|\-\~]
 unisymbol = [[\p{P}\p{S}]&&[^(),;\[\]`{}_\"\']]
 symbol    = {ascsymbol}|{unisymbol}
+not_simbol = (.) && (!symbol)
 
 large     = [:uppercase:]
 ascsmall  = [:lowercase:]
@@ -133,7 +134,8 @@ EOL_COMMENT = "--"[^\n]*
 "[:"                  { return HaskellLexerTokens.OPABRACK; }
 ":]"                  { return HaskellLexerTokens.CPABRACK; }
 
-"(|"                  { return HaskellLexerTokens.OPARENBAR; }
+"(|" {not_simbol}     { yypushback(1);
+                        return HaskellLexerTokens.OPARENBAR; }
 "|)"                  { return HaskellLexerTokens.CPARENBAR; }
 
 "(#"                  { return HaskellLexerTokens.OUBXPAREN; }

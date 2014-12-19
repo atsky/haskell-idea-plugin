@@ -28,14 +28,14 @@ public class HaskellLexerTest extends LexerTestCase {
 
     public void testNestedComments() throws Exception {
         doTest(" {- {- -} -} ",
-               "WHITE_SPACE (' ')\n" +
-               "COMMENT ('{- {- -} -}')\n" +
-               "WHITE_SPACE (' ')");
+                "WHITE_SPACE (' ')\n" +
+                        "COMMENT ('{- {- -} -}')\n" +
+                        "WHITE_SPACE (' ')");
     }
 
     public void testDigits() throws Exception {
         doTest("0x10FFFF",
-               "INTEGER ('0x10FFFF')");
+                "INTEGER ('0x10FFFF')");
     }
 
     public void testStrings() throws Exception {
@@ -43,7 +43,7 @@ public class HaskellLexerTest extends LexerTestCase {
                 "STRING ('\"\\\\\"')\n" +
                         "WHITE_SPACE (' ')");
         doTest("'\\x2919'",
-               "CHAR (''\\x2919'')");
+                "CHAR (''\\x2919'')");
         doTest("\"\\ \n\t \\\"",
                 "STRING ('\"\\ \\n\t \\\"')");
     }
@@ -51,15 +51,21 @@ public class HaskellLexerTest extends LexerTestCase {
     public void testQuotation() throws Exception {
         doTest("'name",
                 "' (''')\n" +
-                "VARID ('name')");
+                        "VARID ('name')");
         doTest("''name",
                 "'' ('''')\n" +
-                "VARID ('name')");
+                        "VARID ('name')");
     }
 
     public void testOperators() throws Exception {
         doTest("\u222F",
                 "VARSYM ('\u222F')");
+    }
+
+    public void testOperatorOPeranBar() throws Exception {
+        doTest("(||)", "( ('(')\n" +
+                       "VARSYM ('||')\n" +
+                       ") (')')");
     }
 
 }
