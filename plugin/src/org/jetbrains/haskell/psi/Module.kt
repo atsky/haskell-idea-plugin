@@ -29,6 +29,9 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         }
     }
 
+    public fun getModuleName() : ModuleName? =
+            findChildByClass(javaClass<ModuleName>())
+
     public fun getImportList(): List<Import> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
