@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="haskell-jps-plugin">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/haskell-jps-plugin.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
