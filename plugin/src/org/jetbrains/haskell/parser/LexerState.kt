@@ -84,8 +84,9 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
                 currentIndent = 0
                 isLineStart = true
             } else {
-                for (ch in builder.getOriginalText().subSequence(start, end)!!) {
-                    if (ch == '\t') {
+                val charSequence = builder.getOriginalText()
+                for (i in start..(end-1)) {
+                    if (charSequence.charAt(i) == '\t') {
                         currentIndent += 8;
                     } else {
                         currentIndent += 1;
