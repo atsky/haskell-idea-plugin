@@ -16,25 +16,43 @@ import com.intellij.icons.AllIcons
 import javax.swing.ListSelectionModel
 import com.intellij.ui.components.JBScrollPane
 import javax.swing.ListModel
+import com.intellij.xdebugger.impl.frame.XVariablesView
+import com.intellij.xdebugger.impl.XDebugSessionImpl
+import com.intellij.xdebugger.impl.frame.XDebugView
+import com.intellij.debugger.ui.DebuggerContentInfo
+import com.intellij.ui.content.Content
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.xdebugger.impl.actions.XDebuggerActions
 
-public class HistoryTab(private val process: HaskellDebugProcess,
+public class HistoryTab(private val debugSession : XDebugSessionImpl,
+                        private val process: HaskellDebugProcess,
                         private val manager: HistoryManager) : Disposable {
 
-    private val debugSession = process.getSession()!!
     private val debuggerStateManager: DebuggerStateManager = MyDebuggerStateManager()
     private val myUi: RunnerLayoutUi = RunnerLayoutUi.Factory.getInstance(process.getSession()!!.getProject())!!
             .create("History", "Debugger History", process.getSession()!!.getSessionName(), this)
 
-    private val framesPanel = FramesPanel()
-    private val variablesPanel: VariablesPanel = VariablesPanel(debugSession.getProject(), debuggerStateManager, null);
+    private val framesPanel = FramesPanel();
 
     {
         val framesContext = myUi.createContent("HistoryFramesContent", JBScrollPane(framesPanel), "History frames", AllIcons.Debugger.Frame, null)
-        val variablesContext = myUi.createContent("HistoryVariablesContent", variablesPanel, "Current variables", AllIcons.Debugger.Value, null)
         framesContext.setCloseable(false)
-        variablesContext.setCloseable(false)
         myUi.addContent(framesContext, 0, PlaceInGrid.left, false)
-        myUi.addContent(variablesContext, 0, PlaceInGrid.right, false)
+        myUi.addContent(createVariablesContent(debugSession), 0, PlaceInGrid.right, false)
+    }
+
+
+    private fun createVariablesContent(session : XDebugSessionImpl ) : Content {
+        val variablesView = XVariablesView(session);
+        //myViews.add(variablesView);
+        val result = myUi.createContent(DebuggerContentInfo.VARIABLES_CONTENT, variablesView.getPanel(),
+            "Variables",
+            AllIcons.Debugger.Value, null);
+            result.setCloseable(false);
+
+        //val group = getCustomizedActionGroup(XDebuggerActions.VARIABLES_TREE_TOOLBAR_GROUP);
+        //result.setActions(group, ActionPlaces.DEBUGGER_TOOLBAR, variablesView.getTree());
+        return result;
     }
 
     public fun getComponent(): JComponent {
@@ -48,7 +66,7 @@ public class HistoryTab(private val process: HaskellDebugProcess,
         if (stackFrame == null) {
             framesPanel.clear()
         }
-        variablesPanel.stackChanged(stackFrame)
+        //variablesPanel.processSessionEvent(XDebugView.SessionEvent.FRAME_CHANGED)
     }
 
     public fun addHistoryLine(line: String) {

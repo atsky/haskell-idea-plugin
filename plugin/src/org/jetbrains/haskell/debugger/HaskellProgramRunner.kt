@@ -24,6 +24,7 @@ import com.intellij.notification.NotificationListener
 import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
+import com.intellij.xdebugger.impl.XDebugSessionImpl
 
 /**
  * Class for starting debug session.
@@ -88,9 +89,10 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
             val executionResult = (state as HaskellCommandLineState).executeDebug(project, environment.getExecutor(), this)
             val processHandler = executionResult.getProcessHandler()!! as HaskellDebugProcessHandler
 
-            val session = debuggerManager.startSession(this, environment, contentToReuse, object : XDebugProcessStarter() {
+            val session = debuggerManager.startSession(environment, object : XDebugProcessStarter() {
                 override fun start(session: XDebugSession): XDebugProcess =
-                        HaskellDebugProcess(session, executionResult.getExecutionConsole()!!, processHandler,
+                        HaskellDebugProcess(session,
+                                executionResult.getExecutionConsole()!!, processHandler,
                                 DefaultDebugExecutor.EXECUTOR_ID.equals(environment.getExecutor().getId()))
             })
             return session.getRunContentDescriptor()

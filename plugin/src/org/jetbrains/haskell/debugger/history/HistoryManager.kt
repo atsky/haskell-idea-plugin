@@ -19,12 +19,15 @@ import java.util.Deque
 import java.util.ArrayDeque
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
 import org.jetbrains.haskell.debugger.utils.SyncObject
+import com.intellij.xdebugger.impl.XDebugSessionImpl
+import com.intellij.xdebugger.XDebugSession
 
 /**
  * Created by vlad on 8/5/14.
  */
 
-public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
+public class HistoryManager(private val debugSession : XDebugSession,
+                            private val debugProcess: HaskellDebugProcess) {
     class object {
         public val HISTORY_SIZE: Int = 20
 
@@ -36,7 +39,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
     }
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
-    private val historyPanel: HistoryTab = HistoryTab(debugProcess, this)
+    private var historyPanel: HistoryTab? = null;
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", Actions.Back) {
@@ -48,7 +51,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             if (historyStack.historyIndex - 1 > HISTORY_SIZE) {
                 historyStack.moveTo(historyStack.historyIndex + 1)
             } else {
-                historyPanel.shiftBack()
+                historyPanel?.shiftBack()
             }
         }
     }
@@ -62,9 +65,13 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             if (historyStack.historyIndex > HISTORY_SIZE) {
                 historyStack.moveTo(historyStack.historyIndex - 1)
             } else {
-                historyPanel.shiftForward()
+                historyPanel?.shiftForward()
             }
         }
+    }
+
+    public fun initHistoryTab(debugSession : XDebugSessionImpl) {
+        historyPanel = HistoryTab(debugSession, debugProcess, this)
     }
 
     public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?): Unit =
@@ -74,18 +81,19 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
 
     public fun setHistoryFramesInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
-            historyPanel.addHistoryLine(initial.toString())
+            historyPanel!!.addHistoryLine(initial.toString())
             for (info in others) {
-                historyPanel.addHistoryLine(info.toString())
+                historyPanel!!.addHistoryLine(info.toString())
             }
             if (!full) {
-                historyPanel.addHistoryLine("...")
+                historyPanel!!.addHistoryLine("...")
             }
         }))
     }
 
     public fun registerContent(ui: RunnerLayoutUi) {
-        val context = ui.createContent("history", historyPanel.getComponent(), "History", null, null)
+        initHistoryTab(debugSession as XDebugSessionImpl)
+        val context = ui.createContent("history", historyPanel!!.getComponent(), "History", null, null)
         context.setCloseable(false)
         ui.addContent(context)
         ui.getOptions().setToFocus(context, XDebuggerUIConstants.LAYOUT_VIEW_BREAKPOINT_CONDITION)
@@ -101,7 +109,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
             backAction.enabled = hasPrevious
             forwardAction.enabled = hasNext
-            historyPanel.stackChanged(stackFrame)
+            historyPanel!!.stackChanged(stackFrame)
             if (stackFrame != null) {
                 historyHighlighter.show(stackFrame, false, null)
             } else {
@@ -264,7 +272,7 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
         }
 
         public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames),
-                historyPanel.getHistoryFramesModel().toArray().toArrayList())
+                historyPanel!!.getHistoryFramesModel().toArray().toArrayList())
 
         public fun loadFrom(state: StackState) {
             historyIndex = state.historyIndex
@@ -272,9 +280,9 @@ public class HistoryManager(private val debugProcess: HaskellDebugProcess) {
             allFramesCollected = state.allFramesCollected
             historyFrames.clear()
             historyFrames.addAll(state.historyFrames)
-            historyPanel.getHistoryFramesModel().removeAllElements()
+            historyPanel!!.getHistoryFramesModel().removeAllElements()
             for (elem in state.historyFramesLines) {
-                historyPanel.addHistoryLine(elem.toString())
+                historyPanel!!.addHistoryLine(elem.toString())
             }
         }
 

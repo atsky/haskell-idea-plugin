@@ -50,6 +50,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.DefaultRespondent
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import org.jetbrains.haskell.repl.HaskellConsoleView
 import org.jetbrains.haskell.debugger.repl.DebugHaskellExecuteActionHandler
+import com.intellij.xdebugger.impl.XDebugSessionImpl
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -69,7 +70,7 @@ public class HaskellDebugProcess(session: XDebugSession,
                                  val stopAfterTrace: Boolean)
 : XDebugProcess(session) {
 
-    public val historyManager: HistoryManager = HistoryManager(this)
+    public val historyManager: HistoryManager = HistoryManager(session , this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
     public val debugger: ProcessDebugger
