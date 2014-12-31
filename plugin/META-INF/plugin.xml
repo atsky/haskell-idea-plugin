@@ -137,13 +137,13 @@
         <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
                     factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
-        <applicationConfigurable instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
+        <applicationConfigurable groupId="language" instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
         <!--Haskell debugger-->
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
         <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType"/>
         <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointType"/>
-        <applicationConfigurable instance="org.jetbrains.haskell.debugger.config.DebuggerConfigurable"/>
+        <applicationConfigurable groupId="build" instance="org.jetbrains.haskell.debugger.config.DebuggerConfigurable"/>
         <applicationService serviceImplementation="org.jetbrains.haskell.debugger.config.HaskellDebugSettings"/>
         <executor implementation="org.jetbrains.haskell.debugger.DebugConsoleExecutor"/>
     </extensions>
