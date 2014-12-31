@@ -54,7 +54,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
         if (isWildcard()) {
             val parentDir = getVirtualParentDir(originalRootFile)
             if (parentDir == null) return listOf(ErrorMessage(this, "invalid path", "warning"))
-            if (filterByWildcard(parentDir).size == 0) return listOf(ErrorMessage(this, "invalid wildcard", "warning"))
+            if (filterByWildcard(parentDir).size() == 0) return listOf(ErrorMessage(this, "invalid wildcard", "warning"))
             return listOf()
         }
         else {

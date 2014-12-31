@@ -152,7 +152,7 @@ public class HaskellSdkType() : SdkType("GHC") {
         }
 
         private fun getLatestVersion(sdkPaths: List<File>): SDKInfo? {
-            val length = sdkPaths.size
+            val length = sdkPaths.size()
             if (length == 0)
                 return null
             if (length == 1)

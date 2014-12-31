@@ -235,7 +235,7 @@ public final class HaskellConsoleRunner {
         }
         GeneralCommandLine line = new GeneralCommandLine();
         line.setExePath(GHCUtil.getCommandPath(homePath, "ghci"));
-        line.setWorkDirectory(workingDir);
+        line.withWorkDirectory(workingDir);
 
         return line;
     }

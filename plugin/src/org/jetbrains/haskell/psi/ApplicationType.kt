@@ -13,7 +13,7 @@ public class ApplicationType(node : ASTNode) : HaskellType(node) {
 
 
     override fun getLeftTypeVariable() : TypeVariable? {
-        return getChildrenTypes().first?.getLeftTypeVariable();
+        return getChildrenTypes().firstOrNull()?.getLeftTypeVariable();
     }
 
 }

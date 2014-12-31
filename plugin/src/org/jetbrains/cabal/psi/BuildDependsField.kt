@@ -23,7 +23,7 @@ public class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable
         for (constraint in packageConstraints) {
             val constrName = constraint.getBaseName()
             val sameConstraints = getConstraintsWithName(constraint.getBaseName())
-            if (sameConstraints.size != 1) {
+            if (sameConstraints.size() != 1) {
                 sameConstraints forEach { res.add(ErrorMessage(it, "dublicate package", "warning")) }
                 continue
             }

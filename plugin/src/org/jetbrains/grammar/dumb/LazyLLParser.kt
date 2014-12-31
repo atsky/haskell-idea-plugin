@@ -70,7 +70,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                   next: TreeCallback): ParserState {
         //log({ "rule ${rule.name}, state = ${state.lexemNumber}" })
 
-        if (state.readedLexemNumber < cache.size) {
+        if (state.readedLexemNumber < cache.size()) {
             val pair = cache[state.readedLexemNumber][rule.name]
             if (pair != null) {
                 return next.done(pair.first, pair.second)
@@ -97,14 +97,14 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                       variants: List<Variant>,
                       children: List<ResultTree>,
                       next: ParserResultCallBack): ParserState {
-        if (variants.size == 1) {
-            return parseVariant(state, variants.first!!, children, next)
+        if (variants.size() == 1) {
+            return parseVariant(state, variants.first(), children, next)
         } else {
             var i = 0;
             val token = state.getToken()
             while (!variants[i].accepts(token)) {
                 i++
-                if (i == variants.size) {
+                if (i == variants.size()) {
                     return next.fail()
                 }
             }
@@ -120,9 +120,9 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                                  val children: List<ResultTree>,
                                  val next: ParserResultCallBack) : ParserState() {
         override fun next(): ParserState {
-            return if (index == variants.size) {
+            return if (index == variants.size()) {
                 throw RuntimeException()
-            } else if (index == variants.size - 1) {
+            } else if (index == variants.size() - 1) {
                 parseVariant(state, variants[index], children, object : ParserResultCallBack() {
                     override fun done(result: ParserResult): ParserState {
                         val nextResult = if (bestResult == null || bestResult.size() < result.size()) {
@@ -148,7 +148,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         val token = state.getToken()
                         while (!variants[nextIndex].accepts(token)) {
                             nextIndex++
-                            if (nextIndex == variants.size) {
+                            if (nextIndex == variants.size()) {
                                 return if (nextResult != null) next.done(nextResult) else next.fail()
                             }
                         }
@@ -217,7 +217,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                   leftTree: NonTerminalTree,
                   state: LexerState,
                   next: TreeCallback): ParserState {
-        return parseVariants(state, (rule.left.first!! as NonTerminalVariant).next, listOf(leftTree), object : ParserResultCallBack() {
+        return parseVariants(state, (rule.left.first() as NonTerminalVariant).next, listOf(leftTree), object : ParserResultCallBack() {
             override fun done(result: ParserResult): ParserState {
                 val tree = NonTerminalTree(rule.name, result.elementType, result.children)
                 return parseLeft(rule, tree, result.state, next)
@@ -265,7 +265,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                    tree: NonTerminalTree,
                    end: LexerState) {
         val lexemNumber = start.readedLexemNumber
-        while (lexemNumber >= cache.size) {
+        while (lexemNumber >= cache.size()) {
             cache.add(HashMap())
         }
         val hashMap = cache[lexemNumber]

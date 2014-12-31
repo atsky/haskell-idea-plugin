@@ -14,7 +14,7 @@ public class DataDeclaration(node : ASTNode) : Declaration(node) {
     }
 
     fun getNameElement(): TypeVariable?  =
-        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).first
+        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).firstOrNull()
 
     fun getConstructorDeclarationList() : List<ConstructorDeclaration> =
         PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())

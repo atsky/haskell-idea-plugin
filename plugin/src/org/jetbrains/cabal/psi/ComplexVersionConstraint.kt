@@ -24,7 +24,7 @@ public class ComplexVersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node
 
         fun checkConstraint(i: Int) = (elements[i] as VersionConstraint).satisfyConstraint(givenVersion)
 
-        if (elements.size == 0) throw IllegalStateException()
+        if (elements.size() == 0) throw IllegalStateException()
         var res = checkConstraint(0)
 
         for (i in elements.indices) {

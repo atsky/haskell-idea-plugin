@@ -218,8 +218,8 @@ class ParserGenerator(val grammar: Grammar) {
 
     fun fillVariant(builder : StringBuilder, variant : Variant): StringBuilder {
         if (variant is NonFinalVariant) {
-            if (variant.next.size == 1) {
-                fillVariant(builder, variant.next.first!!)
+            if (variant.next.size() == 1) {
+                fillVariant(builder, variant.next.firstOrNull()!!)
                 val atom = variant.atom
                 if (tokens.containsKey(atom.toString())) {
                     val tokenDescription = tokens[atom.toString()]!!

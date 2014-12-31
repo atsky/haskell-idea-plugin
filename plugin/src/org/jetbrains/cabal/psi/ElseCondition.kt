@@ -8,7 +8,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 public class ElseCondition(node: ASTNode) : Section(node) {
 
     public override fun check(): List<ErrorMessage> {
-        if (getSectChildren().size == 0) listOf(ErrorMessage(getSectTypeNode(), "empty else section is not allowed", "error"))
+        if (getSectChildren().size() == 0) listOf(ErrorMessage(getSectTypeNode(), "empty else section is not allowed", "error"))
         return listOf()
     }
 

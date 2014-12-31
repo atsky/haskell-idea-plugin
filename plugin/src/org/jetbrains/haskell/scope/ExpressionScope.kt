@@ -38,7 +38,7 @@ public class ExpressionScope(val expression : Expression) {
         } else if (parent is UnguardedRHS) {
             val caseAlternative = parent.getParent() as? CaseAlternative
             if (caseAlternative != null) {
-                traverseExpression(caseAlternative.getExpressions().first, result)
+                traverseExpression(caseAlternative.getExpressions().firstOrNull(), result)
                 result.addAll(ExpressionScope(caseAlternative.getParent() as Expression).getVisibleVariables())
                 return result;
             }
