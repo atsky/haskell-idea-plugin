@@ -56,13 +56,4 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
     }
 
-    fun getConstructorDeclarationList() : List<ConstructorDeclaration> {
-        val list = ArrayList<ConstructorDeclaration>()
-        for (declaration in getDataDeclarationList()) {
-            list.addAll(declaration.getConstructorDeclarationList())
-        }
-        return list
-    }
-
-
 }

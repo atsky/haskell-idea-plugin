@@ -3,7 +3,6 @@ package org.jetbrains.haskell.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiReference
-import org.jetbrains.haskell.psi.reference.QNameReference
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiElement
 
@@ -25,6 +24,6 @@ public class QNameExpression(node: ASTNode) : Expression(node) {
 
 
     override fun getReference(): PsiReference? {
-        return QNameReference(this)
+        return null;
     }
 }
