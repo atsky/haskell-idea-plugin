@@ -13,12 +13,13 @@ import org.jetbrains.haskell.psi.UnguardedRHS
 import org.jetbrains.haskell.psi.CaseAlternative
 import org.jetbrains.haskell.psi.LambdaExpression
 import org.jetbrains.haskell.psi.Statement
+import org.jetbrains.haskell.psi.Guard
 
 /**
  * Created by atsky on 11/21/14.
  */
-public class ExpressionScope(val expression : Expression) {
-    fun getVisibleVariables() : List<QVar> {
+public class ExpressionScope(val expression: Expression) {
+    fun getVisibleVariables(): List<QVar> {
         val parent = expression.getParent()
         val result = ArrayList<QVar>()
 
@@ -31,10 +32,14 @@ public class ExpressionScope(val expression : Expression) {
             result.addAll(ExpressionScope(parent).getVisibleVariables())
             return result
         } else if (parent is Statement) {
-            val expression = parent.getParent()
-            if (expression is Expression) {
-                return ExpressionScope(expression).getVisibleVariables()
+            val pparent = parent.getParent()
+            if (pparent is Expression) {
+                return ExpressionScope(pparent).getVisibleVariables()
+            } else if (pparent is Guard) {
+                addRightHandSide(pparent.getParent() as RightHandSide, result)
             }
+        } else if (parent is Guard) {
+            addRightHandSide(parent.getParent() as RightHandSide, result)
         } else if (parent is UnguardedRHS) {
             val caseAlternative = parent.getParent() as? CaseAlternative
             if (caseAlternative != null) {
@@ -66,7 +71,7 @@ public class ExpressionScope(val expression : Expression) {
         }
         val parent = rhs.getParent()
         if (parent is ValueDefinition) {
-            val valueDefinition : ValueDefinition = parent;
+            val valueDefinition: ValueDefinition = parent;
             traverseExpression(valueDefinition.getExpression(), result)
         }
     }
