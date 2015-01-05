@@ -52,7 +52,7 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
             result.addAll(ModuleScope(module).getVisibleConstructors())
             //result.addAll(ModuleScope(module).getVisibleValues().flatMap { it.getNames() })
         }
-        return result.toArray().requireNoNulls()
+        return result.toArray()
     }
 
 
