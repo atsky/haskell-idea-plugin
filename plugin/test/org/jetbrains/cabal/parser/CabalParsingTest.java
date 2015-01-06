@@ -9,7 +9,7 @@ public class CabalParsingTest extends ParsingTestCase {
     }
 
     public CabalParsingTest() {
-        super("cabalParserTests", "cabal", new CaballParserDefinition());
+        super("cabalParserTests", "cabal", new CabalParserDefinition());
     }
 
     @Override
