@@ -19,7 +19,7 @@ import org.jetbrains.cabal.parser.CabalParser
 import org.jetbrains.cabal.parser.CabalCompositeElementType
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 
-public class CaballParserDefinition() : ParserDefinition {
+public class CabalParserDefinition() : ParserDefinition {
     var CABAL_FILE: IFileElementType = IFileElementType(CabalLanguage.INSTANCE)
 
 

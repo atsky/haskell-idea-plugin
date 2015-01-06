@@ -122,7 +122,7 @@
                                        implementationClass="org.jetbrains.cabal.highlight.CabalHighlighterFactory"/>
         <colorSettingsPage implementation="org.jetbrains.cabal.highlight.CabalColorsAndFontsPage"/>
         <lang.parserDefinition language="Cabal"
-                               implementationClass="org.jetbrains.cabal.parser.CaballParserDefinition"/>
+                               implementationClass="org.jetbrains.cabal.parser.CabalParserDefinition"/>
         <annotator language="Cabal" implementationClass="org.jetbrains.cabal.highlight.CabalAnnotator"/>
         <completion.contributor language="Cabal"
                                 implementationClass="org.jetbrains.cabal.completion.CabalCompletionContributor"/>
