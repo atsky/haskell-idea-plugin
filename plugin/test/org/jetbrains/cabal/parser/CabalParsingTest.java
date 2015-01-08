@@ -1,6 +1,7 @@
 package org.jetbrains.cabal.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
+import org.jetbrains.Constants;
 import org.junit.Test;
 
 public class CabalParsingTest extends ParsingTestCase {
@@ -14,7 +15,7 @@ public class CabalParsingTest extends ParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "data";
+        return this.getClass().getClassLoader().getResource(Constants.DATA_DIR).getPath();
     }
 
     @Test

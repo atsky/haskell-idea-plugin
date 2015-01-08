@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
-import org.junit.Test;
+import org.jetbrains.Constants;
 
 public class RecoveryTest extends ParsingTestCase {
     static {
@@ -14,7 +14,7 @@ public class RecoveryTest extends ParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "data";
+        return this.getClass().getClassLoader().getResource(Constants.DATA_DIR).getPath();
     }
 
     public void testRecovery() throws Exception { doTest(true); }

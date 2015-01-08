@@ -4,3 +4,4 @@ lib/haskell-jps-plugin.jar
 haskell-ide-api/dist
 haskell-ide-api/.idea/workspace.xml
 build/*
+out/*
