@@ -2,15 +2,14 @@ package org.jetbrains.haskell.lexer;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.testFramework.LexerTestCase;
+import org.jetbrains.Constants;
 import org.jetbrains.haskell.parser.lexer.HaskellLexer;
-import org.junit.Test;
 
 
 public class HaskellLexerTest extends LexerTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
-
 
     public HaskellLexerTest() {
 
@@ -23,7 +22,7 @@ public class HaskellLexerTest extends LexerTestCase {
 
     @Override
     protected String getDirPath() {
-        return "data/haskellLexerTest";
+      return this.getClass().getClassLoader().getResource(Constants.DATA_DIR + "/" + "haskellLexerTest").getPath();
     }
 
     public void testNestedComments() throws Exception {

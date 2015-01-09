@@ -1,6 +1,7 @@
 package org.jetbrains.haskell.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
+import org.jetbrains.Constants;
 
 public class CPPTest extends ParsingTestCase {
     static {
@@ -13,7 +14,7 @@ public class CPPTest extends ParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return "data";
+        return this.getClass().getClassLoader().getResource(Constants.DATA_DIR).getPath();
     }
 
     public void testCppIf() throws Exception { doTest(true); }
