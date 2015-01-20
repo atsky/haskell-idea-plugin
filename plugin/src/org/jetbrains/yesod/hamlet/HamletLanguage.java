@@ -1,4 +1,4 @@
-package org.jetbrains.yesod;
+package org.jetbrains.yesod.hamlet;
 
 import com.intellij.lang.Language;
 
