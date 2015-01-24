@@ -1,6 +1,8 @@
 package org.jetbrains.yesod.hamlet.parser;
 
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 
 public interface HamletTokenTypes {
 
@@ -13,5 +15,7 @@ public interface HamletTokenTypes {
     public static IElementType OANGLE = new HamletToken("<");
     public static IElementType CANGLE = new HamletToken(">");
     public static IElementType IDENTIFIER = new HamletToken("identifier");
+    public static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
+    public static IElementType ANY = new HamletCompositeElementType("ANY");
 
 }
