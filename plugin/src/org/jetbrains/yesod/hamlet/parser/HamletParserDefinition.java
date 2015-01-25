@@ -14,6 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.yesod.hamlet.HamletFile;
 import org.jetbrains.yesod.hamlet.HamletLanguage;
+import org.jetbrains.yesod.hamlet.psi.*;
 
 
 public class HamletParserDefinition implements ParserDefinition {
@@ -56,6 +57,21 @@ public class HamletParserDefinition implements ParserDefinition {
     @NotNull
     @Override
     public PsiElement createElement(ASTNode astNode) {
+        if(astNode.getElementType() == HamletTokenTypes.TAG) {
+            return new Tag(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.DOCTYPE) {
+            return new Doctype(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.IF) {
+            return new IfCondition(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.ELSE) {
+            return new ElseCondition(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.FORALL) {
+            return new Forall(astNode);
+        }
         return new ASTWrapperPsiElement(astNode);
     }
 

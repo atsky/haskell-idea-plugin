@@ -110,6 +110,7 @@
 
         <colorSettingsPage implementation="org.jetbrains.haskell.highlight.HaskellColorsAndFontsPage"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/HaskellDefault.xml"/>
+        <additionalTextAttributes scheme="Default" file="colorSchemes/HamletDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/HaskellDracula.xml"/>
         <lang.syntaxHighlighterFactory key="Haskell"
                                        implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
@@ -163,6 +164,7 @@
         <!--Yesod-->
         <lang.parserDefinition language="Hamlet"
                                implementationClass="org.jetbrains.yesod.hamlet.parser.HamletParserDefinition"/>
+        <annotator implementationClass="org.jetbrains.yesod.hamlet.highlight.HamletAnnotator" language="Hamlet"/>
 
     </extensions>
 

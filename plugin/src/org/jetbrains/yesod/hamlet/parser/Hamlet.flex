@@ -23,8 +23,7 @@ import com.intellij.psi.tree.IElementType;
 
 
 DIGIT            = [0-9]
-WHITE_SPACE_CHAR = [\ \f]
-INDENT           = [\n]({WHITE_SPACE_CHAR}|[\n])*
+WHITE_SPACE_CHAR = [\ \f\t]
 EOL_COMMENT      = {INDENT}"--"[^\n]*
 
 
@@ -32,7 +31,7 @@ EOL_COMMENT      = {INDENT}"--"[^\n]*
 
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
-{INDENT}              { return TokenType.NEW_LINE_INDENT; }            // there cannot be more than one new NEW_LINE_INDENT in row
+"\n"                  { return HamletTokenTypes.NEWLINE; }
 "."                   { return HamletTokenTypes.DOT; }
 "{"                   { return HamletTokenTypes.OCURLY; }
 "}"                   { return HamletTokenTypes.CCURLY; }
@@ -43,5 +42,9 @@ EOL_COMMENT      = {INDENT}"--"[^\n]*
 "#"                   { return HamletTokenTypes.SHARP; }
 "<"                   { return HamletTokenTypes.OANGLE; }
 ">"                   { return HamletTokenTypes.CANGLE; }
+"$if"                 { return HamletTokenTypes.IF_DOLLAR; }
+"$else"               { return HamletTokenTypes.ELSE_DOLLAR; }
+"$doctype"            { return HamletTokenTypes.DOCTYPE_DOLLAR; }
+"$forall"             { return HamletTokenTypes.FORALL_DOLLAR; }
 [A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
 .                     { return TokenType.BAD_CHARACTER; }
