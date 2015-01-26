@@ -35,12 +35,13 @@ class _HamletLexer implements FlexLexer {
    * Translates characters to character classes
    */
   private static final String ZZ_CMAP_PACKED = 
-    "\11\0\1\2\1\3\1\32\1\2\1\32\22\0\1\2\2\0\1\11"+
-    "\1\14\10\0\1\1\1\4\1\0\12\1\2\0\1\12\1\10\1\13"+
-    "\1\0\1\7\32\1\4\0\1\1\1\0\1\31\1\1\1\24\1\22"+
-    "\1\17\1\16\2\1\1\15\2\1\1\20\2\1\1\23\1\27\1\1"+
-    "\1\30\1\21\1\25\4\1\1\26\1\1\1\5\1\0\1\6\7\0"+
-    "\1\32\u1fa2\0\1\32\1\32\udfd6\0";
+    "\11\0\1\2\1\4\1\43\1\2\1\43\22\0\1\2\1\15\1\0"+
+    "\1\17\1\5\10\0\1\3\1\20\1\0\12\1\2\0\1\16\1\24"+
+    "\1\25\1\0\1\23\32\1\1\0\1\42\2\0\1\1\1\0\1\33"+
+    "\1\35\1\10\1\6\1\14\1\27\1\40\1\37\1\26\2\1\1\30"+
+    "\1\34\1\36\1\7\1\13\1\1\1\32\1\31\1\11\2\1\1\41"+
+    "\1\1\1\12\1\1\1\21\1\0\1\22\7\0\1\43\u1fa2\0\1\43"+
+    "\1\43\udfd6\0";
 
   /** 
    * Translates characters to character classes
@@ -53,12 +54,15 @@ class _HamletLexer implements FlexLexer {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7"+
-    "\1\10\1\11\1\12\1\13\1\14\1\1\4\0\1\15"+
-    "\7\0\1\16\3\0\1\17\1\0\1\20";
+    "\1\0\1\1\1\2\1\3\1\2\1\4\2\1\1\5"+
+    "\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15"+
+    "\1\2\4\0\1\16\6\0\1\17\1\20\1\0\1\21"+
+    "\2\0\1\22\4\0\1\17\10\0\1\23\1\0\1\24"+
+    "\1\25\3\0\1\26\3\0\1\27\2\0\1\30\1\31"+
+    "\1\0\1\32";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[33];
+    int [] result = new int[67];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -83,14 +87,18 @@ class _HamletLexer implements FlexLexer {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\33\0\66\0\121\0\33\0\33\0\33\0\33"+
-    "\0\33\0\33\0\33\0\33\0\33\0\154\0\207\0\242"+
-    "\0\275\0\330\0\33\0\363\0\u010e\0\u0129\0\u0144\0\u015f"+
-    "\0\u017a\0\u0195\0\33\0\u01b0\0\u01cb\0\u01e6\0\33\0\u0201"+
-    "\0\33";
+    "\0\0\0\44\0\110\0\154\0\220\0\44\0\264\0\330"+
+    "\0\374\0\44\0\44\0\44\0\44\0\44\0\44\0\44"+
+    "\0\44\0\u0120\0\u0144\0\u0168\0\u018c\0\u01b0\0\44\0\u01d4"+
+    "\0\u01f8\0\u021c\0\u0240\0\u0264\0\u0288\0\u02ac\0\44\0\u02d0"+
+    "\0\44\0\u02f4\0\u0318\0\44\0\u033c\0\u0360\0\u0384\0\u03a8"+
+    "\0\44\0\u03cc\0\u03f0\0\u0414\0\u0438\0\u045c\0\u0480\0\u04a4"+
+    "\0\u04c8\0\u04ec\0\u0510\0\44\0\u0534\0\u0558\0\u057c\0\u05a0"+
+    "\0\44\0\u05c4\0\u05e8\0\u060c\0\44\0\u0630\0\u0654\0\44"+
+    "\0\44\0\u0678\0\44";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[33];
+    int [] result = new int[67];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -113,17 +121,27 @@ class _HamletLexer implements FlexLexer {
   private static final int [] ZZ_TRANS = zzUnpackTrans();
 
   private static final String ZZ_TRANS_PACKED_0 =
-    "\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11"+
-    "\1\12\1\13\1\14\1\15\1\16\15\3\35\0\1\3"+
-    "\13\0\15\3\3\0\1\4\45\0\1\17\1\20\1\21"+
-    "\2\0\1\22\26\0\1\23\37\0\1\24\27\0\1\25"+
-    "\35\0\1\26\37\0\1\27\23\0\1\30\35\0\1\31"+
-    "\37\0\1\32\20\0\1\33\40\0\1\34\25\0\1\35"+
-    "\40\0\1\36\24\0\1\37\41\0\1\40\22\0\1\41"+
-    "\13\0";
+    "\1\2\1\3\1\4\1\5\1\6\1\7\7\3\1\10"+
+    "\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20"+
+    "\14\3\1\21\46\0\1\3\1\0\1\3\2\0\7\3"+
+    "\11\0\14\3\4\0\1\4\42\0\1\3\1\0\1\22"+
+    "\2\0\7\3\11\0\14\3\10\0\1\23\1\24\1\25"+
+    "\3\0\1\26\2\0\1\27\6\0\1\30\1\31\4\0"+
+    "\1\32\1\0\1\33\2\0\1\34\17\0\1\35\43\0"+
+    "\1\36\27\0\1\3\1\0\1\3\2\0\7\3\10\0"+
+    "\1\37\14\3\11\0\1\40\63\0\1\41\47\0\1\42"+
+    "\40\0\1\43\42\0\1\44\23\0\1\45\67\0\1\46"+
+    "\17\0\1\47\62\0\1\50\32\0\1\51\31\0\1\52"+
+    "\50\0\1\53\64\0\1\54\43\0\1\55\44\0\1\56"+
+    "\23\0\1\57\42\0\1\60\43\0\1\61\35\0\1\62"+
+    "\51\0\1\63\46\0\1\64\43\0\1\65\62\0\1\66"+
+    "\45\0\1\67\45\0\1\70\43\0\1\71\23\0\1\27"+
+    "\36\0\1\72\57\0\1\73\45\0\1\74\27\0\1\75"+
+    "\55\0\1\76\30\0\1\77\57\0\1\100\44\0\1\101"+
+    "\51\0\1\102\21\0\1\51\67\0\1\103\3\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[540];
+    int [] result = new int[1692];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -164,11 +182,13 @@ class _HamletLexer implements FlexLexer {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\2\1\11\11\1\1\4\0\1\11\7\0"+
-    "\1\11\3\0\1\11\1\0\1\11";
+    "\1\0\1\11\3\1\1\11\3\1\10\11\1\1\4\0"+
+    "\1\11\6\0\1\1\1\11\1\0\1\11\2\0\1\11"+
+    "\4\0\1\11\10\0\1\1\1\0\1\11\1\1\3\0"+
+    "\1\11\3\0\1\11\2\0\2\11\1\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[33];
+    int [] result = new int[67];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -258,7 +278,7 @@ class _HamletLexer implements FlexLexer {
     char [] map = new char[0x10000];
     int i = 0;  /* index in packed string  */
     int j = 0;  /* index in unpacked array */
-    while (i < 110) {
+    while (i < 124) {
       int  count = packed.charAt(i++);
       char value = packed.charAt(i++);
       do map[j++] = value; while (--count > 0);
@@ -477,67 +497,107 @@ class _HamletLexer implements FlexLexer {
         case 1: 
           { return TokenType.BAD_CHARACTER;
           }
-        case 17: break;
+        case 27: break;
         case 2: 
           { return HamletTokenTypes.IDENTIFIER;
           }
-        case 18: break;
+        case 28: break;
         case 3: 
           { return TokenType.WHITE_SPACE;
           }
-        case 19: break;
+        case 29: break;
         case 4: 
           { return HamletTokenTypes.NEWLINE;
           }
-        case 20: break;
+        case 30: break;
         case 5: 
-          { return HamletTokenTypes.DOT;
-          }
-        case 21: break;
-        case 6: 
-          { return HamletTokenTypes.OCURLY;
-          }
-        case 22: break;
-        case 7: 
-          { return HamletTokenTypes.CCURLY;
-          }
-        case 23: break;
-        case 8: 
-          { return HamletTokenTypes.AT;
-          }
-        case 24: break;
-        case 9: 
-          { return HamletTokenTypes.EQUAL;
-          }
-        case 25: break;
-        case 10: 
-          { return HamletTokenTypes.SHARP;
-          }
-        case 26: break;
-        case 11: 
           { return HamletTokenTypes.OANGLE;
           }
-        case 27: break;
+        case 31: break;
+        case 6: 
+          { return HamletTokenTypes.SHARP;
+          }
+        case 32: break;
+        case 7: 
+          { return HamletTokenTypes.DOT;
+          }
+        case 33: break;
+        case 8: 
+          { return HamletTokenTypes.OCURLY;
+          }
+        case 34: break;
+        case 9: 
+          { return HamletTokenTypes.CCURLY;
+          }
+        case 35: break;
+        case 10: 
+          { return HamletTokenTypes.AT;
+          }
+        case 36: break;
+        case 11: 
+          { return HamletTokenTypes.EQUAL;
+          }
+        case 37: break;
         case 12: 
           { return HamletTokenTypes.CANGLE;
           }
-        case 28: break;
+        case 38: break;
         case 13: 
+          { return HamletTokenTypes.BACKSLASH;
+          }
+        case 39: break;
+        case 14: 
+          { return HamletTokenTypes.COMMENTS;
+          }
+        case 40: break;
+        case 15: 
+          { return HamletTokenTypes.DOCTYPE_ALL;
+          }
+        case 41: break;
+        case 16: 
+          { return HamletTokenTypes.COMMENT_END;
+          }
+        case 42: break;
+        case 17: 
+          { return HamletTokenTypes.OF_DOLLAR;
+          }
+        case 43: break;
+        case 18: 
           { return HamletTokenTypes.IF_DOLLAR;
           }
-        case 29: break;
-        case 14: 
+        case 44: break;
+        case 19: 
+          { return HamletTokenTypes.COMMENT_START;
+          }
+        case 45: break;
+        case 20: 
+          { return HamletTokenTypes.CASE_DOLLAR;
+          }
+        case 46: break;
+        case 21: 
           { return HamletTokenTypes.ELSE_DOLLAR;
           }
-        case 30: break;
-        case 15: 
+        case 47: break;
+        case 22: 
+          { return HamletTokenTypes.WITH_DOLLAR;
+          }
+        case 48: break;
+        case 23: 
+          { return HamletTokenTypes.MAYBE_DOLLAR;
+          }
+        case 49: break;
+        case 24: 
+          { return HamletTokenTypes.ELSEIF_DOLLAR;
+          }
+        case 50: break;
+        case 25: 
           { return HamletTokenTypes.FORALL_DOLLAR;
           }
-        case 31: break;
-        case 16: 
-          { return HamletTokenTypes.DOCTYPE_DOLLAR;
+        case 51: break;
+        case 26: 
+          { return HamletTokenTypes.NOTHING_DOLLAR;
           }
-        case 32: break;
+        case 52: break;
         default:
           if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
             zzAtEOF = true;

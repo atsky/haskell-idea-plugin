@@ -21,8 +21,29 @@ public class HamletAnnotator implements Annotator {
          if(psiElement instanceof IfCondition) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
          }
+        if(psiElement instanceof ElseIfCondition) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
         if(psiElement instanceof Forall) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof ControlCase) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof ControlMaybe) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof ControlNothing) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof ControlOf) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof ControlWith) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+        }
+        if(psiElement instanceof Comments) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.COMMENTS);
         }
     }
 }

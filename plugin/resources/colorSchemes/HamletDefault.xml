@@ -5,4 +5,9 @@
             <option name="FOREGROUND" value="177245"/>
         </value>
     </option>
+    <option name="HAMLET_COMMENTS">
+        <value>
+            <option name="FOREGROUND" value="848482"/>
+        </value>
+    </option>
 </list>

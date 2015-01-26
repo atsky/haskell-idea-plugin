@@ -69,8 +69,32 @@ public class HamletParserDefinition implements ParserDefinition {
         if(astNode.getElementType() == HamletTokenTypes.ELSE) {
             return new ElseCondition(astNode);
         }
+        if(astNode.getElementType() == HamletTokenTypes.ELSEIF) {
+            return new ElseIfCondition(astNode);
+        }
         if(astNode.getElementType() == HamletTokenTypes.FORALL) {
             return new Forall(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.CASE) {
+            return new ControlCase(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.MAYBE) {
+            return new ControlMaybe(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.NOTHING) {
+            return new ControlNothing(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.OF) {
+            return new ControlOf(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.WITH) {
+            return new ControlWith(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.COMMENT) {
+            return new Comments(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.BACKSLASH) {
+            return new Backslash(astNode);
         }
         return new ASTWrapperPsiElement(astNode);
     }

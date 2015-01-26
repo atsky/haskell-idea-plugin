@@ -26,6 +26,9 @@ DIGIT            = [0-9]
 WHITE_SPACE_CHAR = [\ \f\t]
 EOL_COMMENT      = {INDENT}"--"[^\n]*
 
+DOCTYPE_ALL      = "$doctype" | "!!!" | "<!"
+COMMENTS         = "<!--#" | "$#"
+COMMANDS         = ""
 
 %%
 
@@ -44,7 +47,17 @@ EOL_COMMENT      = {INDENT}"--"[^\n]*
 ">"                   { return HamletTokenTypes.CANGLE; }
 "$if"                 { return HamletTokenTypes.IF_DOLLAR; }
 "$else"               { return HamletTokenTypes.ELSE_DOLLAR; }
-"$doctype"            { return HamletTokenTypes.DOCTYPE_DOLLAR; }
+"$elseif"             { return HamletTokenTypes.ELSEIF_DOLLAR; }
+{DOCTYPE_ALL}         { return HamletTokenTypes.DOCTYPE_ALL; }
+{COMMENTS}            { return HamletTokenTypes.COMMENTS; }
+"<!--"                { return HamletTokenTypes.COMMENT_START; }
+"-->"                 { return HamletTokenTypes.COMMENT_END; }
 "$forall"             { return HamletTokenTypes.FORALL_DOLLAR; }
+"$case"               { return HamletTokenTypes.CASE_DOLLAR; }
+"$maybe"              { return HamletTokenTypes.MAYBE_DOLLAR; }
+"$nothing"            { return HamletTokenTypes.NOTHING_DOLLAR; }
+"$of"                 { return HamletTokenTypes.OF_DOLLAR; }
+"$with"               { return HamletTokenTypes.WITH_DOLLAR; }
+"\\"                  { return HamletTokenTypes.BACKSLASH; }
 [A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
 .                     { return TokenType.BAD_CHARACTER; }

@@ -23,14 +23,32 @@ public class HamletParser implements PsiParser {
             IElementType token = psiBuilder.getTokenType();
             if(token == HamletTokenTypes.OANGLE) {
                 parseTag(psiBuilder);
-            } else if(token == HamletTokenTypes.DOCTYPE_DOLLAR) {
+            } else if(token == HamletTokenTypes.DOCTYPE_ALL) {
                 parseDoctype(psiBuilder);
             } else if(token == HamletTokenTypes.IF_DOLLAR) {
                 parseIf(psiBuilder);
             } else if(token == HamletTokenTypes.ELSE_DOLLAR) {
                 parseElse(psiBuilder);
+            } else if(token == HamletTokenTypes.ELSEIF_DOLLAR) {
+                parseElseIf(psiBuilder);
             } else if(token == HamletTokenTypes.FORALL_DOLLAR) {
                 parseForall(psiBuilder);
+            } else if(token == HamletTokenTypes.CASE_DOLLAR) {
+                parseCase(psiBuilder);
+            } else if(token == HamletTokenTypes.MAYBE_DOLLAR) {
+                parseMaybe(psiBuilder);
+            } else if(token == HamletTokenTypes.NOTHING_DOLLAR) {
+                parseNothing(psiBuilder);
+            } else if(token == HamletTokenTypes.OF_DOLLAR) {
+                parseOf(psiBuilder);
+            } else if(token == HamletTokenTypes.WITH_DOLLAR) {
+                parseWith(psiBuilder);
+            } else if(token == HamletTokenTypes.COMMENTS) {
+                parseComment_1(psiBuilder);
+            } else if(token == HamletTokenTypes.COMMENT_START) {
+                parseComment_2(psiBuilder);
+            }  else if(token == HamletTokenTypes.BACKSLASH) {
+                parseBackslash(psiBuilder);
             } else {
                 parseAny(psiBuilder);
             }
@@ -89,6 +107,19 @@ public class HamletParser implements PsiParser {
         tagMarker.done(HamletTokenTypes.ELSE);
     }
 
+    public void parseElseIf(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.ELSEIF);
+    }
+
     public void parseForall(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
         while (!psiBuilder.eof()) {
@@ -100,6 +131,110 @@ public class HamletParser implements PsiParser {
             parseAny(psiBuilder);
         }
         tagMarker.done(HamletTokenTypes.FORALL);
+    }
+
+    public void parseCase(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.CASE);
+    }
+
+    public void parseMaybe(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.MAYBE);
+    }
+
+    public void parseNothing(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.NOTHING);
+    }
+
+    public void parseOf(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.OF);
+    }
+
+    public void parseWith(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.WITH);
+    }
+
+    public void parseComment_1(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.COMMENT);
+    }
+
+    public void parseComment_2(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.COMMENT_END) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.COMMENT);
+    }
+
+    public void parseBackslash(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.NEWLINE) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.BACKSLASH);
     }
 
     public void parseAny (PsiBuilder psiBuilder) {

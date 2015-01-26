@@ -4,4 +4,5 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 public interface HamletColors {
     public static TextAttributesKey OPERATORS = TextAttributesKey.createTextAttributesKey("HAMLET_OPERATORS");
+    public static TextAttributesKey COMMENTS = TextAttributesKey.createTextAttributesKey("HAMLET_COMMENTS");
 }
