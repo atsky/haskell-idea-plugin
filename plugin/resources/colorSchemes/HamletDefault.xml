@@ -10,4 +10,9 @@
             <option name="FOREGROUND" value="848482"/>
         </value>
     </option>
+    <option name="HAMLET_ERRORS">
+        <value>
+            <option name="FOREGROUND" value="CC0000"/>
+        </value>
+    </option>
 </list>

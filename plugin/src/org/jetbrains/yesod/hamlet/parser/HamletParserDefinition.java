@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.resolve.graphInference.InferenceVariable;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -95,6 +96,9 @@ public class HamletParserDefinition implements ParserDefinition {
         }
         if(astNode.getElementType() == HamletTokenTypes.BACKSLASH) {
             return new Backslash(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.INVALID_DOLLAR) {
+                return new InvalidDollar(astNode);
         }
         return new ASTWrapperPsiElement(astNode);
     }

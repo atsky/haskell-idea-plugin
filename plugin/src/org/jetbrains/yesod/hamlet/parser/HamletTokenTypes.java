@@ -31,6 +31,8 @@ public interface HamletTokenTypes {
     public static IElementType COMMENT_END = new HamletToken("-->");
     public static IElementType COMMENT_START = new HamletToken("<!--");
     public static IElementType BACKSLASH = new HamletToken("\\");
+    public static IElementType DOLLAR = new HamletToken("$");
+    public static IElementType COMMANDS = new HamletToken("command");
 
     public static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
 
@@ -47,5 +49,7 @@ public interface HamletTokenTypes {
     public static IElementType OF = new HamletCompositeElementType("OF");
     public static IElementType WITH = new HamletCompositeElementType("WITH");
     public static IElementType COMMENT = new HamletCompositeElementType("COMMENT");
+    public static IElementType INVALID_DOLLAR = new HamletCompositeElementType("INVALID_DOLLAR");
+
 
 }

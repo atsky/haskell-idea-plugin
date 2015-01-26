@@ -28,7 +28,7 @@ EOL_COMMENT      = {INDENT}"--"[^\n]*
 
 DOCTYPE_ALL      = "$doctype" | "!!!" | "<!"
 COMMENTS         = "<!--#" | "$#"
-COMMANDS         = ""
+COMMANDS         = "$doctype" | "$if" | "$elseif" | "$else" | "$forall" | "$case" | "$maybe" | "$nothing" | "$of" | "$with"
 
 %%
 
@@ -60,4 +60,6 @@ COMMANDS         = ""
 "$with"               { return HamletTokenTypes.WITH_DOLLAR; }
 "\\"                  { return HamletTokenTypes.BACKSLASH; }
 [A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
+"$"                   { return HamletTokenTypes.DOLLAR; }
+{COMMANDS}            { return HamletTokenTypes.COMMANDS; }
 .                     { return TokenType.BAD_CHARACTER; }
