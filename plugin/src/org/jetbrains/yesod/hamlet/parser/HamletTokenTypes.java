@@ -32,7 +32,6 @@ public interface HamletTokenTypes {
     public static IElementType COMMENT_START = new HamletToken("<!--");
     public static IElementType BACKSLASH = new HamletToken("\\");
     public static IElementType DOLLAR = new HamletToken("$");
-    public static IElementType COMMANDS = new HamletToken("command");
 
     public static TokenSet WHITESPACES = TokenSet.create(TokenType.WHITE_SPACE);
 

@@ -17,7 +17,7 @@ public class HamletFileType extends LanguageFileType {
 
     private HamletFileType() {
         super(HamletLanguage.INSTANCE);
-        myIcon = HaskellIcons.HASKELL;
+        myIcon = HaskellIcons.HAMLET;
     }
 
     @NotNull

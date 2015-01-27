@@ -72,67 +72,67 @@ public class HamletParser implements PsiParser {
 
     public void parseDoctype(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.DOCTYPE);
     }
 
     public void parseIf(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.IF);
     }
 
     public void parseElse(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.ELSE);
     }
 
     public void parseElseIf(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.ELSEIF);
     }
 
     public void parseForall(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.FORALL);
     }
 
     public void parseCase(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.CASE);
     }
 
     public void parseMaybe(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.MAYBE);
     }
 
     public void parseNothing(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.NOTHING);
     }
 
     public void parseOf(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.OF);
     }
 
     public void parseWith(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.WITH);
     }
 
     public void parseCommentInLine(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.COMMENT);
     }
 
@@ -151,25 +151,20 @@ public class HamletParser implements PsiParser {
 
     public void parseBackslash(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        parseNewLine(psiBuilder);
+        parseUntil(psiBuilder);
         tagMarker.done(HamletTokenTypes.BACKSLASH);
     }
 
     public void parseInvalidDollar(PsiBuilder psiBuilder) {
         Marker tagMarker = psiBuilder.mark();
-        while (!psiBuilder.eof()) {
-            IElementType token = psiBuilder.getTokenType();
-            if (token == HamletTokenTypes.DOLLAR) {
-                if(token != HamletTokenTypes.COMMANDS)
-                psiBuilder.advanceLexer();
-                break;
-            }
-            parseAny(psiBuilder);
+        IElementType token = psiBuilder.getTokenType();
+        if (token == HamletTokenTypes.DOLLAR) {
+            psiBuilder.advanceLexer();
         }
         tagMarker.done(HamletTokenTypes.INVALID_DOLLAR);
     }
 
-    public void parseNewLine(PsiBuilder psiBuilder) {
+    public void parseUntil(PsiBuilder psiBuilder) {
         while (!psiBuilder.eof()) {
             IElementType token = psiBuilder.getTokenType();
             if (token == HamletTokenTypes.NEWLINE) {
