@@ -1,5 +1,9 @@
 package org.jetbrains.yesod.hamlet.highlight;
 
+/**
+ * @author Leyla H
+ */
+
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;

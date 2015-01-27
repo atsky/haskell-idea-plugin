@@ -1,5 +1,9 @@
 package org.jetbrains.yesod.hamlet.highlight;
 
+/**
+ * @author Leyla H
+ */
+
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 public interface HamletColors {
