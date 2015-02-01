@@ -50,8 +50,13 @@ public class HamletAnnotator implements Annotator {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.COMMENTS);
         }
         if(psiElement instanceof InvalidDollar) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ERRORS);
-
+            annotationHolder.createErrorAnnotation(psiElement, "Invalid Dollar");
+        }
+        if(psiElement instanceof Curly) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.TEXT);
+        }
+        if(psiElement instanceof Sign) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.SIGN);
         }
     }
 }

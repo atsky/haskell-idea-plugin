@@ -44,7 +44,6 @@ COMMENTS         = "<!--#" | "$#"
 "}"                   { return HamletTokenTypes.CCURLY; }
 "@"                   { return HamletTokenTypes.AT; }
 "="                   { return HamletTokenTypes.EQUAL; }
-"#"                   { return HamletTokenTypes.SHARP; }
 "="                   { return HamletTokenTypes.EQUAL; }
 "#"                   { return HamletTokenTypes.SHARP; }
 "<"                   { return HamletTokenTypes.OANGLE; }
@@ -52,6 +51,7 @@ COMMENTS         = "<!--#" | "$#"
 "$if"                 { return HamletTokenTypes.IF_DOLLAR; }
 "$else"               { return HamletTokenTypes.ELSE_DOLLAR; }
 "$elseif"             { return HamletTokenTypes.ELSEIF_DOLLAR; }
+"^"                   { return HamletTokenTypes.HAT; }
 {DOCTYPE_ALL}         { return HamletTokenTypes.DOCTYPE_ALL; }
 {COMMENTS}            { return HamletTokenTypes.COMMENTS; }
 "<!--"                { return HamletTokenTypes.COMMENT_START; }

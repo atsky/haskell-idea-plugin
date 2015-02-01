@@ -104,6 +104,12 @@ public class HamletParserDefinition implements ParserDefinition {
         if(astNode.getElementType() == HamletTokenTypes.INVALID_DOLLAR) {
                 return new InvalidDollar(astNode);
         }
+        if(astNode.getElementType() == HamletTokenTypes.CURLY) {
+            return new Curly(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.SIGN) {
+            return new Sign(astNode);
+        }
         return new ASTWrapperPsiElement(astNode);
     }
 

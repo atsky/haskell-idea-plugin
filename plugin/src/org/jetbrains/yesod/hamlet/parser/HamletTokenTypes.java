@@ -15,9 +15,10 @@ public interface HamletTokenTypes {
     public static IElementType CCURLY = new HamletToken("}");
     public static IElementType AT = new HamletToken("@");
     public static IElementType EQUAL = new HamletToken("=");
-    public static IElementType SHARP = new HamletToken(".");
+    public static IElementType SHARP = new HamletToken("#");
     public static IElementType OANGLE = new HamletToken("<");
     public static IElementType CANGLE = new HamletToken(">");
+    public static IElementType HAT = new HamletToken("^");
     public static IElementType IDENTIFIER = new HamletToken("identifier");
     public static IElementType NEWLINE = new HamletToken("newline");
 
@@ -53,6 +54,6 @@ public interface HamletTokenTypes {
     public static IElementType WITH = new HamletCompositeElementType("WITH");
     public static IElementType COMMENT = new HamletCompositeElementType("COMMENT");
     public static IElementType INVALID_DOLLAR = new HamletCompositeElementType("INVALID_DOLLAR");
-
-
+    public static IElementType CURLY = new HamletCompositeElementType("CURLY");
+    public static IElementType SIGN = new HamletCompositeElementType("SIGN");
 }

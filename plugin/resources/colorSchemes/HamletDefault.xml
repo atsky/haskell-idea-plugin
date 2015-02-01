@@ -2,7 +2,9 @@
 <list>
     <option name="HAMLET_OPERATORS">
         <value>
-            <option name="FOREGROUND" value="177245"/>
+            <option name="FOREGROUND" value="660e7a"/>
+         <!--   <option name="FONT_TYPE" value="1"/> -->
+
         </value>
     </option>
     <option name="HAMLET_COMMENTS">
@@ -13,6 +15,16 @@
     <option name="HAMLET_ERRORS">
         <value>
             <option name="FOREGROUND" value="CC0000"/>
+        </value>
+    </option>
+    <option name="HAMLET_TEXT">
+        <value>
+            <option name="FOREGROUND" value="177245"/>
+        </value>
+    </option>
+    <option name="HAMLET_SIGN">
+        <value>
+            <option name="FOREGROUND" value="013220"/>
         </value>
     </option>
 </list>

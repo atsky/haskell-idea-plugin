@@ -55,6 +55,10 @@ public class HamletParser implements PsiParser {
                 parseBackslash(psiBuilder);
             } else if(token == HamletTokenTypes.DOLLAR) {
                 parseInvalidDollar(psiBuilder);
+            } else if(token == HamletTokenTypes.OCURLY) {
+                parseCurly(psiBuilder);
+            } else if(token == HamletTokenTypes.AT || token == HamletTokenTypes.HAT || token == HamletTokenTypes.SHARP) {
+                parseSign(psiBuilder);
             } else {
                 parseAny(psiBuilder);
             }
@@ -166,6 +170,25 @@ public class HamletParser implements PsiParser {
             psiBuilder.advanceLexer();
         }
         tagMarker.done(HamletTokenTypes.INVALID_DOLLAR);
+    }
+
+    public void parseCurly(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        while (!psiBuilder.eof()) {
+            IElementType token = psiBuilder.getTokenType();
+            if(token == HamletTokenTypes.CCURLY) {
+                psiBuilder.advanceLexer();
+                break;
+            }
+            parseAny(psiBuilder);
+        }
+        tagMarker.done(HamletTokenTypes.CURLY);
+    }
+
+    public void parseSign(PsiBuilder psiBuilder) {
+        Marker tagMarker = psiBuilder.mark();
+        psiBuilder.advanceLexer();
+        tagMarker.done(HamletTokenTypes.SIGN);
     }
 
     public void parseUntil(PsiBuilder psiBuilder) {
