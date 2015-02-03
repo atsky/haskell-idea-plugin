@@ -162,11 +162,15 @@
         -->
 
         <!--Yesod-->
+        <!--hamlet-->
         <lang.parserDefinition language="Hamlet"
                                implementationClass="org.jetbrains.yesod.hamlet.parser.HamletParserDefinition"/>
         <annotator implementationClass="org.jetbrains.yesod.hamlet.highlight.HamletAnnotator" language="Hamlet"/>
         <completion.contributor language="Hamlet"
                                 implementationClass="org.jetbrains.yesod.hamlet.completion.HamletCompletionContributor"/>
+        <!--cassius-->
+        <lang.parserDefinition language="Cassius"
+                               implementationClass="org.jetbrains.yesod.cassius.parser.CassiusParserDefinition"/>
 
     </extensions>
 
