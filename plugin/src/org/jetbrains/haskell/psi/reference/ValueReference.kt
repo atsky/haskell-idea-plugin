@@ -18,7 +18,11 @@ class ValueReference(val referenceExpression: QVar) : PsiReferenceBase<QVar>(
         TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
 
     override fun resolve(): PsiElement? {
-        return ExpressionScope(referenceExpression.getParent() as Expression).getVisibleVariables().firstOrNull {
+        val parent = referenceExpression.getParent()
+        if (parent !is Expression) {
+            return null;
+        }
+        return ExpressionScope(parent).getVisibleVariables().firstOrNull {
             it.getText() == getValue()
         }
     }
