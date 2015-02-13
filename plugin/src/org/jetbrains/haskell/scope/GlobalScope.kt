@@ -28,12 +28,12 @@ public object GlobalScope {
             return cache[name];
         }
 
-        val source = findSource(project, name)
-        if (source != null) {
-            val result = PsiManager.getInstance(project).findFile(source) as HaskellFile?
-            cache[name] = result
-            return result;
-        }
+        //val source = findSource(project, name)
+        //if (source != null) {
+        //    val result = PsiManager.getInstance(project).findFile(source) as HaskellFile?
+        //    cache[name] = result
+        //    return result;
+        //}
 /*
         val text = ProcessRunner(null).executeNoFail("ghc", "-e", ":browse! ${name}")
         if (text == "") {
