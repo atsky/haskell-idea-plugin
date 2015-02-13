@@ -134,29 +134,34 @@
        <projectImportProvider  implementation="org.jetbrains.cabal.export.CabalProjectImportProvider"/>
        <projectImportBuilder   implementation="org.jetbrains.cabal.export.CabalProjectImportBuilder"/>
        -->
-       <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalSettings"/>
-       <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalLocalSettings"/>
+        <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalSettings"/>
+        <projectService serviceImplementation="org.jetbrains.cabal.settings.CabalLocalSettings"/>
 
-       <externalSystemManager implementation="org.jetbrains.cabal.CabalManager"/>
+        <externalSystemManager implementation="org.jetbrains.cabal.CabalManager"/>
 
-       <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
-                   factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
+        <toolWindow id="Cabal" icon="/org/jetbrains/haskell/icons/cabal13.png" anchor="right"
+                    factoryClass="org.jetbrains.cabal.tool.CabalToolWindowFactory"/>
 
-       <toolWindow id="GhcMod" icon="/org/jetbrains/haskell/icons/haskell13.png" anchor="bottom"
-                   factoryClass="org.jetbrains.haskell.external.tool.GhcModToolWindowFactory"/>
+        <toolWindow id="GhcMod" icon="/org/jetbrains/haskell/icons/haskell13.png" anchor="bottom"
+                    factoryClass="org.jetbrains.haskell.external.tool.GhcModToolWindowFactory"/>
 
-       <applicationConfigurable groupId="language" instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
+        <applicationConfigurable groupId="language" instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
-       <!--Haskell debugger-->
+        <!--Haskell debugger-->
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
-        <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType"/>
-        <xdebugger.breakpointType implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointType"/>
+        <xdebugger.breakpointType
+                implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType"/>
+        <xdebugger.breakpointType
+                implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellExceptionBreakpointType"/>
         <applicationConfigurable groupId="build" instance="org.jetbrains.haskell.debugger.config.DebuggerConfigurable"/>
         <applicationService serviceImplementation="org.jetbrains.haskell.debugger.config.HaskellDebugSettings"/>
+        <lang.findUsagesProvider language="Haskell"
+                                 implementationClass="org.jetbrains.haskell.findUsages.HaskellFindUsagesProvider"/>
         <executor implementation="org.jetbrains.haskell.debugger.DebugConsoleExecutor"/>
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="Haskell.breakpointHandler" interface="org.jetbrains.haskell.debugger.breakpoints.HaskellBreakpointHandlerFactory"/>
+        <extensionPoint qualifiedName="Haskell.breakpointHandler"
+                        interface="org.jetbrains.haskell.debugger.breakpoints.HaskellBreakpointHandlerFactory"/>
     </extensionPoints>
 </idea-plugin>
