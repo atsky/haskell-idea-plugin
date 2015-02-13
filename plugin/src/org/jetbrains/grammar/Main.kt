@@ -24,7 +24,7 @@ import org.jetbrains.grammar.dumb.Rule
  * Created by atsky on 15/11/14.
  */
 fun main(args : Array<String>) {
-    val path = File("./data/haskellParserTests")
+    val path = File("./data")
     val filter = object : FilenameFilter {
         override fun accept(dir: File, name: String): Boolean {
             return name.endsWith("Test.hs")

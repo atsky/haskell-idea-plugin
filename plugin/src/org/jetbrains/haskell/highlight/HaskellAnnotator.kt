@@ -15,6 +15,8 @@ import org.jetbrains.haskell.psi.TypeVariable
 import org.jetbrains.haskell.psi.SignatureDeclaration
 import org.jetbrains.haskell.psi.QVarSym
 import org.jetbrains.haskell.psi.VariableOperation
+import org.jetbrains.haskell.psi.Context
+import org.jetbrains.haskell.psi.ClassDeclaration
 
 
 /**
@@ -45,7 +47,7 @@ public class HaskellAnnotator() : Annotator {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_OPERATOR)
             }
         }
-        if (element is TypeVariable && !element.isConstructor()) {
+        if (element is TypeVariable && !element.isConstructor() && !element.isClass()) {
             for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID, QCONID, QVARID))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
@@ -62,9 +64,22 @@ public class HaskellAnnotator() : Annotator {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_SIGNATURE)
             }
         }
-        if (element is TupleType) {
+        if (element is TupleType && element.getParent() !is Context) {
             for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN, COMMA))!!) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
+            }
+        }
+        if (element is Context) {
+            for (node in element.getNode().getChildren(null)) {
+                holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_CLASS)
+            }
+        }
+        if (element is ClassDeclaration) {
+            val haskellType = element.getType()
+            if (haskellType != null) {
+                for (node in haskellType.getNode().getChildren(null)) {
+                    holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_CLASS)
+                }
             }
         }
     }

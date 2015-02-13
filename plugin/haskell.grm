@@ -885,8 +885,8 @@ ctypedoc
 -- Thus for some reason we allow    f :: a~b => blah
 -- but not                          f :: ?x::Int => blah
 context
-        : btype '~'      btype
-        | btype
+        : btype '~'      btype            { Context }
+        | btype                           { Context }
 ;
 
 

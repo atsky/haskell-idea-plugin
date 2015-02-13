@@ -1796,7 +1796,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, many("btype", end(), end().add("btype").add(TILDE)));
+      addVar(variants, many("btype", end(GrammarPackage.getCONTEXT()), end(GrammarPackage.getCONTEXT()).add("btype").add(TILDE)));
       grammar.put("context", new Rule("context", variants, left));
     }
     {

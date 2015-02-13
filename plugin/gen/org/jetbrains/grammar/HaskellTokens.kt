@@ -12,6 +12,7 @@ public val CASE_ALTERNATIVE : IElementType = HaskellCompositeElementType("CaseAl
 public val CASE_EXPRESSION : IElementType = HaskellCompositeElementType("CaseExpression", ::CaseExpression)
 public val CLASS_DECLARATION : IElementType = HaskellCompositeElementType("ClassDeclaration", ::ClassDeclaration)
 public val CONSTRUCTOR_DECLARATION : IElementType = HaskellCompositeElementType("ConstructorDeclaration", ::ConstructorDeclaration)
+public val CONTEXT : IElementType = HaskellCompositeElementType("Context", ::Context)
 public val DATA_DECLARATION : IElementType = HaskellCompositeElementType("DataDeclaration", ::DataDeclaration)
 public val DO_EXPRESSION : IElementType = HaskellCompositeElementType("DoExpression", ::DoExpression)
 public val EXPRESSION_STATEMENT : IElementType = HaskellCompositeElementType("ExpressionStatement", ::ExpressionStatement)

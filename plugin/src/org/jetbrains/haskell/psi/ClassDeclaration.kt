@@ -9,4 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class ClassDeclaration(node : ASTNode) : ASTWrapperPsiElement(node) {
 
+    public fun getType(): HaskellType? =
+            findChildByClass(javaClass<HaskellType>())
 }

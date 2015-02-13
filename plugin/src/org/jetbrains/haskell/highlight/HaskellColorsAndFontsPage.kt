@@ -39,6 +39,10 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
         return "<keyword>module</keyword> <cons>Main</cons> <keyword>where</keyword>\n" +
                 "<pragma>{-# LANGUAGE CPP #-}</pragma>\n" +
                 "<comment>-- Comment</comment>\n" +
+                "\n" +
+                "<keyword>class</keyword> <class>YesNo a</class> <keyword>where</keyword>\n" +
+                "    <sig>yesno</sig> <dcolon>::</dcolon> <type>a -> Bool</type>\n" +
+                "\n" +
                 "\n" + "<keyword>data</keyword> <type>Maybe a</type> <equal>=</equal> <cons>Nothing</cons> | <cons>Just</cons> <type>a</type>\n" +
                 "\n" + "<sig>main</sig> <dcolon>::</dcolon> <type>IO ()</type>\n" +
                 "<id>main</id> = <keyword>do</keyword>\n" +
@@ -53,6 +57,7 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
         val map = HashMap<String, TextAttributesKey>()
 
         map.put("brackets", HaskellHighlighter.HASKELL_BRACKETS)
+        map.put("class", HaskellHighlighter.HASKELL_CLASS)
         map.put("curly", HaskellHighlighter.HASKELL_CURLY)
         map.put("cons", HaskellHighlighter.HASKELL_CONSTRUCTOR)
         map.put("comment", HaskellHighlighter.HASKELL_COMMENT)
@@ -73,6 +78,7 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
     class object {
         private val ATTRS = array(
                 AttributesDescriptor("Brackets", HaskellHighlighter.HASKELL_BRACKETS),
+                AttributesDescriptor("Class", HaskellHighlighter.HASKELL_CLASS),
                 AttributesDescriptor("Comment", HaskellHighlighter.HASKELL_COMMENT),
                 AttributesDescriptor("Curly brackets", HaskellHighlighter.HASKELL_CURLY),
                 AttributesDescriptor("Constructor or Type", HaskellHighlighter.HASKELL_CONSTRUCTOR),

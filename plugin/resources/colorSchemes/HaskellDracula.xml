@@ -20,4 +20,9 @@
             <option name="FOREGROUND" value="69CD16"/>
         </value>
     </option>
+    <option name="HASKELL_CLASS">
+        <value>
+            <option name="FOREGROUND" value="EB0D94"/>
+        </value>
+    </option>
 </list>

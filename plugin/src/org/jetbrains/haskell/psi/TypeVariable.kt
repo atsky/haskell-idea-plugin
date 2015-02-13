@@ -39,6 +39,23 @@ public class TypeVariable(node: ASTNode) : HaskellType(node), PsiNamedElement {
         }
 
 
+    fun isClass() : Boolean {
+        var current : PsiElement? = this
+        while (true) {
+            val parent = current!!.getParent()
+            if (parent is Context) {
+                return true
+            }
+            if (parent is ClassDeclaration) {
+                return true
+            }
+            if (parent !is HaskellType) {
+                return false
+            }
+            current = parent
+        }
+    }
+
     fun isConstructor() : Boolean {
         var current : PsiElement? = this
         while (true) {
