@@ -24,6 +24,7 @@ import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.haskell.sdk.HaskellSdkType
+import org.jetbrains.haskell.external.tool.GhcModConsole
 
 /**
  * Created by atsky on 15/06/14.
@@ -58,6 +59,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
             null
         }
         process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()), ghcHome)
+        GhcModConsole.getInstance(project).append("start ${getPath()}\n", GhcModConsole.MessageType.INFO)
     }
 
     fun getPath(): String {
@@ -88,7 +90,8 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
         if (process == null) {
             startProcess()
         }
-        return synchronized(process!!) {
+        GhcModConsole.getInstance(project).append(command + "\n", GhcModConsole.MessageType.INPUT)
+        val result = synchronized(process!!) {
             if (isStopped()) {
                 process = null
                 startProcess();
@@ -138,6 +141,11 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                 lines
             }
         }
+        for (line in result) {
+            GhcModConsole.getInstance(project).append(line + "\n", GhcModConsole.MessageType.OUTPUT)
+
+        }
+        return result
     }
 
 }

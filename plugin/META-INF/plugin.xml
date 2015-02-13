@@ -22,6 +22,9 @@
         <component>
             <implementation-class>org.jetbrains.haskell.external.GhcModi</implementation-class>
         </component>
+        <component>
+            <implementation-class>org.jetbrains.haskell.external.tool.GhcModConsole</implementation-class>
+        </component>
 
     </project-components>
 
