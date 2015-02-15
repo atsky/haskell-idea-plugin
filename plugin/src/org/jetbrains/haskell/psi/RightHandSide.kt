@@ -10,4 +10,6 @@ public class RightHandSide(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getWhereBindings() : WhereBindings? =
         findChildByClass(javaClass<WhereBindings>())
 
+    fun getLetStatement() : LetStatement? = getParent()?.getParent() as? LetStatement
+
 }

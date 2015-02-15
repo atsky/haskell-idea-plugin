@@ -14,6 +14,9 @@ import org.jetbrains.haskell.psi.CaseAlternative
 import org.jetbrains.haskell.psi.LambdaExpression
 import org.jetbrains.haskell.psi.Statement
 import org.jetbrains.haskell.psi.Guard
+import org.jetbrains.haskell.psi.DoExpression
+import org.jetbrains.haskell.psi.LetStatement
+import org.jetbrains.haskell.psi.BindStatement
 
 /**
  * Created by atsky on 11/21/14.
@@ -32,12 +35,7 @@ public class ExpressionScope(val expression: Expression) {
             result.addAll(ExpressionScope(parent).getVisibleVariables())
             return result
         } else if (parent is Statement) {
-            val pparent = parent.getParent()
-            if (pparent is Expression) {
-                return ExpressionScope(pparent).getVisibleVariables()
-            } else if (pparent is Guard) {
-                addRightHandSide(pparent.getParent() as RightHandSide, result)
-            }
+            return getStatementScopedDeclarations(parent)
         } else if (parent is Guard) {
             addRightHandSide(parent.getParent() as RightHandSide, result)
         } else if (parent is UnguardedRHS) {
@@ -49,8 +47,45 @@ public class ExpressionScope(val expression: Expression) {
             }
         } else if (parent is RightHandSide) {
             addRightHandSide(parent, result)
+            val letStatement = parent.getLetStatement()
+            if (letStatement != null) {
+                return getStatementScopedDeclarations(letStatement)
+            } else {
+                return getModuleScopedDeclarations(result);
+            }
         }
 
+        return getModuleScopedDeclarations(result);
+    }
+
+    fun getStatementScopedDeclarations(statement: Statement): List<QVar> {
+        val result = ArrayList<QVar>()
+        val parent = statement.getParent()
+        if (parent is DoExpression) {
+            val statementList = parent.getStatementList()
+            val index = statementList.indexOf(statement)
+
+            for (st in statementList.subList(0, index)) {
+                if (st is LetStatement) {
+                    val list = st.getValueDefinitions()
+                            .map { it.getQNameExpression()?.getQVar() }.filterNotNull()
+                    result.addAll(list)
+                } else if (st is BindStatement) {
+                    val qVar = st.getQVar()
+                    if (qVar != null) {
+                        result.add(qVar)
+                    }
+                }
+            }
+            result.addAll(ExpressionScope(parent).getVisibleVariables())
+            return result
+        } else if (parent is Guard) {
+            addRightHandSide(parent.getParent() as RightHandSide, result)
+        }
+        return getModuleScopedDeclarations(result);
+    }
+
+    fun getModuleScopedDeclarations(result: ArrayList<QVar>): List<QVar> {
         val module = Module.findModule(expression)
         if (module == null) {
             return listOf();
