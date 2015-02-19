@@ -25,6 +25,10 @@ import org.jetbrains.grammar.dumb.NonTerminalVariant
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
+    class object {
+        var cache : Map<String, Rule>? = null;
+    }
+
     abstract fun getGrammar() : Map<String, Rule>
 
     fun mark() : Marker {
@@ -39,9 +43,12 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
         val rootMarker = mark()
 
-        val grammar = getGrammar()
-        findFirst(grammar)
-        val tree = LazyLLParser(grammar, cachedTokens).parse()
+        if (cache == null) {
+            val grammar = getGrammar()
+            findFirst(grammar)
+            cache = grammar
+        }
+        val tree = LazyLLParser(cache!!, cachedTokens).parse()
 
         if (tree != null) {
             parserWithTree(tree)
