@@ -1,7 +1,6 @@
 package org.jetbrains.haskell.parser;
 
 import com.intellij.testFramework.ParsingTestCase;
-import org.jetbrains.Constants;
 
 public class HaskellTest extends ParsingTestCase {
     static {
@@ -14,7 +13,7 @@ public class HaskellTest extends ParsingTestCase {
 
     @Override
     protected String getTestDataPath() {
-        return this.getClass().getClassLoader().getResource(Constants.DATA_DIR).getPath();
+        return "data";
     }
 
     public void testALotIndents() throws Exception { doTest(true); }
