@@ -104,7 +104,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
                     val pathArray = path.getPath()
 
                     val packageName = pathArray[1] as DefaultMutableTreeNode
-                    val packageVersion: DefaultMutableTreeNode? = if (pathArray.size == 3) {
+                    val packageVersion: DefaultMutableTreeNode? = if (pathArray.size() == 3) {
                         (pathArray[2] as DefaultMutableTreeNode)
                     } else {
                         null

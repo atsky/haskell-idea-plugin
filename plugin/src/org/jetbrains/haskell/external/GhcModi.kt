@@ -120,7 +120,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                         val last = lines.size() - 1
                         lines[last] = lines[last] + split[0]
                     }
-                    lines.addAll(split.toList().subList(1, split.size))
+                    lines.addAll(split.toList().subList(1, split.size()))
                 }
                 if (lines[lines.size() - 2].startsWith("NG")) {
                     val hyperlinkHandler = object : NotificationListener.Adapter() {

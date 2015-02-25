@@ -29,7 +29,7 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
     }
 
     public fun isBool(): Boolean {
-        return (getChildren().size == 0)
+        return (getChildren().size() == 0)
     }
 
     public fun getTestName(): String? {

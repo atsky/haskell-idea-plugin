@@ -63,7 +63,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
         val data = ByteArray(16384)
 
         while (true) {
-            nRead = ins.read(data, 0, data.size)
+            nRead = ins.read(data, 0, data.size())
             if (nRead == -1) {
                 break;
             }
@@ -98,7 +98,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun getParent(): VirtualFile? {
         val str = if (isDirectory()) {
-            myPath.substring(0, myPath.length - 1)
+            myPath.substring(0, myPath.length() - 1)
         } else {
             myPath
         }
@@ -134,7 +134,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun getLength(): Long {
         doInit()
-        return myData!!.size.toLong()
+        return myData!!.size().toLong()
     }
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {

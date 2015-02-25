@@ -180,7 +180,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                     return "ghc".equalsIgnoreCase(FileUtil.getNameWithoutExtension(f))
                 }
             })
-            return children != null && children.size >= 1
+            return children != null && children.size() >= 1
         }
 
         public fun getGhcVersion(homePath: String?): String? {

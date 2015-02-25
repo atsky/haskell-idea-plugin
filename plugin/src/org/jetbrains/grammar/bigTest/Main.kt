@@ -46,7 +46,7 @@ fun main(args : Array<String>) {
     }
     for ((pkg, versions) in map) {
         versions.sort()
-        val name = pkg + "-" + versions.last
+        val name = pkg + "-" + versions.lastOrNull()
         println(name)
         val tmp = File("hackage-cache")
         tmp.mkdirs()
@@ -61,7 +61,7 @@ fun main(args : Array<String>) {
         }
 
         val byteArray = file.readBytes()
-        val result = listHaskellFiles(name, ByteInputStream(byteArray, byteArray.size))
+        val result = listHaskellFiles(name, ByteInputStream(byteArray, byteArray.size()))
         if (!result) {
             break
         }
@@ -127,7 +127,7 @@ fun readToArray(ins: InputStream): ByteArray {
     val data = ByteArray(16384)
 
     while (true) {
-        nRead = ins.read(data, 0, data.size)
+        nRead = ins.read(data, 0, data.size())
         if (nRead == -1) {
             break;
         }

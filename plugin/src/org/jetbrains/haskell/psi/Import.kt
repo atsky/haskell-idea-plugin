@@ -10,7 +10,7 @@ import org.jetbrains.grammar.HaskellLexerTokens
 public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
 
     public fun hasHiding() : Boolean {
-        return getNode().getChildren(TokenSet.create(HaskellLexerTokens.HIDING))!!.size > 0
+        return getNode().getChildren(TokenSet.create(HaskellLexerTokens.HIDING))!!.size() > 0
     }
 
     public fun getModuleName() : ModuleName? =
