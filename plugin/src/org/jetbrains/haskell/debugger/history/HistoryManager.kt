@@ -132,7 +132,7 @@ public class HistoryManager(private val debugSession : XDebugSession,
     public fun loadState(): Unit = AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), {
         historyStack.loadFrom(states.pollLast()!!)
     })
-    public fun hasSavedStates(): Boolean = !states.empty
+    public fun hasSavedStates(): Boolean = !states.isEmpty()
 
     private inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
         public var historyIndex: Int = 0

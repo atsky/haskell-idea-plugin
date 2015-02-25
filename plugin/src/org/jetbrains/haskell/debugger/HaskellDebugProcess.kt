@@ -192,7 +192,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     public fun traceFinished() {
         if (historyManager.hasSavedStates()) {
             historyManager.loadState()
-            if (!contexts.empty) {
+            if (!contexts.isEmpty()) {
                 getSession()!!.positionReached(contexts.pollLast()!!)
             }
         } else if (stopAfterTrace) {

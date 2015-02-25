@@ -26,12 +26,12 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
     override fun run() {
         while (running) {
             inputLock.lock()
-            while (running && (lowPriorityCommands.empty && highPriorityCommands.empty || !ready)) {
+            while (running && (lowPriorityCommands.isEmpty() && highPriorityCommands.isEmpty() || !ready)) {
                 readyCondition.await()
             }
             var command: AbstractCommand<out ParseResult?>? = null
             if (running) {
-                command = if (!highPriorityCommands.empty) highPriorityCommands.removeFirst() else lowPriorityCommands.removeFirst()
+                command = if (!highPriorityCommands.isEmpty()) highPriorityCommands.removeFirst() else lowPriorityCommands.removeFirst()
                 ready = false
             }
             inputLock.unlock()

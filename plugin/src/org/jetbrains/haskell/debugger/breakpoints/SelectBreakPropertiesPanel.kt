@@ -86,7 +86,7 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
 
     private fun fillComboBox() {
         breaksComboBox.removeAllItems()
-        if(debuggingInProgress() && (breaksList as ArrayList<BreakInfo>).notEmpty) {
+        if(debuggingInProgress() && (breaksList as ArrayList<BreakInfo>).isNotEmpty()) {
             for (breakEntry in breaksList as ArrayList<BreakInfo>) {
                 breaksComboBox.addItem(breakEntry.srcSpan.spanToString())
             }

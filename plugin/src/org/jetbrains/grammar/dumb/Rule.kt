@@ -16,7 +16,7 @@ class Rule(public val name : String,
     override fun toString() : String {
         val n = name + ":\n"
         val v = "  variants: ${variants}\n"
-        val l = if (left.notEmpty) "  left: ${left}\n" else ""
+        val l = if (left.isNotEmpty()) "  left: ${left}\n" else ""
         return n + v + l
     }
 
