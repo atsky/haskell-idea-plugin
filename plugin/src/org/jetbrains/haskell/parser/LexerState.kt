@@ -113,7 +113,11 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
 }
 
 public fun newLexerState(tokens: CachedTokens): LexerState {
-    return LexerState(tokens, 0, 0, null, null)
+    if (tokens.tokens.firstOrNull() == HaskellLexerTokens.MODULE) {
+        return LexerState(tokens, 0, 0, null, null)
+    } else {
+        return LexerState(tokens, 0, 0, null, IntStack(0, null))
+    }
 }
 
 public class CachedTokens(val tokens: List<IElementType>,
