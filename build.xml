@@ -8,8 +8,8 @@
     <property name="cabal.lexer.flex.file" value="plugin/src/org/jetbrains/cabal/parser/Cabal.flex"/>
     <property name="haskell.lexer.result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
-    <property name="idea" value="${build.dir}/idea-IC-135.SNAPSHOT"/>
-    <property name="idea.download.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/135386:id/ideaIC-135.SNAPSHOT.tar.gz"/>
+    <property name="idea" value="${build.dir}/idea-IC-139.SNAPSHOT"/>
+    <property name="idea.download.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/383328:id/ideaIC-139.SNAPSHOT.tar.gz"/>
     <property name="external.annotations.path" value="${basedir}/annotations"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
     <property name="build.number" value="snapshot"/>
@@ -70,7 +70,7 @@
     </target>
 
     <target name="download.kotlinc" depends="mk.buid">
-        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.9.66/kotlin-compiler-0.9.66.zip"
+        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.10.195/kotlin-compiler-0.10.195.zip"
              dest="${build.dir}" skipexisting="true"/>
     </target>
 
@@ -106,7 +106,7 @@
 
         <path id="javac2.classpath">
             <pathelement location="${idea}/lib/javac2.jar"/>
-            <pathelement location="${idea}/lib/asm4-all.jar"/>
+            <pathelement location="${idea}/lib/asm-all.jar"/>
         </path>
 
         <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
@@ -160,7 +160,7 @@
             <plugins>
                 <plugin id="org.jetbrains.haskell"
                         url="http://teamcity.jetbrains.com/guestAuth/repository/download/Haskell_Build/.lastSuccessful/haskell-plugin.zip"
-                        version="0.3.${build.number}" />
+                        version="0.5.${build.number}" />
             </plugins>
         </echoxml>
     </target>
