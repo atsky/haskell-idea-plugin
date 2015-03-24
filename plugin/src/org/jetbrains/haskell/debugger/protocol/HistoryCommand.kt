@@ -24,7 +24,7 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
 
     override fun parseJSONOutput(output: JSONObject): HistoryResult? = JSONConverter.historyResultFromJSON(output)
 
-    class object {
+    companion object {
         public class DefaultHistoryCallback(val debugger: ProcessDebugger,
                                             val debugRespondent: DebugRespondent,
                                             val historyFrame: HsHistoryFrame,

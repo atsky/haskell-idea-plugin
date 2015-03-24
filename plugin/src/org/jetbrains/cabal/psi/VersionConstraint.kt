@@ -10,7 +10,7 @@ import java.lang.IllegalStateException
 
 public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
-    class object {
+    companion object {
         val COMPARATORS: List<String> = listOf(
                 ">=",
                 "<=",

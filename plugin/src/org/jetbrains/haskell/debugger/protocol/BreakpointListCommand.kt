@@ -34,7 +34,7 @@ public class BreakpointListCommand(val module: String,
 
     override fun parseJSONOutput(output: JSONObject): BreakInfoList? = JSONConverter.breaksListFromJSON(output)
 
-    class object {
+    companion object {
         public class DefaultCallback(private val resultList: ArrayList<BreakInfo>)
         : CommandCallback<BreakInfoList?>() {
             override fun execAfterParsing(result: BreakInfoList?) {

@@ -13,7 +13,7 @@ import java.util.ArrayList
  */
 public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    class object {
+    companion object {
 
         fun findModule(element: PsiElement) : Module? {
             var topLevel = element

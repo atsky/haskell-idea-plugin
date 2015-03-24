@@ -20,7 +20,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 
 public abstract class HsStackFrame(val debugger: ProcessDebugger,
                                    public val stackFrameInfo: HsStackFrameInfo) : XStackFrame() {
-    class object {
+    companion object {
         private val STACK_FRAME_EQUALITY_OBJECT = Object()
     }
 
@@ -28,8 +28,9 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
 
     override fun getEqualityObject(): Any? = STACK_FRAME_EQUALITY_OBJECT
 
-    protected var bindingsList: XValueChildrenList? = null;
-    {
+    protected var bindingsList: XValueChildrenList? = null
+
+    init {
         setBindingsList(stackFrameInfo.bindings)
     }
 

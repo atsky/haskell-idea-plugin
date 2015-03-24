@@ -21,7 +21,7 @@ public class HaskellLineBreakpointHandler(val project: Project,
                                           breakpointTypeClass: Class<out XBreakpointType<XLineBreakpoint<XBreakpointProperties<*>>, *>>,
                                           val debugProcess: HaskellDebugProcess)
 : XBreakpointHandler<XLineBreakpoint<XBreakpointProperties<*>>>(breakpointTypeClass) {
-    class object {
+    companion object {
         public val PROJECT_KEY: Key<Project> = Key("org.jetbrains.haskell.debugger.breakpoints.ProjectForBreakpoint")
         public val BREAKS_LIST_KEY: Key<ArrayList<BreakInfo>> =
                                                Key("org.jetbrains.haskell.debugger.breakpoints.BreakListForBreakpoint")

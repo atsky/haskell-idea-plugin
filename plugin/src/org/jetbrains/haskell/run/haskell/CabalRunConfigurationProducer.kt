@@ -67,7 +67,7 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
         return context!!.getPsiLocation()!!.getContainingFile() is HaskellFile
     }
 
-    class object {
+    companion object {
 
         private val LOG: Logger = Logger.getInstance("ideah.run.CabalRunConfigurationProducer")!!
     }

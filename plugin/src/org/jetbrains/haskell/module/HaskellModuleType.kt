@@ -29,7 +29,7 @@ public class HaskellModuleType() : ModuleType<HaskellModuleBuilder>("HASKELL_MOD
         return HaskellFileType.INSTANCE.getIcon()
     }
 
-    class object {
+    companion object {
         public val INSTANCE: HaskellModuleType = HaskellModuleType()
     }
 }

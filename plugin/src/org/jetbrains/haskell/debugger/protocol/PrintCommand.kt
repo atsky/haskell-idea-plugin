@@ -21,7 +21,7 @@ public class PrintCommand(private val bindingName: String, callback: CommandCall
         throw RuntimeException("Not used in remote debugger")
     }
 
-    class object {
+    companion object {
         public class StandardPrintCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition)
         : CommandCallback<LocalBinding?>() {
             override fun execAfterParsing(result: LocalBinding?) {

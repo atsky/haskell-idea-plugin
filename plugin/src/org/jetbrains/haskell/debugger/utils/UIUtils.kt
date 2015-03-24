@@ -16,7 +16,7 @@ import javax.swing.Box
  * @author Habibullin Marat
  */
 public class UIUtils {
-    class object {
+    companion object {
         public fun addLabeledControl(panel: JPanel,
                                      row: Int,
                                      label: String,

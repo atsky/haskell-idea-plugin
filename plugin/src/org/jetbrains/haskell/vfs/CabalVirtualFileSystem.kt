@@ -117,7 +117,7 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    class object {
+    companion object {
         public val INSTANCE : CabalVirtualFileSystem = CabalVirtualFileSystem()
     }
 }

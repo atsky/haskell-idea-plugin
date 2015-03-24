@@ -26,7 +26,7 @@ import com.intellij.notification.NotificationType
  */
 class BuildWrapper(val moduleRoot: String,
                    val cabalFile : String) {
-    class object {
+    companion object {
 
         public fun init(element : PsiElement) : BuildWrapper {
             val moduleRoot = BuildWrapper.getModuleContentDir(element)!!

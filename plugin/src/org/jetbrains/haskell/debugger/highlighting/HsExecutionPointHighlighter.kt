@@ -28,9 +28,9 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
  * @author Habibullin Marat
  */
 public class HsExecutionPointHighlighter(private val myProject: Project,
-                                         private val highlighterType: HsExecutionPointHighlighter.HighlighterType
-                                         = HsExecutionPointHighlighter.HighlighterType.STACK_FRAME) {
-    class object {
+                                         private val highlighterType: HsExecutionPointHighlighter.Companion.HighlighterType
+                                         = HsExecutionPointHighlighter.Companion.HighlighterType.STACK_FRAME) {
+    companion object {
         public enum class HighlighterType {
             STACK_FRAME
             HISTORY
@@ -137,9 +137,9 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
      */
     private fun getTextAttributes(): TextAttributes? {
         when (highlighterType) {
-            HsExecutionPointHighlighter.HighlighterType.STACK_FRAME ->
+            HsExecutionPointHighlighter.Companion.HighlighterType.STACK_FRAME ->
                 return EditorColorsManager.getInstance()!!.getGlobalScheme().getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
-            HsExecutionPointHighlighter.HighlighterType.HISTORY -> {
+            HsExecutionPointHighlighter.Companion.HighlighterType.HISTORY -> {
                 val scheme = EditorColorsManager.getInstance()!!.getGlobalScheme()
                 val attr1 = scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
                 val attr2 = scheme.getAttributes(DebuggerColors.BREAKPOINT_ATTRIBUTES)
@@ -158,9 +158,9 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
 
     private fun getHighlightLayer(): Int {
         when (highlighterType) {
-            HsExecutionPointHighlighter.HighlighterType.STACK_FRAME ->
+            HsExecutionPointHighlighter.Companion.HighlighterType.STACK_FRAME ->
                 return DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER
-            HsExecutionPointHighlighter.HighlighterType.HISTORY ->
+            HsExecutionPointHighlighter.Companion.HighlighterType.HISTORY ->
                 return DebuggerColors.EXECUTION_LINE_HIGHLIGHTERLAYER - 1
             else ->
                 return HighlighterLayer.SELECTION

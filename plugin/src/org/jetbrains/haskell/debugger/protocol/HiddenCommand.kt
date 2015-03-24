@@ -11,7 +11,7 @@ import org.json.simple.JSONObject
 public abstract class HiddenCommand
 : AbstractCommand<ParseResult?>(null) {
 
-    class object {
+    companion object {
         public fun createInstance(command: String): HiddenCommand {
             return object : HiddenCommand() {
                 override fun getText(): String = command

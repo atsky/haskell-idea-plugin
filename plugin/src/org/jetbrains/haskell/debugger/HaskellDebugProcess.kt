@@ -85,9 +85,9 @@ public class HaskellDebugProcess(session: XDebugSession,
     )
     private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
 
-    private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index";
+    private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index"
 
-    {
+    init {
         if (executionConsole is HaskellConsoleView) {
             executionConsole.registerExecuteActionHandler(
                     DebugHaskellExecuteActionHandler(this, session.getProject(), false),
@@ -95,7 +95,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
 
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
-                HaskellDebugSettings.DebuggerType.GHCI
+                HaskellDebugSettings.Companion.DebuggerType.GHCI
         if (debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater()
             debugger = GHCiDebugger(debugRespondent, _processHandler,
@@ -207,7 +207,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
         debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
-                HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
+                HaskellExceptionBreakpointProperties.Companion.ExceptionType.ERROR)
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
@@ -232,10 +232,10 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
             val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())
             registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(index, breakpoint))
-            val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.StandardSetBreakpointCallback(module, debugRespondent))
+            val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.Companion.StandardSetBreakpointCallback(module, debugRespondent))
             debugger.enqueueCommand(command)
         } else {
             throw RuntimeException(BREAK_BY_INDEX_ERROR_MSG)
@@ -259,7 +259,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             try {
                 historyManager.withRealFrameUpdate {
                     debugger.force(localBinding.name!!,
-                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
+                            ForceCommand.Companion.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
                 }
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
@@ -274,10 +274,10 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun syncBreakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
-            val callback = BreakpointListCommand.DefaultCallback(resultArray)
+            val callback = BreakpointListCommand.Companion.DefaultCallback(resultArray)
             val command = BreakpointListCommand(moduleName, lineNumber, syncObject, callback)
             syncCommand(command, syncObject)
             return resultArray

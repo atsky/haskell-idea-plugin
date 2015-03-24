@@ -22,9 +22,9 @@ public abstract class QueueDebugger(private val debugProcessHandler: ProcessHand
 
     private val printCommands: Boolean = HaskellDebugSettings.getInstance().getState().printDebugOutput
     private val writeLock = ReentrantLock()
-    private val queue: CommandQueue;
+    private val queue: CommandQueue
 
-    {
+    init {
         queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })
         queue.start()
     }

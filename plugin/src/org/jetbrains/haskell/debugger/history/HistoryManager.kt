@@ -28,20 +28,20 @@ import com.intellij.xdebugger.XDebugSession
 
 public class HistoryManager(private val debugSession : XDebugSession,
                             private val debugProcess: HaskellDebugProcess) {
-    class object {
+    companion object {
         public val HISTORY_SIZE: Int = 20
 
-        public inner class StackState(public val historyIndex: Int,
-                                      public val realHistIndex: Int,
-                                      public val allFramesCollected: Boolean,
-                                      public val historyFrames: ArrayList<HsHistoryFrame>,
-                                      public val historyFramesLines: ArrayList<*>)
+        public class StackState(public val historyIndex: Int,
+                                public val realHistIndex: Int,
+                                public val allFramesCollected: Boolean,
+                                public val historyFrames: ArrayList<HsHistoryFrame>,
+                                public val historyFramesLines: ArrayList<*>)
     }
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
     private var historyPanel: HistoryTab? = null;
     private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
-            HsExecutionPointHighlighter.HighlighterType.HISTORY)
+            HsExecutionPointHighlighter.Companion.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
             enabled = false

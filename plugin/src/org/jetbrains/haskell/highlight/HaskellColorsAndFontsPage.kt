@@ -75,7 +75,7 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
         return map
     }
 
-    class object {
+    companion object {
         private val ATTRS = array(
                 AttributesDescriptor("Brackets", HaskellHighlighter.HASKELL_BRACKETS),
                 AttributesDescriptor("Class", HaskellHighlighter.HASKELL_CLASS),

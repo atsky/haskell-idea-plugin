@@ -14,7 +14,7 @@ import java.util.ArrayList
 class TarGzArchive(val file : File) {
     val filesList : List<String>
 
-    {
+    init {
         val bin = BufferedInputStream(FileInputStream(file))
         val gzIn = GzipCompressorInputStream(bin);
 

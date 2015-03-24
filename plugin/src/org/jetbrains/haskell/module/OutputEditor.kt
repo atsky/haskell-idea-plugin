@@ -25,7 +25,7 @@ public class OutputEditor(state: ModuleConfigurationState) : ModuleElementsEdito
         return myCompilerOutputEditor.getHelpTopic()!!
     }
 
-    {
+    init {
         myCompilerOutputEditor = object : BuildElementsEditor(state) {
 
 

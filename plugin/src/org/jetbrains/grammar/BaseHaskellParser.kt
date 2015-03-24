@@ -25,7 +25,7 @@ import org.jetbrains.grammar.dumb.NonTerminalVariant
 
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
-    class object {
+    companion object {
         var cache : Map<String, Rule>? = null;
     }
 

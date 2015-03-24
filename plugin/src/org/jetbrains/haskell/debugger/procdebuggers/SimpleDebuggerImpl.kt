@@ -44,13 +44,13 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     protected open fun fixTraceCommand(line: String): String = line
 
     override fun trace(line: String?) = enqueueCommand(TraceCommand(fixTraceCommand(line ?: TRACE_COMMAND),
-            FlowCommand.StandardFlowCallback(this, debugRespondent)))
+            FlowCommand.Companion.StandardFlowCallback(this, debugRespondent)))
 
-    override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(this, debugRespondent)))
+    override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.Companion.StandardStepCallback(this, debugRespondent)))
 
-    override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(this, debugRespondent)))
+    override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.Companion.StandardStepCallback(this, debugRespondent)))
 
-    override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(this, debugRespondent)))
+    override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.Companion.StandardFlowCallback(this, debugRespondent)))
 
     override fun back(callback: CommandCallback<MoveHistResult?>?) = enqueueCommand(BackCommand(callback))
 
@@ -65,14 +65,14 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     override fun history(callback: CommandCallback<HistoryResult?>) = enqueueCommand(HistoryCommand(callback))
 
     override fun setBreakpoint(module: String, line: Int) {
-        val callback = SetBreakpointCommand.StandardSetBreakpointCallback(module, debugRespondent)
+        val callback = SetBreakpointCommand.Companion.StandardSetBreakpointCallback(module, debugRespondent)
         enqueueCommand(SetBreakpointCommand(module, line, callback))
     }
 
     override fun removeBreakpoint(module: String, breakpointNumber: Int) {
         val moduleName = if (GLOBAL_BREAKPOINT_INDICES) null else module
         enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber,
-                RemoveBreakpointCommand.StandardRemoveBreakpointCallback(debugRespondent)))
+                RemoveBreakpointCommand.Companion.StandardRemoveBreakpointCallback(debugRespondent)))
     }
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
@@ -114,6 +114,6 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
     : CommandCallback<Nothing?>() {
         override fun execAfterParsing(result: Nothing?) =
-                FlowCommand.StandardFlowCallback(this@SimpleDebuggerImpl, debugRespondent).execAfterParsing(flowResult)
+                FlowCommand.Companion.StandardFlowCallback(this@SimpleDebuggerImpl, debugRespondent).execAfterParsing(flowResult)
     }
 }

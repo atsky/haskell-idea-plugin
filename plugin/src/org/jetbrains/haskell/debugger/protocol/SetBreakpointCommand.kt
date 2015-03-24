@@ -23,7 +23,7 @@ public class SetBreakpointCommand(val module: String,
     override fun parseJSONOutput(output: JSONObject): BreakpointCommandResult? =
             if (JSONConverter.checkExceptionFromJSON(output) == null) JSONConverter.breakpointCommandResultFromJSON(output) else null
 
-    class object {
+    companion object {
         public class StandardSetBreakpointCallback(val module: String,
                                                    val debugRespondent: DebugRespondent)
         : CommandCallback<BreakpointCommandResult?>() {

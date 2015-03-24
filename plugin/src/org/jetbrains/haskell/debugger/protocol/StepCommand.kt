@@ -21,7 +21,7 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
     override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
             JSONConverter.stoppedAtFromJSON(output)
 
-    class object {
+    companion object {
         public class StandardStepCallback(val debugger: ProcessDebugger,
                                           val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
@@ -31,7 +31,7 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
                 if (result != null) {
                     val frame = HsHistoryFrame(debugger, result)
                     frame.obsolete = false
-                    debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, null))
+                    debugger.history(HistoryCommand.Companion.DefaultHistoryCallback(debugger, debugRespondent, frame, null))
                 } else {
                     debugRespondent.traceFinished()
                 }

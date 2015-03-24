@@ -33,7 +33,7 @@ import java.awt.event.ActionEvent
  * @author Habibullin Marat
  */
 public class DebuggerConfigurable() : Configurable {
-    class object {
+    companion object {
         private val ITEM_GHCI = "GHCi"
         private val ITEM_REMOTE = "Remote"
 
@@ -107,7 +107,7 @@ public class DebuggerConfigurable() : Configurable {
         val printDebugOutput = printDebugOutputCheckBox.isSelected()
 
         val state = HaskellDebugSettings.getInstance().getState()
-        state.debuggerType = if (ghciSelected) HaskellDebugSettings.DebuggerType.GHCI else HaskellDebugSettings.DebuggerType.REMOTE
+        state.debuggerType = if (ghciSelected) HaskellDebugSettings.Companion.DebuggerType.GHCI else HaskellDebugSettings.Companion.DebuggerType.REMOTE
         state.remoteDebuggerPath = remotePath
         state.traceOff = traceSwitchedOff
         state.printDebugOutput = printDebugOutput
@@ -121,7 +121,7 @@ public class DebuggerConfigurable() : Configurable {
      */
     override fun reset() {
         val state = HaskellDebugSettings.getInstance().getState()
-        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == HaskellDebugSettings.DebuggerType.GHCI) 0 else 1)
+        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == HaskellDebugSettings.Companion.DebuggerType.GHCI) 0 else 1)
         traceSwitchOffCheckBox.setSelected(state.traceOff)
         remoteDebuggerPathField.getTextField()!!.setText(state.remoteDebuggerPath)
         printDebugOutputCheckBox.setSelected(state.printDebugOutput)

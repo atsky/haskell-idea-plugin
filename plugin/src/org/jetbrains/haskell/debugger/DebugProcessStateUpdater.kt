@@ -33,9 +33,9 @@ public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
 
-    public val processStopped: AtomicBoolean = AtomicBoolean(false);
+    public val processStopped: AtomicBoolean = AtomicBoolean(false)
 
-    {
+    init {
         inputReadinessChecker = InputReadinessChecker(this)
         inputReadinessChecker.start()
     }

@@ -33,8 +33,9 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
     private val PANEL_LABEL: String = "Select breakpoint:"
     private val DEBUG_NOT_STARTED_ITEM: String = "start debug process to enable"
     private val breaksComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(DEBUG_NOT_STARTED_ITEM)))
-    private val mainPanel: JPanel = JPanel(GridLayout(1, 0));
-    {
+    private val mainPanel: JPanel = JPanel(GridLayout(1, 0))
+
+    init {
         UIUtils.addLabeledControl(mainPanel, 0, PANEL_LABEL, breaksComboBox)
         breaksComboBox.setEnabled(false)
     }

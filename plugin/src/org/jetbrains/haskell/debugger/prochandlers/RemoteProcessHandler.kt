@@ -10,7 +10,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.RemoteDebugStreamHandl
 
 public class RemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler) : HaskellDebugProcessHandler(process: Process) {
 
-    {
+    init {
         streamHandler.processHandler = this
     }
 

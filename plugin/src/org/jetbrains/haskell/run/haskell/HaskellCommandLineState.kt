@@ -165,7 +165,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
     public fun executeDebug(project: Project, executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
         val processHandler =
-                if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.GHCI)
+                if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.GHCI)
                     startGHCiDebugProcess()
                 else
                     startRemoteDebugProcess()
