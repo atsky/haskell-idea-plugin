@@ -207,7 +207,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
         debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
-                HaskellExceptionBreakpointProperties.Companion.ExceptionType.ERROR)
+                HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
     }
 
     public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
@@ -259,7 +259,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             try {
                 historyManager.withRealFrameUpdate {
                     debugger.force(localBinding.name!!,
-                            ForceCommand.Companion.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
+                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
                 }
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()

@@ -35,67 +35,67 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
     override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
             JSONConverter.stoppedAtFromJSON(output)
 
-    companion object {
 
-        public class StandardFlowCallback(val debugger: ProcessDebugger,
-                                          val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
+    public class StandardFlowCallback(val debugger: ProcessDebugger,
+                                      val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
-            override fun execBeforeSending() = debugRespondent.resetHistoryStack()
+        override fun execBeforeSending() = debugRespondent.resetHistoryStack()
 
-            override fun execAfterParsing(result: HsStackFrameInfo?) {
-                if (result != null) {
-                    if (result.filePosition == null) {
-                        setExceptionContext(result)
-                        return
-                    }
-                    val module = debugRespondent.getModuleByFile(result.filePosition.filePath)
-                    val breakpoint = debugRespondent.getBreakpointAt(module, result.filePosition.rawStartLine)
-                    val condition = breakpoint?.condition
-                    if (breakpoint != null && condition != null) {
-                        handleCondition(breakpoint, condition, result)
-                    } else {
-                        setContext(result, breakpoint)
-                    }
-                } else {
-                    debugRespondent.traceFinished()
+        override fun execAfterParsing(result: HsStackFrameInfo?) {
+            if (result != null) {
+                if (result.filePosition == null) {
+                    setExceptionContext(result)
+                    return
                 }
-            }
-
-            private fun handleCondition(breakpoint: HaskellLineBreakpointDescription, condition: String, result: HsStackFrameInfo) {
-                val evaluator = HsDebuggerEvaluator(debugger)
-                evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
-                    override fun errorOccurred(errorMessage: String) {
-                        val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.line}" +
-                                "cannot be evaluated, reason: $errorMessage"
-                        Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
-                        setContext(result, breakpoint)
-                    }
-                    override fun evaluated(evalResult: XValue) {
-                        if (evalResult is HsDebugValue &&
-                                evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
-                                evalResult.binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
-                            setContext(result, breakpoint)
-                        } else {
-                            debugger.resume()
-                        }
-                    }
-
-                }, null)
-            }
-
-            private fun setExceptionContext(result: HsStackFrameInfo) {
-                val frame = HsHistoryFrame(debugger, result)
-                frame.obsolete = false
-                debugRespondent.historyChange(frame, null)
-                val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", result))
-                debugRespondent.exceptionReached(context)
-            }
-
-            private fun setContext(result: HsStackFrameInfo, breakpoint: HaskellLineBreakpointDescription?) {
-                val frame = HsHistoryFrame(debugger, result)
-                frame.obsolete = false
-                debugger.history(HistoryCommand.Companion.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))
+                val module = debugRespondent.getModuleByFile(result.filePosition.filePath)
+                val breakpoint = debugRespondent.getBreakpointAt(module, result.filePosition.rawStartLine)
+                val condition = breakpoint?.condition
+                if (breakpoint != null && condition != null) {
+                    handleCondition(breakpoint, condition, result)
+                } else {
+                    setContext(result, breakpoint)
+                }
+            } else {
+                debugRespondent.traceFinished()
             }
         }
+
+        private fun handleCondition(breakpoint: HaskellLineBreakpointDescription, condition: String, result: HsStackFrameInfo) {
+            val evaluator = HsDebuggerEvaluator(debugger)
+            evaluator.evaluate(condition, object : XDebuggerEvaluator.XEvaluationCallback {
+                override fun errorOccurred(errorMessage: String) {
+                    val msg = "Condition \"$condition\" of breakpoint at line ${breakpoint.line}" +
+                            "cannot be evaluated, reason: $errorMessage"
+                    Notifications.Bus.notify(Notification("", "Wrong breakpoint condition", msg, NotificationType.WARNING))
+                    setContext(result, breakpoint)
+                }
+
+                override fun evaluated(evalResult: XValue) {
+                    if (evalResult is HsDebugValue &&
+                            evalResult.binding.typeName == HaskellUtils.HS_BOOLEAN_TYPENAME &&
+                            evalResult.binding.value == HaskellUtils.HS_BOOLEAN_TRUE) {
+                        setContext(result, breakpoint)
+                    } else {
+                        debugger.resume()
+                    }
+                }
+
+            }, null)
+        }
+
+        private fun setExceptionContext(result: HsStackFrameInfo) {
+            val frame = HsHistoryFrame(debugger, result)
+            frame.obsolete = false
+            debugRespondent.historyChange(frame, null)
+            val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", result))
+            debugRespondent.exceptionReached(context)
+        }
+
+        private fun setContext(result: HsStackFrameInfo, breakpoint: HaskellLineBreakpointDescription?) {
+            val frame = HsHistoryFrame(debugger, result)
+            frame.obsolete = false
+            debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))
+        }
     }
+
 }

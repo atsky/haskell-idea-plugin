@@ -1,9 +1,5 @@
 package org.jetbrains.cabal.completion
 
-//import com.intellij.codeInsight.completion.CompletionContributor
-//import com.intellij.codeInsight.completion.CompletionParameters
-//import com.intellij.codeInsight.completion.CompletionResultSet
-//import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.psi.PsiElement
@@ -63,6 +59,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                 is Identifier -> {
                     var parentField = parent
                     while ((parentField !is Field) && (parentField !is CabalFile) && (parentField != null)) {
+                        // TODO Look like a bug in Kotlin.
                         val parentFieldVal = parentField
                         parentField = parentFieldVal?.getParent()
                     }

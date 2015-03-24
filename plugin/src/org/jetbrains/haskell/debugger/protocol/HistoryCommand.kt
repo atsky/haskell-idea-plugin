@@ -20,25 +20,25 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
     override fun getText(): String {
         return ":history\n"
     }
+
     override fun parseGHCiOutput(output: Deque<String?>): HistoryResult? = GHCiParser.parseHistoryResult(output)
 
     override fun parseJSONOutput(output: JSONObject): HistoryResult? = JSONConverter.historyResultFromJSON(output)
 
-    companion object {
-        public class DefaultHistoryCallback(val debugger: ProcessDebugger,
-                                            val debugRespondent: DebugRespondent,
-                                            val historyFrame: HsHistoryFrame,
-                                            val breakpoint: HaskellLineBreakpointDescription?) : CommandCallback<HistoryResult?>() {
+    public class DefaultHistoryCallback(val debugger: ProcessDebugger,
+                                        val debugRespondent: DebugRespondent,
+                                        val historyFrame: HsHistoryFrame,
+                                        val breakpoint: HaskellLineBreakpointDescription?) : CommandCallback<HistoryResult?>() {
 
-            override fun execAfterParsing(result: HistoryResult?) {
-                debugRespondent.historyChange(historyFrame, result)
-                val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
-                if (breakpoint != null) {
-                    debugRespondent.breakpointReached(breakpoint, context)
-                } else {
-                    debugRespondent.positionReached(context)
-                }
+        override fun execAfterParsing(result: HistoryResult?) {
+            debugRespondent.historyChange(historyFrame, result)
+            val context = HsSuspendContext(debugger, ProgramThreadInfo(null, "Main", historyFrame.stackFrameInfo))
+            if (breakpoint != null) {
+                debugRespondent.breakpointReached(breakpoint, context)
+            } else {
+                debugRespondent.positionReached(context)
             }
         }
     }
+
 }

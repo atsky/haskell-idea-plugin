@@ -18,12 +18,10 @@ public class RemoveBreakpointCommand(val module: String?, val breakpointNumber: 
 
     override fun parseJSONOutput(output: JSONObject): Nothing? = null
 
-    companion object {
-        public class StandardRemoveBreakpointCallback(val respondent: DebugRespondent) : CommandCallback<Nothing?>() {
-            override fun execAfterParsing(result: Nothing?) {
-                respondent.breakpointRemoved()
-            }
-
+    public class StandardRemoveBreakpointCallback(val respondent: DebugRespondent) : CommandCallback<Nothing?>() {
+        override fun execAfterParsing(result: Nothing?) {
+            respondent.breakpointRemoved()
         }
+
     }
 }

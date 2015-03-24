@@ -15,7 +15,7 @@ import org.jetbrains.haskell.run.ModuleComboBoxRenderer
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var mainFileComponent: TextFieldWithBrowseButton
-    private var moduleComboBox: JComboBox<Module>
+    private var moduleComboBox: JComboBox
     private var programParametersComponent : RawCommandLineEditor
     private var workingDirectoryComponent : TextFieldWithBrowseButton
     private var environmentVariables : EnvironmentVariablesComponent

@@ -73,7 +73,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
         framesPanel.addElement(line)
     }
 
-    public fun getHistoryFramesModel(): DefaultListModel<String> = framesPanel.getModel()
+    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()
 
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()
@@ -94,7 +94,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
     }
 
     private inner class FramesPanel : JBList() {
-        private val listModel = DefaultListModel<String?>()
+        private val listModel = DefaultListModel()
 
         init {
             setModel(listModel)
@@ -105,7 +105,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
             }
         }
 
-        override fun getModel(): DefaultListModel<String?> {
+        override fun getModel(): DefaultListModel {
             return listModel
         }
 

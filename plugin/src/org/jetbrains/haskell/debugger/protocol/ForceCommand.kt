@@ -23,24 +23,24 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
         return LocalBinding(bindingName, res.expressionType, res.expressionValue)
     }
 
-    companion object {
-        public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
-                                           val debugProcess: HaskellDebugProcess)
-        : CommandCallback<LocalBinding?>() {
-            override fun execAfterParsing(result: LocalBinding?) {
-                syncObject.lock()
-                try {
-                    if (result != null && result.name != null && result.name == localBinding.name) {
-                        localBinding.value = result.value
-                    } else {
-                        localBinding.value = ""
-                    }
-                    debugProcess.historyManager.markHistoryFramesAsObsolete()
-                    bindingValueIsSet.signal()
-                } finally {
-                    syncObject.unlock()
+
+    public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
+                                       val debugProcess: HaskellDebugProcess)
+    : CommandCallback<LocalBinding?>() {
+        override fun execAfterParsing(result: LocalBinding?) {
+            syncObject.lock()
+            try {
+                if (result != null && result.name != null && result.name == localBinding.name) {
+                    localBinding.value = result.value
+                } else {
+                    localBinding.value = ""
                 }
+                debugProcess.historyManager.markHistoryFramesAsObsolete()
+                bindingValueIsSet.signal()
+            } finally {
+                syncObject.unlock()
             }
         }
     }
+
 }

@@ -21,21 +21,21 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
     override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
             JSONConverter.stoppedAtFromJSON(output)
 
-    companion object {
-        public class StandardStepCallback(val debugger: ProcessDebugger,
-                                          val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
-            override fun execBeforeSending() = debugRespondent.resetHistoryStack()
+    public class StandardStepCallback(val debugger: ProcessDebugger,
+                                      val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
-            override fun execAfterParsing(result: HsStackFrameInfo?) {
-                if (result != null) {
-                    val frame = HsHistoryFrame(debugger, result)
-                    frame.obsolete = false
-                    debugger.history(HistoryCommand.Companion.DefaultHistoryCallback(debugger, debugRespondent, frame, null))
-                } else {
-                    debugRespondent.traceFinished()
-                }
+        override fun execBeforeSending() = debugRespondent.resetHistoryStack()
+
+        override fun execAfterParsing(result: HsStackFrameInfo?) {
+            if (result != null) {
+                val frame = HsHistoryFrame(debugger, result)
+                frame.obsolete = false
+                debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, null))
+            } else {
+                debugRespondent.traceFinished()
             }
         }
     }
+
 }

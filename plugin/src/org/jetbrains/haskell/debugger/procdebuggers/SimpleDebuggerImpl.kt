@@ -44,13 +44,13 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     protected open fun fixTraceCommand(line: String): String = line
 
     override fun trace(line: String?) = enqueueCommand(TraceCommand(fixTraceCommand(line ?: TRACE_COMMAND),
-            FlowCommand.Companion.StandardFlowCallback(this, debugRespondent)))
+            FlowCommand.StandardFlowCallback(this, debugRespondent)))
 
-    override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.Companion.StandardStepCallback(this, debugRespondent)))
+    override fun stepInto() = enqueueCommand(StepIntoCommand(StepCommand.StandardStepCallback(this, debugRespondent)))
 
-    override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.Companion.StandardStepCallback(this, debugRespondent)))
+    override fun stepOver() = enqueueCommand(StepOverCommand(StepCommand.StandardStepCallback(this, debugRespondent)))
 
-    override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.Companion.StandardFlowCallback(this, debugRespondent)))
+    override fun resume() = enqueueCommand(ResumeCommand(FlowCommand.StandardFlowCallback(this, debugRespondent)))
 
     override fun back(callback: CommandCallback<MoveHistResult?>?) = enqueueCommand(BackCommand(callback))
 
@@ -72,7 +72,7 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     override fun removeBreakpoint(module: String, breakpointNumber: Int) {
         val moduleName = if (GLOBAL_BREAKPOINT_INDICES) null else module
         enqueueCommand(RemoveBreakpointCommand(moduleName, breakpointNumber,
-                RemoveBreakpointCommand.Companion.StandardRemoveBreakpointCallback(debugRespondent)))
+                RemoveBreakpointCommand.StandardRemoveBreakpointCallback(debugRespondent)))
     }
 
     override fun setExceptionBreakpoint(uncaughtOnly: Boolean) =
@@ -114,6 +114,6 @@ public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
     private inner class RemoveTempBreakCallback(val flowResult: HsStackFrameInfo?)
     : CommandCallback<Nothing?>() {
         override fun execAfterParsing(result: Nothing?) =
-                FlowCommand.Companion.StandardFlowCallback(this@SimpleDebuggerImpl, debugRespondent).execAfterParsing(flowResult)
+                FlowCommand.StandardFlowCallback(this@SimpleDebuggerImpl, debugRespondent).execAfterParsing(flowResult)
     }
 }
