@@ -34,7 +34,7 @@ public class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable
             }
             val versionConstr = constraint.getConstraint()
             if (versionConstr == null) continue
-            if (!(installed.availableVersions map { versionConstr.satisfyConstraint(it) } reduce { (curr, next) -> curr || next })) {
+            if (!(installed.availableVersions map { versionConstr.satisfyConstraint(it) } reduce { curr, next -> curr || next })) {
                 res.add(ErrorMessage(versionConstr, "installed package's version does not satisfy this constraint", "warning"))
             }
         }

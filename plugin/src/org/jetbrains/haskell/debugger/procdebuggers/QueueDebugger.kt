@@ -25,7 +25,7 @@ public abstract class QueueDebugger(private val debugProcessHandler: ProcessHand
     private val queue: CommandQueue
 
     init {
-        queue = CommandQueue({(command: AbstractCommand<out ParseResult?>) -> execute(command) })
+        queue = CommandQueue({ command: AbstractCommand<out ParseResult?> -> execute(command) })
         queue.start()
     }
 

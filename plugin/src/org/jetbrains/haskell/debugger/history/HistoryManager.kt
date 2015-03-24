@@ -80,7 +80,7 @@ public class HistoryManager(private val debugSession : XDebugSession,
     public fun indexSelected(index: Int): Unit = historyStack.moveTo(index)
 
     public fun setHistoryFramesInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
-        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({ ->
             historyPanel!!.addHistoryLine(initial.toString())
             for (info in others) {
                 historyPanel!!.addHistoryLine(info.toString())
@@ -106,7 +106,7 @@ public class HistoryManager(private val debugSession : XDebugSession,
     }
 
     public fun historyChanged(hasNext: Boolean, hasPrevious: Boolean, stackFrame: HsStackFrame?) {
-        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({() ->
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({ ->
             backAction.enabled = hasPrevious
             forwardAction.enabled = hasNext
             historyPanel!!.stackChanged(stackFrame)

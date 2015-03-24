@@ -9,19 +9,19 @@ import java.util.*
 // https://github.com/ghc/packages-Cabal/blob/master/Cabal/Distribution/PackageDescription/Parse.hs
 
 public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
-    "name"               to Pair(CabalTokelTypes.NAME_FIELD        , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.NAME) }      ),
-    "version"            to Pair(CabalTokelTypes.VERSION           , { CabalParser.(level: Int) -> this.parseVersionValue() }                     ),
-    "cabal-version"      to Pair(CabalTokelTypes.CABAL_VERSION     , { CabalParser.(level: Int) -> this.parseSimpleVersionConstraint() }          ),
-    "build-type"         to Pair(CabalTokelTypes.BUILD_TYPE_FIELD  , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.BUILD_TYPE) }),
-    "license"            to Pair(CabalTokelTypes.LICENSE           , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.IDENTIFIER) }),
-    "license-file"       to Pair(CabalTokelTypes.LICENSE_FILES     , { CabalParser.(level: Int) -> this.parsePath() }                             ),
+    "name"               to Pair(CabalTokelTypes.NAME_FIELD        , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.NAME)),
+    "version"            to Pair(CabalTokelTypes.VERSION           , fun CabalParser.(level: Int): Boolean = this.parseVersionValue()),
+    "cabal-version"      to Pair(CabalTokelTypes.CABAL_VERSION     , fun CabalParser.(level: Int): Boolean = this.parseSimpleVersionConstraint()),
+    "build-type"         to Pair(CabalTokelTypes.BUILD_TYPE_FIELD  , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.BUILD_TYPE)),
+    "license"            to Pair(CabalTokelTypes.LICENSE           , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.IDENTIFIER)),
+    "license-file"       to Pair(CabalTokelTypes.LICENSE_FILES     , fun CabalParser.(level: Int): Boolean = this.parsePath()),
     "copyright"          to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "author"             to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
-    "maintainer"         to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseFreeLine(CabalTokelTypes.E_MAIL) }   ),
+    "maintainer"         to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseFreeLine(CabalTokelTypes.E_MAIL)),
     "stability"          to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
-    "homepage"           to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
-    "bug-reports"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
-    "package-url"        to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }    ),
+    "homepage"           to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.URL)),
+    "bug-reports"        to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.URL)),
+    "package-url"        to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.URL)),
     "synopsis"           to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "description"        to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
     "category"           to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                                                   ),
@@ -29,19 +29,19 @@ public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
     "tested-with"        to Pair(CabalTokelTypes.TESTED_WITH       , CabalParser::parseCompilerList                                               ),
 
     "data-files"         to Pair(CabalTokelTypes.DATA_FILES        , CabalParser::parsePathList                                                   ),
-    "data-dir"           to Pair(CabalTokelTypes.DATA_DIR          , { CabalParser.(level: Int) -> this.parsePath() }                             ),
+    "data-dir"           to Pair(CabalTokelTypes.DATA_DIR          , fun CabalParser.(level: Int): Boolean = this.parsePath()),
     "extra-source-files" to Pair(CabalTokelTypes.EXTRA_SOURCE      , CabalParser::parsePathList                                                   ),
     "extra-tmp-files"    to Pair(CabalTokelTypes.EXTRA_TMP         , CabalParser::parsePathList                                                   )
 )
 
 public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
-    "build-depends"      to Pair(CabalTokelTypes.BUILD_DEPENDS     , { CabalParser.(level: Int) -> this.parseConstraintList(level) }             ),
+    "build-depends"      to Pair(CabalTokelTypes.BUILD_DEPENDS     , fun CabalParser.(level: Int): Boolean = this.parseConstraintList(level)),
     "other-modules"      to Pair(CabalTokelTypes.OTHER_MODULES     , CabalParser::parseIdList                                                    ),
     "hs-source-dirs"     to Pair(CabalTokelTypes.HS_SOURCE_DIRS    , CabalParser::parsePathList                                                  ),
-    "hs-source-dir"      to Pair(CabalTokelTypes.HS_SOURCE_DIRS    , { CabalParser.(level: Int) -> this.parsePath() }                            ),
+    "hs-source-dir"      to Pair(CabalTokelTypes.HS_SOURCE_DIRS    , fun CabalParser.(level: Int): Boolean = this.parsePath()),
     "extensions"         to Pair(CabalTokelTypes.EXTENSIONS        , CabalParser::parseIdList                                                    ),
-    "build-tools"        to Pair(CabalTokelTypes.BUILD_TOOLS       , { CabalParser.(level: Int) -> this.parseConstraintList(level) }             ),
-    "buildable"          to Pair(CabalTokelTypes.BUILDABLE         , { CabalParser.(level: Int) -> this.parseBool() }                            ),
+    "build-tools"        to Pair(CabalTokelTypes.BUILD_TOOLS       , fun CabalParser.(level: Int): Boolean = this.parseConstraintList(level)),
+    "buildable"          to Pair(CabalTokelTypes.BUILDABLE         , fun CabalParser.(level: Int): Boolean = this.parseBool()),
 
     "ghc-options"        to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseOptionList                                                ),
     "ghc-prof-options"   to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseOptionList                                                ),
@@ -63,19 +63,19 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
     "cpp-options"        to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseOptionList                                                ),
     "ld-options"         to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseOptionList                                                ),
 
-    "pkgconfig-depends"  to Pair(CabalTokelTypes.PKG_CONFIG_DEPENDS, { CabalParser.(level: Int) -> this.parseConstraintList(level) }             ),
+    "pkgconfig-depends"  to Pair(CabalTokelTypes.PKG_CONFIG_DEPENDS, fun CabalParser.(level: Int): Boolean = this.parseConstraintList(level)),
     "frameworks"         to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseTokenList                                                 ),
 
     "default-extensions" to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseIdList                                                    ),
     "other-extensions"   to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseIdList                                                    ),
-    "default-language"   to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.LANGUAGE) } ),
+    "default-language"   to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.LANGUAGE)),
     "other-languages"    to Pair(CabalTokelTypes.MULTI_VAL         , CabalParser::parseLanguageList                                              )
 )
 
 public val LIBRARY_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = {
     val res = hashMapOf(
             "exposed-modules"    to Pair(CabalTokelTypes.EXPOSED_MODULES, CabalParser::parseIdList                        ),
-            "exposed"            to Pair(CabalTokelTypes.EXPOSED        , { CabalParser.(level: Int) -> this.parseBool() })
+            "exposed"            to Pair(CabalTokelTypes.EXPOSED        , fun CabalParser.(level: Int): Boolean = this.parseBool())
     )
     res.putAll(BUILD_INFO_FIELDS)
     res
@@ -83,7 +83,7 @@ public val LIBRARY_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> B
 
 public val EXECUTABLE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = {
     var res = hashMapOf(
-        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , { CabalParser.(level: Int) -> this.parsePath() })
+        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , fun CabalParser.(level: Int): Boolean = this.parsePath())
     )
     res.putAll(BUILD_INFO_FIELDS)
     res
@@ -91,9 +91,9 @@ public val EXECUTABLE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
 
 public val TEST_SUITE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = {
     var res = hashMapOf(
-        "type"               to Pair(CabalTokelTypes.TYPE              , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.TEST_SUITE_TYPE) }),
-        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , { CabalParser.(level: Int) -> this.parsePath() }                                  ),
-        "test-module"        to Pair(CabalTokelTypes.TEST_MODULE       , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.IDENTIFIER) }     )
+        "type"               to Pair(CabalTokelTypes.TYPE              , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.TEST_SUITE_TYPE)),
+        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , fun CabalParser.(level: Int): Boolean = this.parsePath()),
+        "test-module"        to Pair(CabalTokelTypes.TEST_MODULE       , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.IDENTIFIER))
     )
     res.putAll(BUILD_INFO_FIELDS)
     res
@@ -101,8 +101,8 @@ public val TEST_SUITE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
 
 public val BENCHMARK_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = {
     var res = hashMapOf(
-        "type"               to Pair(CabalTokelTypes.TYPE              , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.BENCHMARK_TYPE) } ),
-        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , { CabalParser.(level: Int) -> this.parsePath() }                                  )
+        "type"               to Pair(CabalTokelTypes.TYPE              , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.BENCHMARK_TYPE)),
+        "main-is"            to Pair(CabalTokelTypes.MAIN_FILE         , fun CabalParser.(level: Int): Boolean = this.parsePath())
     )
     res.putAll(BUILD_INFO_FIELDS)
     res
@@ -110,17 +110,17 @@ public val BENCHMARK_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
 
 public val FLAG_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
     "description"        to Pair(CabalTokelTypes.SINGLE_VAL        , CabalParser::parseFreeForm                      ),
-    "default"            to Pair(CabalTokelTypes.BOOL_FIELD        , { CabalParser.(level: Int) -> this.parseBool() }),
-    "manual"             to Pair(CabalTokelTypes.BOOL_FIELD        , { CabalParser.(level: Int) -> this.parseBool() })
+    "default"            to Pair(CabalTokelTypes.BOOL_FIELD        , fun CabalParser.(level: Int): Boolean = this.parseBool()),
+    "manual"             to Pair(CabalTokelTypes.BOOL_FIELD        , fun CabalParser.(level: Int): Boolean = this.parseBool())
 )
 
 public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = mapOf(
-    "location"           to Pair(CabalTokelTypes.REPO_LOCATION     , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.URL) }   ),
-    "type"               to Pair(CabalTokelTypes.TYPE              , { CabalParser.(level: Int) -> this.parseIdValue(CabalTokelTypes.REPO_TYPE) }),
-    "subdir"             to Pair(CabalTokelTypes.REPO_SUBDIR       , { CabalParser.(level: Int) -> this.parsePath() }                            ),
-    "module"             to Pair(CabalTokelTypes.REPO_MODULE       , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } ),
-    "tag"                to Pair(CabalTokelTypes.REPO_TAG          , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } ),
-    "branch"             to Pair(CabalTokelTypes.SINGLE_VAL        , { CabalParser.(level: Int) -> this.parseTokenValue(CabalTokelTypes.TOKEN) } )
+    "location"           to Pair(CabalTokelTypes.REPO_LOCATION     , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.URL)),
+    "type"               to Pair(CabalTokelTypes.TYPE              , fun CabalParser.(level: Int): Boolean = this.parseIdValue(CabalTokelTypes.REPO_TYPE)),
+    "subdir"             to Pair(CabalTokelTypes.REPO_SUBDIR       , fun CabalParser.(level: Int): Boolean = this.parsePath()),
+    "module"             to Pair(CabalTokelTypes.REPO_MODULE       , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.TOKEN)),
+    "tag"                to Pair(CabalTokelTypes.REPO_TAG          , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.TOKEN)),
+    "branch"             to Pair(CabalTokelTypes.SINGLE_VAL        , fun CabalParser.(level: Int): Boolean = this.parseTokenValue(CabalTokelTypes.TOKEN))
 )
 
 public val SECTION_TYPES: Map<String, IElementType> = mapOf(
@@ -137,14 +137,14 @@ public val SECTION_TYPES: Map<String, IElementType> = mapOf(
 public val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
                                        Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>>?
                                                                                                         >> = mapOf(
-        "executable"            to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, EXECUTABLE_FIELDS) ,
-        "library"               to Pair({ CabalParser.(level: Int) -> true }                   , LIBRARY_FIELDS)    ,
-        "test-suite"            to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, TEST_SUITE_FIELDS) ,
-        "benchmark"             to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, BENCHMARK_FIELDS)  ,
-        "flag"                  to Pair({ CabalParser.(level: Int) -> this.parseSectionName() }, FLAG_FIELDS)       ,
-        "source-repository"     to Pair({ CabalParser.(level: Int) -> this.parseRepoKinds() }  , SOURCE_REPO_FIELDS),
-        "if"                    to Pair(CabalParser::parseFullCondition                        , null)              ,
-        "else"                  to Pair({ CabalParser.(level: Int) -> true }                   , null)
+        "executable"            to Pair(fun CabalParser.(level: Int): Boolean = this.parseSectionName(), EXECUTABLE_FIELDS) ,
+        "library"               to Pair(fun CabalParser.(level: Int): Boolean = true,                    LIBRARY_FIELDS)    ,
+        "test-suite"            to Pair(fun CabalParser.(level: Int): Boolean = this.parseSectionName(), TEST_SUITE_FIELDS) ,
+        "benchmark"             to Pair(fun CabalParser.(level: Int): Boolean = this.parseSectionName(), BENCHMARK_FIELDS)  ,
+        "flag"                  to Pair(fun CabalParser.(level: Int): Boolean = this.parseSectionName(), FLAG_FIELDS)       ,
+        "source-repository"     to Pair(fun CabalParser.(level: Int): Boolean = this.parseRepoKinds(),   SOURCE_REPO_FIELDS),
+        "if"                    to Pair(CabalParser::parseFullCondition,                                 null)              ,
+        "else"                  to Pair(fun CabalParser.(level: Int): Boolean = true,                    null)
 )
 
 public val TOP_SECTION_NAMES: List<String> = listOf(

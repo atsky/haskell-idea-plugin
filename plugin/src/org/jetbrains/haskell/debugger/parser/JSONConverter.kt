@@ -91,7 +91,7 @@ public class JSONConverter {
             switchInfoOrThrow<HistoryResult>(json, WRONG_OUTPUT_MSG + " - get history") {
                 case(HISTORY_MSG) {
                     HistoryResult(ArrayList(json.getArray("history").toArray().map {
-                                        (callInfo) ->
+                        callInfo ->
                                             with (callInfo as JSONObject) {
                                             HsHistoryFrameInfo(getInt("index"), getString("function"),
                                                                       filePositionFromJSON(getObject("src_span")))
@@ -104,7 +104,7 @@ public class JSONConverter {
             switchInfoOrThrow<BreakInfoList>(json, WRONG_OUTPUT_MSG + " - breakpoints list") {
                 case(BREAK_LIST_FOR_LINE_INFO) {
                     val indexSpanArray = json.getArray(BREAKS_TAG)
-                    val lambda = {(p: Any?) -> BreakInfo(
+                    val lambda = { p: Any? -> BreakInfo(
                                   (p as JSONObject).getInt(BREAK_INDEX_TAG),
                                   filePositionFromJSON(p.getObject(SRC_SPAN_TAG)) as HsFilePosition
                                  )}
@@ -144,7 +144,7 @@ public class JSONConverter {
 
         private fun localBindingListFromJSONArray(json: JSONArray): LocalBindingList =
                 LocalBindingList(ArrayList(json.toArray().map {
-                    (variable) ->
+                    variable ->
                     with (variable as JSONObject) {
                         LocalBinding(getString("name"), get("type") as String?, get("value") as String?)
                     }

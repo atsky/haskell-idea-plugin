@@ -58,7 +58,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val env = generalCommandLine.getEnvironment()
         val dir = generalCommandLine.getWorkDirectory()
         val command = Array(1 + (params?.size() ?: 0), {
-            (i: Int) ->
+            i: Int ->
             if (i == 0) exePath else params!!.get(i - 1)
         })
         return PtyProcess.exec(command, env, dir?.getAbsolutePath(), true)

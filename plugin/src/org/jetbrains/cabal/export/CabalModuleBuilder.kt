@@ -19,7 +19,7 @@ public class CabalModuleBuilder() : AbstractExternalModuleBuilder<CabalProjectSe
     override fun setupRootModel(modifiableRootModel: ModifiableRootModel?) {
     }
 
-    override fun getModuleType(): ModuleType<ModuleBuilder> {
-        return HaskellModuleType.INSTANCE as ModuleType<ModuleBuilder>
+    override fun getModuleType(): ModuleType<out ModuleBuilder> {
+        return HaskellModuleType.INSTANCE
     }
 }
