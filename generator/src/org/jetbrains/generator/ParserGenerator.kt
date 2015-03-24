@@ -15,15 +15,15 @@ import java.util.TreeSet
  * Created by atsky on 11/7/14.
  */
 class ParserGenerator(val grammar: Grammar) {
-    class object {
+    companion object {
         val MAIN_PATH = "./plugin/gen/org/jetbrains/grammar/"
     }
 
     val tokens: Map<String, TokenDescription>
     val rules: Map<String, AbstractRule>
-    val fakeRules: List<FakeRule>;
+    val fakeRules: List<FakeRule>
 
-    {
+    init {
         val tokens = HashMap<String, TokenDescription>()
         val rules = HashMap<String, AbstractRule>()
         val fakeRules = ArrayList<FakeRule>()

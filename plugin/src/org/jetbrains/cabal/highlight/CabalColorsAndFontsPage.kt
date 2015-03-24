@@ -55,7 +55,7 @@ public class CabalColorsAndFontsPage : ColorSettingsPage {
         return map
     }
 
-    class object {
+    companion object {
         private val ATTRS = array(
                 AttributesDescriptor("Colon", CabalHighlighter.CABAL_COLON),
                 AttributesDescriptor("Comment", CabalHighlighter.CABAL_COMMENT),

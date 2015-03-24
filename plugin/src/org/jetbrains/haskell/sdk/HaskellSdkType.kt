@@ -22,9 +22,9 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     class SDKInfo(val sdkPath : File) {
         val ghcHome: File
-        val version: GHCVersion = GHCUtil.getVersion(sdkPath.getName());
+        val version: GHCVersion = GHCUtil.getVersion(sdkPath.getName())
 
-        {
+        init {
             ghcHome = if (SystemInfo.isMac && sdkPath.getAbsolutePath().contains("GHC.framework")) {
                 File(sdkPath, "usr")
             } else {
@@ -141,7 +141,7 @@ public class HaskellSdkType() : SdkType("GHC") {
     }
 
 
-    class object {
+    companion object {
 
         public val INSTANCE: HaskellSdkType = HaskellSdkType()
         private val GHC_ICON: Icon = HaskellIcons.HASKELL

@@ -32,7 +32,7 @@ public class HaskellRunConfigurationType() : ConfigurationType {
         return array<ConfigurationFactory>(myFactory)
     }
 
-    {
+    init {
         this.myFactory = object : ConfigurationFactoryEx(this) {
             override fun createTemplateConfiguration(project: Project?): RunConfiguration {
                 return CabalRunConfiguration(project, this)
@@ -40,7 +40,7 @@ public class HaskellRunConfigurationType() : ConfigurationType {
         }
     }
 
-    class object {
+    companion object {
 
         public val INSTANCE: HaskellRunConfigurationType = HaskellRunConfigurationType()
     }

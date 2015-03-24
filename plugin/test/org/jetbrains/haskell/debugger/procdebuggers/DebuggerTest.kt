@@ -23,7 +23,7 @@ import org.jetbrains.haskell.debugger.protocol.CommandCallback
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
-    class object {
+    companion object {
 
         public val PROPERTIES_FILE: String = "unittest.properties"
         public val TEST_MODULE_FILE: String = "TestMain.hs"
@@ -31,9 +31,9 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         public val MAIN_LINE: Int = 10
         public val QSORT_LINE: Int = 6
 
-        public var properties: Properties? = null;
+        public var properties: Properties? = null
 
-        {
+        init {
             properties = Properties()
             val filePath = javaClass.getResource("/$PROPERTIES_FILE")?.getFile()
             assertNotNull(filePath)

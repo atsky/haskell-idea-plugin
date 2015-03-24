@@ -35,7 +35,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
     override fun parseJSONOutput(output: JSONObject): HsStackFrameInfo? =
             JSONConverter.stoppedAtFromJSON(output)
 
-    class object {
+    companion object {
 
         public class StandardFlowCallback(val debugger: ProcessDebugger,
                                           val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
@@ -94,7 +94,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             private fun setContext(result: HsStackFrameInfo, breakpoint: HaskellLineBreakpointDescription?) {
                 val frame = HsHistoryFrame(debugger, result)
                 frame.obsolete = false
-                debugger.history(HistoryCommand.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))
+                debugger.history(HistoryCommand.Companion.DefaultHistoryCallback(debugger, debugRespondent, frame, breakpoint))
             }
         }
     }

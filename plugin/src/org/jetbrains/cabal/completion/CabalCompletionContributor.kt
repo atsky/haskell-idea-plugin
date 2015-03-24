@@ -63,7 +63,8 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                 is Identifier -> {
                     var parentField = parent
                     while ((parentField !is Field) && (parentField !is CabalFile) && (parentField != null)) {
-                        parentField = parentField?.getParent()
+                        val parentFieldVal = parentField
+                        parentField = parentFieldVal?.getParent()
                     }
                     if (parentField is BuildDependsField) {
                         val project = current!!.getProject()

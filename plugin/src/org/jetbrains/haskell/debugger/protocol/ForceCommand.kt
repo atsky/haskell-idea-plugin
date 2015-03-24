@@ -23,7 +23,7 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
         return LocalBinding(bindingName, res.expressionType, res.expressionValue)
     }
 
-    class object {
+    companion object {
         public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
                                            val debugProcess: HaskellDebugProcess)
         : CommandCallback<LocalBinding?>() {

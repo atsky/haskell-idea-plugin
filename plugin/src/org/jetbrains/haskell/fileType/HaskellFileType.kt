@@ -26,7 +26,7 @@ public class HaskellFileType() : LanguageFileType(HaskellLanguage.INSTANCE) {
     override fun getCharset(file: VirtualFile, content: ByteArray?): String =
             "UTF-8"
 
-    class object {
+    companion object {
         public val INSTANCE: HaskellFileType = HaskellFileType()
         public val DEFAULT_EXTENSION: String = "hs"
     }

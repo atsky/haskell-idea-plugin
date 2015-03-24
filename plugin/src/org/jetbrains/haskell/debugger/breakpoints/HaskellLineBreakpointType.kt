@@ -29,7 +29,7 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
 public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
 {
-    class object {
+    companion object {
         public val ID: String = "haskell-line-breakpoint"
         private val TITLE: String = "Haskell breakpoints"
     }
@@ -53,7 +53,7 @@ public class HaskellLineBreakpointType():
      * Creates panel in breakpoint's context menu with list of available breakpoints to set on the line
      */
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
-        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.DebuggerType.REMOTE) {
+        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
             if(selectBreakpointPanel == null) {
                 selectBreakpointPanel = SelectBreakPropertiesPanel()
             }

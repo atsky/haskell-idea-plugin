@@ -30,7 +30,6 @@ import java.net.URL
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Arrays
-import javax.xml.bind.JAXBElement.GlobalScope
 import org.jetbrains.haskell.scope.GlobalScope
 
 /**

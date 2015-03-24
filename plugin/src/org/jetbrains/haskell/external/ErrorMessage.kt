@@ -23,7 +23,7 @@ class ErrorMessage(
                 "in " + file + " " + line + ":" + column + "-" + eLine + ":" + eColumn;
     }
 
-    class object {
+    companion object {
         fun fromJson(a : Any) : ErrorMessage {
             val obj = a as JSONObject
             val text = obj.get("t") as String

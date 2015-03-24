@@ -23,7 +23,7 @@ class ConfigurationEditor(modules: Array<Module>) : SettingsEditor<CabalRunConfi
     override fun disposeEditor() {
     }
 
-    {
+    init {
         programParams = ProgramParamsPanel(modules)
     }
 }

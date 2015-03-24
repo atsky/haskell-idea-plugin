@@ -12,7 +12,7 @@ import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 
 public class CabalHighlighter : SyntaxHighlighterBase() {
-    class object {
+    companion object {
         public val CABAL_STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
         public val CABAL_COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
         public val CABAL_PROPERTY: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
@@ -31,7 +31,7 @@ public class CabalHighlighter : SyntaxHighlighterBase() {
 
     private val keys1: MutableMap<IElementType, TextAttributesKey>
 
-    {
+    init {
         keys1 = THashMap<IElementType, TextAttributesKey>()
 
         keys1.put(CabalTokelTypes.STRING, CABAL_STRING_LITERAL)

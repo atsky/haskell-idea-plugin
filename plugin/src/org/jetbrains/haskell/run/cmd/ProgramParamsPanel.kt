@@ -15,7 +15,7 @@ import org.jetbrains.haskell.run.ModuleComboBoxRenderer
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var mainFileComponent: TextFieldWithBrowseButton
-    private var moduleComboBox: JComboBox
+    private var moduleComboBox: JComboBox<Module>
     private var programParametersComponent : RawCommandLineEditor
     private var workingDirectoryComponent : TextFieldWithBrowseButton
     private var environmentVariables : EnvironmentVariablesComponent
@@ -35,7 +35,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
         environmentVariables.setEnvs(s.getEnvs())
     }
 
-    {
+    init {
         this.setLayout(GridBagLayout())
         mainFileComponent = TextFieldWithBrowseButton();
         mainFileComponent.addBrowseFolderListener("Main file", "Main File", null, FileChooserDescriptor(true, false, false, false, true, false))

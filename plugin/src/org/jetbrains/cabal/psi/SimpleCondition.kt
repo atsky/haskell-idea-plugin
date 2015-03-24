@@ -7,7 +7,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
-    class object {
+    companion object {
         public val VALID_TESTS_NAMES : List<String> = listOf(
                 "os",
                 "arch",

@@ -32,9 +32,9 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
     private val myUi: RunnerLayoutUi = RunnerLayoutUi.Factory.getInstance(process.getSession()!!.getProject())!!
             .create("History", "Debugger History", process.getSession()!!.getSessionName(), this)
 
-    private val framesPanel = FramesPanel();
+    private val framesPanel = FramesPanel()
 
-    {
+    init {
         val framesContext = myUi.createContent("HistoryFramesContent", JBScrollPane(framesPanel), "History frames", AllIcons.Debugger.Frame, null)
         framesContext.setCloseable(false)
         myUi.addContent(framesContext, 0, PlaceInGrid.left, false)
@@ -73,7 +73,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
         framesPanel.addElement(line)
     }
 
-    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()
+    public fun getHistoryFramesModel(): DefaultListModel<String> = framesPanel.getModel()
 
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()
@@ -94,18 +94,18 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
     }
 
     private inner class FramesPanel : JBList() {
-        private val listModel = DefaultListModel();
+        private val listModel = DefaultListModel<String?>()
 
-        {
+        init {
             setModel(listModel)
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
             setValueIsAdjusting(true)
-            addListSelectionListener {(event: ListSelectionEvent) ->
+            addListSelectionListener { event: ListSelectionEvent ->
                 manager.indexSelected(getSelectedIndex())
             }
         }
 
-        override fun getModel(): DefaultListModel {
+        override fun getModel(): DefaultListModel<String?> {
             return listModel
         }
 

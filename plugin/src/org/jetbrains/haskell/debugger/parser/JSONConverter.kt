@@ -11,7 +11,7 @@ import java.util.ArrayList
  * @author Habibullin Marat
  */
 public class JSONConverter {
-    class object {
+    companion object {
         private val WRONG_OUTPUT_MSG = "Wrong JSON output occured while handling command"
         private val INFO_TAG = "info"
         private val BREAK_LIST_FOR_LINE_INFO = "break list for line"

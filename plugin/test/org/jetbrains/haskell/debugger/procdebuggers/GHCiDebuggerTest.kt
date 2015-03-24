@@ -12,11 +12,11 @@ import java.io.InputStream
 import com.intellij.execution.process.ProcessOutputTypes
 
 public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
-    class object {
+    companion object {
         public val pathPropertyName: String = "ghciPath"
 
         public class TestGHCiProcessHandler(process: Process) : OSProcessHandler(process, null, CharsetToolkit.UTF8_CHARSET) {
-            class object {
+            companion object {
                 public class StreamReader(val stream: InputStream, val onTextAvailable: (String) -> Unit) : Thread() {
                     private var running: Boolean = true
                     private var reader: InputStreamReader? = null
@@ -45,7 +45,7 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
             private val stdoutReader: StreamReader
             private val stderrReader: StreamReader
 
-            {
+            init {
                 stdoutReader = StreamReader(process.getInputStream()!!, { notifyTextAvailable(it, ProcessOutputTypes.STDOUT) })
                 stderrReader = StreamReader(process.getErrorStream()!!, { notifyTextAvailable(it, ProcessOutputTypes.STDERR) })
                 stdoutReader.start()

@@ -12,7 +12,7 @@ import org.jetbrains.cabal.psi.*
 
 public trait CabalTokelTypes {
 
-    class object {
+    companion object {
         val defaultContructor : (ASTNode) -> PsiElement = { node ->
             ASTWrapperPsiElement(node)
         }

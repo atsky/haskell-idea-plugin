@@ -21,7 +21,7 @@ public class HaskellBraceMatcher() : PairedBraceMatcher {
         return openingBraceOffset
     }
 
-    class object {
+    companion object {
         val PAIRS: Array<BracePair> = array(
                 BracePair(HaskellLexerTokens.OPAREN, HaskellLexerTokens.CPAREN, true),
                 BracePair(HaskellLexerTokens.OCURLY, HaskellLexerTokens.CCURLY, true),

@@ -11,7 +11,7 @@ import java.util.Deque
 
 public class GHCiParser() {
     // we can put here functions to parse some known things like 'parseSetBreakpointResult' ect...
-    class object {
+    companion object {
         // the strings above are used as patterns for regexps
         private val BREAKPOINT_ACTIVATED_PATTERN = "Breakpoint (\\d+) activated at (.*)"
         private val BREAKPOINT_NOT_ACTIVATED_PATTERN = "No breakpoints found at that location."

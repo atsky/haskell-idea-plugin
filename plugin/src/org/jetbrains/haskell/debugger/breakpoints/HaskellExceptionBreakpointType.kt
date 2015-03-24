@@ -23,7 +23,7 @@ public class HaskellExceptionBreakpointType() :
                 HaskellExceptionBreakpointType.ID,
                 HaskellExceptionBreakpointType.TITLE) {
 
-    class object {
+    companion object {
         public val ID: String = "haskell-exception-breakpoint"
         private val TITLE: String = "Haskell exception breakpoints"
     }

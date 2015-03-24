@@ -16,7 +16,7 @@ import java.awt.GridBagConstraints
 import javax.swing.Box
 
 public class HaskellUtils {
-    class object {
+    companion object {
         fun zeroBasedToHaskellLineNumber(zeroBasedFileLineNumber: Int) = zeroBasedFileLineNumber + 1
         fun haskellLineNumberToZeroBased(haskellFileLineNumber: Int) = haskellFileLineNumber - 1
 

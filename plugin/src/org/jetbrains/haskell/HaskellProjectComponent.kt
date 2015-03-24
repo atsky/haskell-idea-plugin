@@ -24,7 +24,7 @@ import org.jetbrains.haskell.sdk.HaskellSdkType
 
 
 public class HaskellProjectComponent(val project: Project) : ProjectComponent {
-    class object {
+    companion object {
         val GHC_PATH_NOT_FOUND = "ghc not found in PATH. It can cause issues."+
                                  " Please spicify haskell SDK for project."
     }

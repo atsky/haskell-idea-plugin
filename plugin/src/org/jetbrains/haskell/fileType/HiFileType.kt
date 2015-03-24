@@ -36,7 +36,7 @@ public class HiFileType() : FileType {
     }
 
 
-    class object {
+    companion object {
         public val INSTANCE: HiFileType = HiFileType()
     }
 }

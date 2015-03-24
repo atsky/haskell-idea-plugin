@@ -112,7 +112,7 @@ public class RamVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    class object {
+    companion object {
         public val INSTANCE : RamVirtualFileSystem = RamVirtualFileSystem()
     }
 }

@@ -8,7 +8,7 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateUpdater)
 : Runnable {
 
-    class object {
+    companion object {
         private val OUTPUT_ACCEPTED_BYTE: Int = 0
     }
 

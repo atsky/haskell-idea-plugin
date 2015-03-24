@@ -41,7 +41,7 @@ public class HaskellSdkAdditionalData(cabalPath: String?,
     }
 
 
-    class object {
+    companion object {
         private val CABAL_PATH = "cabal_path"
         private val CABAL_DATA_PATH = "cabal_data_path"
 

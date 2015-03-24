@@ -13,7 +13,7 @@ import com.intellij.execution.process.ConsoleHistoryModel
 
 
 public class DebugConsoleFactory {
-    class object {
+    companion object {
 
         public fun createDebugConsole(project: Project,
                                       processHandler: HaskellDebugProcessHandler): HaskellConsoleView {

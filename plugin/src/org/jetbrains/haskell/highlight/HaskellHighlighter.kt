@@ -20,7 +20,7 @@ import org.jetbrains.grammar.HaskellLexerTokens
 
 public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
-    class object {
+    companion object {
         public val HASKELL_BRACKETS: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_BRACKETS", DefaultLanguageHighlighterColors.BRACES)
         public val HASKELL_CLASS: TextAttributesKey
@@ -68,9 +68,9 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
 
 
-    public val DISPLAY_NAMES: MutableMap<TextAttributesKey, Pair<String, HighlightSeverity>> = THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(4);
+    public val DISPLAY_NAMES: MutableMap<TextAttributesKey, Pair<String, HighlightSeverity>> = THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(4)
 
-    {
+    init {
         keys1 = THashMap<IElementType, TextAttributesKey>()
         keys1.put(END_OF_LINE_COMMENT, HASKELL_COMMENT)
         keys1.put(BLOCK_COMMENT, HASKELL_COMMENT)
@@ -116,7 +116,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
 
 
-    {
+    init {
         DISPLAY_NAMES.put(HASKELL_KEYWORD, Pair<String, HighlightSeverity>("Property value", null))
         DISPLAY_NAMES.put(HASKELL_COMMENT, Pair<String, HighlightSeverity>("Comment", null))
     }

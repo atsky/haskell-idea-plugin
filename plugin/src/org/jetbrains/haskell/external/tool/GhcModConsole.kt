@@ -38,7 +38,7 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
         editorFactory.releaseEditor(editor)
     }
 
-    class object {
+    companion object {
         fun getInstance(project : Project) =
             project.getComponent(javaClass<GhcModConsole>())
 

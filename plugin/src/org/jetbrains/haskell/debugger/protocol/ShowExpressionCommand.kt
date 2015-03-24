@@ -29,7 +29,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
         throw RuntimeException("Unused in remote debugger")
     }
 
-    class object {
+    companion object {
         public class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)
         : CommandCallback<ShowOutput?>() {
             override fun execAfterParsing(result: ShowOutput?) {

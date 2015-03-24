@@ -48,7 +48,7 @@ val cabalLock = Object()
 
 public class CabalInterface(val project: Project) {
 
-    class object {
+    companion object {
         public fun findCabal(module: Module): VirtualFile? {
             val children = module.getModuleFile()?.getParent()?.getChildren()
             var cabalFile: VirtualFile? = null;
@@ -135,11 +135,11 @@ public class CabalInterface(val project: Project) {
     private fun findCabal(): String? {
         for (file: VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
             if ("cabal".equals(file?.getExtension())) {
-                val cachedDocument: Document? = FileDocumentManager.getInstance()?.getCachedDocument(file!!)
+                val cachedDocument: Document? = FileDocumentManager.getInstance().getCachedDocument(file!!)
                 if (cachedDocument != null) {
                     ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {
                         public override fun run(): Unit {
-                            FileDocumentManager.getInstance()?.saveDocument(cachedDocument)
+                            FileDocumentManager.getInstance().saveDocument(cachedDocument)
                         }
 
 
@@ -247,7 +247,7 @@ public class CabalInterface(val project: Project) {
     }
 
     public fun update(): Unit {
-        ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal update", false) {
+        ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
                     val process = runCommand(project.getBasePath().toString(), "update")
@@ -258,7 +258,7 @@ public class CabalInterface(val project: Project) {
     }
 
     public fun install(pkg: String) {
-        ProgressManager.getInstance()!!.run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
+        ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
                     val process = runCommand(project.getBasePath().toString(), "install", pkg)

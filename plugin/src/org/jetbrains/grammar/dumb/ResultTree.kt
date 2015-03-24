@@ -23,9 +23,9 @@ class NonTerminalTree(val rule : String,
                       val elementType : IElementType?,
                       val children : List<ResultTree>) : ResultTree() {
 
-    val mySize : Int;
+    val mySize : Int
 
-    {
+    init {
         var size = 0;
         for (child in children) {
             size += child.size()

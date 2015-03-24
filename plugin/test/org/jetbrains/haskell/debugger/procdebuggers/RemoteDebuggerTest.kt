@@ -16,12 +16,12 @@ import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 
 public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
-    class object {
+    companion object {
         public val pathPropertyName: String = "remotePath"
 
         public class TestRemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler,
                                               listener: ProcessListener) : OSProcessHandler(process, null, null) {
-            {
+            init {
                 streamHandler.processHandler = this
                 streamHandler.listener = listener
             }

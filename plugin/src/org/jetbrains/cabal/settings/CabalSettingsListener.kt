@@ -7,7 +7,7 @@ import org.jetbrains.cabal.settings.CabalProjectSettings
 
 public trait CabalSettingsListener: ExternalSystemSettingsListener<CabalProjectSettings> {
 
-    class object {
+    companion object {
         public val TOPIC: Topic<CabalSettingsListener> = Topic.create("Cabal-specific settings", javaClass<CabalSettingsListener>())!!
     }
 }
