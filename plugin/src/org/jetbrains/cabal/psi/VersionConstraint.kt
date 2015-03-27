@@ -41,7 +41,7 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
         if (isAny()) return true
 
         if (!isSimple()) {
-            val baseVersion = getVersionValue().get(0, getVersionValue().length() - 2)!! as String
+            val baseVersion = getVersionValue().get(0, getVersionValue().length() - 2) as String
             return givenVersion startsWith baseVersion
         }
 

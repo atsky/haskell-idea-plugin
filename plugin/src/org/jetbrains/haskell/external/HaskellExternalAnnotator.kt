@@ -59,7 +59,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                 copyContent(child, destinationFile)
             } else {
                 val childTime = child.getModificationStamp()
-                val document = FileDocumentManager.getInstance()!!.getCachedDocument(child)
+                val document = FileDocumentManager.getInstance().getCachedDocument(child)
                 if (document != null) {
                     val stream = ByteArrayInputStream(document.getText().getBytes(child.getCharset()!!));
                     copyFile(stream, destinationFile)
@@ -83,7 +83,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                              file: VirtualFile): List<ErrorMessage> {
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
-                FileDocumentManager.getInstance()!!.saveAllDocuments()
+                FileDocumentManager.getInstance().saveAllDocuments()
             }
         }, ModalityState.any())
 
@@ -122,7 +122,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                                  file: VirtualFile): List<ErrorMessage> {
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
-                FileDocumentManager.getInstance()!!.saveAllDocuments()
+                FileDocumentManager.getInstance().saveAllDocuments()
             }
         }, ModalityState.any())
 

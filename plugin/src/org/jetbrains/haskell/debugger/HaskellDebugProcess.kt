@@ -147,7 +147,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun sessionInitialized() {
         super<XDebugProcess>.sessionInitialized()
         val currentSession = getSession()
-        currentSession?.addSessionListener(HsDebugSessionListener(currentSession as XDebugSession))
+        currentSession?.addSessionListener(HsDebugSessionListener(currentSession))
         debugger.prepareDebugger()
         if (stopAfterTrace) {
             debugger.trace(null)

@@ -64,7 +64,7 @@ public class HaskellLineBreakpointType():
 
     private fun checkLineInSourceFile(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
         var canStopAtLine: Boolean = false
-        val currentDoc: Document? = FileDocumentManager.getInstance()?.getDocument(file)
+        val currentDoc: Document? = FileDocumentManager.getInstance().getDocument(file)
         if (currentDoc != null) {
             XDebuggerUtil.getInstance()?.iterateLine(project, currentDoc, lineNumber, object : Processor<PsiElement> {
                 override fun process(psiElement: PsiElement?): Boolean {

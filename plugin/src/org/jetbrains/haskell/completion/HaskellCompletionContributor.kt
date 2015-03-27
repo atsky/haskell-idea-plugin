@@ -63,7 +63,7 @@ public class HaskellCompletionContributor() : CompletionContributor() {
         val module = Module.findModule(element)
 
         if (module != null) {
-            val list = (module as Module).getImportList()
+            val list = module.getImportList()
             for (import in list) {
                 val moduleExports = import.getModuleExports()
                 if (moduleExports != null) {

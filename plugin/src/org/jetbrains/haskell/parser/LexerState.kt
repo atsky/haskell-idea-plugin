@@ -104,7 +104,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
         lineStarts.add(isLineStart)
         isLineStart = false
 
-        currentIndent += builder.getTokenText().size
+        currentIndent += builder.getTokenText()!!.length()
 
         builder.advanceLexer()
     }

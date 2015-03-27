@@ -55,7 +55,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
 
         val contentEntry = doAddContentEntry(rootModel)
         if (contentEntry != null) {
-            val srcPath = getContentEntryPath() + File.separator + "src"
+            val srcPath = getContentEntryPath()!! + File.separator + "src"
             File(srcPath).mkdirs()
             val sourceRoot = LocalFileSystem.getInstance()!!.refreshAndFindFileByPath(FileUtil.toSystemIndependentName(srcPath))
             if (sourceRoot != null) {
@@ -66,7 +66,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
             if (!hasCabal) {
                 val name = getName()
                 try {
-                    makeCabal(getContentEntryPath() + File.separator + name + ".cabal", name!!)
+                    makeCabal(getContentEntryPath()!! + File.separator + name + ".cabal", name!!)
                     makeMain(srcPath + File.separator + "Main.hs")
                 } catch (e: IOException) {
                     e.printStackTrace()

@@ -130,7 +130,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         } else {
                             bestResult
                         }
-                        return if (nextResult != null) next.done(nextResult) else next.fail()
+                        return next.done(nextResult)
                     }
 
                     override fun fail(): ParserState = if (bestResult != null) next.done(bestResult) else next.fail()
@@ -149,7 +149,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         while (!variants[nextIndex].accepts(token)) {
                             nextIndex++
                             if (nextIndex == variants.size()) {
-                                return if (nextResult != null) next.done(nextResult) else next.fail()
+                                return next.done(nextResult)
                             }
                         }
                         return ListCombineState(nextResult, variants, nextIndex, state, children, next)

@@ -41,7 +41,7 @@ class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
         if (newElementName != null) {
-            val qcon = HaskellElementFactory.createExpressionFromText(getElement().getProject(), newElementName!!)
+            val qcon = HaskellElementFactory.createExpressionFromText(getElement().getProject(), newElementName)
             getElement().getFirstChild().replace(qcon)
             return qcon
         } else {

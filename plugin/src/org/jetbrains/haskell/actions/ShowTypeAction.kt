@@ -68,7 +68,7 @@ public class ShowTypeAction : AnAction() {
 
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
             override fun run() {
-                FileDocumentManager.getInstance()!!.saveAllDocuments()
+                FileDocumentManager.getInstance().saveAllDocuments()
             }
         }, ModalityState.any())
 

@@ -37,7 +37,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
     override fun projectClosed() {
         val process = process
         if (process != null) {
-            ProgressManager.getInstance()!!.runProcessWithProgressSynchronously({
+            ProgressManager.getInstance().runProcessWithProgressSynchronously({
                 synchronized(process) {
                     val output = OutputStreamWriter(process.getOutputStream()!!)
                     output.write("\n")
