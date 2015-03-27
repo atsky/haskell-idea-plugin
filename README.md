@@ -3,6 +3,14 @@ haskell-idea-plugin
 
 IntelliJ IDEA plugin for Haskell, based on [ideah](https://code.google.com/p/ideah/).
 
+<div>
+  <a href="http://teamcity.jetbrains.com/viewType.html?buildTypeId=Haskell_Build&guest=1">
+    <img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:Haskell_Build)/statusIcon"/>
+  </a>
+  <span>Build</span>
+</div>
+
+
 http://plugins.jetbrains.com/plugin/7453?pr=idea
 
 You can download latest build manually from BuildServer:
