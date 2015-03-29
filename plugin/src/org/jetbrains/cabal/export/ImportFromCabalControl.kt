@@ -19,7 +19,7 @@ public class ImportFromCabalControl()
 
     override fun createProjectSettingsControl(settings: CabalProjectSettings): ExternalSystemSettingsControl<CabalProjectSettings> {
         val settingsControl = CabalProjectSettingsControl(settings)
-        settingsControl.hideUseAutoImportBox()
+        //settingsControl.hideUseAutoImportBox()
         return settingsControl
     }
 

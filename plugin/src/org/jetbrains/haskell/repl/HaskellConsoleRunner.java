@@ -3,8 +3,11 @@ package org.jetbrains.haskell.repl;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.console.ConsoleHistoryController;
+import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.*;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.ide.CommonActionsManager;
@@ -40,9 +43,9 @@ public final class HaskellConsoleRunner {
     private final Project project;
     private final String consoleTitle;
     private final String workingDir;
-    private final ConsoleHistoryModel historyModel;
+    //private final ConsoleHistoryModel historyModel;
 
-    private HaskellConsoleView consoleView;
+    private HaskellConsole console;
     private HaskellConsoleProcessHandler processHandler;
 
     private HaskellConsoleExecuteActionHandler executeHandler;
@@ -55,7 +58,6 @@ public final class HaskellConsoleRunner {
         this.project = module.getProject();
         this.consoleTitle = consoleTitle;
         this.workingDir = workingDir;
-        this.historyModel = new ConsoleHistoryModel();
     }
 
     public static HaskellConsoleProcessHandler run(@NotNull Module module) {
@@ -81,11 +83,11 @@ public final class HaskellConsoleRunner {
         GeneralCommandLine cmdline = createCommandLine(module, workingDir);
         Process process = cmdline.createProcess();
         // !!! do not change order!!!
-        consoleView = createConsoleView();
+        console = createConsoleView();
         String commandLine = cmdline.getCommandLineString();
         processHandler = new HaskellConsoleProcessHandler(process, commandLine, getLanguageConsole());
         executeHandler = new DefaultHaskellExecuteActionHandler(processHandler, project, false);
-        getLanguageConsole().setExecuteHandler(executeHandler);
+        getLanguageConsole().registerExecuteActionHandler(executeHandler, processHandler);
 
         // Init a console view
         ProcessTerminatedListener.attach(processHandler);
@@ -94,18 +96,18 @@ public final class HaskellConsoleRunner {
             @Override
             public void processTerminated(ProcessEvent event) {
                 runAction.getTemplatePresentation().setEnabled(false);
-                consoleView.getConsole().setPrompt("");
-                consoleView.getConsole().getConsoleEditor().setRendererMode(true);
+                console.setPrompt("");
+                console.getConsoleEditor().setRendererMode(true);
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                     public void run() {
-                        consoleView.getConsole().getConsoleEditor().getComponent().updateUI();
+                        console.getConsoleEditor().getComponent().updateUI();
                     }
                 });
             }
         });
 
         // Attach a console view to the process
-        consoleView.attachToProcess(processHandler);
+        console.attachToProcess(processHandler);
 
         // Runner creating
         Executor defaultExecutor = ExecutorRegistry.getInstance().getExecutorById(DefaultRunExecutor.EXECUTOR_ID);
@@ -114,10 +116,9 @@ public final class HaskellConsoleRunner {
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(actionToolbar.getComponent(), BorderLayout.WEST);
-        panel.add(consoleView.getComponent(), BorderLayout.CENTER);
+        panel.add(console.getComponent(), BorderLayout.CENTER);
 
-        RunContentDescriptor myDescriptor =
-                new RunContentDescriptor(consoleView, processHandler, panel, consoleTitle);
+        RunContentDescriptor myDescriptor = new RunContentDescriptor(console, processHandler, panel, consoleTitle);
 
         // tool bar actions
         AnAction[] actions = fillToolBarActions(toolbarActions, defaultExecutor, myDescriptor);
@@ -136,7 +137,7 @@ public final class HaskellConsoleRunner {
         if (window != null) {
             window.activate(new Runnable() {
                 public void run() {
-                    IdeFocusManager.getInstance(project).requestFocus(getLanguageConsole().getCurrentEditor().getContentComponent(), true);
+                    IdeFocusManager.getInstance(project).requestFocus(getLanguageConsole().getComponent(), true);
                 }
             });
         }
@@ -144,10 +145,9 @@ public final class HaskellConsoleRunner {
         // Run
         processHandler.startNotify();
 
-        HaskellConsole console = consoleView.getConsole();
         for (String statement : statements2execute) {
             String st = statement + "\n";
-            HaskellConsoleHighlightingUtil.processOutput(console, st, ProcessOutputTypes.SYSTEM);
+            //HaskellConsoleHighlightingUtil.processOutput(console, st, ProcessOutputTypes.SYSTEM);
             executeHandler.processLine(st);
         }
 
@@ -177,8 +177,7 @@ public final class HaskellConsoleRunner {
         actionList.add(closeAction);
 
         // run and history actions
-        ArrayList<AnAction> executionActions = createConsoleExecActions(getLanguageConsole(),
-                processHandler, executeHandler, historyModel);
+        ArrayList<AnAction> executionActions = createConsoleExecActions(getLanguageConsole(), processHandler, executeHandler);
         runAction = executionActions.get(0);
         actionList.addAll(executionActions);
 
@@ -198,10 +197,9 @@ public final class HaskellConsoleRunner {
 
     private static ArrayList<AnAction> createConsoleExecActions(HaskellConsole languageConsole,
                                                                 ProcessHandler processHandler,
-                                                                HaskellConsoleExecuteActionHandler executeHandler,
-                                                                ConsoleHistoryModel historyModel) {
+                                                                HaskellConsoleExecuteActionHandler executeHandler) {
 
-        ConsoleHistoryController historyController = new ConsoleHistoryController("haskell", null, languageConsole, historyModel);
+        ConsoleHistoryController historyController = new ConsoleHistoryController("haskell", null, languageConsole);
         historyController.install();
 
         AnAction upAction = historyController.getHistoryPrev();
@@ -221,8 +219,8 @@ public final class HaskellConsoleRunner {
         return ActionManager.getInstance().getAction(IdeActions.ACTION_STOP_PROGRAM);
     }
 
-    private HaskellConsoleView createConsoleView() {
-        return new HaskellConsoleView(project, consoleTitle, historyModel);
+    private HaskellConsole createConsoleView() {
+        return new HaskellConsole(project, consoleTitle);
     }
 
     private static GeneralCommandLine createCommandLine(Module module, String workingDir) throws CantRunException {
@@ -241,6 +239,6 @@ public final class HaskellConsoleRunner {
     }
 
     private HaskellConsole getLanguageConsole() {
-        return consoleView.getConsole();
+        return console;
     }
 }

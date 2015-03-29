@@ -20,7 +20,7 @@ public final class HaskellConsoleProcessHandler extends ColoredProcessHandler {
     @Override
     public void coloredTextAvailable(String text, Key attributes) {
         String string = processPrompts(console, StringUtil.convertLineSeparators(text));
-        HaskellConsoleHighlightingUtil.processOutput(console, string, attributes);
+        //HaskellConsoleHighlightingUtil.processOutput(console, string, attributes);
         super.coloredTextAvailable(string, attributes);
     }
 

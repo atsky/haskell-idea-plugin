@@ -30,7 +30,7 @@ abstract class HaskellConsoleActionBase extends AnAction {
 
         @NotNull
         public Boolean fun(RunContentDescriptor descriptor) {
-            return descriptor != null && (descriptor.getExecutionConsole() instanceof HaskellConsoleView);
+            return descriptor != null && (descriptor.getExecutionConsole() instanceof HaskellConsole);
         }
     }
 

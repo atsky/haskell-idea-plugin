@@ -1,7 +1,6 @@
 package org.jetbrains.haskell.repl;
 
 import com.intellij.execution.console.LanguageConsoleImpl;
-import com.intellij.execution.process.ConsoleHistoryModel;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
@@ -26,9 +25,9 @@ public abstract class HaskellConsoleExecuteActionHandler {
 
     public void runExecuteAction(final HaskellConsole console,
                                  boolean executeImmediately) {
-        ConsoleHistoryModel consoleHistoryModel = console.getHistoryModel();
+        //ConsoleHistoryModel consoleHistoryModel = console.getHistoryModel();
         if (executeImmediately) {
-            execute(console, consoleHistoryModel);
+            execute(console);
             return;
         }
 
@@ -57,22 +56,21 @@ public abstract class HaskellConsoleExecuteActionHandler {
             return;
         }
 
-        execute(console, consoleHistoryModel);
+        execute(console);
     }
 
-    private void execute(LanguageConsoleImpl languageConsole,
-                         ConsoleHistoryModel consoleHistoryModel) {
+    private void execute(LanguageConsoleImpl languageConsole) {
         // Process input and add to history
         Document document = languageConsole.getCurrentEditor().getDocument();
         String text = document.getText();
         TextRange range = new TextRange(0, document.getTextLength());
 
         languageConsole.getCurrentEditor().getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset());
-        languageConsole.addCurrentToHistory(range, false, preserveMarkup);
+        //languageConsole.addCurrentToHistory(range, false, preserveMarkup);
         languageConsole.setInputText("");
-        if (!StringUtil.isEmptyOrSpaces(text)) {
-            consoleHistoryModel.addToHistory(text);
-        }
+        //if (!StringUtil.isEmptyOrSpaces(text)) {
+        //    consoleHistoryModel.addToHistory(text);
+        //}
         // Send to interpreter / server
         processLine(text);
     }
