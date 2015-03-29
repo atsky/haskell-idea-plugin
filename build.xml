@@ -8,8 +8,8 @@
     <property name="cabal.lexer.flex.file" value="plugin/src/org/jetbrains/cabal/parser/Cabal.flex"/>
     <property name="haskell.lexer.result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
-    <property name="idea" value="${build.dir}/idea-IC-139.SNAPSHOT"/>
-    <property name="idea.download.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/383328:id/ideaIC-139.SNAPSHOT.tar.gz"/>
+    <property name="idea" value="${build.dir}/idea-IC-141.SNAPSHOT"/>
+    <property name="idea.download.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/426153:id/ideaIC-141.SNAPSHOT.tar.gz"/>
     <property name="external.annotations.path" value="${basedir}/annotations"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
     <property name="build.number" value="snapshot"/>
