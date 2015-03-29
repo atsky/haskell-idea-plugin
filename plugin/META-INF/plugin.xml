@@ -157,7 +157,10 @@
         <applicationService serviceImplementation="org.jetbrains.haskell.debugger.config.HaskellDebugSettings"/>
         <lang.findUsagesProvider language="Haskell"
                                  implementationClass="org.jetbrains.haskell.findUsages.HaskellFindUsagesProvider"/>
+        <!--
+        Disabled, since it's hard to support
         <executor implementation="org.jetbrains.haskell.debugger.DebugConsoleExecutor"/>
+        -->
     </extensions>
 
     <extensionPoints>

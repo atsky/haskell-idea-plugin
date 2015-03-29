@@ -48,9 +48,8 @@ import com.intellij.xdebugger.frame.XSuspendContext
 import java.util.ArrayDeque
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DefaultRespondent
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
-import org.jetbrains.haskell.repl.HaskellConsoleView
-import org.jetbrains.haskell.debugger.repl.DebugHaskellExecuteActionHandler
 import com.intellij.xdebugger.impl.XDebugSessionImpl
+import org.jetbrains.haskell.repl.HaskellConsole
 
 /**
  * Main class for managing debug process and sending commands to real debug process through it's ProcessDebugger member.
@@ -88,12 +87,6 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index"
 
     init {
-        if (executionConsole is HaskellConsoleView) {
-            executionConsole.registerExecuteActionHandler(
-                    DebugHaskellExecuteActionHandler(this, session.getProject(), false),
-                    _processHandler)
-        }
-
         val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
                 HaskellDebugSettings.Companion.DebuggerType.GHCI
         if (debuggerIsGHCi) {
