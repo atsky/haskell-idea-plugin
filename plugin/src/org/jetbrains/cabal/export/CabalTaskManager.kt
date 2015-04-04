@@ -1,13 +1,10 @@
 package org.jetbrains.cabal.export
 
-import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
-
 import com.intellij.openapi.externalSystem.model.ExternalSystemException
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
-
-import java.io.File
+import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 
 public class CabalTaskManager() : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 

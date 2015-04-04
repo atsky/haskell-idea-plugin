@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.SimpleJavaParameters
 import com.intellij.util.Function
+import com.intellij.util.PathUtil
 import org.jetbrains.haskell.icons.HaskellIcons
 import org.jetbrains.cabal.settings.*
 import org.jetbrains.cabal.export.*
@@ -43,7 +44,10 @@ public class CabalManager()
     }
 
     throws(javaClass<ExecutionException>())
-    override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) { }
+    override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
+        val kotlinJarPath = PathUtil.getJarPathForClass(kotlin.Unit.javaClass)
+        parameters.getClassPath().add(kotlinJarPath)
+    }
 
     override fun enhanceLocalProcessing(urls: List<URL>) {  }
 
