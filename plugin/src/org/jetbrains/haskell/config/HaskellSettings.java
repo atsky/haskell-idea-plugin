@@ -2,8 +2,7 @@ package org.jetbrains.haskell.config;
 
 import com.intellij.openapi.components.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.haskell.util.OsUtil;
-import org.jetbrains.haskell.util.UtilPackage;
+import org.jetbrains.haskell.util.OSUtil;
 
 import java.io.File;
 
@@ -44,18 +43,17 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
             myState.cabalPath = "cabal";
         }
 
-        OsUtil os = UtilPackage.getOS();
 
         if (myState.cabalDataPath == null) {
-            myState.cabalDataPath = os.getCabalData();
+            myState.cabalDataPath = OSUtil.getCabalData();
         }
 
         if (myState.ghcModPath == null) {
-            myState.ghcModPath = os.getDefaultCabalBin() + File.separator + "ghc-mod" + os.getExe();
+            myState.ghcModPath = OSUtil.getDefaultCabalBin() + File.separator + "ghc-mod" + OSUtil.getExe();
         }
 
         if (myState.ghcModiPath == null) {
-            myState.ghcModiPath = os.getDefaultCabalBin() + File.separator + "ghc-modi" + os.getExe();
+            myState.ghcModiPath = OSUtil.getDefaultCabalBin() + File.separator + "ghc-modi" + OSUtil.getExe();
         }
 
         if (myState.useGhcMod == null) {
