@@ -25,6 +25,7 @@ import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.haskell.sdk.HaskellSdkType
 import org.jetbrains.haskell.external.tool.GhcModConsole
+import org.jetbrains.haskell.util.OSUtil
 
 /**
  * Created by atsky on 15/06/14.
@@ -113,7 +114,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                     val char = CharArray(16 * 1024)
                     val size = input.read(char)
                     val result = java.lang.String(char, 0, size)
-                    val split = result.split("\n", -1)
+                    val split = result.split(OSUtil.newLine, -1)
                     if (lines.isEmpty()) {
                         lines.add(split[0])
                     } else {
