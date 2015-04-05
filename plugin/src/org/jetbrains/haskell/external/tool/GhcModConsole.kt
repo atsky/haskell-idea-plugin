@@ -35,7 +35,7 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
 
     override fun projectClosed() {
         val editorFactory = EditorFactory.getInstance()
-        editorFactory.releaseEditor(editor)
+        editorFactory.releaseEditor(editor!!)
     }
 
     companion object {
