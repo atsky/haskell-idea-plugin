@@ -61,7 +61,7 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
 
     private fun update() {
         if (myState.remoteDebuggerPath == null || myState.remoteDebuggerPath == "") {
-            myState.remoteDebuggerPath = OS.getDefaultCabalBin() + File.separator + "remote-debugger" + OS.getExe();
+            myState.remoteDebuggerPath = OSUtil.getDefaultCabalBin() + File.separator + "remote-debugger" + OSUtil.getExe();
         }
     }
 }

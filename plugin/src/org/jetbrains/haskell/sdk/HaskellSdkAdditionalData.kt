@@ -4,7 +4,7 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.projectRoots.SdkAdditionalData
 import com.intellij.openapi.projectRoots.SdkModel
 import org.jdom.Element
-import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.util.OSUtil
 
 
 public class HaskellSdkAdditionalData(cabalPath: String?,
@@ -50,7 +50,7 @@ public class HaskellSdkAdditionalData(cabalPath: String?,
         }
 
         fun getDefaultCabalDataPath() : String {
-            return OS.getCabalData()
+            return OSUtil.getCabalData()
         }
 
         public fun load(element: Element): HaskellSdkAdditionalData {

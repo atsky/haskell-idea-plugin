@@ -2,9 +2,9 @@ package org.jetbrains.haskell.util
 
 import java.io.File
 
-public val OS: OsUtil = OsUtil()
+public object OSUtil {
+    val newLine = System.getProperty("line.separator").toString();
 
-public class OsUtil() {
     val osName = System.getProperty("os.name")!!.toLowerCase();
 
     public val isWindows: Boolean = (osName.indexOf("win") >= 0)
@@ -33,21 +33,7 @@ public class OsUtil() {
         }
     }
 
+    fun getExe(cmd : String) : String = if (isWindows) cmd + ".exe" else cmd
 
-    fun getExe(cmd : String) : String {
-        if (isWindows) {
-            return cmd + ".exe"
-        } else {
-            return cmd
-        }
-    }
-
-    fun getExe() : String {
-        if (isWindows) {
-            return ".exe"
-        } else {
-            return ""
-        }
-    }
-
+    fun getExe() : String = if (isWindows) ".exe" else ""
 }

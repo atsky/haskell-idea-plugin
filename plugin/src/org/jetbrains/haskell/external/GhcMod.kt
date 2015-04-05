@@ -7,9 +7,8 @@ import com.intellij.util.MessageBusUtil
 import com.intellij.notification.Notifications
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import org.jetbrains.haskell.util.OsUtil
 import java.io.File
-import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.util.OSUtil
 import org.jetbrains.haskell.config.HaskellSettings
 import java.util.Collections
 import java.util.HashMap

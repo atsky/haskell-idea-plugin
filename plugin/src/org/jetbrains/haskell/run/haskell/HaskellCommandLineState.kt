@@ -8,7 +8,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import java.io.File
 import org.jetbrains.haskell.util.joinPath
-import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.util.OSUtil
 import com.intellij.execution.Executor
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ExecutionResult
@@ -186,7 +186,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
         val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
 
-        val exePath = joinPath(baseDir!!, "dist", "build", name, OS.getExe(name))
+        val exePath = joinPath(baseDir!!, "dist", "build", name, OSUtil.getExe(name))
 
         if (!File(exePath).exists()) {
             throw CantRunException("Cannot run: " + exePath)

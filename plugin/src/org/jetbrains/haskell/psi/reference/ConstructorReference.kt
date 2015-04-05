@@ -36,6 +36,9 @@ class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
         return listOf()
     }
 
+    override fun handleElementRename(newElementName: String?): PsiElement? {
+        return constructor;
+    }
 
     override fun getVariants(): Array<Any> {
         return getConstructorsList().copyToArray()

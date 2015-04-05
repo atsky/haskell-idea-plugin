@@ -202,7 +202,7 @@ public class CabalInterface(val project: Project) {
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
-            val ghcPkg = if (OS.isMac && File("/usr/local/bin/ghc-pkg").exists()) {
+            val ghcPkg = if (OSUtil.isMac && File("/usr/local/bin/ghc-pkg").exists()) {
                 "/usr/local/bin/ghc-pkg"
             } else {
                 "ghc-pkg"

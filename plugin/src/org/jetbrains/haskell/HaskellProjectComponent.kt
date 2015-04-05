@@ -17,7 +17,7 @@ import java.io.File
 import org.jetbrains.haskell.util.deleteRecursive
 import org.jetbrains.haskell.util.ProcessRunner
 import java.io.IOException
-import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.util.OSUtil
 import org.jetbrains.haskell.external.GhcMod
 import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.haskell.sdk.HaskellSdkType
@@ -68,11 +68,11 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                 paths.add(sdk.getHomePath() + File.separator + "bin")
             }
 
-            if (OS.isMac) {
+            if (OSUtil.isMac) {
                 paths.add("/usr/local/bin")
             }
             val ghcFound = paths.any {
-                File(it, "ghc" + OS.getExe()).exists()
+                File(it, "ghc" + OSUtil.getExe()).exists()
             }
             if (!ghcFound) {
 

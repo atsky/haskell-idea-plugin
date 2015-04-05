@@ -1,6 +1,6 @@
 package org.jetbrains.haskell.external
 
-import org.jetbrains.haskell.util.OS
+import org.jetbrains.haskell.util.OSUtil
 import java.io.File
 import org.jetbrains.haskell.util.joinPath
 import org.jetbrains.haskell.util.ProcessRunner

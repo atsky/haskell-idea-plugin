@@ -47,7 +47,7 @@ public class ProcessRunner(workingDirectory: String? = null) {
             environment.put("PATH", environment.get("PATH") + ":" + path)
         }
 
-        if (OS.isMac) {
+        if (OSUtil.isMac) {
             // It's hack to make homebrew based HaskellPlatform work
             val environment = processBuilder.environment()!!
             environment.put("PATH", environment.get("PATH") + ":/usr/local/bin")
