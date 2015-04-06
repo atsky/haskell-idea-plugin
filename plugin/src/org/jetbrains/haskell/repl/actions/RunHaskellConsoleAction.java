@@ -8,9 +8,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.haskell.icons.HaskellIcons;
 import org.jetbrains.haskell.repl.HaskellConsoleRunner;
 
 public final class RunHaskellConsoleAction extends AnAction implements DumbAware {
+
+    public RunHaskellConsoleAction() {
+        getTemplatePresentation().setIcon(HaskellIcons.REPL);
+    }
 
     @Override
     public void update(AnActionEvent e) {

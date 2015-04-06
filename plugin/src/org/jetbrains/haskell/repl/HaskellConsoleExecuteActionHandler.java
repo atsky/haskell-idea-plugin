@@ -1,6 +1,8 @@
 package org.jetbrains.haskell.repl;
 
 import com.intellij.execution.console.LanguageConsoleImpl;
+import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.CaretModel;
@@ -10,20 +12,22 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 
-public abstract class HaskellConsoleExecuteActionHandler {
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class HaskellConsoleExecuteActionHandler {
 
     private final Project project;
-    private final boolean preserveMarkup;
+    private ProcessHandler processHandler;
 
-    public HaskellConsoleExecuteActionHandler(Project project,
-                                       boolean preserveMarkup) {
+    public HaskellConsoleExecuteActionHandler(
+            Project project,
+            ProcessHandler processHandler) {
         this.project = project;
-        this.preserveMarkup = preserveMarkup;
+        this.processHandler = processHandler;
     }
 
-    public abstract void processLine(String line);
-
-    public void runExecuteAction(final HaskellConsole console,
+    public void runExecuteAction(final LanguageConsoleImpl console,
                                  boolean executeImmediately) {
         //ConsoleHistoryModel consoleHistoryModel = console.getHistoryModel();
         if (executeImmediately) {
@@ -66,12 +70,23 @@ public abstract class HaskellConsoleExecuteActionHandler {
         TextRange range = new TextRange(0, document.getTextLength());
 
         languageConsole.getCurrentEditor().getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset());
-        //languageConsole.addCurrentToHistory(range, false, preserveMarkup);
         languageConsole.setInputText("");
-        //if (!StringUtil.isEmptyOrSpaces(text)) {
-        //    consoleHistoryModel.addToHistory(text);
-        //}
+
         // Send to interpreter / server
         processLine(text);
+    }
+
+    private void processLine(String line) {
+        OutputStream os = processHandler.getProcessInput();
+        if (os != null) {
+            byte[] bytes = (line + "\n").getBytes();
+            try {
+                os.write(bytes);
+                os.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

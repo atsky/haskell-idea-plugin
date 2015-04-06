@@ -46,28 +46,26 @@ abstract class HaskellConsoleActionBase extends AnAction {
     }
 
     protected static void executeCommand(Project project, String command) {
-            HaskellConsoleProcessHandler processHandler = findRunningHaskellConsole(project);
+        HaskellConsoleProcessHandler processHandler = findRunningHaskellConsole(project);
 
         // if a console isn't runnning, start one
         if (processHandler == null || processHandler.isProcessTerminated()) {
             Module module = RunHaskellConsoleAction.getModule(project);
             processHandler = HaskellConsoleRunner.run(module);
-            if (processHandler == null)
+            if (processHandler == null) {
                 return;
+            }
         }
 
         // implement a command
-        LanguageConsoleImpl languageConsole = processHandler.getLanguageConsole();
-        languageConsole.setInputText(command);
+        LanguageConsoleImpl console = processHandler.getLanguageConsole();
+        console.setInputText(command);
 
-        Editor editor = languageConsole.getCurrentEditor();
+        Editor editor = console.getCurrentEditor();
         CaretModel caretModel = editor.getCaretModel();
         caretModel.moveToOffset(command.length());
 
-        HaskellConsole console = (HaskellConsole) languageConsole;
-        HaskellConsoleExecuteActionHandler handler = console.getExecuteHandler();
-
-        handler.runExecuteAction(console, true);
+        new HaskellConsoleExecuteActionHandler(project, processHandler).runExecuteAction(console, true);
     }
 
     @Override

@@ -41,18 +41,12 @@
             <add-to-group group-id="CodeEditorViewGroup" anchor="after" relative-to-action="QuickJavaDoc"/>
         </action>
 
-        <group id="Haskell.REPL.Group"
-               class="org.jetbrains.haskell.repl.actions.HaskellReplActionGroup"
-               text="Haskell REPL" description="Haskell" popup="true">
-
-            <action id="ideah.repl.actions.RunHaskellConsoleAction"
-                    class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
-                    text="Start Haskell REPL" description="Runs Haskell REPL">
-                <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F10"/>
-            </action>
-
+        <action id="ideah.repl.actions.RunHaskellConsoleAction"
+                class="org.jetbrains.haskell.repl.actions.RunHaskellConsoleAction"
+                text="Start Haskell REPL" description="Runs Haskell REPL">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift F10"/>
             <add-to-group group-id="ToolsMenu" anchor="last"/>
-        </group>
+        </action>
 
         <action id="ideah.repl.actions.LoadHaskellFileInConsoleAction"
                 class="org.jetbrains.haskell.repl.actions.LoadHaskellFileInConsoleAction"

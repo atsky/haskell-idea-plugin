@@ -9,8 +9,6 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.haskell.repl.HaskellConsole
-import org.jetbrains.haskell.repl.HaskellConsoleEnterAction
 
 
 public object DebugConsoleFactory {

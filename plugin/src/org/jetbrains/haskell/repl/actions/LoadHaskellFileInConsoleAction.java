@@ -13,28 +13,38 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.haskell.fileType.HaskellFile;
+import org.jetbrains.haskell.icons.HaskellIcons;
 
 import java.io.File;
 
 public final class LoadHaskellFileInConsoleAction extends HaskellConsoleActionBase {
 
+    public LoadHaskellFileInConsoleAction() {
+        getTemplatePresentation().setIcon(HaskellIcons.REPL);
+    }
+
     public void actionPerformed(AnActionEvent e) {
         Editor editor = e.getData(DataKeys.EDITOR);
-        if (editor == null)
+        if (editor == null) {
             return;
+        }
         Project project = editor.getProject();
-        if (project == null)
+        if (project == null) {
             return;
+        }
         Document document = editor.getDocument();
         PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document);
-        if (psiFile == null || !(psiFile instanceof HaskellFile))
+
+        if (psiFile == null || !(psiFile instanceof HaskellFile)) {
             return;
+        }
+
         VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (virtualFile == null)
+
+        if (virtualFile == null) {
             return;
+        }
         String filePath = virtualFile.getPath();
-        if (filePath == null)
-            return;
 
         PsiDocumentManager.getInstance(project).commitAllDocuments();
         FileDocumentManager.getInstance().saveAllDocuments();
