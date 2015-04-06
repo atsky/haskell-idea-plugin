@@ -1,4 +1,5 @@
 <idea-plugin version="2">
+    <id>org.jetbrains.haskell</id>
     <name>Haskell</name>
     <description>Haskell language support</description>
     <version>0.5.1</version>
