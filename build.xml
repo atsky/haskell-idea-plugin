@@ -70,7 +70,7 @@
     </target>
 
     <target name="download.kotlinc" depends="mk.buid">
-        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.11.91/kotlin-compiler-0.11.91.zip"
+        <get src="https://github.com/JetBrains/kotlin/releases/download/M11.1-bootstrap/kotlin-compiler-0.11.91.1.zip"
              dest="${build.dir}" skipexisting="true"/>
     </target>
 
@@ -160,7 +160,7 @@
             <plugins>
                 <plugin id="org.jetbrains.haskell"
                         url="http://teamcity.jetbrains.com/guestAuth/repository/download/Haskell_Build/.lastSuccessful/haskell-plugin.zip"
-                        version="0.5.${build.number}" />
+                        version="0.5.1-b.${build.number}" />
             </plugins>
         </echoxml>
     </target>
