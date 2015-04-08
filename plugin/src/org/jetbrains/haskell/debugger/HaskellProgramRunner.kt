@@ -99,8 +99,6 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
         } catch (e: Exception) {
             val msg = GENERAL_ERROR_MSG(project.getName())
             Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.ERROR))
-            println("ERROR(HaskellProgramRunner.doExecute): ${e.getMessage()}")
-            throw RuntimeException(e)
         }
         return null
     }

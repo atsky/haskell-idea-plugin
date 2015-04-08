@@ -105,7 +105,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
             }
         }
 
-        override fun getModel(): DefaultListModel {
+        override fun getModel(): DefaultListModel? {
             return listModel
         }
 
