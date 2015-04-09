@@ -73,7 +73,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
         framesPanel.addElement(line)
     }
 
-    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()
+    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()!!
 
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()
