@@ -1,9 +1,6 @@
 package org.jetbrains.haskell.repl.actions;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbAware;
@@ -47,9 +44,9 @@ public final class RunHaskellConsoleAction extends AnAction implements DumbAware
     }
 
     static Module getModule(AnActionEvent e) {
-        Module module = e.getData(DataKeys.MODULE);
+        Module module = e.getData(LangDataKeys.MODULE);
         if (module == null) {
-            Project project = e.getData(DataKeys.PROJECT);
+            Project project = e.getData(CommonDataKeys.PROJECT);
             return getModule(project);
         } else {
             return module;

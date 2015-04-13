@@ -4,10 +4,7 @@ import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.LanguageConsoleImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -72,7 +69,7 @@ abstract class HaskellConsoleActionBase extends AnAction {
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
 
-        Editor editor = e.getData(DataKeys.EDITOR);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
 
         if (editor == null) {
             presentation.setEnabled(false);

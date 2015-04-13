@@ -1,7 +1,7 @@
 package org.jetbrains.haskell.repl.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -24,7 +24,7 @@ public final class LoadHaskellFileInConsoleAction extends HaskellConsoleActionBa
     }
 
     public void actionPerformed(AnActionEvent e) {
-        Editor editor = e.getData(DataKeys.EDITOR);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
         if (editor == null) {
             return;
         }
@@ -57,7 +57,7 @@ public final class LoadHaskellFileInConsoleAction extends HaskellConsoleActionBa
         Module m = RunHaskellConsoleAction.getModule(e);
         if (m == null)
             return null;
-        Editor editor = e.getData(DataKeys.EDITOR);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
         if (editor == null || editor.getProject() == null)
             return null;
         PsiFile psiFile = PsiDocumentManager.getInstance(editor.getProject()).getPsiFile(editor.getDocument());
