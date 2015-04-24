@@ -3,7 +3,6 @@ package org.jetbrains.haskell.repl;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.console.ConsoleHistoryController;
-import com.intellij.execution.console.ConsoleRootType;
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
 import com.intellij.execution.process.*;
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory;
@@ -23,7 +22,7 @@ import java.util.Arrays;
 public final class HaskellConsoleRunner extends AbstractConsoleRunnerWithHistory<HaskellConsole> {
     static final String REPL_TITLE = "GHCi";
 
-    private final ConsoleRootType myType = new HaskellConsoleRootType();
+    private final String myType = "haskell";
     private final Module module;
     private final Project project;
     private final String consoleTitle;
