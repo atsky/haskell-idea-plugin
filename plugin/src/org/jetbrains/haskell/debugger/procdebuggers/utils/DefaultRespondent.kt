@@ -50,16 +50,16 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
     override fun setBreakpointNumberAt(breakpointNumber: Int, module: String, line: Int) =
             debugProcess.setBreakpointNumberAtLine(breakpointNumber, module, line)
 
-    override fun resetHistoryStack() = debugProcess.historyManager.resetHistoryStack()
+    override fun resetHistoryStack() {}//= debugProcess.historyManager.resetHistoryStack()
 
     override fun historyChange(currentFrame: HsHistoryFrame, history: HistoryResult?) {
-        debugProcess.historyManager.historyFrameAppeared(currentFrame)
-        if (history != null) {
-            debugProcess.historyManager.setHistoryFramesInfo(
-                    HsHistoryFrameInfo(0, currentFrame.stackFrameInfo.functionName,
-                            currentFrame.stackFrameInfo.filePosition), history.frames, history.full)
-        }
-        debugProcess.historyManager.historyChanged(false, true, currentFrame)
+        //debugProcess.historyManager.historyFrameAppeared(currentFrame)
+        //if (history != null) {
+        //    debugProcess.historyManager.setHistoryFramesInfo(
+        //            HsHistoryFrameInfo(0, currentFrame.stackFrameInfo.functionName,
+        //                    currentFrame.stackFrameInfo.filePosition), history.frames, history.full)
+        //}
+        //debugProcess.historyManager.historyChanged(false, true, currentFrame)
     }
 
     override fun getModuleByFile(filename: String): String =

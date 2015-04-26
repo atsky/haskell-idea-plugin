@@ -69,7 +69,7 @@ public class HaskellDebugProcess(session: XDebugSession,
                                  val stopAfterTrace: Boolean)
 : XDebugProcess(session) {
 
-    public val historyManager: HistoryManager = HistoryManager(session , this)
+    //public val historyManager: HistoryManager = HistoryManager(session , this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
     public val debugger: ProcessDebugger
@@ -125,7 +125,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     override fun stop() {
-        historyManager.clean()
+        //historyManager.clean()
         debugger.close()
         debugProcessStateUpdater.close()
     }
@@ -149,7 +149,7 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     override fun createTabLayouter(): XDebugTabLayouter = object : XDebugTabLayouter() {
         override fun registerAdditionalContent(ui: RunnerLayoutUi) {
-            historyManager.registerContent(ui)
+            //historyManager.registerContent(ui)
         }
     }
 
@@ -168,12 +168,12 @@ public class HaskellDebugProcess(session: XDebugSession,
         topToolbar.remove(stepOut)
         topToolbar.remove(forceStepInto)
 
-        historyManager.registerActions(topToolbar)
+        //historyManager.registerActions(topToolbar)
     }
 
     // Class' own methods
     public fun startTrace(line: String?) {
-        historyManager.saveState()
+        //historyManager.saveState()
         val context = getSession()!!.getSuspendContext()
         if (context != null) {
             contexts.add(context)
@@ -183,6 +183,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun traceFinished() {
+        /*
         if (historyManager.hasSavedStates()) {
             historyManager.loadState()
             if (!contexts.isEmpty()) {
@@ -193,6 +194,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         } else {
 
         }
+        */
     }
 
     public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
@@ -250,10 +252,12 @@ public class HaskellDebugProcess(session: XDebugSession,
             val syncLocalBinding: LocalBinding = LocalBinding(localBinding.name, "", null)
             syncObject.lock()
             try {
+                /*
                 historyManager.withRealFrameUpdate {
                     debugger.force(localBinding.name!!,
                             ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
                 }
+                */
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
                 }
