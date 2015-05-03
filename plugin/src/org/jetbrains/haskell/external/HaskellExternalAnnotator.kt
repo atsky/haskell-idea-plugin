@@ -61,7 +61,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                 val childTime = child.getModificationStamp()
                 val document = FileDocumentManager.getInstance().getCachedDocument(child)
                 if (document != null) {
-                    val stream = ByteArrayInputStream(document.getText().getBytes(child.getCharset()!!));
+                    val stream = ByteArrayInputStream(document.getText().getBytes(child.getCharset()));
                     copyFile(stream, destinationFile)
                 } else {
                     val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.getModificationStamp()

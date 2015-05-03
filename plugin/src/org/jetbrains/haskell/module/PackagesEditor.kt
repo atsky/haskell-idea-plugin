@@ -45,7 +45,7 @@ public class PackagesEditor(state: ModuleConfigurationState, val project : Proje
     }
     public override fun saveData(): Unit {
         CabalPackagesContainer.getInstance(project).getState()!!.myPackages =
-                Collections.list(packages.elements() as Enumeration<String>?) : List<String>;
+                Collections.list(packages.elements()) as List<String>;
     }
 
     public override fun getDisplayName(): String {

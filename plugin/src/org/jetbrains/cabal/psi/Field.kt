@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileSystem
 
 public open class Field(node: ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun getType(): IElementType = getNode().getElementType()!!
+    public fun getType(): IElementType = getNode().getElementType()
 
     public fun hasName(name: String): Boolean {
         return getFirstChild()!!.getText()!!.equalsIgnoreCase(name)

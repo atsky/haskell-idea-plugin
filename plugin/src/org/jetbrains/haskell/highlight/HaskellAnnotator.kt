@@ -25,7 +25,7 @@ import org.jetbrains.haskell.psi.ClassDeclaration
 public class HaskellAnnotator() : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
         if (element is Import) {
-            for (node in element.getNode().getChildren(TokenSet.create(HIDING, QUALIFIED))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(HIDING, QUALIFIED))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
             for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS)) ?: array<ASTNode>()) {
@@ -33,22 +33,22 @@ public class HaskellAnnotator() : Annotator {
             }
         }
         if (element is FunctionType) {
-            for (node in element.getNode().getChildren(TokenSet.create(RARROW))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(RARROW))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }
         if (element is ListType) {
-            for (node in element.getNode().getChildren(TokenSet.create(OBRACK, CBRACK))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(OBRACK, CBRACK))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }
         if (element is QVarSym) {
-            for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_OPERATOR)
             }
         }
         if (element is TypeVariable && !element.isConstructor() && !element.isClass()) {
-            for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID, QCONID, QVARID))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(CONID, VARID, QCONID, QVARID))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }
@@ -65,7 +65,7 @@ public class HaskellAnnotator() : Annotator {
             }
         }
         if (element is TupleType && element.getParent() !is Context) {
-            for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN, COMMA))!!) {
+            for (node in element.getNode().getChildren(TokenSet.create(OPAREN, CPAREN, COMMA))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_TYPE)
             }
         }

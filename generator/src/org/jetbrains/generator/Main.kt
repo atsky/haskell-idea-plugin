@@ -64,8 +64,8 @@ fun merge(variants: List<Variant>): List<Variant> {
             result.add(variant)
         }
     }
-    for ((name, variants) in map) {
-        result.add(NonFinalVariant(name, merge(variants)))
+    for ((name, vars) in map) {
+        result.add(NonFinalVariant(name, merge(vars)))
     }
     return result
 }

@@ -31,10 +31,10 @@ public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Ra
             return listOf(ErrorMessage(this, "invalid flag name", "error"))
         }
         if (getParent() is Section) {
-            if (getNode().getText()!!.matches("^\\S+$")) return listOf()
+            if (getNode().getText().matches("^\\S+$")) return listOf()
             return listOf(ErrorMessage(this, "invalid section name", "error"))
         }
-        if (getNode().getText()!!.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return listOf()
+        if (getNode().getText().matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$")) return listOf()
         return listOf(ErrorMessage(this, "invalid name", "error"))
     }
 
