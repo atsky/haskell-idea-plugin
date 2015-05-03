@@ -250,7 +250,7 @@ public class CabalInterface(val project: Project) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
-                    val process = runCommand(project.getBasePath().toString(), "update")
+                        val process = runCommand(project.getBasePath()!!.toString(), "update")
                     process.waitFor();
                 }
             }
@@ -261,7 +261,7 @@ public class CabalInterface(val project: Project) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
-                    val process = runCommand(project.getBasePath().toString(), "install", pkg)
+                    val process = runCommand(project.getBasePath()!!.toString(), "install", pkg)
                     process.waitFor()
                 }
             }
