@@ -11,9 +11,6 @@ import org.jetbrains.haskell.parser.HaskellTokenType
 import org.jetbrains.cabal.psi.*
 
 public object CabalTokelTypes {
-    val defaultContructor : (ASTNode) -> PsiElement = { node ->
-        ASTWrapperPsiElement(node)
-    }
 
     val COLON                  : IElementType  = HaskellTokenType(":")
     val COMMA                  : IElementType  = HaskellTokenType(",")
@@ -39,7 +36,6 @@ public object CabalTokelTypes {
     val WHITESPACES            : TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 
     val PROPERTY_KEY           : IElementType = CabalCompositeElementType("PROPERTY_KEY", ::PropertyKey)
-    val SECTION                : IElementType = CabalCompositeElementType("SECTION", defaultContructor)
 
     val SECTION_TYPE           : IElementType = CabalCompositeElementType("SECTION_TYPE"             , ::SectionType              )
 
