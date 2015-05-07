@@ -192,8 +192,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw CantRunException("Cannot run: " + exePath)
         }
 
-        val path = File(module.getModuleFilePath())
-        commandLine.setWorkDirectory(path.getParent())
+        commandLine.setWorkDirectory(configuration.getWorkingDirectory())
         commandLine.setExePath(exePath)
         val parameters = configuration.getProgramParameters()
         if (parameters != null) {
