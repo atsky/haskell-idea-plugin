@@ -37,7 +37,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
 
     override fun getGroupName(): String? = "Haskell"
 
-    override fun getPresentableName(): String? = "Haskell Module"
+    override fun getPresentableName(): String? = "Haskell"
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> =
         getModuleType().createWizardSteps(wizardContext, this, modulesProvider)
