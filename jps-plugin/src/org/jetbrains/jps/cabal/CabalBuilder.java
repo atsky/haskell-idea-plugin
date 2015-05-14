@@ -29,13 +29,12 @@ import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsModuleType;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -202,7 +201,11 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
     private File getCabalFile(JpsModule module) {
         String pathname = getContentRootPath(module);
-        for (File file : new File(pathname).listFiles()) {
+        File[] files = new File(pathname).listFiles();
+        if (files == null) {
+            return null;
+        }
+        for (File file : files) {
             if (file.getName().endsWith(".cabal")) {
                 return file;
             }
@@ -219,7 +222,7 @@ public class CabalBuilder extends ModuleLevelBuilder {
 
     @Override
     public List<String> getCompilableFileExtensions() {
-        return Arrays.asList("hs");
+        return Collections.singletonList("hs");
     }
 
 
