@@ -1,9 +1,7 @@
 package org.jetbrains.jps.cabal.model;
 
-import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.JDOMUtil;
 import org.jdom.Element;
-import org.jdom.Parent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.cabal.CabalBuilder;
@@ -13,6 +11,7 @@ import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.serialization.JpsGlobalExtensionSerializer;
 import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension;
 import org.jetbrains.jps.model.serialization.library.JpsSdkPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,8 +45,14 @@ public class JpsHaskellModelSerializerExtension extends JpsModelSerializerExtens
 
     @NotNull
     @Override
+    public List<? extends JpsModulePropertiesSerializer<?>> getModulePropertiesSerializers() {
+        return Collections.singletonList(new JpsHaskellModulePropertiesSerializer());
+    }
+
+    @NotNull
+    @Override
     public List<? extends JpsSdkPropertiesSerializer<?>> getSdkPropertiesSerializers() {
-        return Arrays.asList(new JpsHaskellSdkPropertiesSerializer());
+        return Collections.singletonList(new JpsHaskellSdkPropertiesSerializer());
     }
 
     private static class JpsHaskellSdkPropertiesSerializer extends JpsSdkPropertiesSerializer<JpsSimpleElement<JpsHaskellSdkProperties>> {

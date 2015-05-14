@@ -55,10 +55,16 @@ public class CabalBuilder extends ModuleLevelBuilder {
                           final OutputConsumer outputConsumer) throws ProjectBuildException {
         try {
             for (JpsModule module : chunk.getModules()) {
+                JpsModuleType<?> moduleType = module.getModuleType();
+                if (!(moduleType instanceof JpsHaskellModuleType)) {
+                    continue;
+                }
                 File cabalFile = getCabalFile(module);
                 if (cabalFile == null) {
-                    //context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.ERROR,
-                    //        "Can't find cabal file in " + getContentRootPath(module)));
+                    context.processMessage(new CompilerMessage(
+                            "cabal",
+                            BuildMessage.Kind.ERROR,
+                            "Can't find cabal file in " + getContentRootPath(module)));
                     continue;
                 }
                 CabalJspInterface cabal = new CabalJspInterface(cabalPath, cabalFile);
