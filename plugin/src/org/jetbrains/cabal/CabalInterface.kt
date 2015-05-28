@@ -41,14 +41,7 @@ private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
 public class CabalPackageShort(
         val name: String,
         val availableVersions: List<String>,
-        val isInstalled: Boolean
-) {
-    init {
-        if (availableVersions.any { it.contains("\n") }) {
-            println()
-        }
-    }
-}
+        val isInstalled: Boolean)
 
 val cabalLock = Object()
 
