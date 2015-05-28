@@ -42,7 +42,13 @@ public class CabalPackageShort(
         val name: String,
         val availableVersions: List<String>,
         val isInstalled: Boolean
-) {}
+) {
+    init {
+        if (availableVersions.any { it.contains("\n") }) {
+            println()
+        }
+    }
+}
 
 val cabalLock = Object()
 
@@ -219,7 +225,7 @@ public class CabalInterface(val project: Project) {
             }
 
             val map = TreeMap<String, MutableList<String>>()
-            output.split(' ').forEach { pkgVer ->
+            output.split("\\s").forEach { pkgVer ->
                 val lastIndexOf = pkgVer.lastIndexOf('-')
                 if (lastIndexOf != -1) {
                     val pkg = pkgVer.substring(0, lastIndexOf)
