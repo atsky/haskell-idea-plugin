@@ -22,7 +22,7 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
                 topLevel = topLevel.getParent()!!
             }
             if (topLevel is Module) {
-                return topLevel as Module
+                return topLevel
             } else {
                 return null
             }

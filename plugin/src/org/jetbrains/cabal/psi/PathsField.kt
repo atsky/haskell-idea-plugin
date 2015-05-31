@@ -13,7 +13,7 @@ import java.io.FilenameFilter
 import java.io.File
 import java.util.ArrayList
 
-public trait PathsField: PropertyField {
+public interface PathsField: PropertyField {
 
     public fun isValidCompletionFile(file: VirtualFile): Boolean = true
 
@@ -26,8 +26,8 @@ public trait PathsField: PropertyField {
     public fun getParentBuildSection(): BuildSection? {
         var parent = getParent()
         while (parent != null) {
-            if (parent is BuildSection) return (parent as BuildSection)
-            parent = parent!!.getParent()
+            if (parent is BuildSection) return parent
+            parent = parent.getParent()
         }
         return null
     }

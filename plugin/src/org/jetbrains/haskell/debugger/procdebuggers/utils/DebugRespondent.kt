@@ -6,7 +6,7 @@ import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
 
-public trait DebugRespondent {
+public interface DebugRespondent {
 
     public fun traceFinished()
 

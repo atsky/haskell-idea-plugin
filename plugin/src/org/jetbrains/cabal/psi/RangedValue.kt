@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.highlight.ErrorMessage
 
 
-public trait RangedValue: Checkable, PsiElement {
+public interface RangedValue: Checkable, PsiElement {
 
     public fun getAvailableValues(): List<String> { return listOf() }
 

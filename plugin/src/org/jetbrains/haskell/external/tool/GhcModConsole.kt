@@ -65,8 +65,8 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
     }
 
     enum class MessageType(val key : TextAttributesKey) {
-        INFO : MessageType(ConsoleViewContentType.SYSTEM_OUTPUT_KEY)
-        INPUT : MessageType(ConsoleViewContentType.USER_INPUT_KEY)
-        OUTPUT : MessageType(ConsoleViewContentType.NORMAL_OUTPUT_KEY)
+        INFO(ConsoleViewContentType.SYSTEM_OUTPUT_KEY),
+        INPUT(ConsoleViewContentType.USER_INPUT_KEY),
+        OUTPUT(ConsoleViewContentType.NORMAL_OUTPUT_KEY)
     }
 }

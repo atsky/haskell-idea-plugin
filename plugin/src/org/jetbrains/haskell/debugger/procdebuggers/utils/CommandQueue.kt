@@ -37,7 +37,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
             inputLock.unlock()
 
             if (command != null) {
-                execute(command!!)
+                execute(command)
                 someCommandInProgress.set(true)
             }
         }

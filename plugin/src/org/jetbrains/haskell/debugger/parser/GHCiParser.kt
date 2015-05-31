@@ -19,15 +19,13 @@ public class GHCiParser() {
         private val CALL_INFO_PATTERN = "-(\\d+)\\s+:\\s(.*)\\s\\((.*)\\)"
         private val STOPPED_AT_PATTERN = "Stopped\\sat\\s(.*)"
         private val LOGGED_BREAKPOINT_AT_PATTERN = "Logged breakpoint\\sat\\s(.*)"
-        val FILE_POSITION_PATTERNS = array(
-                "(.*):(\\d+):(\\d+)",
+        val FILE_POSITION_PATTERNS = arrayOf("(.*):(\\d+):(\\d+)",
                 "(.*):(\\d+):(\\d+)-(\\d+)",
                 "(.*):\\((\\d+),(\\d+)\\)-\\((\\d+),(\\d+)\\)"
         )
-        val POSITION_PATTERN_PLACES = array(
-                array(0, 1, 0, 1),
-                array(0, 1, 0, 2),
-                array(0, 1, 2, 3)
+        val POSITION_PATTERN_PLACES = arrayOf(arrayOf(0, 1, 0, 1),
+                arrayOf(0, 1, 0, 2),
+                arrayOf(0, 1, 2, 3)
         )
 
         val LOCAL_BINDING_PATTERN = "([a-zA-Z_]?\\w*)(\\s::\\s)(\\[[\\w\\s\\(\\)]*\\]|[\\w\\s\\(\\)]*)((\\s=\\s\\w*)?)"
@@ -95,18 +93,18 @@ public class GHCiParser() {
             val localBindings = ArrayList<LocalBinding>()
             var res: LocalBinding?
             while (it.hasNext()) {
-                val currentLine = it.next()
-                val matcher0 = Pattern.compile("(.*)" + EXCEPTION_BREAKPOINT_PATTERN).matcher(currentLine!!.trim())
+                val currentLine = it.next()!!
+                val matcher0 = Pattern.compile("(.*)" + EXCEPTION_BREAKPOINT_PATTERN).matcher(currentLine.trim())
                 if (matcher0.matches()) {
                     return HsStackFrameInfo(null, localBindings, null)
                 }
                 filePosition = tryParseFilePosition(currentLine.trim(), STOPPED_AT_PATTERN)
                 if (filePosition != null) {
-                    return HsStackFrameInfo(filePosition as HsFilePosition, localBindings, null)
+                    return HsStackFrameInfo(filePosition, localBindings, null)
                 }
                 res = tryParseLocalBinding(currentLine.trim())
                 if (res != null) {
-                    localBindings.add(res as LocalBinding)
+                    localBindings.add(res)
                 }
             }
             return null
@@ -121,7 +119,7 @@ public class GHCiParser() {
             for (currentLine in output) {
                 res = tryParseLocalBinding(currentLine?.trim())
                 if (res != null) {
-                    localBindings.add(res as LocalBinding)
+                    localBindings.add(res)
                 }
             }
             return LocalBindingList(localBindings)
@@ -161,8 +159,8 @@ public class GHCiParser() {
         private fun removeBoldModifier(boldText: String): String {
             val boldStartTag = "\u001B[1m"
             val boldEndTag = "\u001B[0m"
-            val startIndex = if (boldText.startsWith(boldStartTag)) boldStartTag.size else 0
-            val endIndex = if (boldText.endsWith(boldEndTag)) boldText.size - boldEndTag.size else boldText.size
+            val startIndex = if (boldText.startsWith(boldStartTag)) boldStartTag.length() else 0
+            val endIndex = if (boldText.endsWith(boldEndTag)) boldText.length() - boldEndTag.length() else boldText.length()
             return boldText.substring(startIndex, endIndex)
         }
 

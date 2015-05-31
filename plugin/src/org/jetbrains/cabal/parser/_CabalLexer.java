@@ -242,7 +242,7 @@ class _CabalLexer implements FlexLexer {
    * @param   in  the java.io.Reader to read input from.
    */
   _CabalLexer(java.io.Reader in) {
-    this.zzReader = in;
+    zzReader = in;
   }
 
   /**

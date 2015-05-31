@@ -9,7 +9,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 public class EMail(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
     public override fun check(): List<ErrorMessage> {
-        if (!getNode().getText().matches("^.+@.+\\..+$")) return listOf(ErrorMessage(this, "invalid value", "error"))
+        if (!getNode().getText().matches("^.+@.+\\..+$".toRegex())) return listOf(ErrorMessage(this, "invalid value", "error"))
         return listOf()
     }
 }

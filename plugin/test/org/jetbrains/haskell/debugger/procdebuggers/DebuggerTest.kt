@@ -41,11 +41,11 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         }
 
         public enum class Result {
-            TRACE_FINISHED
-            POSITION_REACHED
-            BREAKPOINT_REACHED
-            EXCEPTION_REACHED
-            BREAKPOINT_REMOVED
+            TRACE_FINISHED,
+            POSITION_REACHED,
+            BREAKPOINT_REACHED,
+            EXCEPTION_REACHED,
+            BREAKPOINT_REMOVED,
             BREAKPOINT_SET_AT
         }
 

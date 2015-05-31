@@ -31,7 +31,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
 
     public fun getParentField(): PathsField = getParent() as PathsField
 
-    public fun getDefaultTextRange(): TextRange = TextRange(0, getText().size)
+    public fun getDefaultTextRange(): TextRange = TextRange(0, getText().length())
 
     public fun getFile(): File = File(getText())
 
@@ -44,7 +44,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
     public fun isWildcard(): Boolean {
         val parentField = getParentField()
         if (parentField.hasName("extra-source-files") || parentField.hasName("data-files")) {
-            return getFilename().matches("^\\*\\.(.+)$")
+            return getFilename().matches("^\\*\\.(.+)$".toRegex())
         }
         return false
     }
@@ -99,8 +99,8 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
             = virtualSystem.findFileByPath(path.replace(File.separatorChar, '/'))
 
     private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile> {
-        val ext = getFile().getName().replaceAll("^\\*(\\..+)$", "$1")
-        return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$") }  ?:  listOf()
+        val ext = getFile().getName().replace("^\\*(\\..+)$".toRegex(), "$1")
+        return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$".toRegex()) }  ?:  listOf()
     }
 
     private fun getCabalRootFile(): VirtualFile? = getCabalFile().getVirtualFile()?.getParent()

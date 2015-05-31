@@ -43,7 +43,7 @@ public class CabalManager()
         return Function<Pair<Project, String>, ExternalSystemExecutionSettings> { ExternalSystemExecutionSettings() }
     }
 
-    throws(javaClass<ExecutionException>())
+    throws(ExecutionException::class)
     override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
         val kotlinJarPath = PathUtil.getJarPathForClass(kotlin.Unit.javaClass)
         parameters.getClassPath().add(kotlinJarPath)

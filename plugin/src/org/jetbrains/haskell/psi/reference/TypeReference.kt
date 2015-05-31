@@ -36,7 +36,7 @@ class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
     }
 
 
-    override fun getVariants(): Array<Any> = array()
+    override fun getVariants(): Array<Any> = arrayOf()
 
 
     override fun handleElementRename(newElementName: String?): PsiElement? {

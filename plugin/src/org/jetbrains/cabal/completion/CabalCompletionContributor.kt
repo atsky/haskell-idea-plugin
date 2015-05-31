@@ -61,7 +61,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     while ((parentField !is Field) && (parentField !is CabalFile) && (parentField != null)) {
                         // TODO Look like a bug in Kotlin.
                         val parentFieldVal = parentField
-                        parentField = parentFieldVal?.getParent()
+                        parentField = parentFieldVal.getParent()
                     }
                     if (parentField is BuildDependsField) {
                         val project = current!!.getProject()

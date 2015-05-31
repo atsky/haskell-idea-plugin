@@ -65,21 +65,21 @@ public class VersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), Chec
 
     public fun getVersion(): String = (this : PsiElement).getLastChild()!!.getText()!!
 
-    public fun getVersionValue(): String = (getVersion().replaceAll("(\\-[0-9a-zA-Z]+)+\\.", "\\.")).replaceAll("(\\-[0-9a-zA-Z]+)+$", "")
+    public fun getVersionValue(): String = (getVersion().replace("(\\-[0-9a-zA-Z]+)+\\.".toRegex(), "\\.")).replace("(\\-[0-9a-zA-Z]+)+$".toRegex(), "")
 
     public override fun check(): List<ErrorMessage> {
         val comparator = getComparator()
         if (comparator == null) return listOf()
         val version = getVersion()
         if (getParent()!! is CabalVersionField) {
-            if ((comparator == ">=") && (version.matches("[0-9]+\\.[0-9]+"))) return listOf()
+            if ((comparator == ">=") && (version.matches("[0-9]+\\.[0-9]+".toRegex()))) return listOf()
             return listOf(ErrorMessage(this, "invalid cabal version constraint", "error"))
         }
         if (comparator == "==") {
-            if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)") || version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.){2,}\\*")) return listOf()
+            if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)".toRegex()) || version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.){2,}\\*".toRegex())) return listOf()
         }
         else {
-            if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)")) return listOf()
+            if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)".toRegex())) return listOf()
         }
         return listOf(ErrorMessage(this, "invalid version constraint", "error"))
     }

@@ -9,7 +9,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 public class Token(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
 
     public override fun check(): List<ErrorMessage> {
-        if (!getNode().getText().matches("^.+$")) {
+        if (!getNode().getText().matches("^.+$".toRegex())) {
             return listOf(ErrorMessage(this, "invalid token", "error"))
         }
         return listOf()

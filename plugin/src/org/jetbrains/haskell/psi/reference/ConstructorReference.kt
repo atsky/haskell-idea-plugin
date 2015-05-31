@@ -41,7 +41,7 @@ class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
     }
 
     override fun getVariants(): Array<Any> {
-        return getConstructorsList().copyToArray()
+        return getConstructorsList().toTypedArray()
     }
 
 

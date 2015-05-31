@@ -14,7 +14,7 @@ public open class Field(node: ASTNode) : ASTWrapperPsiElement(node) {
     public fun getType(): IElementType = getNode().getElementType()
 
     public fun hasName(name: String): Boolean {
-        return getFirstChild()!!.getText()!!.equalsIgnoreCase(name)
+        return getFirstChild()!!.getText()!!.equals(name, ignoreCase = true)
     }
 
     public fun getFieldName(): String {

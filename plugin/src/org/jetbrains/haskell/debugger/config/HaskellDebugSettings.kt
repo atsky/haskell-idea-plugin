@@ -14,14 +14,13 @@ import org.jetbrains.haskell.util.*
 
 com.intellij.openapi.components.State(
         name = "HaskellDebugConfiguration",
-        storages = array(
-            Storage(id = "default", file = StoragePathMacros.APP_CONFIG + "/haskelldebug.xml")
+        storages = arrayOf(Storage(id = "default", file = StoragePathMacros.APP_CONFIG + "/haskelldebug.xml")
         )
 )
 public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSettings.Companion.State> {
     companion object {
         public enum class DebuggerType {
-            GHCI
+            GHCI,
             REMOTE
         }
 

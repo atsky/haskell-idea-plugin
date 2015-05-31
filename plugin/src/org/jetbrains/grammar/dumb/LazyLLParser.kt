@@ -51,7 +51,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
         })
         while (true) {
             if (state is FinalState) {
-                val result = (state as FinalState).result
+                val result = state.result
                 if (result == null && lastSeen <= lastCurlyPosition) {
                     state = lastCurlyState!!.recover()
                     lastCurlyPosition = -1

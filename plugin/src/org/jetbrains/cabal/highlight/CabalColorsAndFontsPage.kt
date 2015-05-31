@@ -26,7 +26,7 @@ public class CabalColorsAndFontsPage : ColorSettingsPage {
     }
 
     override fun getColorDescriptors(): Array<ColorDescriptor> {
-        return array()
+        return arrayOf()
     }
 
     override fun getHighlighter(): SyntaxHighlighter {
@@ -56,8 +56,7 @@ public class CabalColorsAndFontsPage : ColorSettingsPage {
     }
 
     companion object {
-        private val ATTRS = array(
-                AttributesDescriptor("Colon", CabalHighlighter.CABAL_COLON),
+        private val ATTRS = arrayOf(AttributesDescriptor("Colon", CabalHighlighter.CABAL_COLON),
                 AttributesDescriptor("Comment", CabalHighlighter.CABAL_COMMENT),
                 AttributesDescriptor("Property", CabalHighlighter.CABAL_PROPERTY))
     }

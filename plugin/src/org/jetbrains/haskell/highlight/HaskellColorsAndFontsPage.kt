@@ -27,7 +27,7 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
     }
 
     override fun getColorDescriptors(): Array<ColorDescriptor> {
-        return array()
+        return arrayOf()
     }
 
     override fun getHighlighter(): SyntaxHighlighter {
@@ -76,8 +76,7 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
     }
 
     companion object {
-        private val ATTRS = array(
-                AttributesDescriptor("Brackets", HaskellHighlighter.HASKELL_BRACKETS),
+        private val ATTRS = arrayOf(AttributesDescriptor("Brackets", HaskellHighlighter.HASKELL_BRACKETS),
                 AttributesDescriptor("Class", HaskellHighlighter.HASKELL_CLASS),
                 AttributesDescriptor("Comment", HaskellHighlighter.HASKELL_COMMENT),
                 AttributesDescriptor("Curly brackets", HaskellHighlighter.HASKELL_CURLY),

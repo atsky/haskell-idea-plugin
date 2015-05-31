@@ -32,7 +32,7 @@ object GhcMod {
             if (!text.contains(":Error:")) {
                 val f: (String) -> Pair<String, String?> = {
                     if (it.contains("::")) {
-                        val t = it.split("::")
+                        val t = it.split("::".toRegex()).toTypedArray()
                         Pair(t[0].trim(), t[1].trim())
                     } else {
                         Pair(it, null)

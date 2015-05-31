@@ -70,7 +70,7 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
         val command: ArrayList<String> = arrayListOf(ghciPath!!, filePath)
         command.add("-package")
         command.add("network")
-        val process = Runtime.getRuntime().exec(command.copyToArray())
+        val process = Runtime.getRuntime().exec(command.toTypedArray())
         val handler = TestGHCiProcessHandler(process)
         listener = GHCiDebugProcessStateUpdater()
         val debugger = GHCiDebugger(respondent, handler, null, listener!!.INPUT_READINESS_PORT)

@@ -177,7 +177,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                 override fun accept(f: File): Boolean {
                     if (f.isDirectory())
                         return false
-                    return "ghc".equalsIgnoreCase(FileUtil.getNameWithoutExtension(f))
+                    return "ghc".equals(FileUtil.getNameWithoutExtension(f), ignoreCase = true)
                 }
             })
             return children != null && children.size() >= 1

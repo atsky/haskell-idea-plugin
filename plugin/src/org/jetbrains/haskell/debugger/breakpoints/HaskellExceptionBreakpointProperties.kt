@@ -9,7 +9,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 public class HaskellExceptionBreakpointProperties(): XBreakpointProperties<HaskellExceptionBreakpointProperties.State>() {
 
     public enum class ExceptionType {
-        EXCEPTION
+        EXCEPTION,
         ERROR
     }
 

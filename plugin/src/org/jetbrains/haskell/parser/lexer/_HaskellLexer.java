@@ -900,7 +900,7 @@ class _HaskellLexer implements FlexLexer {
    * @param   in  the java.io.Reader to read input from.
    */
   _HaskellLexer(java.io.Reader in) {
-    this.zzReader = in;
+    zzReader = in;
   }
 
   /**

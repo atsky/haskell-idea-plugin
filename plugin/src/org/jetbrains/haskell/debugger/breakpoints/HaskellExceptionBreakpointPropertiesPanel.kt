@@ -27,7 +27,7 @@ public class HaskellExceptionBreakpointPropertiesPanel :
         private val ITEM_ERROR = "Uncaught exceptions"
     }
 
-    private val selectDebuggerComboBox: ComboBox = ComboBox(DefaultComboBoxModel(array(ITEM_EXCEPTION, ITEM_ERROR)))
+    private val selectDebuggerComboBox: ComboBox = ComboBox(DefaultComboBoxModel(arrayOf(ITEM_EXCEPTION, ITEM_ERROR)))
 
     override fun getComponent(): JComponent {
         val panel = JPanel(GridBagLayout())

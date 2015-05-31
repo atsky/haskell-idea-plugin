@@ -34,7 +34,7 @@ public class RamFile(val fileName: String, val content : String) : VirtualFile()
     }
 
     override fun getChildren(): Array<VirtualFile>? {
-        return array()
+        return arrayOf()
     }
 
     override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream {

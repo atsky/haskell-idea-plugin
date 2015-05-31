@@ -38,11 +38,11 @@ public class SourceRepo(node: ASTNode) : Section(node) {
         var node = getFirstChild()
         var res = ArrayList<String>()
         while ((node != null) && (node !is RepoKind)) {
-            node = node!!.getNextSibling()
+            node = node.getNextSibling()
         }
         while (node is RepoKind) {
-            res.add((node as RepoKind).getText()!!)
-            node = node!!.getNextSibling()
+            res.add(node.getText()!!)
+            node = node.getNextSibling()
         }
         return res
     }

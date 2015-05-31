@@ -11,7 +11,7 @@ public class CabalProjectSettingsControl(initialSettings: CabalProjectSettings)
 
     override fun fillExtraControls(content: PaintAwarePanel, indentLevel: Int) {  }
 
-    throws(javaClass<ConfigurationException>())
+    throws(ConfigurationException::class)
     override fun validate(settings: CabalProjectSettings): Boolean {
         return true
     }

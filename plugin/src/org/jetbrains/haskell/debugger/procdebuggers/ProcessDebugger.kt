@@ -13,7 +13,7 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.parser.ParseResult
 
-public trait ProcessDebugger {
+public interface ProcessDebugger {
 
     public fun isReadyForNextCommand(): Boolean
 

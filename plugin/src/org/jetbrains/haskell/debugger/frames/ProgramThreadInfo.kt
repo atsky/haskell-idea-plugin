@@ -8,8 +8,8 @@ public class ProgramThreadInfo(public val id: String?,
                             public val topFrameInfo: HsStackFrameInfo) {
 
     public enum class State {
-        RUNNING
-        SUSPENDED
+        RUNNING,
+        SUSPENDED,
         KILLED
     }
 

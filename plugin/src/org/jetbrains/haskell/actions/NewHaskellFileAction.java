@@ -108,11 +108,8 @@ public final class NewHaskellFileAction extends CreateElementActionBase {
         }
 
         IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
-        if (view == null) {
-            return false;
-        }
+        return view != null;
 
-        return true;
     }
 
 

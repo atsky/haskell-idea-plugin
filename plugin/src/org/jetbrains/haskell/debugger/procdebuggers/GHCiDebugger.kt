@@ -84,8 +84,7 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
          * 1. need to be careful with concurrency of modules
          * 2. handle name can be used
          */
-        val commands = array(
-                ":m +System.IO\n",
+        val commands = arrayOf(":m +System.IO\n",
                 ":m +Data.Char\n",
                 ":m +Network.Socket\n",
                 ":m +Network.BSD\n",

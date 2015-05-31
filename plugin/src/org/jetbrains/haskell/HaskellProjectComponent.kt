@@ -43,7 +43,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                     project,
                     pkg + " not found. You can install it by cabal or set path in settings.",
                     pkg + " executable not found",
-                    array("Install", "Open settings", "Close"),
+                    arrayOf("Install", "Open settings", "Close"),
                     0,
                     null)
             if (result == 0) {
@@ -61,7 +61,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
         if (!getHaskellModules().isEmpty()) {
-            val paths = System.getenv("PATH")!!.split(File.pathSeparator).toArrayList()
+            val paths = System.getenv("PATH")!!.split(File.pathSeparator.toRegex()).toTypedArray().toArrayList()
 
             val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
             if (sdk != null && sdk.getSdkType() is HaskellSdkType) {
@@ -80,7 +80,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                         project,
                         GHC_PATH_NOT_FOUND,
                         "ghc not found",
-                        array("Close"),
+                        arrayOf("Close"),
                         0,
                         null)
             }
@@ -94,7 +94,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                             project,
                             "Cabal executable not found. Please add it to PATH or specify path in settings",
                             "Cabal not found",
-                            array("Open settings", "Close"),
+                            arrayOf("Open settings", "Close"),
                             0,
                             null)
                     if (result == 0) {

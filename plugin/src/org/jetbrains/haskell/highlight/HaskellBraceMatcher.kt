@@ -22,8 +22,7 @@ public class HaskellBraceMatcher() : PairedBraceMatcher {
     }
 
     companion object {
-        val PAIRS: Array<BracePair> = array(
-                BracePair(HaskellLexerTokens.OPAREN, HaskellLexerTokens.CPAREN, true),
+        val PAIRS: Array<BracePair> = arrayOf(BracePair(HaskellLexerTokens.OPAREN, HaskellLexerTokens.CPAREN, true),
                 BracePair(HaskellLexerTokens.OCURLY, HaskellLexerTokens.CCURLY, true),
                 BracePair(HaskellLexerTokens.OBRACK, HaskellLexerTokens.CBRACK, true))
     }

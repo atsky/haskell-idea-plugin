@@ -61,7 +61,7 @@ public class CabalInterface(val project: Project) {
                 }
             }
             if (cabalFile != null) {
-                return cabalFile!!
+                return cabalFile
             }
             return null;
         }
@@ -132,9 +132,9 @@ public class CabalInterface(val project: Project) {
     }
 
     private fun findCabal(): String? {
-        for (file: VirtualFile? in project.getBaseDir()!!.getChildren()!!) {
-            if ("cabal".equals(file?.getExtension())) {
-                val cachedDocument: Document? = FileDocumentManager.getInstance().getCachedDocument(file!!)
+        for (file: VirtualFile in project.getBaseDir()!!.getChildren()!!) {
+            if ("cabal".equals(file.getExtension())) {
+                val cachedDocument: Document? = FileDocumentManager.getInstance().getCachedDocument(file)
                 if (cachedDocument != null) {
                     ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {
                         public override fun run(): Unit {
@@ -218,7 +218,7 @@ public class CabalInterface(val project: Project) {
             }
 
             val map = TreeMap<String, MutableList<String>>()
-            output.split("\\s").forEach { pkgVer ->
+            output.split("\\s".toRegex()).toTypedArray().forEach { pkgVer ->
                 val lastIndexOf = pkgVer.lastIndexOf('-')
                 if (lastIndexOf != -1) {
                     val pkg = pkgVer.substring(0, lastIndexOf)

@@ -29,7 +29,7 @@ public class HaskellRunConfigurationType() : ConfigurationType {
     }
 
     override fun getConfigurationFactories(): Array<ConfigurationFactory> {
-        return array<ConfigurationFactory>(myFactory)
+        return arrayOf(myFactory)
     }
 
     init {

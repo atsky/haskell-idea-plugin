@@ -93,47 +93,47 @@ public class GHCiParserTests {
     test fun tryParseStoppedAtTraceOutputTest() {
         var expected: HsStackFrameInfo? = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 16, 4, 47),
-                array(LocalBinding("a", "Integer", "8"), LocalBinding("_result", "[Integer]", "_")).toArrayList(),
+                arrayOf(LocalBinding("a", "Integer", "8"), LocalBinding("_result", "[Integer]", "_")).toArrayList(),
                 null)
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.traceOutput), expected)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.traceOutput), expected)
     }
 
     test fun tryParseStoppedAtWithPreSymbolsTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 37, 4, 47),
-                array(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
                 null)
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.traceOutput, TryParseStoppedAtInputs.withPreSymbols), expected)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.traceOutput, TryParseStoppedAtInputs.withPreSymbols), expected)
     }
 
     test fun tryParseStoppedAtWithPreStoppedAtTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 37, 4, 47),
-                array(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
                 null)
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.withPreStoppedAt), expected)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt), expected)
     }
 
     test fun tryParseStoppedAtMultilineTest() {
         var expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 3, 1, 5, 56),
-                array(LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("_result", "[a]", "_")).toArrayList(),
                 null)
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.withPreStoppedAt, TryParseStoppedAtInputs.multiline), expected)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt, TryParseStoppedAtInputs.multiline), expected)
     }
 
     test fun tryParseStoppedAtWithPointStopTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22),
-                array(LocalBinding("_result", "a1", "_")).toArrayList(),
+                arrayOf(LocalBinding("_result", "a1", "_")).toArrayList(),
                 null)
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.withPreStoppedAt,
-                                    TryParseStoppedAtInputs.multiline,
-                                    TryParseStoppedAtInputs.pointStop), expected)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt,
+                TryParseStoppedAtInputs.multiline,
+                TryParseStoppedAtInputs.pointStop), expected)
     }
 
     test fun tryParseStoppedAtWithNoInfoAtTest() =
-        tryParseStoppedAtTest(array(TryParseStoppedAtInputs.withNoInfo), null)
+        tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withNoInfo), null)
 
     private fun tryParseStoppedAtTest(inputs: Array<String>, expected: HsStackFrameInfo?) {
         val deq = LinkedList<String?>()
@@ -148,7 +148,7 @@ public class GHCiParserTests {
                         "n :: Integer"
         var expected: MoveHistResult? = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 3, 10, 3, 14),
-                LocalBindingList(array(LocalBinding("_result", "Bool", null), LocalBinding("n", "Integer", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "Bool", null), LocalBinding("n", "Integer", null)).toArrayList()))
         parseMoveHistResultTest(usual, expected)
     }
 
@@ -157,7 +157,7 @@ public class GHCiParserTests {
                         "_result :: a1"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 3, 1, 4, 22),
-                LocalBindingList(array(LocalBinding("_result", "a1", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toArrayList()))
         parseMoveHistResultTest(multiline, expected)
     }
 
@@ -166,7 +166,7 @@ public class GHCiParserTests {
                         "_result :: a1"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22),
-                LocalBindingList(array(LocalBinding("_result", "a1", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toArrayList()))
         parseMoveHistResultTest(pointStop, expected)
     }
 
@@ -176,7 +176,7 @@ public class GHCiParserTests {
                         "r2 :: Integer"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 10, 9, 10, 16),
-                LocalBindingList(array(LocalBinding("_result", "IO ()", null), LocalBinding("r2", "Integer", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "IO ()", null), LocalBinding("r2", "Integer", null)).toArrayList()))
         parseMoveHistResultTest(stopped, expected)
     }
 
@@ -243,11 +243,10 @@ public class GHCiParserTests {
     }
 
     private object ParseHistoryResultTestInputs {
-        val frames = array(
-                HsHistoryFrameInfo(-1, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 10, 4, 14)),
+        val frames = arrayOf(HsHistoryFrameInfo(-1, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 10, 4, 14)),
                 HsHistoryFrameInfo(-2, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 1, 5, 30)),
                 HsHistoryFrameInfo(-3, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22))
-                          ).toArrayList()
+        ).toArrayList()
     }
 
     test fun parseHistoryResultNormalTest() {

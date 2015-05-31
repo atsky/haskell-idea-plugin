@@ -8,18 +8,18 @@ import java.util.*
 import org.jetbrains.cabal.parser.CabalTokelTypes as CT
 
 class FieldsBuilder {
-    val map : MutableMap<String, Pair<IElementType, ExtensionFunction1<CabalParser, Int, Boolean>>> =
+    val map : MutableMap<String, Pair<IElementType, Function2<CabalParser, Int, Boolean>>> =
         HashMap()
 
     fun field(name : String , elementType : IElementType, f : CabalParser.(Int) -> Boolean) {
         map.put(name, Pair(elementType, f))
     }
 
-    fun addAll(fields : Map<String, Pair<IElementType, ExtensionFunction1<CabalParser, Int, Boolean>>>) {
+    fun addAll(fields : Map<String, Pair<IElementType, Function2<CabalParser, Int, Boolean>>>) {
         map.putAll(fields)
     }
 
-    fun build(): MutableMap<String, Pair<IElementType, ExtensionFunction1<CabalParser, Int, Boolean>>> {
+    fun build(): MutableMap<String, Pair<IElementType, Function2<CabalParser, Int, Boolean>>> {
         return map
     }
 

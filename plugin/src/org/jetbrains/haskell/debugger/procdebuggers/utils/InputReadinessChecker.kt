@@ -39,7 +39,7 @@ public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateU
                     debugStateUpdater.processStopped.set(true)
                     debugStateUpdater.checkCollected()
                     connected = false
-                    socket!!.close()
+                    socket.close()
                 }
             }
         } catch (e: Exception) {

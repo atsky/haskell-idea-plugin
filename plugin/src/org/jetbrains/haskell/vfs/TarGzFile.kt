@@ -45,8 +45,8 @@ public class TarGzFile(val archiveFile: VirtualFile,
             if (myPath == entryName) {
                 myData = readToArray(tarArchiveInputStream)
             } else if (entryName.startsWith(myPath)) {
-                val name = entryName.substring(myPath.size)
-                if (!name.substring(0, name.size - 1).contains("/")) {
+                val name = entryName.substring(myPath.length())
+                if (!name.substring(0, name.length() - 1).contains("/")) {
                     myChildren.add(name)
                 }
             }
@@ -112,7 +112,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
     override fun getChildren(): Array<VirtualFile>? {
         doInit()
         val files : List<VirtualFile> = myChildren.map { TarGzFile(archiveFile, myPath + it) }
-        return files.copyToArray()
+        return files.toTypedArray()
     }
 
     override fun getOutputStream(requestor: Any?, newModificationStamp: Long, newTimeStamp: Long): OutputStream {

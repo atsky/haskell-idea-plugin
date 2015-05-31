@@ -62,8 +62,8 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
             if (!_sourcePositionSet) {
                 _hackSourcePosition = if (stackFrameInfo.filePosition == null) null else
                     XDebuggerUtil.getInstance()!!.createPosition(
-                            LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition!!.filePath)),
-                            stackFrameInfo.filePosition!!.normalizedStartLine)
+                            LocalFileSystem.getInstance()?.findFileByIoFile(File(stackFrameInfo.filePosition.filePath)),
+                            stackFrameInfo.filePosition.normalizedStartLine)
                 _sourcePositionSet = true
             }
             return _hackSourcePosition
@@ -82,7 +82,7 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
         val position = hackSourcePosition
         if (position != null) {
             if (stackFrameInfo.functionName != null) {
-                component.append(stackFrameInfo.functionName as String, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
+                component.append(stackFrameInfo.functionName, SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES)
                 component.append(" (", SimpleTextAttributes.REGULAR_ATTRIBUTES)
             }
             component.append(position.getFile().getName() + ":", SimpleTextAttributes.REGULAR_ATTRIBUTES)
@@ -132,7 +132,7 @@ public abstract class HsStackFrame(val debugger: ProcessDebugger,
     private fun setSourceSpan(component: ColoredTextContainer) {
         val srcSpan: String
         if (stackFrameInfo.filePosition != null) {
-            srcSpan = stackFrameInfo.filePosition!!.spanToString()
+            srcSpan = stackFrameInfo.filePosition.spanToString()
         } else {
             srcSpan = "<exception thrown>"
         }

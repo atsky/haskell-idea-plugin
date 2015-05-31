@@ -32,7 +32,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
                                          = HsExecutionPointHighlighter.HighlighterType.STACK_FRAME) {
 
     public enum class HighlighterType {
-        STACK_FRAME
+        STACK_FRAME,
         HISTORY
     }
 

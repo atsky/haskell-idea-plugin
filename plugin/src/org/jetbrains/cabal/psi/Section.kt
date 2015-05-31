@@ -26,7 +26,7 @@ public open class Section(node: ASTNode): Field(node), FieldContainer, Checkable
     protected open fun getSectName(): String? {
         var node = getFirstChild()
         while ((node != null) && (node !is Name)) {
-            node = node?.getNextSibling()
+            node = node.getNextSibling()
         }
         return (node as? Name)?.getText()
     }

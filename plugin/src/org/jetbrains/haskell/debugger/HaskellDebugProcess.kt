@@ -78,8 +78,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val contexts: Deque<XSuspendContext> = ArrayDeque()
     private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = array(
-            HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
+    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = arrayOf(HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
             HaskellExceptionBreakpointHandler(this)
     )
     private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
@@ -93,7 +92,7 @@ public class HaskellDebugProcess(session: XDebugSession,
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater()
             debugger = GHCiDebugger(debugRespondent, _processHandler,
                     executionConsole as ConsoleView,
-                    (debugProcessStateUpdater as GHCiDebugProcessStateUpdater).INPUT_READINESS_PORT)
+                    debugProcessStateUpdater.INPUT_READINESS_PORT)
             debugProcessStateUpdater.debugger = debugger
         } else {
             debugProcessStateUpdater = RemoteDebugProcessStateUpdater()

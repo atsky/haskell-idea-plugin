@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 import kotlin.Set
 
-public trait FieldContainer: PsiElement {
+public interface FieldContainer: PsiElement {
 
     public open fun getAvailableFieldNames(): List<String> = listOf()
 

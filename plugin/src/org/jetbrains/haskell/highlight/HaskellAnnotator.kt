@@ -28,7 +28,7 @@ public class HaskellAnnotator() : Annotator {
             for (node in element.getNode().getChildren(TokenSet.create(HIDING, QUALIFIED))) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
-            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS)) ?: array<ASTNode>()) {
+            for (node in element.getImportAsPart()?.getNode()?.getChildren(TokenSet.create(AS)) ?: arrayOf()) {
                 holder.createInfoAnnotation(node, null)?.setTextAttributes(HaskellHighlighter.HASKELL_KEYWORD)
             }
         }

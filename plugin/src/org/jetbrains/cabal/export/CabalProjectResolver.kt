@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.service.project.ExternalSystemProject
 
 public class CabalProjectResolver(): ExternalSystemProjectResolver<ExternalSystemExecutionSettings> {
 
-    throws(javaClass<ExternalSystemException>(), javaClass<IllegalArgumentException>(), javaClass<IllegalStateException>())
+    throws(ExternalSystemException::class, IllegalArgumentException::class, IllegalStateException::class)
     override fun resolveProjectInfo(id: ExternalSystemTaskId,
                                     projectPath: String,
                                     isPreviewMode: Boolean,

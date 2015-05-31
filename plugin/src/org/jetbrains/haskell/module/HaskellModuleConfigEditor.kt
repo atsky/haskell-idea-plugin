@@ -16,9 +16,8 @@ public class HaskellModuleConfigEditor() : ModuleConfigurationEditorProvider {
     override fun createEditors(state: ModuleConfigurationState?): Array<ModuleConfigurationEditor> {
         val module = state!!.getRootModel()!!.getModule()
 
-        return array<ModuleConfigurationEditor>(
-            ContentEntriesEditor(module.getName(), state),
-            //PackagesEditor(state, module.getProject()),
-            OutputEditor(state));
+        return arrayOf(ContentEntriesEditor(module.getName(), state),
+                //PackagesEditor(state, module.getProject()),
+                OutputEditor(state));
     }
 }

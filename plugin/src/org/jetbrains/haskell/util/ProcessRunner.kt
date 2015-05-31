@@ -85,7 +85,7 @@ public class ProcessRunner(workingDirectory: String? = null) {
         return builder.toString()
     }
 
-    public trait Callback {
+    public interface Callback {
         public open fun call(command: String?): Boolean
 
 

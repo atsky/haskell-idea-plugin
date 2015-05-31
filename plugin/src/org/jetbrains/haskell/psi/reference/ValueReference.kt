@@ -28,6 +28,6 @@ class ValueReference(val referenceExpression: QVar) : PsiReferenceBase<QVar>(
     }
 
 
-    override fun getVariants(): Array<Any> = array()
+    override fun getVariants(): Array<Any> = arrayOf()
 
 }

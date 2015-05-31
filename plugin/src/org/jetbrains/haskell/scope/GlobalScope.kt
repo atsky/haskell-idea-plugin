@@ -80,7 +80,7 @@ public object GlobalScope {
     }
 
     fun findInArchive(tarGzArchive: TarGzArchive, name: String) : String? {
-        val fileEnd = name.replaceAll("\\.", "/") + ".hs"
+        val fileEnd = name.replace("\\.".toRegex(), "/") + ".hs"
 
         for (file in tarGzArchive.filesList) {
             if (file.endsWith(fileEnd)) {

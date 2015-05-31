@@ -127,7 +127,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             command.add("-package")
             command.add(dep.getBaseName())
         }
-        val process = Runtime.getRuntime().exec(command.copyToArray())
+        val process = Runtime.getRuntime().exec(command.toTypedArray())
         return GHCiProcessHandler(process)
     }
 

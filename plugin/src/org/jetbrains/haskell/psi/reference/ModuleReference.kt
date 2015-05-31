@@ -26,5 +26,5 @@ class ModuleReference(moduleName : ModuleName) : PsiReferenceBase<ModuleName>(
         return getElement()!!.findModuleFile()
     }
 
-    override fun getVariants(): Array<Any> = array()
+    override fun getVariants(): Array<Any> = arrayOf()
 }
