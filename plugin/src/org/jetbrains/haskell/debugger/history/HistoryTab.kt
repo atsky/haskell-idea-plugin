@@ -32,7 +32,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
     private val myUi: RunnerLayoutUi = RunnerLayoutUi.Factory.getInstance(process.getSession()!!.getProject())!!
             .create("History", "Debugger History", process.getSession()!!.getSessionName(), this)
 
-    private val framesPanel = FramesPanel()
+    private val framesPanel = FramesPanel(manager)
 
     init {
         val framesContext = myUi.createContent("HistoryFramesContent", JBScrollPane(framesPanel), "History frames", AllIcons.Debugger.Frame, null)
@@ -73,7 +73,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
         framesPanel.addElement(line)
     }
 
-    public fun getHistoryFramesModel(): DefaultListModel<String> = framesPanel.getModel()!!
+    public fun getHistoryFramesModel(): DefaultListModel<String> = framesPanel.getModel() as DefaultListModel<String>
 
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()

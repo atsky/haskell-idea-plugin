@@ -21,7 +21,7 @@ public class FramesPanel extends JBList {
   }
 
   @Override
-  public ListModel getModel() {
+  public ListModel<String> getModel() {
     return listModel;
   }
 
@@ -41,9 +41,6 @@ public class FramesPanel extends JBList {
   }
 
   public boolean isFrameUnknown() {
-    if (getSelectedIndex() < 0) {
-      return true;
-    }
-    return listModel.get(getSelectedIndex()).equals("...");
+    return getSelectedIndex() < 0 || listModel.get(getSelectedIndex()).equals("...");
   }
 }
