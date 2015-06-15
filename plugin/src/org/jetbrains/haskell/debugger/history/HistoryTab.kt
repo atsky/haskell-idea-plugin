@@ -73,7 +73,7 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
         framesPanel.addElement(line)
     }
 
-    public fun getHistoryFramesModel(): DefaultListModel = framesPanel.getModel()!!
+    public fun getHistoryFramesModel(): DefaultListModel<String> = framesPanel.getModel()!!
 
     public fun shiftBack() {
         val index = framesPanel.getSelectedIndex()
@@ -90,45 +90,6 @@ public class HistoryTab(private val debugSession : XDebugSessionImpl,
             framesPanel.setSelectedIndex(index - 1)
         } else {
             manager.indexSelected(index)
-        }
-    }
-
-    private inner class FramesPanel : JBList() {
-        private val listModel = DefaultListModel()
-
-        init {
-            setModel(listModel)
-            setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
-            setValueIsAdjusting(true)
-            addListSelectionListener { event: ListSelectionEvent ->
-                manager.indexSelected(getSelectedIndex())
-            }
-        }
-
-        override fun getModel(): DefaultListModel? {
-            return listModel
-        }
-
-        public fun addElement(line: String) {
-            listModel.addElement(line)
-            if (listModel.size() == 1) {
-                setSelectedIndex(0)
-            }
-        }
-
-        public fun clear() {
-            listModel.clear()
-        }
-
-        public fun getIndexCount(): Int {
-            return listModel.size()
-        }
-
-        public fun isFrameUnknown(): Boolean {
-            if (getSelectedIndex() < 0) {
-                return true
-            }
-            return listModel.get(getSelectedIndex()).equals("...")
         }
     }
 
