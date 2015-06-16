@@ -6,7 +6,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 public class FramesPanel extends JBList {
-  private DefaultListModel<String> listModel = new DefaultListModel<String>();
+  private DefaultListModel listModel = new DefaultListModel();
 
   public FramesPanel(final HistoryManager manager) {
     setModel(listModel);
@@ -21,7 +21,7 @@ public class FramesPanel extends JBList {
   }
 
   @Override
-  public ListModel<String> getModel() {
+  public ListModel getModel() {
     return listModel;
   }
 
