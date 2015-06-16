@@ -42,7 +42,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                 synchronized(process) {
                     val output = OutputStreamWriter(process.getOutputStream()!!)
                     output.write("\n")
-                    output.flush()
+                    output.close()
                     process.waitFor()
                 }
             }, "stopping ghc-modi", false, project)
