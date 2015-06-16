@@ -72,7 +72,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                 paths.add("/usr/local/bin")
             }
             val ghcFound = paths.any {
-                File(it, "ghc" + OSUtil.getExe()).exists()
+                File(it, OSUtil.getExe("ghc")).exists()
             }
             if (!ghcFound) {
 

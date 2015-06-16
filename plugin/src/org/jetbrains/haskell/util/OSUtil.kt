@@ -36,8 +36,9 @@ public object OSUtil {
         }
     }
 
-    fun getExe(cmd : String) : String = if (isWindows) cmd + ".exe" else cmd
-
     platformStatic
-    fun getExe() : String = if (isWindows) ".exe" else ""
+    fun getExe(cmd: String): String = if (isWindows) cmd + ".exe" else cmd
+
+    fun userHome(): String = System.getProperty("user.home")!!
+
 }

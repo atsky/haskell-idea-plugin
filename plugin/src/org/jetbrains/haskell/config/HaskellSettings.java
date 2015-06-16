@@ -49,11 +49,11 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
         }
 
         if (myState.ghcModPath == null) {
-            myState.ghcModPath = OSUtil.getDefaultCabalBin() + File.separator + "ghc-mod" + OSUtil.getExe();
+            myState.ghcModPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("ghc-mod");
         }
 
         if (myState.ghcModiPath == null) {
-            myState.ghcModiPath = OSUtil.getDefaultCabalBin() + File.separator + "ghc-modi" + OSUtil.getExe();
+            myState.ghcModiPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("ghc-modi");
         }
 
         if (myState.useGhcMod == null) {

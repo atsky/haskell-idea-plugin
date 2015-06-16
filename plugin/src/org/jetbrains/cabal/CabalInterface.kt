@@ -187,16 +187,20 @@ public class CabalInterface(val project: Project) {
         }
     }
 
-    fun getRepo() =
+    fun getDefaultRepo() =
             if (SystemInfo.isMac) {
                 joinPath(getDataPath(),
-                        "repo-cache",
-                        "hackage.haskell.org")
+                        "repo-cache")
             } else {
                 joinPath(getDataPath(),
-                        "packages",
-                        "hackage.haskell.org")
+                        "packages")
             }
+
+
+    fun getRepo() : String {
+        val repoCache = CabalApplicationComponent.getInstance().getCabalConfiguration().remoteRepoCache!!
+        return joinPath(repoCache, "hackage.haskell.org")
+    }
 
 
     public fun getInstalledPackagesList(): List<CabalPackageShort> {

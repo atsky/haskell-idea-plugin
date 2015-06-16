@@ -11,7 +11,9 @@
     <depends>com.intellij.modules.xdebugger</depends>
 
     <application-components>
-        <!-- Add your application components here -->
+        <component>
+            <implementation-class>org.jetbrains.cabal.CabalApplicationComponent</implementation-class>
+        </component>
     </application-components>
 
     <project-components>
