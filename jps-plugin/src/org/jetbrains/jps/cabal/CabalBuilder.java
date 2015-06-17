@@ -67,6 +67,15 @@ public class CabalBuilder extends ModuleLevelBuilder {
                             "Can't find cabal file in " + getContentRootPath(module)));
                     continue;
                 }
+
+                if (getSdk(module) == null) {
+                    context.processMessage(new CompilerMessage(
+                            "cabal",
+                            BuildMessage.Kind.ERROR,
+                            "Can't find GHC SDK"));
+                    continue;
+                }
+
                 CabalJspInterface cabal = new CabalJspInterface(cabalPath, cabalFile);
 
                 if (!runConfigure(context, module, cabal)) {
@@ -100,10 +109,14 @@ public class CabalBuilder extends ModuleLevelBuilder {
         return true;
     }
 
+    private JpsSdk<JpsSimpleElement<JpsHaskellSdkProperties>> getSdk(JpsModule module) {
+        return module.getSdk(HaskellSdkType.INSTANCE);
+    }
+
     private boolean runConfigure(CompileContext context, JpsModule module, CabalJspInterface cabal) throws IOException, InterruptedException {
         context.processMessage(new CompilerMessage("cabal", BuildMessage.Kind.INFO, "Start configure"));
 
-        JpsSdk<JpsSimpleElement<JpsHaskellSdkProperties>> sdk = module.getSdk(HaskellSdkType.INSTANCE);
+        JpsSdk<JpsSimpleElement<JpsHaskellSdkProperties>> sdk = getSdk(module);
         String ghcPath = sdk.getSdkProperties().getData().getGhcPath();
 
         Process configureProcess = cabal.configure(ghcPath);
