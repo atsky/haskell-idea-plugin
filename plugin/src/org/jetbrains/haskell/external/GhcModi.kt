@@ -113,8 +113,11 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                 !lines[lines.size() - 2].startsWith("NG"))) {
                     val char = CharArray(16 * 1024)
                     val size = input.read(char)
-                    val result = java.lang.String(char, 0, size)
-                    val split = result.split(OSUtil.newLine, -1)
+                    if (size == -1) {
+                        break
+                    }
+                    val result = String(char, 0, size)
+                    val split = result.splitBy(OSUtil.newLine, limit = -1)
                     if (lines.isEmpty()) {
                         lines.add(split[0])
                     } else {
