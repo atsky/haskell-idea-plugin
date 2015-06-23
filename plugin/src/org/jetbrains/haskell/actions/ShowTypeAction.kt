@@ -90,9 +90,7 @@ public class ShowTypeAction : AnAction() {
         val result = list.map { typeInfoFromString(it) }.filterNotNull()
         val typeInfo = result.firstOrNull {
             it.startLine == start.myLine &&
-            it.startCol == start.myColumn &&
-            it.endLine == end.myLine &&
-            it.endCol == end.myColumn
+            it.startCol == start.myColumn
         }
         if (typeInfo != null) {
             HintManager.getInstance()!!.showInformationHint(editor, typeInfo.aType)
