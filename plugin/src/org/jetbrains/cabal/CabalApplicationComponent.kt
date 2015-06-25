@@ -27,7 +27,10 @@ class CabalApplicationComponent() : ApplicationComponent {
 
     fun getCabalConfiguration(): CabalConfing {
         if (configuration == null) {
-            configuration = CabalConfing.read(File(joinPath(OSUtil.userHome(), ".cabal", "config")))
+            val f = File(joinPath(OSUtil.getCabalConfig()))
+            if (f.exists()) {
+                configuration = CabalConfing.read(f)
+            }
         }
         return configuration!!
     }
