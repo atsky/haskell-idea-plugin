@@ -26,7 +26,7 @@ public object OSUtil {
     platformStatic
     public fun getCabalConfig(): String {
         return if (isWindows) {
-            joinPath(System.getenv("AppData")!!, "cabal", "confing")
+            joinPath(System.getenv("AppData")!!, "cabal", "config")
         } else {
             joinPath(System.getProperty("user.home")!!, ".cabal", "config")
         }

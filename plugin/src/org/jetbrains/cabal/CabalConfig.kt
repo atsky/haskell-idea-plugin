@@ -1,5 +1,7 @@
 package org.jetbrains.cabal
 
+import org.jetbrains.haskell.util.OSUtil
+import org.jetbrains.haskell.util.joinPath
 import java.io.File
 
 /**
@@ -8,26 +10,21 @@ import java.io.File
  */
 
 class CabalConfing() {
-    var remoteRepoCache : String? = null
-        private set
+    var inizialized = false
+    var remoteRepoCache: String = joinPath(OSUtil.getCabalData(), "packages")
 
-    companion object {
-        fun read(file : File) : CabalConfing {
-            val config = CabalConfing()
-
-            for (line in file.readLines()) {
-                if (line.startsWith("--")) {
-                    continue
-                }
-                val chunks = line.splitBy(": ")
-                if (chunks.size() > 0) {
-                    if (chunks[0] == "remote-repo-cache") {
-                        config.remoteRepoCache = chunks[1]
-                    }
+    fun read(file: File) {
+        for (line in file.readLines()) {
+            if (line.startsWith("--")) {
+                continue
+            }
+            val chunks = line.splitBy(": ")
+            if (chunks.size() > 0) {
+                if (chunks[0] == "remote-repo-cache") {
+                    remoteRepoCache = chunks[1]
                 }
             }
-
-            return config;
         }
     }
+
 }

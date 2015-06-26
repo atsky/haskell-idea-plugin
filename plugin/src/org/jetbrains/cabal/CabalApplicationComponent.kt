@@ -22,17 +22,18 @@ class CabalApplicationComponent() : ApplicationComponent {
                 ApplicationManager.getApplication().getComponent(javaClass<CabalApplicationComponent>())
     }
 
-    var configuration: CabalConfing? = null
+    var configuration: CabalConfing = CabalConfing()
 
 
     fun getCabalConfiguration(): CabalConfing {
-        if (configuration == null) {
+        if (!configuration.inizialized) {
             val f = File(joinPath(OSUtil.getCabalConfig()))
             if (f.exists()) {
-                configuration = CabalConfing.read(f)
+                configuration.read(f)
             }
+            configuration.inizialized = true
         }
-        return configuration!!
+        return configuration
     }
 
     override fun disposeComponent() {
