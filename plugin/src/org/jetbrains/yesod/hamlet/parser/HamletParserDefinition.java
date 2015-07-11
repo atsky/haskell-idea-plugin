@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.resolve.graphInference.InferenceVariable;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +67,7 @@ public class HamletParserDefinition implements ParserDefinition {
         if(astNode.getElementType() == HamletTokenTypes.DOCTYPE) {
             return new Doctype(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.IF) {
+       /* if(astNode.getElementType() == HamletTokenTypes.IF) {
             return new IfCondition(astNode);
         }
         if(astNode.getElementType() == HamletTokenTypes.ELSE) {
@@ -94,6 +93,9 @@ public class HamletParserDefinition implements ParserDefinition {
         }
         if(astNode.getElementType() == HamletTokenTypes.WITH) {
             return new ControlWith(astNode);
+        }*/
+        if(astNode.getElementType() == HamletTokenTypes.OPERATOR) {
+            return new Operator(astNode);
         }
         if(astNode.getElementType() == HamletTokenTypes.COMMENT) {
             return new Comments(astNode);

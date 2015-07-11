@@ -17,34 +17,9 @@ public class HamletAnnotator implements Annotator {
              annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD);
          }
          if(psiElement instanceof Doctype) {
-             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-         }
-         if(psiElement instanceof ElseCondition) {
-             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-         }
-         if(psiElement instanceof IfCondition) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-         }
-        if(psiElement instanceof ElseIfCondition) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof Forall) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof ControlCase) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof ControlMaybe) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof ControlNothing) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof ControlOf) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
-        }
-        if(psiElement instanceof ControlWith) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATORS);
+             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+         }      if(psiElement instanceof Operator) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
         }
         if(psiElement instanceof Comments) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.COMMENTS);
@@ -60,3 +35,31 @@ public class HamletAnnotator implements Annotator {
         }
     }
 }
+         /*if(psiElement instanceof ElseCondition) {
+             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+         }
+         if(psiElement instanceof IfCondition) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+         }
+        if(psiElement instanceof ElseIfCondition) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof Forall) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof ControlCase) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof ControlMaybe) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof ControlNothing) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof ControlOf) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }
+        if(psiElement instanceof ControlWith) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
+        }*/
+
