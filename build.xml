@@ -42,6 +42,7 @@
         </sequential>
     </target>
 
+    <!--hamlet lexer-->
     <target name="compile.hamlet.lexer">
         <sequential>
             <delete file="./plugin/src/org/jetbrains/yesod/hamlet/parser/_HamletLexer.java"/>
@@ -49,6 +50,26 @@
                    skeleton="tools/idea-flex.skeleton"/>
         </sequential>
     </target>
+
+    <!--julius lexer-->
+    <target name="compile.julius.lexer">
+        <sequential>
+            <delete file="./plugin/src/org/jetbrains/yesod/julius/parser/_JuliusLexer.java"/>
+            <jflex file="./plugin/src/org/jetbrains/yesod/julius/parser/Julius.flex"
+                   skeleton="tools/idea-flex.skeleton"/>
+        </sequential>
+    </target>
+
+    <!--cassius lexer-->
+    <target name="compile.cassius.lexer">
+        <sequential>
+            <delete file="./plugin/src/org/jetbrains/yesod/cassius/parser/_CassiusLexer.java"/>
+            <jflex file="./plugin/src/org/jetbrains/yesod/cassius/parser/Cassius.flex"
+                   skeleton="tools/idea-flex.skeleton"/>
+        </sequential>
+    </target>
+
+    <!--cabal lexer-->
 
     <target name="compile.cabal.lexer">
         <sequential>

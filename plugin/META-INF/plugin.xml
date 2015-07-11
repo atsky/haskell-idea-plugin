@@ -110,7 +110,10 @@
 
         <colorSettingsPage implementation="org.jetbrains.haskell.highlight.HaskellColorsAndFontsPage"/>
         <additionalTextAttributes scheme="Default" file="colorSchemes/HaskellDefault.xml"/>
+        <!--HAMLET-->
         <additionalTextAttributes scheme="Default" file="colorSchemes/HamletDefault.xml"/>
+        <!--JULIUS-->
+        <additionalTextAttributes scheme="Default" file="colorSchemes/JuliusDefault.xml"/>
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/HaskellDracula.xml"/>
         <lang.syntaxHighlighterFactory key="Haskell"
                                        implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
@@ -171,6 +174,12 @@
         <!--cassius-->
         <lang.parserDefinition language="Cassius"
                                implementationClass="org.jetbrains.yesod.cassius.parser.CassiusParserDefinition"/>
+        <!--julius-->
+        <lang.parserDefinition language="Julius"
+                               implementationClass="org.jetbrains.yesod.julius.parser.JuliusParserDefinition"/>
+        <annotator implementationClass="org.jetbrains.yesod.julius.highlight.JuliusAnnotator" language="Julius"/>
+        <completion.contributor language="Julius"
+                                implementationClass="org.jetbrains.yesod.julius.completion.JuliusCompletionContributor"/>
 
     </extensions>
 
