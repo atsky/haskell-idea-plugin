@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <list>
-    <option name="HAMLET_OPERATORS">
+    <option name="HAMLET_OPERATOR">
         <value>
             <option name="FOREGROUND" value="660e7a"/>
-         <!--   <option name="FONT_TYPE" value="1"/> -->
-
+            <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="HAMLET_COMMENTS">
+    <option name="HAMLET_COMMENT">
         <value>
             <option name="FOREGROUND" value="848482"/>
         </value>
     </option>
-    <option name="HAMLET_ERRORS">
+    <option name="HAMLET_ATTRIBUTE">
         <value>
-            <option name="FOREGROUND" value="CC0000"/>
+            <option name="FOREGROUND" value="0000FF"/>
+            <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="HAMLET_TEXT">
+    <option name="HAMLET_STRING">
         <value>
-            <option name="FOREGROUND" value="177245"/>
+            <option name="FOREGROUND" value="008000"/>
+            <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
-    <option name="HAMLET_SIGN">
+    <option name="HAMLET_ATTRIBUTE_VALUE">
         <value>
-            <option name="FOREGROUND" value="013220"/>
+            <option name="FOREGROUND" value="008000"/>
+        </value>
+    </option>
+    <option name="HAMLET_IDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="800000"/>
+            <option name="FONT_TYPE" value="1"/>
         </value>
     </option>
 </list>

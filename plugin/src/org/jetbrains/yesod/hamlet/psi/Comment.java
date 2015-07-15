@@ -7,8 +7,8 @@ package org.jetbrains.yesod.hamlet.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
-public class ElseCondition extends ASTWrapperPsiElement{
-    public ElseCondition(ASTNode node) {
+public class Comment extends ASTWrapperPsiElement{
+    public Comment(ASTNode node) {
         super(node);
     }
 }

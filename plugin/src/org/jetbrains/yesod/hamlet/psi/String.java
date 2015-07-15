@@ -7,8 +7,8 @@ package org.jetbrains.yesod.hamlet.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
-public class ControlWith extends ASTWrapperPsiElement{
-    public ControlWith(ASTNode node) {
+public class String extends ASTWrapperPsiElement{
+    public String(ASTNode node) {
         super(node);
     }
 }

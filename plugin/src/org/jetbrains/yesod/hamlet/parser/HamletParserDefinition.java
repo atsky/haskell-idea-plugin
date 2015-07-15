@@ -67,50 +67,44 @@ public class HamletParserDefinition implements ParserDefinition {
         if(astNode.getElementType() == HamletTokenTypes.DOCTYPE) {
             return new Doctype(astNode);
         }
-       /* if(astNode.getElementType() == HamletTokenTypes.IF) {
-            return new IfCondition(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.STRING) {
+            return new org.jetbrains.yesod.hamlet.psi.String(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.ELSE) {
-            return new ElseCondition(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.DOT_IDENTIFIER) {
+            return new DotIdentifier(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.ELSEIF) {
-            return new ElseIfCondition(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.COLON_IDENTIFIER) {
+            return new ColonIdentifier(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.FORALL) {
-            return new Forall(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.INTERPOLATION) {
+            return new Interpolation(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.CASE) {
-            return new ControlCase(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.SHARP_IDENTIFIER) {
+            return new SharpIdentifier(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.MAYBE) {
-            return new ControlMaybe(astNode);
-        }
-        if(astNode.getElementType() == HamletTokenTypes.NOTHING) {
-            return new ControlNothing(astNode);
-        }
-        if(astNode.getElementType() == HamletTokenTypes.OF) {
-            return new ControlOf(astNode);
-        }
-        if(astNode.getElementType() == HamletTokenTypes.WITH) {
-            return new ControlWith(astNode);
-        }*/
         if(astNode.getElementType() == HamletTokenTypes.OPERATOR) {
             return new Operator(astNode);
         }
         if(astNode.getElementType() == HamletTokenTypes.COMMENT) {
-            return new Comments(astNode);
+            return new Comment(astNode);
         }
         if(astNode.getElementType() == HamletTokenTypes.BACKSLASH) {
             return new Backslash(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.INVALID_DOLLAR) {
-                return new InvalidDollar(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.DOLLAR) {
+            return new Dollar(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.CURLY) {
-            return new Curly(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.END_INTERPOLATION) {
+            return new EndInterpolation(astNode);
         }
-        if(astNode.getElementType() == HamletTokenTypes.SIGN) {
-            return new Sign(astNode);
+        if(astNode.getElementType() == HamletTokenTypes.ATTRIBUTE) {
+            return new Attribute(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.ATTRIBUTE_VALUE) {
+            return new AttributeValue(astNode);
+        }
+        if(astNode.getElementType() == HamletTokenTypes.BACKSLASH) {
+            return new Backslash(astNode);
         }
         return new ASTWrapperPsiElement(astNode);
     }

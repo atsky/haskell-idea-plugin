@@ -7,8 +7,8 @@ package org.jetbrains.yesod.hamlet.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
-public class Forall extends ASTWrapperPsiElement{
-    public Forall(ASTNode node) {
+public class Interpolation extends ASTWrapperPsiElement{
+    public Interpolation (ASTNode node) {
         super(node);
     }
 }

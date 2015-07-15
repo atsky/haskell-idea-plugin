@@ -7,8 +7,8 @@ package org.jetbrains.yesod.hamlet.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
-public class InvalidDollar extends ASTWrapperPsiElement{
-    public InvalidDollar(ASTNode node) {
+public class ColonIdentifier extends ASTWrapperPsiElement{
+    public ColonIdentifier(ASTNode node) {
         super(node);
     }
 }

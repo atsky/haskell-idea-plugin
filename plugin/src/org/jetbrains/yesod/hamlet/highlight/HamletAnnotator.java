@@ -9,57 +9,57 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.yesod.hamlet.psi.*;
+import org.jetbrains.yesod.hamlet.psi.String;
 
 public class HamletAnnotator implements Annotator {
     @Override
     public void annotate(PsiElement psiElement, AnnotationHolder annotationHolder) {
-         if(psiElement instanceof Tag) {
-             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD);
-         }
-         if(psiElement instanceof Doctype) {
-             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-         }      if(psiElement instanceof Operator) {
+        if(psiElement instanceof Tag) {
+            annotationHolder.createInfoAnnotation(psiElement, null)
+                    .setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD);
+        }
+        if(psiElement instanceof Backslash) {
+            annotationHolder.createInfoAnnotation(psiElement, null)
+                    .setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD);
+        }
+        if(psiElement instanceof Doctype) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
         }
-        if(psiElement instanceof Comments) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.COMMENTS);
+
+        if(psiElement instanceof Operator) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
         }
-        if(psiElement instanceof InvalidDollar) {
-            annotationHolder.createErrorAnnotation(psiElement, "Invalid Dollar");
+        if(psiElement instanceof Comment) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.COMMENT);
         }
-        if(psiElement instanceof Curly) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.TEXT);
+        if(psiElement instanceof Attribute) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE);
         }
-        if(psiElement instanceof Sign) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.SIGN);
+        if(psiElement instanceof AttributeValue) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE);
+        }
+        if(psiElement instanceof Interpolation) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE);
+        }
+        if(psiElement instanceof EndInterpolation) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE);
+        }
+        if(psiElement instanceof Dollar) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE);
+        }
+        if(psiElement instanceof String) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.STRING);
+        }
+        if(psiElement instanceof ColonIdentifier) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.IDENTIFIER);
+        }
+        if(psiElement instanceof DotIdentifier) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.IDENTIFIER);
+        }
+        if(psiElement instanceof SharpIdentifier) {
+            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.IDENTIFIER);
         }
     }
 }
-         /*if(psiElement instanceof ElseCondition) {
-             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-         }
-         if(psiElement instanceof IfCondition) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-         }
-        if(psiElement instanceof ElseIfCondition) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof Forall) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof ControlCase) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof ControlMaybe) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof ControlNothing) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof ControlOf) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }
-        if(psiElement instanceof ControlWith) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.OPERATOR);
-        }*/
+
 

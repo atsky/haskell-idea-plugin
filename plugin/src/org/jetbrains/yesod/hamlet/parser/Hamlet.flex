@@ -26,45 +26,46 @@ import com.intellij.psi.tree.IElementType;
 %type IElementType
 
 
-DIGIT            = [0-9]
-WHITE_SPACE_CHAR = [\ \f\t]
-EOL_COMMENT      = {INDENT}"--"[^\n]*
+DIGIT             = [0-9]
+WHITE_SPACE_CHAR  = [\ \f\t]
+EOL_COMMENT       = {INDENT}"--"[^\n]*
 
-DOCTYPE_ALL      = "$doctype" | "!!!" | "<!"
-COMMENTS         = "<!--#" | "$#"
-
+DOCTYPE           = "$doctype" | "!!!" | "<!"
+COMMENT           = "<!--#" | "$#"
+OPERATOR          = "$if"     |
+                    "$else"   |
+                    "$elseif" |
+                    "$forall" |
+                    "$case"   |
+                    "$maybe"  |
+                    "$nothing"|
+                    "$of"     |
+                    "$with"
+INTERPOLATION     = "*{" | "_{" | "^{" | "@{" | "@?{" | "#{"
 
 %%
 
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
+{DOCTYPE}             { return HamletTokenTypes.DOCTYPE; }
+{COMMENT}             { return HamletTokenTypes.COMMENT; }
+{OPERATOR}            { return HamletTokenTypes.OPERATOR; }
+{INTERPOLATION}       { return HamletTokenTypes.INTERPOLATION; }
+[A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
+"."[A-Za-z0-9_-]+     { return HamletTokenTypes.DOT_IDENTIFIER; }
+":"[A-Za-z0-9_-]+     { return HamletTokenTypes.COLON_IDENTIFIER; }
+"#"[A-Za-z0-9_-]+     { return HamletTokenTypes.SHARP_IDENTIFIER; }
+\"([^\\\"\n]|\\.)*\"  { return HamletTokenTypes.STRING; }
+"/"                   { return HamletTokenTypes.SLASH; }
 "\n"                  { return HamletTokenTypes.NEWLINE; }
-"."                   { return HamletTokenTypes.DOT; }
-"@?{"                 { return HamletTokenTypes.OCURLY; }
-"}"                   { return HamletTokenTypes.CCURLY; }
-"@{"                  { return HamletTokenTypes.AT; }
+"}"                   { return HamletTokenTypes.END_INTERPOLATION; }
 "="                   { return HamletTokenTypes.EQUAL; }
-"#{"                  { return HamletTokenTypes.SHARP; }
 "<"                   { return HamletTokenTypes.OANGLE; }
 ">"                   { return HamletTokenTypes.CANGLE; }
-"*{"                  { return HamletTokenTypes.STAR; }
-"_{"                  { return HamletTokenTypes.UNDERSCORE; }
-"^{"                  { return HamletTokenTypes.HAT; }
-"<-"                  { return HamletTokenTypes.BINDSTATMENT; }
-{DOCTYPE_ALL}         { return HamletTokenTypes.DOCTYPE_ALL; }
-{COMMENTS}            { return HamletTokenTypes.COMMENTS; }
 "<!--"                { return HamletTokenTypes.COMMENT_START; }
 "-->"                 { return HamletTokenTypes.COMMENT_END; }
-"$if"                 { return HamletTokenTypes.IF_DOLLAR; }
-"$else"               { return HamletTokenTypes.ELSE_DOLLAR; }
-"$elseif"             { return HamletTokenTypes.ELSEIF_DOLLAR; }
-"$forall"             { return HamletTokenTypes.FORALL_DOLLAR; }
-"$case"               { return HamletTokenTypes.CASE_DOLLAR; }
-"$maybe"              { return HamletTokenTypes.MAYBE_DOLLAR; }
-"$nothing"            { return HamletTokenTypes.NOTHING_DOLLAR; }
-"$of"                 { return HamletTokenTypes.OF_DOLLAR; }
-"$with"               { return HamletTokenTypes.WITH_DOLLAR; }
+"<-"                  { return HamletTokenTypes.BINDSTATMENT; }
 "\\"                  { return HamletTokenTypes.BACKSLASH; }
-[A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
+"."                   { return HamletTokenTypes.DOT; }
 "$"                   { return HamletTokenTypes.DOLLAR; }
 .                     { return TokenType.BAD_CHARACTER; }

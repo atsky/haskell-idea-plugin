@@ -7,9 +7,8 @@ package org.jetbrains.yesod.hamlet.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 
-public class Curly extends ASTWrapperPsiElement {
-    public Curly(ASTNode node) {
-            super(node);
+public class EndInterpolation extends ASTWrapperPsiElement{
+    public EndInterpolation(ASTNode node) {
+        super(node);
     }
 }
-
