@@ -42,6 +42,7 @@ OPERATOR          = "$if"     |
                     "$of"     |
                     "$with"
 INTERPOLATION     = "*{" | "_{" | "^{" | "@{" | "@?{" | "#{"
+ESCAPE            = "\\" | "#"
 
 %%
 
@@ -51,9 +52,10 @@ INTERPOLATION     = "*{" | "_{" | "^{" | "@{" | "@?{" | "#{"
 {COMMENT}             { return HamletTokenTypes.COMMENT; }
 {OPERATOR}            { return HamletTokenTypes.OPERATOR; }
 {INTERPOLATION}       { return HamletTokenTypes.INTERPOLATION; }
+{ESCAPE}              { return HamletTokenTypes.ESCAPE; }
 [A-Za-z0-9_-]+        { return HamletTokenTypes.IDENTIFIER; }
 "."[A-Za-z0-9_-]+     { return HamletTokenTypes.DOT_IDENTIFIER; }
-":"[A-Za-z0-9_-]+     { return HamletTokenTypes.COLON_IDENTIFIER; }
+":"[A-Za-z0-9_-]+":"  { return HamletTokenTypes.COLON_IDENTIFIER; }
 "#"[A-Za-z0-9_-]+     { return HamletTokenTypes.SHARP_IDENTIFIER; }
 \"([^\\\"\n]|\\.)*\"  { return HamletTokenTypes.STRING; }
 "/"                   { return HamletTokenTypes.SLASH; }
@@ -65,7 +67,5 @@ INTERPOLATION     = "*{" | "_{" | "^{" | "@{" | "@?{" | "#{"
 "<!--"                { return HamletTokenTypes.COMMENT_START; }
 "-->"                 { return HamletTokenTypes.COMMENT_END; }
 "<-"                  { return HamletTokenTypes.BINDSTATMENT; }
-"\\"                  { return HamletTokenTypes.BACKSLASH; }
 "."                   { return HamletTokenTypes.DOT; }
-"$"                   { return HamletTokenTypes.DOLLAR; }
 .                     { return TokenType.BAD_CHARACTER; }
