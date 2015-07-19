@@ -30,55 +30,36 @@ DIGIT            = [0-9]
 WHITE_SPACE_CHAR = [\ \f\t]
 EOL_COMMENT      = {INDENT}"--"[^\n]*
 
-COMMENTS         = "//"
+KEYWORD          = "abstract" |	"arguments" | "boolean"	   | "break"	 | "byte"         |
+                   "case"	  | "catch"	    | "char"	   | "class"	 | "const"        |
+                   "continue" |	"debugger"	| "default"	   | "delete"	 | "do"           |
+                   "double"	  | "else"	    | "enum"	   | "eval"	     | "export"       |
+                   "extends"  |	"false"	    | "final"	   | "finally"	 | "float"        |
+                   "for"	  | "function"	| "goto"	   | "if"	     | "implements"   |
+                   "import"	  | "in"	    | "instanceof" | "int"	     | "interface"    |
+                   "let"	  | "long"   	| "native"	   | "new"	     | "null"         |
+                   "package"  |	"private"	| "protected"  | "public"	 | "return"       |
+                   "short"	  | "static"	| "super"	   | "switch"	 | "synchronized" |
+                   "this"	  | "throw"	    | "throws"	   | "transient" | "true"         |
+                   "try"	  | "typeof"	| "var"        | "void"	     | "volatile"     |
+                   "while"	  | "with"	    | "yield"
 
+INTERPOLATION     = "^{" | "@{" | "@?{" | "#{"
 
 %%
 
 
 ({WHITE_SPACE_CHAR})+ { return TokenType.WHITE_SPACE; }
-//[A-Za-z0-9_-]+        { return JuliusTokenTypes.IDENTIFIER; }
-{COMMENTS}            { return JuliusTokenTypes.COMMENTS; }
-"\n"                  { return JuliusTokenTypes.NEWLINE; }
-"}"                   { return JuliusTokenTypes.CCURLY; }
-"@{"                  { return JuliusTokenTypes.AT; }
-"@?{"                 { return JuliusTokenTypes.ATWITHQ; }
-"#{"                  { return JuliusTokenTypes.SHARP; }
-"^{"                  { return JuliusTokenTypes.HAT; }
-"/*"                  { return JuliusTokenTypes.COMMENT_START; }
-"*/"                  { return JuliusTokenTypes.COMMENT_END; }
-"$"                   { return JuliusTokenTypes.DOLLAR; }
-"_"                   { return JuliusTokenTypes.UNDERLINE; }
-"var"                 { return JuliusTokenTypes.VAR; }
-"function"            { return JuliusTokenTypes.FUNCTION; }
-"instanceof"          { return JuliusTokenTypes.INSTANCEOF; }
-"if"                  { return JuliusTokenTypes.IF; }
-"else"                { return JuliusTokenTypes.ELSE; }
-"switch"              { return JuliusTokenTypes.SWITCH; }
-"case"                { return JuliusTokenTypes.CASE; }
-":"                   { return JuliusTokenTypes.COLON; }
-"break"               { return JuliusTokenTypes.BREAK; }
-"default"             { return JuliusTokenTypes.DEFAULT; }
-"for"                 { return JuliusTokenTypes.FOR; }
-"while"               { return JuliusTokenTypes.WHILE; }
-"do"                  { return JuliusTokenTypes.DO; }
-"continue"            { return JuliusTokenTypes.CONTINUE; }
-"new"                 { return JuliusTokenTypes.NEW; }
-"delete"              { return JuliusTokenTypes.DELETE; }
-"return"              { return JuliusTokenTypes.RETURN; }
-"catch"               { return JuliusTokenTypes.CATCH; }
-"try"                 { return JuliusTokenTypes.TRY; }
-"throw"               { return JuliusTokenTypes.THROW; }
-"finally"             { return JuliusTokenTypes.FINALLY; }
-"in"                  { return JuliusTokenTypes.IN; }
-"typeof"              { return JuliusTokenTypes.TYPEOF; }
-"with"                { return JuliusTokenTypes.WITH; }
-"this"                { return JuliusTokenTypes.THIS; }
-"debugger"            { return JuliusTokenTypes.DEBUGGER; }
-"\\"                  { return JuliusTokenTypes.BACKSLASH; }
+{KEYWORD}             { return JuliusTokenTypes.KEYWORD; }
+{INTERPOLATION}       { return JuliusTokenTypes.INTERPOLATION; }
 \'([^\\\']|\\.)*\'    { return JuliusTokenTypes.STRING; }
 \"([^\\\"]|\\.)*\"    { return JuliusTokenTypes.STRING; }
-
-//"\\&"
+"."[A-Za-z0-9_-]+     { return JuliusTokenTypes.DOT_IDENTIFIER; }
+[0-9]+                { return JuliusTokenTypes.NUMBER; }
+"//"                  { return JuliusTokenTypes.COMMENT; }
+"/*"                  { return JuliusTokenTypes.COMMENT_START; }
+"*/"                  { return JuliusTokenTypes.COMMENT_END; }
+"}"                   { return JuliusTokenTypes.END_INTERPOLATION; }
+"\n"                  { return JuliusTokenTypes.NEWLINE; }
 .                     { return TokenType.BAD_CHARACTER; }
 

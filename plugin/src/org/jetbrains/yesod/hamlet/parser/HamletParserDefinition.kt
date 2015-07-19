@@ -47,43 +47,43 @@ public class HamletParserDefinition : ParserDefinition {
 
     override fun createElement(astNode: ASTNode): PsiElement {
         if (astNode.getElementType() === HamletTokenTypes.TAG) {
-            return Tag(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Tag(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.DOCTYPE) {
-            return Doctype(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Doctype(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.STRING) {
             return org.jetbrains.yesod.hamlet.psi.String(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.DOT_IDENTIFIER) {
-            return DotIdentifier(astNode)
+            return org.jetbrains.yesod.hamlet.psi.DotIdentifier(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.COLON_IDENTIFIER) {
-            return ColonIdentifier(astNode)
+            return org.jetbrains.yesod.hamlet.psi.ColonIdentifier(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.INTERPOLATION) {
-            return Interpolation(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Interpolation(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.SHARP_IDENTIFIER) {
-            return SharpIdentifier(astNode)
+            return org.jetbrains.yesod.hamlet.psi.SharpIdentifier(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.OPERATOR) {
-            return Operator(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Operator(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.COMMENT) {
-            return Comment(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Comment(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.ESCAPE) {
-            return Escape(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Escape(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.END_INTERPOLATION) {
-            return EndInterpolation(astNode)
+            return org.jetbrains.yesod.hamlet.psi.Interpolation(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.ATTRIBUTE) {
             return Attribute(astNode)
         }
         if (astNode.getElementType() === HamletTokenTypes.ATTRIBUTE_VALUE) {
-            return AttributeValue(astNode)
+            return org.jetbrains.yesod.hamlet.psi.AttributeValue(astNode)
         }
         return ASTWrapperPsiElement(astNode)
     }

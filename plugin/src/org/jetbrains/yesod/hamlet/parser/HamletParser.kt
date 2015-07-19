@@ -24,21 +24,21 @@ public class HamletParser : PsiParser {
     public fun parseText(psiBuilder: PsiBuilder) {
         while (!psiBuilder.eof()) {
             val token = psiBuilder.getTokenType()
-            if (token === HamletTokenTypes.OANGLE) {
+            if (token == HamletTokenTypes.OANGLE) {
                 parseTag(psiBuilder)
-            } else if (token === HamletTokenTypes.STRING) {
+            } else if (token == HamletTokenTypes.STRING) {
                 parseString(psiBuilder)
-            } else if (token === HamletTokenTypes.DOCTYPE) {
+            } else if (token == HamletTokenTypes.DOCTYPE) {
                 parseDoctype(psiBuilder)
-            } else if (token === HamletTokenTypes.OPERATOR) {
+            } else if (token == HamletTokenTypes.OPERATOR) {
                 parseOperator(psiBuilder)
-            } else if (token === HamletTokenTypes.COMMENT) {
+            } else if (token == HamletTokenTypes.COMMENT) {
                 parseCommentInLine(psiBuilder)
-            } else if (token === HamletTokenTypes.COMMENT_START) {
+            } else if (token == HamletTokenTypes.COMMENT_START) {
                 parseCommentWithEnd(psiBuilder)
-            } else if (token === HamletTokenTypes.INTERPOLATION) {
+            } else if (token == HamletTokenTypes.INTERPOLATION) {
                 parseInterpolation(psiBuilder)
-            } else if (token === HamletTokenTypes.ESCAPE) {
+            } else if (token == HamletTokenTypes.ESCAPE) {
                 parseEscape(psiBuilder)
             } else {
                 parseAny(psiBuilder)
@@ -54,9 +54,9 @@ public class HamletParser : PsiParser {
 
     public fun parseTag(psiBuilder: PsiBuilder) {
         psiBuilder.advanceLexer()
-        var tokenType: IElementType = psiBuilder.getTokenType()
+        var tokenType = psiBuilder.getTokenType()
 
-        if (tokenType === HamletTokenTypes.SLASH) {
+        if (tokenType == HamletTokenTypes.SLASH) {
             val tagMarker = psiBuilder.mark()
             psiBuilder.advanceLexer()
             tagMarker.done(HamletTokenTypes.TAG)
@@ -68,24 +68,22 @@ public class HamletParser : PsiParser {
 
         tokenType = psiBuilder.getTokenType()
 
-        while (tokenType !== HamletTokenTypes.CANGLE) {
-
-
-            if (tokenType === HamletTokenTypes.DOT_IDENTIFIER) {
+        while (tokenType != HamletTokenTypes.CANGLE) {
+            if (tokenType == HamletTokenTypes.DOT_IDENTIFIER) {
                 parseDotIdentifier(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.IDENTIFIER) {
+            } else if (tokenType == HamletTokenTypes.IDENTIFIER) {
                 parseAttribute(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.EQUAL) {
+            } else if (tokenType == HamletTokenTypes.EQUAL) {
                 parseEqual(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.COLON_IDENTIFIER) {
+            } else if (tokenType == HamletTokenTypes.COLON_IDENTIFIER) {
                 parseColonIdentifier(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.SHARP_IDENTIFIER) {
+            } else if (tokenType == HamletTokenTypes.SHARP_IDENTIFIER) {
                 parseSharpIdentifier(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.INTERPOLATION) {
+            } else if (tokenType == HamletTokenTypes.INTERPOLATION) {
                 parseInterpolation(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.STRING) {
+            } else if (tokenType == HamletTokenTypes.STRING) {
                 parseString(psiBuilder)
-            } else if (tokenType === HamletTokenTypes.ESCAPE) {
+            } else if (tokenType == HamletTokenTypes.ESCAPE) {
                 parseEscape(psiBuilder)
             } else {
                 parseAny(psiBuilder)
@@ -97,11 +95,11 @@ public class HamletParser : PsiParser {
     public fun parseEqual(psiBuilder: PsiBuilder) {
         psiBuilder.advanceLexer()
         val next = psiBuilder.getTokenType()
-        if (next === HamletTokenTypes.STRING) {
+        if (next == HamletTokenTypes.STRING) {
             parseString(psiBuilder)
-        } else if (next === HamletTokenTypes.INTERPOLATION) {
+        } else if (next == HamletTokenTypes.INTERPOLATION) {
             parseInterpolation(psiBuilder)
-        } else if (next === HamletTokenTypes.CANGLE) {
+        } else if (next == HamletTokenTypes.CANGLE) {
             return
         } else {
             parseAttributeValue(psiBuilder)
@@ -129,7 +127,7 @@ public class HamletParser : PsiParser {
 
         while (!psiBuilder.eof()) {
             val token = psiBuilder.getTokenType()
-            if (token === HamletTokenTypes.END_INTERPOLATION) {
+            if (token == HamletTokenTypes.END_INTERPOLATION) {
                 parseEndInterpolation(psiBuilder)
                 break
             } else
@@ -183,7 +181,7 @@ public class HamletParser : PsiParser {
         val tagMarker = psiBuilder.mark()
         while (!psiBuilder.eof()) {
             val token = psiBuilder.getTokenType()
-            if (token === HamletTokenTypes.COMMENT_END) {
+            if (token == HamletTokenTypes.COMMENT_END) {
                 psiBuilder.advanceLexer()
                 break
             }
@@ -201,7 +199,7 @@ public class HamletParser : PsiParser {
     public fun parseUntil(psiBuilder: PsiBuilder) {
         while (!psiBuilder.eof()) {
             val token = psiBuilder.getTokenType()
-            if (token === HamletTokenTypes.NEWLINE) {
+            if (token == HamletTokenTypes.NEWLINE) {
                 psiBuilder.advanceLexer()
                 break
             }

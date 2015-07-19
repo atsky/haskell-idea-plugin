@@ -1,4 +1,4 @@
-package org.jetbrains.yesod.hamlet.psi
+package org.jetbrains.yesod.julius.psi
 
 /**
  * @author Leyla H
@@ -7,4 +7,4 @@ package org.jetbrains.yesod.hamlet.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 
-public class EndInterpolation(node: ASTNode) : ASTWrapperPsiElement(node)
+public class Keyword(node: ASTNode) : ASTWrapperPsiElement(node)

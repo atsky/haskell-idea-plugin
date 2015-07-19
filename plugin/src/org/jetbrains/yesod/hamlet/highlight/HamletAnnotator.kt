@@ -37,9 +37,6 @@ public class HamletAnnotator : Annotator {
         if (psiElement is Interpolation) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE)
         }
-        if (psiElement is EndInterpolation) {
-            annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.ATTRIBUTE_VALUE)
-        }
         if (psiElement is String) {
             annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(HamletColors.STRING)
         }
