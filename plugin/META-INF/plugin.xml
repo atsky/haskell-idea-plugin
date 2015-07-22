@@ -114,6 +114,11 @@
         <additionalTextAttributes scheme="Default" file="colorSchemes/HamletDefault.xml"/>
         <!--JULIUS-->
         <additionalTextAttributes scheme="Default" file="colorSchemes/JuliusDefault.xml"/>
+        <!--LUCIUS-->
+        <additionalTextAttributes scheme="Default" file="colorSchemes/LuciusDefault.xml"/>
+        <!--CASSIUS-->
+        <additionalTextAttributes scheme="Default" file="colorSchemes/CassiusDefault.xml"/>
+
         <additionalTextAttributes scheme="Darcula" file="colorSchemes/HaskellDracula.xml"/>
         <lang.syntaxHighlighterFactory key="Haskell"
                                        implementationClass="org.jetbrains.haskell.highlight.HaskellHighlighterFactory"/>
@@ -180,6 +185,12 @@
         <annotator implementationClass="org.jetbrains.yesod.julius.highlight.JuliusAnnotator" language="Julius"/>
         <completion.contributor language="Julius"
                                 implementationClass="org.jetbrains.yesod.julius.completion.JuliusCompletionContributor"/>
+        <!--lucius-->
+        <lang.parserDefinition language="Lucius"
+                               implementationClass="org.jetbrains.yesod.lucius.parser.LuciusParserDefinition"/>
+        <annotator implementationClass="org.jetbrains.yesod.lucius.highlight.LuciusAnnotator" language="Lucius"/>
+        <completion.contributor language="Lucius"
+                                implementationClass="org.jetbrains.yesod.lucius.completion.LuciusCompletionContributor"/>
 
     </extensions>
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list>
+    <option name="LUCIUS_COMMENT">
+        <value>
+            <option name="FOREGROUND" value="848482"/>
+        </value>
+    </option>
+    <option name="LUCIUS_DOTIDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="660e7a"/>
+        </value>
+    </option>
+    <option name="LUCIUS_NUMBER">
+        <value>
+            <option name="FOREGROUND" value="0000FF"/>
+        </value>
+    </option>
+    <option name="LUCIUS_SHARPIDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="0000FF"/>
+        </value>
+    </option>
+    <option name="LUCIUS_COLONIDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="0000FF"/>
+        </value>
+    </option>
+    <option name="LUCIUS_CCIDENTIFIER">
+        <value>
+            <option name="FOREGROUND" value="0000FF"/>
+        </value>
+    </option>
+    <option name="LUCIUS_INTERPOLATION">
+        <value>
+            <option name="FOREGROUND" value="008000"/>
+        </value>
+    </option>
+    <option name="LUCIUS_STRING">
+        <value>
+            <option name="FOREGROUND" value="008000"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+    <option name="LUCIUS_ATRULE">
+        <value>
+            <option name="FOREGROUND" value="808000"/>
+        </value>
+    </option>
+    <option name="LUCIUS_ATTRIBUTE">
+        <value>
+            <option name="FOREGROUND" value="0000FF"/>
+            <option name="FONT_TYPE" value="1"/>
+        </value>
+    </option>
+</list>
