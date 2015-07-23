@@ -79,6 +79,8 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
         <compileServer.plugin classpath="haskell-jps-plugin.jar"/>
         <fileTypeFactory implementation="org.jetbrains.haskell.fileType.HaskellFileTypeFactory"/>
         <moduleType id="HASKELL_MODULE" classpathProvider="false"
