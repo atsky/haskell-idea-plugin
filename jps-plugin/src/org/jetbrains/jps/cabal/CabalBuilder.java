@@ -234,7 +234,11 @@ public class CabalBuilder extends ModuleLevelBuilder {
     }
 
     private String getContentRootPath(JpsModule module) {
-        String url = module.getContentRootsList().getUrls().get(0);
+        final List<String> urls = module.getContentRootsList().getUrls();
+        if (urls.size() == 0) {
+            throw new RuntimeException("Can't find content root in module");
+        }
+        String url = urls.get(0);
         return url.substring("file://".length());
     }
 
