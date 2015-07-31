@@ -12,8 +12,8 @@ import org.jetbrains.haskell.debugger.parser.JSONConverter
 /**
  * @author Habibullin Marat
  */
-public class ForceCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>)
-: RealTimeCommand<LocalBinding?>(callback) {
+public class ForceCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>) :
+        RealTimeCommand<LocalBinding?>(callback) {
     override fun getText(): String = ":force $bindingName\n"
 
     override fun parseGHCiOutput(output: Deque<String?>): LocalBinding? = GHCiParser.tryParseAnyPrintCommandOutput(output)

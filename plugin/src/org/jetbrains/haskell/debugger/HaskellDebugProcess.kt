@@ -66,8 +66,7 @@ import org.jetbrains.haskell.repl.HaskellConsole
 public class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
                                  val _processHandler: HaskellDebugProcessHandler,
-                                 val stopAfterTrace: Boolean)
-: XDebugProcess(session) {
+                                 val stopAfterTrace: Boolean) : XDebugProcess(session) {
 
     //public val historyManager: HistoryManager = HistoryManager(session , this)
     public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
@@ -251,12 +250,10 @@ public class HaskellDebugProcess(session: XDebugSession,
             val syncLocalBinding: LocalBinding = LocalBinding(localBinding.name, "", null)
             syncObject.lock()
             try {
-                /*
-                historyManager.withRealFrameUpdate {
-                    debugger.force(localBinding.name!!,
-                            ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
-                }
-                */
+
+                debugger.force(localBinding.name!!,
+                        ForceCommand.StandardForceCallback(syncLocalBinding, syncObject, bindingValueIsSet, this))
+
                 while (syncLocalBinding.value == null) {
                     bindingValueIsSet.await()
                 }

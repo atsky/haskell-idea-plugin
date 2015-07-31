@@ -15,8 +15,8 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
  * Created by vlad on 7/30/14.
  */
 
-public class RemoteDebugger(debugRespondent: DebugRespondent, debugProcessHandler: ProcessHandler)
-: SimpleDebuggerImpl(debugRespondent, debugProcessHandler, null) {
+public class RemoteDebugger(debugRespondent: DebugRespondent, debugProcessHandler: ProcessHandler) :
+        SimpleDebuggerImpl(debugRespondent, debugProcessHandler, null) {
 
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = false
 
@@ -30,7 +30,8 @@ public class RemoteDebugger(debugRespondent: DebugRespondent, debugProcessHandle
         enqueueCommand(EvalCommand(false, expression, wrapperCallback))
     }
 
-    override fun prepareDebugger() {}
+    override fun prepareDebugger() {
+    }
 
     override fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition) {
         lock.lock()
