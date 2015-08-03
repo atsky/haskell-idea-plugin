@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>Haskell</name>
     <description>Haskell language support</description>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <vendor url="http://www.jetbrains.com/">JetBrains Inc.</vendor>
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
