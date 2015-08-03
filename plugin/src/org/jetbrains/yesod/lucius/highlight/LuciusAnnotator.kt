@@ -18,7 +18,7 @@ public class LuciusAnnotator : Annotator {
 
         override fun annotate(psiElement: PsiElement, annotationHolder: AnnotationHolder) {
             if (psiElement is Function) {
-                annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD)
+                annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.ATTRIBUTE)
             }
             if (psiElement is String) {
                 annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.STRING)
@@ -30,7 +30,7 @@ public class LuciusAnnotator : Annotator {
                 annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.COMMENT)
             }
             if (psiElement is Attribute) {
-                annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.ATTRIBUTE)
+                annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(DefaultLanguageHighlighterColors.KEYWORD)
             }
             if (psiElement is ColonIdentifier) {
                 annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.COLON_IDENTIFIER)
@@ -49,6 +49,9 @@ public class LuciusAnnotator : Annotator {
             }
             if (psiElement is Interpolation) {
                 annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(LuciusColors.INTERPOLATION)
+            }
+            if (psiElement is Hyperlink) {
+                annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(DefaultLanguageHighlighterColors.METADATA)
             }
         }
 }

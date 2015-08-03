@@ -69,6 +69,15 @@
         </sequential>
     </target>
 
+    <!--lucius lexer-->
+    <target name="compile.lucius.lexer">
+        <sequential>
+            <delete file="./plugin/src/org/jetbrains/yesod/lucius/parser/_LuciusLexer.java"/>
+            <jflex file="./plugin/src/org/jetbrains/yesod/lucius/parser/Lucius.flex"
+                   skeleton="tools/idea-flex.skeleton"/>
+        </sequential>
+    </target>
+
     <!--cabal lexer-->
 
     <target name="compile.cabal.lexer">

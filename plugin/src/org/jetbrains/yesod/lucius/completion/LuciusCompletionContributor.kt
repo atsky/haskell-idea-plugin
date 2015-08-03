@@ -32,7 +32,12 @@ public class LuciusCompletionContributor : CompletionContributor() {
                         for (tagName in PSEUDO_ELEMENTS) {
                                 result.addElement(LookupElementBuilder.create(tagName))
                         }
-
+                        for (tagName in VALUES) {
+                                result.addElement(LookupElementBuilder.create(tagName))
+                        }
+                        for (tagName in FUNCTIONS) {
+                                result.addElement(LookupElementBuilder.create(tagName))
+                        }
                 }
         }
 
@@ -166,6 +171,13 @@ public class LuciusCompletionContributor : CompletionContributor() {
                 public var PSEUDO_ELEMENTS: List<String> = Arrays.asList(
 
                         "::after", "::before", "::first-letter", "::first-line", "::selection"
+                )
+
+                public var VALUES: List<String> = Arrays.asList(
+
+                        "auto",     "currentColor", "ease",       "ease-in",     "ease-in-out",
+                        "ease-out", "inherit",      "initial",    "linear",      "none",
+                        "normal",   "step-end",     "step-start", "transparent", "unset"
                 )
 
         }
