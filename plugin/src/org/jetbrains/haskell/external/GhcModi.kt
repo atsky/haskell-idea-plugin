@@ -23,6 +23,7 @@ import com.intellij.notification.NotificationListener
 import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.roots.ProjectRootManager
+import org.jetbrains.haskell.config.HaskellConfigurable
 import org.jetbrains.haskell.sdk.HaskellSdkType
 import org.jetbrains.haskell.external.tool.GhcModConsole
 import org.jetbrains.haskell.util.OSUtil
@@ -131,7 +132,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                         override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
                             notification.expire()
                             if (!project.isDisposed()) {
-                                ShowSettingsUtil.getInstance()?.showSettingsDialog(project, "Haskell")
+                                ShowSettingsUtil.getInstance()?.showSettingsDialog(project, javaClass<HaskellConfigurable>())
                             }
                         }
                     }
