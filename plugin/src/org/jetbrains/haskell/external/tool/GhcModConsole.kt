@@ -13,6 +13,8 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.execution.ui.ConsoleViewContentType
+import com.intellij.openapi.editor.LogicalPosition
+import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
 /**
@@ -61,6 +63,10 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
                     layer,
                     attributes,
                     HighlighterTargetArea.EXACT_RANGE)
+
+            val line = document.getLineCount() - 1
+            editor?.getScrollingModel()?.scrollTo(LogicalPosition(line, 0), ScrollType.MAKE_VISIBLE)
+
         });
     }
 
