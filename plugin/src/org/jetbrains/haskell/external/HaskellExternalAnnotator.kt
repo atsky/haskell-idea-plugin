@@ -3,6 +3,7 @@ package org.jetbrains.haskell.external
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.ExternalAnnotator
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -25,6 +26,7 @@ import sun.nio.cs.StandardCharsets
 import java.io.ByteArrayInputStream
 import org.jetbrains.haskell.util.getRelativePath
 import com.intellij.openapi.application.ModalityState
+import com.intellij.xml.util.XmlStringUtil
 import java.util.regex.Pattern
 import java.util.ArrayList
 import org.jetbrains.haskell.config.HaskellSettings
@@ -165,24 +167,27 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
     }
 
 
-    override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>?, holder: AnnotationHolder) {
-        for (error in annotationResult!!) {
+    override fun apply(file: PsiFile, annotationResult: List<ErrorMessage>, holder: AnnotationHolder) {
+        for (error in annotationResult) {
 
             val start = LineColPosition(error.line, error.column).getOffset(file)
             val end = LineColPosition(error.eLine, error.eColumn).getOffset(file)
 
+
             val element = file.findElementAt(start)
-            if (element != null) {
-                when (error.severity) {
-                    ErrorMessage.Severity.Error -> holder.createErrorAnnotation(element, error.text);
-                    ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(element, error.text);
-                }
+            val textRange = if (element != null) {
+                element.getTextRange()
             } else {
-                when (error.severity) {
-                    ErrorMessage.Severity.Error -> holder.createErrorAnnotation(TextRange(start, end), error.text);
-                    ErrorMessage.Severity.Warning -> holder.createWarningAnnotation(TextRange(start, end), error.text);
-                }
+                TextRange(start, end)
             }
+
+            val text = XmlStringUtil.wrapInHtml("<pre>" + XmlStringUtil.escapeString(error.text) + "</pre>")
+
+            val severity = when (error.severity) {
+                ErrorMessage.Severity.Error -> HighlightSeverity.ERROR
+                ErrorMessage.Severity.Warning -> HighlightSeverity.WARNING
+            }
+            holder.createAnnotation(severity, textRange, error.text, text);
         }
     }
 }
