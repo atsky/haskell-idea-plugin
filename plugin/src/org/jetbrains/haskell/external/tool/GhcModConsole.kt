@@ -33,6 +33,7 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
         editor = ConsoleViewUtil.setupConsoleEditor(project, false, false);
+        editor!!.getSettings().setUseSoftWraps(true)
     }
 
     override fun projectClosed() {
