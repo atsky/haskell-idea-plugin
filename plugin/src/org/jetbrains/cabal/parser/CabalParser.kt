@@ -8,8 +8,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.haskell.parser.rules.BaseParser
 import org.jetbrains.haskell.parser.HaskellTokenType
-import com.siyeh.ig.dataflow.BooleanVariableAlwaysNegatedInspectionBase
-
 
 public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(root, builder) {
 
