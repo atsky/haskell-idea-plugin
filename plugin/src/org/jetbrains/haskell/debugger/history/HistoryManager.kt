@@ -33,8 +33,8 @@ public class HistoryManager(private val debugSession : XDebugSession,
     public class StackState(public val historyIndex: Int,
                             public val realHistIndex: Int,
                             public val allFramesCollected: Boolean,
-                            public val historyFrames: ArrayList<HsHistoryFrame>,
-                            public val historyFramesLines: ArrayList<*>)
+                            public val historyFrames: List<HsHistoryFrame>,
+                            public val historyFramesLines: List<*>)
 
 
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
@@ -272,7 +272,7 @@ public class HistoryManager(private val debugSession : XDebugSession,
         }
 
         public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames),
-                historyPanel!!.getHistoryFramesModel().toArray().toArrayList())
+                historyPanel!!.getHistoryFramesModel().getElements())
 
         public fun loadFrom(state: StackState) {
             historyIndex = state.historyIndex
