@@ -16,7 +16,7 @@ import java.awt.BorderLayout
 
 class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var executableComponent: JTextField
-    private var moduleComboBox: JComboBox<Module>
+    private var moduleComboBox: JComboBoxWrapper
     private var programParametersComponent : RawCommandLineEditor
     private var workingDirectoryComponent : TextFieldWithBrowseButton
     private var environmentVariables : EnvironmentVariablesComponent
@@ -40,7 +40,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     init {
         this.setLayout(GridBagLayout())
         executableComponent = JTextField();
-        moduleComboBox = JComboBox(DefaultComboBoxModel(modules))
+        moduleComboBox = JComboBoxWrapper(JComboBox(DefaultComboBoxModel(modules)))
         moduleComboBox.setRenderer(ModuleComboBoxRenderer())
 
         programParametersComponent = RawCommandLineEditor()
@@ -109,7 +109,7 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
             weightx = 0.1
         })
 
-        add(moduleComboBox, base().setConstraints {
+        add(moduleComboBox.get(), base().setConstraints {
             gridx = 1
             gridy = 4
             fill = GridBagConstraints.HORIZONTAL
