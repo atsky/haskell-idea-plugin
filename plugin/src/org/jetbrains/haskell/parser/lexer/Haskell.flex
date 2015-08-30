@@ -157,6 +157,7 @@ EOL_COMMENT = "--"[^\n]*
 "`"                   { return HaskellLexerTokens.BACKQUOTE; }
 "=>"                  { return HaskellLexerTokens.DARROW; }
 "!"                   { return HaskellLexerTokens.BANG; }
+"*"                   { return HaskellLexerTokens.STAR; }
 "_"                   { return HaskellLexerTokens.UNDERSCORE; }
 "-"                   { return HaskellLexerTokens.MINUS; }
 {symbol}+             { return HaskellLexerTokens.VARSYM; }
@@ -266,8 +267,8 @@ EOL_COMMENT = "--"[^\n]*
 
 "''"                  { return TokenPackage.getTH_TY_QUOTE(); }
 "'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
-{large}{idchar}*      { return HaskellLexerTokens.CONID; }
-{small}{idchar}*      { return HaskellLexerTokens.VARID; }
-({large}{idchar}*".")+{large}{idchar}*  { return HaskellLexerTokens.QCONID;}
-({large}{idchar}*".")+{small}{idchar}*  { return HaskellLexerTokens.QVARID; }
+{large}{idchar}* "#"* { return HaskellLexerTokens.CONID; }
+{small}{idchar}* "#"* { return HaskellLexerTokens.VARID; }
+({large}{idchar}*".")+{large}{idchar}* "#"* { return HaskellLexerTokens.QCONID;}
+({large}{idchar}*".")+{small}{idchar}* "#"* { return HaskellLexerTokens.QVARID; }
 .                     { return TokenType.BAD_CHARACTER; }
