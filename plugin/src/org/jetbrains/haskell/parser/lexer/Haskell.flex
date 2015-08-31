@@ -252,7 +252,7 @@ EOL_COMMENT = "--"[^\n]*
 
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
-({digit}+)            { return HaskellLexerTokens.INTEGER; }
+({digit}+) "#"?"#"?   { return HaskellLexerTokens.INTEGER; }
 
 {character}           { return HaskellLexerTokens.CHAR; }
 {string}              { return HaskellLexerTokens.STRING;}
