@@ -269,6 +269,7 @@ EOL_COMMENT = "--"[^\n]*
 "'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
 {large}{idchar}* "#"* { return HaskellLexerTokens.CONID; }
 {small}{idchar}* "#"* { return HaskellLexerTokens.VARID; }
+"?"{small}{idchar}*   { return HaskellLexerTokens.DUPIPVARID; } // Extention ImplicitParams
 ({large}{idchar}*".")+{large}{idchar}* "#"* { return HaskellLexerTokens.QCONID;}
 ({large}{idchar}*".")+{small}{idchar}* "#"* { return HaskellLexerTokens.QVARID; }
 .                     { return TokenType.BAD_CHARACTER; }
