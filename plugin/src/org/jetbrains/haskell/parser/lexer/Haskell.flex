@@ -250,6 +250,21 @@ EOL_COMMENT = "--"[^\n]*
 "-<<"                   { return HaskellLexerTokens.LLARROWTAIL; }
 ">>-"                   { return HaskellLexerTokens.RRARROWTAIL; }
 
+
+"[|"                    { return HaskellLexerTokens.OPENEXPQUOTE; }
+"[||"                   { return HaskellLexerTokens.OPENTEXPQUOTE; }
+"[e|"                   { return HaskellLexerTokens.OPENEXPQUOTE; }
+"[e||"                  { return HaskellLexerTokens.OPENTEXPQUOTE; }
+"[p|"                   { return HaskellLexerTokens.OPENPATQUOTE; }
+"[d|"                   { return HaskellLexerTokens.OPENDECQUOTE; }
+"[t|"                   { return HaskellLexerTokens.OPENTYPQUOTE; }
+"|]"                    { return HaskellLexerTokens.CLOSEQUOTE; }
+"||]"                   { return HaskellLexerTokens.CLOSETEXPQUOTE; }
+//\$ @varid   / { ifExtension thEnabled } { skip_one_varid ITidEscape }
+//"$$" @varid / { ifExtension thEnabled } { skip_two_varid ITidTyEscape }
+"$("                    { return HaskellLexerTokens.PARENESCAPE; }
+"$$("                   { return HaskellLexerTokens.PARENTYESCAPE; }
+
 (0(o|O){octit}*) |
 (0(x|X){hexit}*) |
 ({digit}+) "#"?"#"?   { return HaskellLexerTokens.INTEGER; }
@@ -265,8 +280,8 @@ EOL_COMMENT = "--"[^\n]*
 
 "\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
 
-"''"                  { return TokenPackage.getTH_TY_QUOTE(); }
-"'"                   { return TokenPackage.getTH_VAR_QUOTE(); }
+"''"                  { return HaskellLexerTokens.TYQUOTE; }
+"'"                   { return HaskellLexerTokens.SIMPLEQUOTE; }
 {large}{idchar}* "#"* { return HaskellLexerTokens.CONID; }
 {small}{idchar}* "#"* { return HaskellLexerTokens.VARID; }
 "?"{small}{idchar}*   { return HaskellLexerTokens.DUPIPVARID; } // Extention ImplicitParams
