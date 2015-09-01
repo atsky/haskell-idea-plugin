@@ -160,8 +160,9 @@ EOL_COMMENT = "--"[^\n]*
 "*"                   { return HaskellLexerTokens.STAR; }
 "_"                   { return HaskellLexerTokens.UNDERSCORE; }
 "-"                   { return HaskellLexerTokens.MINUS; }
-{symbol}+             { return HaskellLexerTokens.VARSYM; }
+
 ":"{symbol}+          { return HaskellLexerTokens.CONSYM; }
+{symbol}+             { return HaskellLexerTokens.VARSYM; }
 
 // - Keywords
 

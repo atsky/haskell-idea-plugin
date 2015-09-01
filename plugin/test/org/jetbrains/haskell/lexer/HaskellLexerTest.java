@@ -21,7 +21,7 @@ public class HaskellLexerTest extends LexerTestCase {
 
     @Override
     protected String getDirPath() {
-      return "data/haskellLexerTest";
+        return "data/haskellLexerTest";
     }
 
     public void testNestedComments() throws Exception {
@@ -62,8 +62,14 @@ public class HaskellLexerTest extends LexerTestCase {
 
     public void testOperatorOPeranBar() throws Exception {
         doTest("(||)", "( ('(')\n" +
-                       "VARSYM ('||')\n" +
-                       ") (')')");
+                "VARSYM ('||')\n" +
+                ") (')')");
+    }
+
+    public void testConsym() throws Exception {
+        doTest("(:!)", "( ('(')\n" +
+                "CONSYM (':!')\n" +
+                ") (')')");
     }
 
 }
