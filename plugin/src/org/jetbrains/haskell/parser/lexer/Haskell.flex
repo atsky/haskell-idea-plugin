@@ -24,7 +24,7 @@ import org.jetbrains.grammar.HaskellLexerTokens;
 %type IElementType
 
 
-%xstate BLOCK_COMMENT, TEX
+%xstate BLOCK_COMMENT, TEX, LAMBDA
 
 unispace    = \x05
 white_no_nl = [\ \r\t\f]|{unispace}
@@ -88,6 +88,13 @@ EOL_COMMENT = "--"[^\n]*
 }
 
 
+<LAMBDA> {
+   "case"        { yybegin(YYINITIAL);
+                   return HaskellLexerTokens.LCASE;
+                 }
+   .|{whitechar} {yypushback(1); yybegin(YYINITIAL); }
+}
+
 <BLOCK_COMMENT> {
     "{-" {
          commentDepth++;
@@ -148,7 +155,8 @@ EOL_COMMENT = "--"[^\n]*
 ","                   { return HaskellLexerTokens.COMMA; }
 "="                   { return HaskellLexerTokens.EQUAL; }
 "|"                   { return HaskellLexerTokens.VBAR;}
-"\\"                  { return HaskellLexerTokens.LAM; }
+"\\"                  { yybegin(LAMBDA);
+                        return HaskellLexerTokens.LAM; }
 "<-"                  { return HaskellLexerTokens.LARROW; }
 (->)|(\u2192)         { return HaskellLexerTokens.RARROW; }
 

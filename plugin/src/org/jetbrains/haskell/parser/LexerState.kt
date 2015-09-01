@@ -22,6 +22,7 @@ val INDENT_TOKENS = HashSet<IElementType>(Arrays.asList(
         HaskellLexerTokens.DO,
         HaskellLexerTokens.OF,
         HaskellLexerTokens.LET,
+        HaskellLexerTokens.LCASE, // In GHC this depends on extension LambdaCase.
         HaskellLexerTokens.WHERE))
 
 class IntStack(val indent: Int,
