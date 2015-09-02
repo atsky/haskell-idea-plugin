@@ -154,11 +154,19 @@ public class LexerState(val tokens: CachedTokens,
             return last()
         }
         if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
-            return LexerState(tokens,
-                    position + 1,
-                    readedLexemNumber + 1,
-                    null,
-                    IntStack(-1, indentStack))
+            if (tokens.tokens[position + 1] != HaskellLexerTokens.CCURLY) {
+                return LexerState(tokens,
+                        position + 1,
+                        readedLexemNumber + 1,
+                        null,
+                        IntStack(-1, indentStack))
+            } else {
+                return LexerState(tokens,
+                        position + 1,
+                        readedLexemNumber + 1,
+                        null,
+                        indentStack)
+            }
         }
         val nextPosition = position + 1
 
