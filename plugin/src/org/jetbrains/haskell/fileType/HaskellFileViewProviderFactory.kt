@@ -9,11 +9,10 @@ import org.jetbrains.haskell.HaskellViewProvider
 
 public class HaskellFileViewProviderFactory() : FileViewProviderFactory {
 
-
     override fun createFileViewProvider(file: VirtualFile,
-                                        language: Language?,
+                                        language: Language,
                                         manager: PsiManager,
-                                        eventSystemEnabled: Boolean): FileViewProvider? {
-        return HaskellViewProvider(manager, file, eventSystemEnabled, language!!)
+                                        eventSystemEnabled: Boolean): FileViewProvider {
+        return HaskellViewProvider(manager, file, eventSystemEnabled, language)
     }
 }
