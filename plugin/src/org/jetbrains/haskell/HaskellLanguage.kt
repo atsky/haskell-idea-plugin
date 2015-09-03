@@ -8,15 +8,6 @@ import org.jetbrains.haskell.highlight.HaskellHighlighter
 
 public class HaskellLanguage : Language("Haskell", "text/haskell") {
 
-    init {
-        SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this,
-                object : SingleLazyInstanceSyntaxHighlighterFactory() {
-            override fun createHighlighter(): SyntaxHighlighter {
-                return HaskellHighlighter()
-            }
-        })
-    }
-
     companion object {
         public val INSTANCE: HaskellLanguage = HaskellLanguage()
     }
