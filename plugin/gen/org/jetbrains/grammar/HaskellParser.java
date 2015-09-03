@@ -469,6 +469,7 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
+      addVar(variants, end());
       addVar(variants, end().add("close").add("top").add(VOCURLY));
       addVar(variants, end().add(CCURLY).add("top").add(OCURLY));
       grammar.put("body", new Rule("body", variants, left));

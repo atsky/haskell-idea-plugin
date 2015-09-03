@@ -192,6 +192,7 @@ maybemodwarning
 body
         :  '{'            top '}'
         |      vocurly    top close
+        |   {- empty -}
 ;
 
 body2
