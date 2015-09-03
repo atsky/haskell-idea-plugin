@@ -42,4 +42,6 @@ public class IndentTest extends ParsingTestCase {
 
     public void testOpenBraceThenClose() throws Exception { doTest(true); }
 
+    public void testIndentInBracesAgain() throws Exception { doTest(true); }
+
 }
