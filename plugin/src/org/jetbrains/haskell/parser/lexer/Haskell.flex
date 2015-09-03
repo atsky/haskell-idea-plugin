@@ -27,7 +27,7 @@ import org.jetbrains.grammar.HaskellLexerTokens;
 %xstate BLOCK_COMMENT, TEX, LAMBDA
 
 unispace    = \x05
-white_no_nl = [\ \r\t\f]|{unispace}
+white_no_nl = [\ \r\t\f\xA0]|{unispace}
 whitechar   = {white_no_nl}|[\n]
 tab         = \t
 
