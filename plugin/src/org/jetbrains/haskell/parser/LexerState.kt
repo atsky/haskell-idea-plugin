@@ -228,7 +228,7 @@ public class LexerState(val tokens: CachedTokens,
     private fun checkCurly(nextPosition: Int): LexerState {
         if (tokens.tokens[nextPosition] == HaskellLexerTokens.CCURLY) {
             if (indentStack!!.indent > -1) {
-                return LexerState(tokens, nextPosition - 1, readedLexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
+                return LexerState(tokens, nextPosition, readedLexemNumber + 1, HaskellLexerTokens.VCCURLY, indentStack.parent)
             }
             return LexerState(tokens, nextPosition, readedLexemNumber + 1, null, indentStack.parent)
         }
