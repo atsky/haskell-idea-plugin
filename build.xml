@@ -10,7 +10,6 @@
     <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
     <property name="idea" value="${build.dir}/idea-IC-141.SNAPSHOT"/>
     <property name="idea.download.url" value="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/426153:id/ideaIC-141.SNAPSHOT.tar.gz"/>
-    <property name="external.annotations.path" value="${basedir}/annotations"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
     <property name="build.number" value="snapshot"/>
 
@@ -115,7 +114,6 @@
                 classpathref="build.classpath">
             <src path="${basedir}/plugin/src"/>
             <src path="${basedir}/plugin/gen"/>
-            <withKotlin externalannotations="${external.annotations.path}"/>
         </javac2>
     </target>
     <target name="build" depends="compile.plugin, compile.jps">

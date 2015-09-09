@@ -1,7 +1,0 @@
-<root>
-    <item name='com.intellij.openapi.editor.Document java.lang.String getText()'>
-        <annotation name='kotlin.jvm.KotlinSignature'>
-            <val name="value" val="&quot;fun getText(): String&quot;"/>
-        </annotation>
-    </item>
-</root>
