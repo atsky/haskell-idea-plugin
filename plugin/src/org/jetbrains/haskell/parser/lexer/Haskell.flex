@@ -15,6 +15,7 @@ import org.jetbrains.grammar.HaskellLexerTokens;
 %implements FlexLexer
 
 %{
+    private int qouteStart;
     private int commentStart;
     private int commentDepth;
 %}
@@ -24,7 +25,7 @@ import org.jetbrains.grammar.HaskellLexerTokens;
 %type IElementType
 
 
-%xstate BLOCK_COMMENT, TEX, LAMBDA
+%xstate BLOCK_COMMENT, TEX, LAMBDA, QUASI_QUOTE
 
 unispace    = \x05
 white_no_nl = [\ \r\t\f\xA0]|{unispace}
@@ -122,12 +123,32 @@ EOL_COMMENT = "--"[^\n]*
     .|{whitechar} {}
 }
 
+
 "{-" {
     yybegin(BLOCK_COMMENT);
     commentDepth = 0;
     commentStart = getTokenStart();
 }
 
+
+<QUASI_QUOTE> {
+    "|]"    { yybegin(YYINITIAL);
+              zzStartRead = qouteStart;
+              return HaskellLexerTokens.QUASIQUOTE;
+            }
+
+    <<EOF>> { yybegin(YYINITIAL);
+              zzStartRead = qouteStart;
+              return HaskellLexerTokens.QUASIQUOTE;
+            }
+
+    .|{whitechar} {}
+}
+
+("["{small}{idchar}*"|")   {
+    yybegin(QUASI_QUOTE);
+    qouteStart = getTokenStart();
+}
 
 {white_no_nl}+        { return TokenType.WHITE_SPACE; }
 "\n"                  { return TokenPackage.getNEW_LINE(); }
