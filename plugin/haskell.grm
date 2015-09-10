@@ -371,7 +371,7 @@ topdecl
         | stand_alone_deriving
         | role_annot
         | 'default' '(' comma_types0 ')'
-        | 'foreign' fdecl
+        | 'foreign' fdecl                                             { ForeignDeclaration }
         | '{-# DEPRECATED' deprecations '#-}'
         | '{-# WARNING' warnings '#-}'
         | '{-# RULES' rules '#-}'
@@ -1854,8 +1854,8 @@ tyvarid
 -- Variables
 
 var
-        : varid
-        | '(' varsym ')'
+        : varid                      { QVar }
+        | '(' varsym ')'             { QVarSym }
 ;
 
 qvar

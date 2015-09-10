@@ -18,6 +18,7 @@ public val DO_EXPRESSION : IElementType = HaskellCompositeElementType("DoExpress
 public val EXPRESSION_STATEMENT : IElementType = HaskellCompositeElementType("ExpressionStatement", ::ExpressionStatement)
 public val FIELD_DECLARATION : IElementType = HaskellCompositeElementType("FieldDeclaration", ::FieldDeclaration)
 public val FIELD_UPDATE : IElementType = HaskellCompositeElementType("FieldUpdate", ::FieldUpdate)
+public val FOREIGN_DECLARATION : IElementType = HaskellCompositeElementType("ForeignDeclaration", ::ForeignDeclaration)
 public val FUNCTION_TYPE : IElementType = HaskellCompositeElementType("FunctionType", ::FunctionType)
 public val GUARD : IElementType = HaskellCompositeElementType("Guard", ::Guard)
 public val IMPORT : IElementType = HaskellCompositeElementType("Import", ::Import)

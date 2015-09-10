@@ -233,7 +233,7 @@ public class HaskellParser extends BaseHaskellParser {
       addVar(variants, many(VECT_PRAG, end().add(CLOSE_PRAG).add("gtycon").add(CLASS), end().add(CLOSE_PRAG).add("exp").add(EQUAL).add("qvar"), many("gtycon", end().add(CLOSE_PRAG).add("gtycon").add(EQUAL), end().add(CLOSE_PRAG)).add(TYPE)));
       addVar(variants, end().add("ty_decl"));
       addVar(variants, end().add("infixexp"));
-      addVar(variants, end().add("fdecl").add(FOREIGN));
+      addVar(variants, end(GrammarPackage.getFOREIGN_DECLARATION()).add("fdecl").add(FOREIGN));
       addVar(variants, end().add("stand_alone_deriving"));
       grammar.put("topdecl", new Rule("topdecl", variants, left));
     }
@@ -673,8 +673,8 @@ public class HaskellParser extends BaseHaskellParser {
     {
       List<Variant> variants = new ArrayList<Variant>();
       List<Variant> left = new ArrayList<Variant>();
-      addVar(variants, end().add(CPAREN).add("varsym").add(OPAREN));
-      addVar(variants, end().add("varid"));
+      addVar(variants, end(GrammarPackage.getQ_VAR_SYM()).add(CPAREN).add("varsym").add(OPAREN));
+      addVar(variants, end(GrammarPackage.getQ_VAR()).add("varid"));
       grammar.put("var", new Rule("var", variants, left));
     }
     {

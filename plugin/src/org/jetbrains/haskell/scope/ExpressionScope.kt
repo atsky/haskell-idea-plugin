@@ -92,6 +92,8 @@ public class ExpressionScope(val expression: Expression) {
         }
         val signatureDeclaration = ModuleScope(module).getVisibleSignatureDeclaration()
         result.addAll(signatureDeclaration.map({ it.getQNameExpression()?.getQVar() }).filterNotNull())
+        val foreignDeclaration = ModuleScope(module).getVisibleForeignDeclarations()
+        result.addAll(foreignDeclaration.map({ it.getQVar() }).filterNotNull())
         return result;
     }
 
