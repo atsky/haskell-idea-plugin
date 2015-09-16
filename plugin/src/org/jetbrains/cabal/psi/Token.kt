@@ -6,7 +6,7 @@ import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class Token(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
+public class Token(node: ASTNode) : PropertyValue(node), Checkable {
 
     public override fun check(): List<ErrorMessage> {
         if (!getNode().getText().matches("^.+$".toRegex())) {

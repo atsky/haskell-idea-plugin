@@ -17,7 +17,7 @@ import java.io.FilenameFilter
 import java.util.ArrayList
 import com.intellij.psi.PsiReference
 
-public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, Checkable {
+public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
 
     public override fun getReference(): PsiReference? {
         val originalRootDir = getCabalRootFile()
@@ -42,7 +42,7 @@ public open class Path(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValu
     public fun isAbsolute(): Boolean = getFile().isAbsolute()
 
     public fun isWildcard(): Boolean {
-        val parentField = getParentField()
+        val parentField = getParentField() as Field
         if (parentField.hasName("extra-source-files") || parentField.hasName("data-files")) {
             return getFilename().matches("^\\*\\.(.+)$".toRegex())
         }

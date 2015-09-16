@@ -11,7 +11,7 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 /**
  * Created by atsky on 13/12/13.
  */
-public class Name(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue, RangedValue {
+public class Name(node: ASTNode) : PropertyValue(node), RangedValue {
 
     public override fun getAvailableValues(): List<String> {
         val parent = getParent()

@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import java.lang.IllegalStateException
 
-public class ComplexVersionConstraint(node: ASTNode) : ASTWrapperPsiElement(node), PropertyValue {
+public class ComplexVersionConstraint(node: ASTNode) : PropertyValue(node)  {
 
     public fun satisfyConstraint(givenVersion: String): Boolean {
         val elements = getChildren() filter { it is VersionConstraint }

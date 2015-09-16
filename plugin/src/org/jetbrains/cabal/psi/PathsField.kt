@@ -5,6 +5,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.Path
 import org.jetbrains.cabal.psi.BuildSection
@@ -13,7 +14,7 @@ import java.io.FilenameFilter
 import java.io.File
 import java.util.ArrayList
 
-public interface PathsField: PropertyField {
+public interface PathsField: PsiElement {
 
     public fun isValidCompletionFile(file: VirtualFile): Boolean = true
 

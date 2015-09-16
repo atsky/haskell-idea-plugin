@@ -6,7 +6,7 @@ import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class Url(node: ASTNode) : ASTWrapperPsiElement(node), Checkable, PropertyValue {
+public class Url(node: ASTNode) : PropertyValue(node), Checkable {
 
     public override fun check(): List<ErrorMessage> {
         return listOf()
