@@ -22,7 +22,7 @@ public class JComboBoxWrapper {
         return myComboBox.getSelectedItem();
     }
 
-    public void setSelectedItem(@NotNull Object item) {
+    public void setSelectedItem(Object item) {
         myComboBox.setSelectedItem(item);
     }
 

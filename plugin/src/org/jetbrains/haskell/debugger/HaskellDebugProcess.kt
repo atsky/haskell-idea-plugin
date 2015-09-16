@@ -49,6 +49,7 @@ import java.util.ArrayDeque
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DefaultRespondent
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import com.intellij.xdebugger.impl.XDebugSessionImpl
+import org.jetbrains.haskell.debugger.config.DebuggerType
 import org.jetbrains.haskell.repl.HaskellConsole
 
 /**
@@ -85,8 +86,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index"
 
     init {
-        val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType ==
-                HaskellDebugSettings.Companion.DebuggerType.GHCI
+        val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.GHCI
         if (debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater()
             debugger = GHCiDebugger(debugRespondent, _processHandler,
@@ -225,7 +225,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
             val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())
             registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(index, breakpoint))
             val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.Companion.StandardSetBreakpointCallback(module, debugRespondent))
@@ -267,7 +267,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     public fun syncBreakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
+        if (HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
             val callback = BreakpointListCommand.Companion.DefaultCallback(resultArray)

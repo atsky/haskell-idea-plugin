@@ -182,23 +182,25 @@ public class CabalInterface(val project: Project) {
 
             return result
         } catch (e: IOException) {
-            Notifications.Bus.notify(Notification("Cabal error", "cabal", "Can't read cabal package list.", NotificationType.ERROR))
+            Notifications.Bus.notify(Notification(
+                    "Cabal error",
+                    "cabal",
+                    "Can't read cabal package list.",
+                    NotificationType.ERROR))
             return listOf()
         }
     }
 
     fun getDefaultRepo() =
             if (SystemInfo.isMac) {
-                joinPath(getDataPath(),
-                        "repo-cache")
+                joinPath(getDataPath(), "repo-cache")
             } else {
-                joinPath(getDataPath(),
-                        "packages")
+                joinPath(getDataPath(), "packages")
             }
 
 
-    fun getRepo() : String {
-        val repoCache = CabalApplicationComponent.getInstance().getCabalConfiguration().remoteRepoCache!!
+    fun getRepo(): String {
+        val repoCache = CabalApplicationComponent.getInstance().getCabalConfiguration().remoteRepoCache
         return joinPath(repoCache, "hackage.haskell.org")
     }
 
@@ -253,7 +255,7 @@ public class CabalInterface(val project: Project) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
-                        val process = runCommand(project.getBasePath()!!.toString(), "update")
+                    val process = runCommand(project.getBasePath()!!.toString(), "update")
                     process.waitFor();
                 }
             }

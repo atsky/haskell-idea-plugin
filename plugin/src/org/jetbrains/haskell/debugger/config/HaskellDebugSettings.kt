@@ -19,10 +19,6 @@ com.intellij.openapi.components.State(
 )
 public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSettings.Companion.State> {
     companion object {
-        public enum class DebuggerType {
-            GHCI,
-            REMOTE
-        }
 
         public class State {
             public var debuggerType: DebuggerType = DebuggerType.REMOTE
@@ -63,4 +59,9 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
             myState.remoteDebuggerPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("remote-debugger");
         }
     }
+}
+
+public enum class DebuggerType {
+    GHCI,
+    REMOTE
 }

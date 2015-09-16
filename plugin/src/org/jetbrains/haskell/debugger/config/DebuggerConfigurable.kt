@@ -107,7 +107,7 @@ public class DebuggerConfigurable() : Configurable {
         val printDebugOutput = printDebugOutputCheckBox.isSelected()
 
         val state = HaskellDebugSettings.getInstance().getState()
-        state.debuggerType = if (ghciSelected) HaskellDebugSettings.Companion.DebuggerType.GHCI else HaskellDebugSettings.Companion.DebuggerType.REMOTE
+        state.debuggerType = if (ghciSelected) DebuggerType.GHCI else DebuggerType.REMOTE
         state.remoteDebuggerPath = remotePath
         state.traceOff = traceSwitchedOff
         state.printDebugOutput = printDebugOutput
@@ -121,7 +121,7 @@ public class DebuggerConfigurable() : Configurable {
      */
     override fun reset() {
         val state = HaskellDebugSettings.getInstance().getState()
-        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == HaskellDebugSettings.Companion.DebuggerType.GHCI) 0 else 1)
+        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == DebuggerType.GHCI) 0 else 1)
         traceSwitchOffCheckBox.setSelected(state.traceOff)
         remoteDebuggerPathField.getTextField()!!.setText(state.remoteDebuggerPath)
         printDebugOutputCheckBox.setSelected(state.printDebugOutput)

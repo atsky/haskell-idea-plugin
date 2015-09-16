@@ -25,6 +25,7 @@ import javax.swing.event.HyperlinkEvent
 import com.intellij.openapi.options.ShowSettingsUtil
 import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 import com.intellij.xdebugger.impl.XDebugSessionImpl
+import org.jetbrains.haskell.debugger.config.DebuggerType
 
 /**
  * Class for starting debug session.
@@ -80,7 +81,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
                 return null
             }
             val settingsState = HaskellDebugSettings.getInstance().getState()
-            if (settingsState.debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
+            if (settingsState.debuggerType == DebuggerType.REMOTE) {
                 if (settingsState.remoteDebuggerPath == null || !File(settingsState.remoteDebuggerPath!!).exists()) {
                     Notifications.Bus.notify(Notification("", GENERAL_DEBUGGING_TITLE, WRONG_REMOTE_DEBUGGER_PATH_MSG, NotificationType.WARNING, hyperlinkHandler))
                     return null

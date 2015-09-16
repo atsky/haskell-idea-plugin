@@ -25,6 +25,7 @@ import org.jetbrains.haskell.debugger.utils.UIUtils
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebugProcess
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
+import org.jetbrains.haskell.debugger.config.DebuggerType
 
 public class HaskellLineBreakpointType():
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
@@ -53,7 +54,7 @@ public class HaskellLineBreakpointType():
      * Creates panel in breakpoint's context menu with list of available breakpoints to set on the line
      */
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
-        if(HaskellDebugSettings.getInstance().getState().debuggerType == HaskellDebugSettings.Companion.DebuggerType.REMOTE) {
+        if(HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
             if(selectBreakpointPanel == null) {
                 selectBreakpointPanel = SelectBreakPropertiesPanel()
             }
