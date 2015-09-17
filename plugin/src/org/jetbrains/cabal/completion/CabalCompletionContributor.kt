@@ -14,12 +14,12 @@ import java.util.*
 
 public open class CabalCompletionContributor() : CompletionContributor() {
 
-    public override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?): Unit {
-        if (parameters?.getCompletionType() == CompletionType.BASIC) {
+    public override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet): Unit {
+        if (parameters.getCompletionType() == CompletionType.BASIC) {
 
             val values = ArrayList<String>()
-            val current = parameters?.getPosition()
-            val parent = current?.getParent()
+            val current = parameters.getPosition()
+            val parent = current.getParent()
             if (parent == null) { return }
             var caseSensitivity = true
 

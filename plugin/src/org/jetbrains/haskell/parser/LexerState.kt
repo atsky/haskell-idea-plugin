@@ -39,7 +39,7 @@ public fun getCachedTokens(lexer: HaskellLexer, stream: PrintStream?): CachedTok
 
     stream?.println("-------------------")
     while (lexer.getTokenType() != null) {
-        val tokenType = lexer.getTokenType()
+        val tokenType = lexer.getTokenType()!!
         if (!COMMENTS.contains(tokenType) && tokenType != TokenType.WHITE_SPACE) {
             if (tokenType == NEW_LINE) {
                 currentIndent = 0
@@ -99,7 +99,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
     })
 
     while (builder.getTokenType() != null) {
-        tokens.add(builder.getTokenType())
+        tokens.add(builder.getTokenType()!!)
         starts.add(builder.getCurrentOffset())
         indents.add(currentIndent)
         lineStarts.add(isLineStart)

@@ -54,9 +54,9 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
     class PackageData(val text : String, val installed : Boolean)
 
-    override fun createToolWindowContent(project: Project?, toolWindow: ToolWindow?) {
-        this.project = project!!
-        this.toolWindow = toolWindow!!
+    override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+        this.project = project
+        this.toolWindow = toolWindow
         val contentFactory = ContentFactory.SERVICE.getInstance()
         val content = contentFactory!!.createContent(createToolWindowPanel(), "", false)
         toolWindow.getContentManager()!!.addContent(content)

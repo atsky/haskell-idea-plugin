@@ -1,9 +1,7 @@
 package org.jetbrains.haskell
 
-import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
-import org.jetbrains.haskell.fileType.HaskellFileType
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleType
 import org.jetbrains.haskell.module.HaskellModuleType
@@ -15,8 +13,6 @@ import org.jetbrains.haskell.config.HaskellConfigurable
 import com.intellij.openapi.module.Module
 import java.io.File
 import org.jetbrains.haskell.util.deleteRecursive
-import org.jetbrains.haskell.util.ProcessRunner
-import java.io.IOException
 import org.jetbrains.haskell.util.OSUtil
 import org.jetbrains.haskell.external.GhcMod
 import com.intellij.openapi.roots.ProjectRootManager
@@ -123,7 +119,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
     override fun disposeComponent() {
     }
 
-    Deprecated
+    @Deprecated("")
     private fun removeTempDir() {
         for (module in getHaskellModules()) {
             val path = module.getModuleFile()?.getParent()?.getPath()

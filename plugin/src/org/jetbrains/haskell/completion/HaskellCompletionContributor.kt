@@ -18,11 +18,8 @@ import org.jetbrains.haskell.external.GhcMod
 
 public class HaskellCompletionContributor() : CompletionContributor() {
 
-    override fun fillCompletionVariants(parameters: CompletionParameters?, result: CompletionResultSet?) {
-        if (result == null) {
-            return
-        }
-        if (parameters!!.getCompletionType() == CompletionType.BASIC) {
+    override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
+        if (parameters.getCompletionType() == CompletionType.BASIC) {
             val psiElement = parameters.getPosition()
             val psiFile = parameters.getOriginalPosition()?.getContainingFile()
 

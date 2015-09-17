@@ -59,7 +59,7 @@ fun merge(variants: List<Variant>): List<Variant> {
             if (!map.contains(name)) {
                 map[name] = ArrayList<Variant>()
             }
-            map[name].addAll(variant.next)
+            map[name]!!.addAll(variant.next)
         } else {
             result.add(variant)
         }

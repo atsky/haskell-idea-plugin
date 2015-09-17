@@ -69,9 +69,9 @@ public object GlobalScope {
                     if (!tarCache.contains(filePath)) {
                         tarCache[filePath] = TarGzArchive(file)
                     }
-                    val result = findInArchive(tarCache[filePath], name)
+                    val result = findInArchive(tarCache[filePath]!!, name)
                     if (result != null) {
-                        return TarGzFile(LocalFileSystem.getInstance().findFileByIoFile(file), result);
+                        return TarGzFile(LocalFileSystem.getInstance().findFileByIoFile(file)!!, result);
                     }
                 }
             }
