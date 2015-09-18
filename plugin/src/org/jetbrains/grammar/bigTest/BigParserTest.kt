@@ -1,8 +1,6 @@
 package org.jetbrains.grammar.bigTest
 
 import java.io.File
-import java.io.FilenameFilter
-import org.jetbrains.grammar.parseFile
 
 import org.apache.commons.httpclient.methods.GetMethod
 import org.apache.commons.httpclient.HttpClient
@@ -15,7 +13,6 @@ import org.jetbrains.haskell.util.readLines
 import java.util.ArrayList
 import java.util.TreeMap
 import java.io.BufferedInputStream
-import java.io.FileInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import java.io.InputStream
@@ -25,9 +22,7 @@ import org.jetbrains.haskell.parser.lexer.HaskellLexer
 import org.jetbrains.haskell.parser.getCachedTokens
 import org.jetbrains.grammar.HaskellParser
 import org.jetbrains.grammar.dumb.LazyLLParser
-import java.io.FileWriter
 import java.io.FileOutputStream
-import kotlin.platform.platformStatic
 
 /**
  * Created by atsky on 12/12/14.
@@ -165,8 +160,8 @@ class BigParserTest {
             }
         }
         for ((pkg, versions) in map) {
-            versions.sort()
-            val name = pkg + "-" + versions.lastOrNull()
+            val sortedVersions = versions.sorted()
+            val name = pkg + "-" + sortedVersions.lastOrNull()
 
             if (exclude.contains(name)) {
                 println(name + " - exclude!")
@@ -202,7 +197,7 @@ class BigParserTest {
     }
 
     companion object {
-        platformStatic
+        @JvmStatic
         fun main(args: Array<String>) {
             val test = BigParserTest()
             test.doTest(File("/Users/atsky/Library/Haskell/repo-cache/hackage.haskell.org/00-index.cache"))

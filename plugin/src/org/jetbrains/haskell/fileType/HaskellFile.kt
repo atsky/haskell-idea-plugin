@@ -18,5 +18,5 @@ public class HaskellFile(provider: FileViewProvider) : PsiFileBase(provider, Has
         visitor.visitFile(this)
     }
 
-    public fun getModule() : Module? = findChildByClass(javaClass<Module>())
+    public fun getModule() : Module? = findChildByClass(Module::class.java)
 }

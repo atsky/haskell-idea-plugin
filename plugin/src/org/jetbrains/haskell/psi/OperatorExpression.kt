@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 public class OperatorExpression(node: ASTNode) : Expression(node) {
 
     public fun getExpressions(): List<Expression> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression::class.java)
     }
 
     override fun traverse(visitor: (Expression) -> Unit) {

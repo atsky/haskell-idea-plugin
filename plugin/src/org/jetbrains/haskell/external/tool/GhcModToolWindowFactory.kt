@@ -22,7 +22,7 @@ class GhcModToolWindowFactory() : ToolWindowFactory {
 
     private fun createToolWindowPanel(project: Project): JComponent {
         val panel = JPanel(BorderLayout())
-        val ghcMod = project.getComponent(javaClass<GhcModConsole>())
+        val ghcMod = project.getComponent(GhcModConsole::class.java)
         panel.add(ghcMod.editor!!.getComponent(), BorderLayout.CENTER)
         return panel
     }

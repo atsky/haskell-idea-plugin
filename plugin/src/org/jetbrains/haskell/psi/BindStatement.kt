@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 public class BindStatement(node : ASTNode) : Statement(node) {
 
     fun getExpressions() : QNameExpression? {
-        val expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<QNameExpression>())
+        val expressions = PsiTreeUtil.getChildrenOfTypeAsList(this, QNameExpression::class.java)
         return if (expressions.isEmpty()) null else expressions[0]
     }
 

@@ -136,7 +136,7 @@ class GrammarParser(val tokens : List<Token>) {
 
         var variant : Variant = FinalVariant(name);
 
-        for (ref in list.reverse()) {
+        for (ref in list.reversed()) {
             variant = NonFinalVariant(ref, listOf(variant))
         }
 

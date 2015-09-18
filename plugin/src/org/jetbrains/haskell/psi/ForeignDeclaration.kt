@@ -14,5 +14,5 @@ public class ForeignDeclaration(node : ASTNode) : Declaration(node) {
     }
 
     fun getQVar(): QVar? =
-            findChildByClass(javaClass<QVar>())
+            findChildByClass(QVar::class.java)
 }

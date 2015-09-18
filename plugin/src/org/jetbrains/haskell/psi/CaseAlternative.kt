@@ -9,6 +9,6 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class CaseAlternative(node : ASTNode) : ASTWrapperPsiElement(node) {
     public fun getExpressions(): List<Expression> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression::class.java)
     }
 }

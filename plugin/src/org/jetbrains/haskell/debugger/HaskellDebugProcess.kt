@@ -78,7 +78,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val contexts: Deque<XSuspendContext> = ArrayDeque()
     private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = arrayOf(HaskellLineBreakpointHandler(getSession()!!.getProject(), javaClass<HaskellLineBreakpointType>(), this),
+    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = arrayOf(HaskellLineBreakpointHandler(getSession()!!.getProject(), HaskellLineBreakpointType::class.java, this),
             HaskellExceptionBreakpointHandler(this)
     )
     private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()

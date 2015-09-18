@@ -8,7 +8,6 @@ import com.intellij.profile.ui.ProfileUIFactory
 import org.jetbrains.haskell.util.OSUtil
 import org.jetbrains.haskell.util.joinPath
 import java.io.File
-import kotlin.platform.platformStatic
 
 /**
  * @author Evgeny.Kurbatsky
@@ -17,9 +16,9 @@ import kotlin.platform.platformStatic
 
 class CabalApplicationComponent() : ApplicationComponent {
     companion object {
-        platformStatic
+        @JvmStatic
         public fun getInstance(): CabalApplicationComponent =
-                ApplicationManager.getApplication().getComponent(javaClass<CabalApplicationComponent>())
+                ApplicationManager.getApplication().getComponent(CabalApplicationComponent::class.java)
     }
 
     var configuration: CabalConfing = CabalConfing()

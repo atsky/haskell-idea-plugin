@@ -11,7 +11,7 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescripti
 
 public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
 
-    private val session = debugProcess.getSession()!!
+    private val session = debugProcess.session!!
 
     override fun traceFinished() = debugProcess.traceFinished()
 
@@ -23,7 +23,7 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
         if (realBreakpoint == null) {
             session.positionReached(context)
         } else {
-            session.breakpointReached(realBreakpoint, realBreakpoint.getLogExpression(), context)
+            session.breakpointReached(realBreakpoint, realBreakpoint.logExpression, context)
         }
     }
 
@@ -32,7 +32,7 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
         if (breakpoint == null) {
             session.positionReached(context)
         } else {
-            session.breakpointReached(breakpoint, breakpoint.getLogExpression(), context)
+            session.breakpointReached(breakpoint, breakpoint.logExpression, context)
         }
     }
 
@@ -43,7 +43,7 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
         if (breakpoint == null) {
             return null
         } else {
-            return HaskellLineBreakpointDescription(module, line, breakpoint.getCondition())
+            return HaskellLineBreakpointDescription(module, line, breakpoint.condition)
         }
     }
 
@@ -63,5 +63,5 @@ public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRes
     }
 
     override fun getModuleByFile(filename: String): String =
-            HaskellUtils.getModuleName(session.getProject(), LocalFileSystem.getInstance()!!.findFileByPath(filename)!!)
+            HaskellUtils.getModuleName(session.project, LocalFileSystem.getInstance()!!.findFileByPath(filename)!!)
 }

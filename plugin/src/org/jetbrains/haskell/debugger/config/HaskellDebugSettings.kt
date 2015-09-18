@@ -1,9 +1,6 @@
 package org.jetbrains.haskell.debugger.config
 
-import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.StoragePathMacros
-import com.intellij.openapi.components.Storage
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.*
 import java.io.File
 import org.jetbrains.haskell.util.*
 
@@ -12,7 +9,7 @@ import org.jetbrains.haskell.util.*
  * Created by vlad on 8/1/14.
  */
 
-com.intellij.openapi.components.State(
+@State(
         name = "HaskellDebugConfiguration",
         storages = arrayOf(Storage(id = "default", file = StoragePathMacros.APP_CONFIG + "/haskelldebug.xml")
         )
@@ -28,7 +25,7 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
         }
 
         public fun getInstance(): HaskellDebugSettings {
-            val persisted = ServiceManager.getService(javaClass<HaskellDebugSettings>())
+            val persisted = ServiceManager.getService(HaskellDebugSettings::class.java)
             if (persisted == null) {
                 val settings = HaskellDebugSettings()
                 settings.update();

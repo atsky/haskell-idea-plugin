@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NonNls
 
 public class DebugConsoleExecutor(): Executor() {
     companion object {
-        NonNls public val EXECUTOR_ID: String = "DebugConsole"
+        public val EXECUTOR_ID: String = "DebugConsole"
     }
     override fun getToolWindowId(): String? = "Run"
     override fun getToolWindowIcon(): Icon? = AllIcons.Toolwindows.ToolWindowDebugger

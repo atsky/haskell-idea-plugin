@@ -9,10 +9,10 @@ import com.intellij.psi.util.PsiTreeUtil
  */
 public class WhereBindings(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getSignatureDeclarationsList() : List<SignatureDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, SignatureDeclaration::class.java)
     }
 
     fun getValueDefinitionList() : List<ValueDefinition> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ValueDefinition::class.java)
     }
 }

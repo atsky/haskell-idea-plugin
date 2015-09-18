@@ -16,11 +16,11 @@ public class QNameExpression(node: ASTNode) : Expression(node) {
     }
 
     fun getQVar(): QVar? =
-            findChildByClass(javaClass<QVar>())
+            findChildByClass(QVar::class.java)
 
 
     fun getQCon(): QCon? =
-            findChildByClass(javaClass<QCon>())
+            findChildByClass(QCon::class.java)
 
 
     override fun getReference(): PsiReference? {

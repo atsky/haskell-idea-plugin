@@ -11,13 +11,13 @@ import java.util.ArrayList
 
 public class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable {
 
-    public fun getPackageNames(): List<String> = getValues(javaClass<FullVersionConstraint>()) map { it.getBaseName() }
+    public fun getPackageNames(): List<String> = getValues(FullVersionConstraint::class.java) map { it.getBaseName() }
 
     public fun getConstraintsWithName(name: String): List<FullVersionConstraint>
-            = getValues(javaClass<FullVersionConstraint>()) filter { it.getBaseName().equals(name) }
+            = getValues(FullVersionConstraint::class.java) filter { it.getBaseName().equals(name) }
 
     public override fun check(): List<ErrorMessage> {
-        val packageConstraints = getValues(javaClass<FullVersionConstraint>())
+        val packageConstraints = getValues(FullVersionConstraint::class.java)
         val installedPackages  = CabalInterface(getProject()).getInstalledPackagesList()
         var res = ArrayList<ErrorMessage>()
         for (constraint in packageConstraints) {

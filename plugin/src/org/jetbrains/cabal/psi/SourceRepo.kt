@@ -17,10 +17,10 @@ public class SourceRepo(node: ASTNode) : Section(node) {
     public override fun check(): List<ErrorMessage> {
         val res = ArrayList<ErrorMessage>()
 
-        val typeField   = getField(javaClass<TypeField>())
-        val locationField = getField(javaClass<RepoLocationField>())
-        val moduleField = getField(javaClass<RepoModuleField>())
-        val tagField = getField(javaClass<RepoTagField>())
+        val typeField   = getField(TypeField::class.java)
+        val locationField = getField(RepoLocationField::class.java)
+        val moduleField = getField(RepoModuleField::class.java)
+        val tagField = getField(RepoTagField::class.java)
 
         if (typeField == null)     res.add(ErrorMessage(getSectTypeNode(), "type field is required", "error"))
         if (locationField == null) res.add(ErrorMessage(getSectTypeNode(), "location field is required", "error"))

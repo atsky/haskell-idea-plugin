@@ -14,14 +14,14 @@ public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
     }
 
     public fun getModuleName() : ModuleName? =
-        findChildByClass(javaClass<ModuleName>())
+        findChildByClass(ModuleName::class.java)
 
 
     public fun getModuleExports() : ModuleExports? =
-        findChildByClass(javaClass<ModuleExports>())
+        findChildByClass(ModuleExports::class.java)
 
     public fun getImportAsPart() : ImportAsPart? =
-            findChildByClass(javaClass<ImportAsPart>())
+            findChildByClass(ImportAsPart::class.java)
 
     public fun findModule() : Module? = getModuleName()?.findModuleFile()?.getModule()
 }

@@ -18,7 +18,7 @@ class CabalConfing() {
             if (line.startsWith("--")) {
                 continue
             }
-            val chunks = line.splitBy(": ")
+            val chunks = line.split(": ")
             if (chunks.size() > 0) {
                 if (chunks[0] == "remote-repo-cache") {
                     remoteRepoCache = chunks[1]

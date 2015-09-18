@@ -39,7 +39,7 @@ public class SimpleCabalStep(context: WizardContext) : AbstractImportFromExterna
     override fun updateDataModel() {
     }
 
-    throws(ConfigurationException::class)
+    @Throws(ConfigurationException::class)
     override fun validate(): Boolean {
         myControl?.apply()
         if (myControl?.getProjectFormatPanel() != null) {

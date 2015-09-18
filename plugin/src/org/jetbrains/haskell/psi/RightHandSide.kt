@@ -8,7 +8,7 @@ import com.intellij.lang.ASTNode
  */
 public class RightHandSide(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getWhereBindings() : WhereBindings? =
-        findChildByClass(javaClass<WhereBindings>())
+        findChildByClass(WhereBindings::class.java)
 
     fun getLetStatement() : LetStatement? = getParent()?.getParent() as? LetStatement
 

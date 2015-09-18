@@ -34,7 +34,6 @@ public class HaskellColorsAndFontsPage : ColorSettingsPage {
         return HaskellHighlighter()
     }
 
-    NonNls
     override fun getDemoText(): String {
         return "<keyword>module</keyword> <cons>Main</cons> <keyword>where</keyword>\n" +
                 "<pragma>{-# LANGUAGE CPP #-}</pragma>\n" +

@@ -10,8 +10,8 @@ import com.intellij.psi.util.PsiTreeUtil
 public class LetStatement(node : ASTNode) : Statement(node) {
 
     fun getQVar() : QVar? =
-            findChildByClass(javaClass<QNameExpression>())?.getQVar()
+            findChildByClass(QNameExpression::class.java)?.getQVar()
 
     fun getValueDefinitions() : List<ValueDefinition> =
-            PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+            PsiTreeUtil.getChildrenOfTypeAsList(this, ValueDefinition::class.java)
 }

@@ -10,5 +10,5 @@ import org.jetbrains.haskell.psi.reference.ConstructorReference
  */
 public class Pattern(node : ASTNode) : ASTWrapperPsiElement(node) {
     public fun getExpression(): Expression? =
-            findChildByClass(javaClass<Expression>())
+            findChildByClass(Expression::class.java)
 }

@@ -118,7 +118,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                         break
                     }
                     val result = String(char, 0, size)
-                    val split = result.splitBy(OSUtil.newLine, limit = 0)
+                    val split = result.split(OSUtil.newLine, limit = 0)
                     if (lines.isEmpty()) {
                         lines.add(split[0])
                     } else {
@@ -132,7 +132,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                         override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
                             notification.expire()
                             if (!project.isDisposed()) {
-                                ShowSettingsUtil.getInstance()?.showSettingsDialog(project, javaClass<HaskellConfigurable>())
+                                ShowSettingsUtil.getInstance()?.showSettingsDialog(project, HaskellConfigurable::class.java)
                             }
                         }
                     }

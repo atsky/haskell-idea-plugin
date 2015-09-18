@@ -15,7 +15,7 @@ import java.io.IOException
 
 public class CabalModuleBuilder() : AbstractExternalModuleBuilder<CabalProjectSettings>(SYSTEM_ID, CabalProjectSettings()) {
 
-    throws(ConfigurationException::class)
+    @Throws(ConfigurationException::class)
     override fun setupRootModel(modifiableRootModel: ModifiableRootModel?) {
     }
 

@@ -33,7 +33,6 @@ public class CabalColorsAndFontsPage : ColorSettingsPage {
         return CabalHighlighter()
     }
 
-    NonNls
     override fun getDemoText(): String {
         return "<prop>name</prop><colon>:</colon>                package-name\n" +
                 "<prop>version</prop><colon>:</colon>             0.1.0.0\n" +

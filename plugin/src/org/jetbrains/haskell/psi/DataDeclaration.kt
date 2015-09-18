@@ -14,10 +14,10 @@ public class DataDeclaration(node : ASTNode) : Declaration(node) {
     }
 
     fun getNameElement(): TypeVariable?  =
-        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).firstOrNull()
+        PsiTreeUtil.getChildrenOfTypeAsList(this, TypeVariable::class.java).firstOrNull()
 
     fun getConstructorDeclarationList() : List<ConstructorDeclaration> =
-        PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        PsiTreeUtil.getChildrenOfTypeAsList(this, ConstructorDeclaration::class.java)
 
 
 }

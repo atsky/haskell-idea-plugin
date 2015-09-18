@@ -12,5 +12,5 @@ public class DoExpression(node : ASTNode) : Expression(node) {
     }
 
     fun getStatementList() : List<Statement> =
-            PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+            PsiTreeUtil.getChildrenOfTypeAsList(this, Statement::class.java)
 }

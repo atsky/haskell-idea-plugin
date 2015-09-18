@@ -8,7 +8,7 @@ import com.intellij.lang.ASTNode
 public class ParenthesisExpression(node : ASTNode) : Expression(node) {
 
     public fun getExpression(): Expression? =
-        findChildByClass(javaClass<Expression>())
+        findChildByClass(Expression::class.java)
 
 
     override fun traverse(visitor: (Expression) -> Unit) {

@@ -1,7 +1,6 @@
 package org.jetbrains.haskell.util
 
 import java.io.File
-import kotlin.platform.platformStatic
 
 public object OSUtil {
     val newLine = System.getProperty("line.separator").toString();
@@ -12,7 +11,7 @@ public object OSUtil {
 
     public val isMac: Boolean = (osName.indexOf("mac") >= 0) || (osName.indexOf("darwin") >= 0);
 
-    platformStatic
+    @JvmStatic
     public fun getCabalData(): String {
         return if (isWindows) {
             joinPath(System.getenv("AppData")!!, "cabal")
@@ -23,7 +22,7 @@ public object OSUtil {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun getCabalConfig(): String {
         return if (isWindows) {
             joinPath(System.getenv("AppData")!!, "cabal", "config")
@@ -32,7 +31,7 @@ public object OSUtil {
         }
     }
 
-    platformStatic
+    @JvmStatic
     public fun getDefaultCabalBin(): String = joinPath(getCabalData(), "bin")
 
     fun getProgramDataFolder(name: String): String {
@@ -45,7 +44,7 @@ public object OSUtil {
         }
     }
 
-    platformStatic
+    @JvmStatic
     fun getExe(cmd: String): String = if (isWindows) cmd + ".exe" else cmd
 
     fun userHome(): String = System.getProperty("user.home")!!

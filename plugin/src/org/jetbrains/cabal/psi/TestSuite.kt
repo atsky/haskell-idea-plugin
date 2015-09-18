@@ -21,9 +21,9 @@ public class TestSuite(node: ASTNode) : BuildSection(node) {
     public override fun check(): List<ErrorMessage> {
         val res = ArrayList<ErrorMessage>()
 
-        val typeField    = getField(javaClass<TypeField>())
-        val mainIsField  = getField(javaClass<MainFileField>())
-        val testModField = getField(javaClass<TestModuleField>())
+        val typeField    = getField(TypeField::class.java)
+        val mainIsField  = getField(MainFileField::class.java)
+        val testModField = getField(TestModuleField::class.java)
 
         if (typeField == null) {
             res.add(ErrorMessage(getSectTypeNode(), "type field is required", "error"))

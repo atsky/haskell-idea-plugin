@@ -13,6 +13,6 @@ public class TypeSynonym(node : ASTNode) : Declaration(node) {
     }
 
     fun getNameElement(): TypeVariable?  =
-            PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<TypeVariable>()).firstOrNull()
+            PsiTreeUtil.getChildrenOfTypeAsList(this, TypeVariable::class.java).firstOrNull()
 
 }

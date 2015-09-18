@@ -16,11 +16,11 @@ public class SignatureDeclaration(node: ASTNode) : Declaration(node) {
         if (qVar != null) {
             return listOf(qVar)
         }
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, QVar::class.java)
     }
 
     fun getQNameExpression(): QNameExpression? =
-            findChildByClass(javaClass<QNameExpression>())
+            findChildByClass(QNameExpression::class.java)
 
 
 }

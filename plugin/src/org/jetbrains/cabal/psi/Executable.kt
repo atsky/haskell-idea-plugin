@@ -23,7 +23,7 @@ public class Executable(node: ASTNode) : BuildSection(node) {
     }
 
     public override fun check(): List<ErrorMessage> {
-        if (getField(javaClass<MainFileField>()) == null) return listOf(ErrorMessage(getSectTypeNode(), "main-is field is required", "error"))
+        if (getField(MainFileField::class.java) == null) return listOf(ErrorMessage(getSectTypeNode(), "main-is field is required", "error"))
         return listOf()
     }
 
@@ -34,5 +34,5 @@ public class Executable(node: ASTNode) : BuildSection(node) {
         return res
     }
 
-    public fun getMainFile(): Path? = getField(javaClass<MainFileField>())?.getValue() as Path?
+    public fun getMainFile(): Path? = getField(MainFileField::class.java)?.getValue() as Path?
 }

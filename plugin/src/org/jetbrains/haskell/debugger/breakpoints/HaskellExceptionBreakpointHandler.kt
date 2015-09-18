@@ -10,7 +10,7 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
  */
 
 public class HaskellExceptionBreakpointHandler(val debugProcess: HaskellDebugProcess) :
-        XBreakpointHandler<XBreakpoint<HaskellExceptionBreakpointProperties>>(javaClass<HaskellExceptionBreakpointType>()) {
+        XBreakpointHandler<XBreakpoint<HaskellExceptionBreakpointProperties>>(HaskellExceptionBreakpointType::class.java) {
 
     override fun registerBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         debugProcess.addExceptionBreakpoint(breakpoint)

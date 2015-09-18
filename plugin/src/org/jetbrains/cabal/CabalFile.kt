@@ -34,10 +34,10 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
     }
 
     public fun getExecutables(): MutableList<Executable> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<Executable>())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, Executable::class.java)
     }
 
-    public fun getFlagNames(): List<String> = PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass<Flag>()) map { it.getFlagName() }
+    public fun getFlagNames(): List<String> = PsiTreeUtil.getChildrenOfTypeAsList(this, Flag::class.java) map { it.getFlagName() }
 
-    public fun getDataDir(): Path? = getField(javaClass<DataDirField>())?.getValue() as Path?
+    public fun getDataDir(): Path? = getField(DataDirField::class.java)?.getValue() as Path?
 }

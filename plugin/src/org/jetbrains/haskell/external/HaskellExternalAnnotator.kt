@@ -90,7 +90,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }, ModalityState.any())
 
 
-        val ghcModi = psiFile.getProject().getComponent(javaClass<GhcModi>())!!
+        val ghcModi = psiFile.getProject().getComponent(GhcModi::class.java)!!
 
         val relativePath = getRelativePath(baseDir.getPath(), file.getPath())
 

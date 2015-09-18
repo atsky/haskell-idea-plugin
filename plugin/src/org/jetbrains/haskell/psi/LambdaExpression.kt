@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 public class LambdaExpression(node: ASTNode) : Expression(node) {
 
     public fun getPatterns(): List<Pattern> =
-            PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+            PsiTreeUtil.getChildrenOfTypeAsList(this, Pattern::class.java)
 
 
     override fun traverse(visitor: (Expression) -> Unit) {

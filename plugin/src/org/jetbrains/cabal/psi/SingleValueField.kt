@@ -21,6 +21,6 @@ public open class SingleValueField(node: ASTNode) : PropertyField(node) {
     }
 
     public fun getValue(): PropertyValue? {
-        return PsiTreeUtil.findChildOfType(this, javaClass<PropertyValue>())
+        return PsiTreeUtil.findChildOfType(this, PropertyValue::class.java)
     }
 }

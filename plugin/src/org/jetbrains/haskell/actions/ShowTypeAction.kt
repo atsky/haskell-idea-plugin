@@ -77,7 +77,7 @@ public class ShowTypeAction : AnAction() {
 
         val lineColPosition = LineColPosition.fromOffset(psiFile, range.first)!!
 
-        val ghcModi = psiFile.getProject().getComponent(javaClass<GhcModi>())!!
+        val ghcModi = psiFile.getProject().getComponent(GhcModi::class.java)!!
         val basePath = psiFile.getProject().getBasePath()!!
         val relativePath = getRelativePath(basePath, psiFile.getVirtualFile()!!.getPath())
 

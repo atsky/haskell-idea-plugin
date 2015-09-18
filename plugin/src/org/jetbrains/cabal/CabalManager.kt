@@ -14,13 +14,10 @@ import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.SimpleJavaParameters
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
-import org.jetbrains.haskell.icons.HaskellIcons
 import org.jetbrains.cabal.settings.*
 import org.jetbrains.cabal.export.*
 import org.jetbrains.cabal.util.*
 
-import javax.swing.*
-//import java.util.List
 import java.net.URL
 
 
@@ -43,7 +40,7 @@ public class CabalManager()
         return Function<Pair<Project, String>, ExternalSystemExecutionSettings> { ExternalSystemExecutionSettings() }
     }
 
-    throws(ExecutionException::class)
+    @Throws(ExecutionException::class)
     override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
         val kotlinJarPath = PathUtil.getJarPathForClass(kotlin.Unit.javaClass)
         parameters.getClassPath().add(kotlinJarPath)
@@ -52,11 +49,11 @@ public class CabalManager()
     override fun enhanceLocalProcessing(urls: List<URL>) {  }
 
     override fun getProjectResolverClass(): Class<out ExternalSystemProjectResolver<ExternalSystemExecutionSettings>> {
-        return javaClass<CabalProjectResolver>()
+        return CabalProjectResolver::class.java
     }
 
     override fun getTaskManagerClass(): Class<out ExternalSystemTaskManager<ExternalSystemExecutionSettings>> {
-        return javaClass<CabalTaskManager>()
+        return CabalTaskManager::class.java
     }
 
     override fun getExternalProjectDescriptor(): FileChooserDescriptor {

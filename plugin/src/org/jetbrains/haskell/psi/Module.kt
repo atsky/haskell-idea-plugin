@@ -30,34 +30,34 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
     }
 
     public fun getModuleName() : ModuleName? =
-            findChildByClass(javaClass<ModuleName>())
+            findChildByClass(ModuleName::class.java)
 
     public fun getImportList(): List<Import> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, Import::class.java)
     }
 
     fun getSignatureDeclarationsList() : List<SignatureDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, SignatureDeclaration::class.java)
     }
 
     fun getForeignDeclarationList() : List<ForeignDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ForeignDeclaration::class.java)
     }
 
     fun getInstanceDeclarationList() : List<InstanceDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, InstanceDeclaration::class.java)
     }
 
     fun getClassDeclarationList() : List<ClassDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, ClassDeclaration::class.java)
     }
 
     fun getDataDeclarationList() : List<DataDeclaration> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, DataDeclaration::class.java)
     }
 
     fun getTypeSynonymList() : List<TypeSynonym> {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, javaClass())
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, TypeSynonym::class.java)
     }
 
 }
