@@ -18,7 +18,7 @@ class CabalApplicationComponent() : ApplicationComponent {
     companion object {
         @JvmStatic
         public fun getInstance(): CabalApplicationComponent =
-                ApplicationManager.getApplication().getComponent(CabalApplicationComponent::class.java)
+                ApplicationManager.getApplication().getComponent(CabalApplicationComponent::class.java)!!
     }
 
     var configuration: CabalConfing = CabalConfing()

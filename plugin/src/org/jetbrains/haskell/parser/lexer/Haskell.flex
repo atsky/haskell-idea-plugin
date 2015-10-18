@@ -83,8 +83,8 @@ EOL_COMMENT = "--"[^\n]*
 
 <TEX> {
     [^\\]+            { return TokenPackage.getBLOCK_COMMENT(); }
-    "\\begin{code}"   { yybegin(YYINITIAL); return TokenPackage.getBLOCK_COMMENT(); }
-    \\+*              { return TokenPackage.getBLOCK_COMMENT(); }
+    "\\begin{code}"   { yybegin(YYINITIAL); return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
+    \\+*              { return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
 
 }
 
@@ -105,7 +105,7 @@ EOL_COMMENT = "--"[^\n]*
         int state = yystate();
         yybegin(YYINITIAL);
         zzStartRead = commentStart;
-        return TokenPackage.getBLOCK_COMMENT();
+        return HaskelLexerTokensKt.getBLOCK_COMMENT();
     }
 
     "-}" {
@@ -116,7 +116,7 @@ EOL_COMMENT = "--"[^\n]*
              int state = yystate();
              yybegin(YYINITIAL);
              zzStartRead = commentStart;
-             return TokenPackage.getBLOCK_COMMENT();
+             return HaskelLexerTokensKt.getBLOCK_COMMENT();
         }
     }
 
@@ -151,8 +151,8 @@ EOL_COMMENT = "--"[^\n]*
 }
 
 {white_no_nl}+        { return TokenType.WHITE_SPACE; }
-"\n"                  { return TokenPackage.getNEW_LINE(); }
-{EOL_COMMENT}         { return TokenPackage.getEND_OF_LINE_COMMENT(); }
+"\n"                  { return HaskelLexerTokensKt.getNEW_LINE(); }
+{EOL_COMMENT}         { return HaskelLexerTokensKt.getEND_OF_LINE_COMMENT(); }
 "{"                   { return HaskellLexerTokens.OCURLY; }
 "}"                   { return HaskellLexerTokens.CCURLY; }
 "["                   { return HaskellLexerTokens.OBRACK; }
@@ -270,7 +270,7 @@ EOL_COMMENT = "--"[^\n]*
 "{-# OVERLAPS"          { return HaskellLexerTokens.OVERLAPS; }
 "{-# INCOHERENT"        { return HaskellLexerTokens.INCOHERENT; }
 "#-}"                   { return HaskellLexerTokens.CLOSE_PRAG; }
-"{-#".*"#-}"            { return TokenPackage.getPRAGMA(); }
+"{-#".*"#-}"            { return HaskelLexerTokensKt.getPRAGMA(); }
 
 
 "*"                     { return HaskellLexerTokens.STAR; }
@@ -308,7 +308,7 @@ EOL_COMMENT = "--"[^\n]*
 "#else"[^\n]*         { return CPPTokens.ELSE;}
 
 
-"\\end{code}"         { yybegin(TEX); return TokenPackage.getBLOCK_COMMENT(); }
+"\\end{code}"         { yybegin(TEX); return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
 
 "''"                  { return HaskellLexerTokens.TYQUOTE; }
 "'"                   { return HaskellLexerTokens.SIMPLEQUOTE; }

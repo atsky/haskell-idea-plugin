@@ -151,7 +151,9 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    override fun registerAdditionalActions(leftToolbar: DefaultActionGroup, topToolbar: DefaultActionGroup) {
+    override fun registerAdditionalActions(leftToolbar: DefaultActionGroup,
+                                           topToolbar: DefaultActionGroup,
+                                           settings: DefaultActionGroup) {
         //temporary code for removal of unused actions from debug panel
         var stepOut: StepOutAction? = null
         var forceStepInto: ForceStepIntoAction? = null

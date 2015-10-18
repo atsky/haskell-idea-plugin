@@ -16,7 +16,7 @@ public class BreakpointCommandResult(public val breakpointNumber: Int,
                                      public val position: HsFilePosition) : ParseResult() {
 
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as BreakpointCommandResult
         return breakpointNumber == othCasted.breakpointNumber && position.equals(othCasted.position)
@@ -62,7 +62,7 @@ public class HsFilePosition(public val filePath: String,
     override fun toString(): String = "${getFileName()}:${spanToString()}"
 
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HsFilePosition
         return filePath.equals(othCasted.filePath) && rawStartLine == othCasted.rawStartLine &&
@@ -93,7 +93,7 @@ public class LocalBinding(var name: String?,
                           var typeName: String?,
                           var value: String?) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as LocalBinding
         return name == othCasted.name && typeName == othCasted.typeName && value == othCasted.value
@@ -110,7 +110,7 @@ public class LocalBinding(var name: String?,
 
 public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as LocalBindingList
         var bindingsAreEq = true
@@ -132,7 +132,7 @@ public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
                                    var bindings: ArrayList<LocalBinding>?,
                                    val functionName: String?) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HsStackFrameInfo
         var bindingsAreEq = true
@@ -159,7 +159,7 @@ public class HsHistoryFrameInfo(public val index: Int,
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HsHistoryFrameInfo
         return index == othCasted.index && function == othCasted.function && filePosition == othCasted.filePosition
@@ -178,7 +178,7 @@ public class HsHistoryFrameInfo(public val index: Int,
 public class ExpressionType(public val expression: String,
                             public val expressionType: String) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as ExpressionType
         return expression == othCasted.expression && expressionType == othCasted.expressionType
@@ -201,7 +201,7 @@ public class ShowOutput(public val output: String) : ParseResult()
 public class MoveHistResult(public val filePosition: HsFilePosition?,
                             public val bindingList: LocalBindingList) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as MoveHistResult
         return filePosition == othCasted.filePosition && bindingList == othCasted.bindingList
@@ -211,7 +211,7 @@ public class MoveHistResult(public val filePosition: HsFilePosition?,
 public class HistoryResult(public val frames: ArrayList<HsHistoryFrameInfo>,
                            public val full: Boolean) : ParseResult() {
     override fun equals(other: Any?): Boolean {
-        if (other identityEquals this) return true
+        if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HistoryResult
         var framesAreEq = true

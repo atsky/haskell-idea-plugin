@@ -46,8 +46,8 @@ public class CabalParserDefinition() : ParserDefinition {
     override fun createParser(project: Project?): PsiParser {
         return object : PsiParser {
 
-            override fun parse(root: IElementType?, builder: PsiBuilder?): ASTNode {
-                return CabalParser(root!!, builder!!).parse()
+            override fun parse(root: IElementType, builder: PsiBuilder): ASTNode {
+                return CabalParser(root, builder).parse()
             }
         }
     }

@@ -14,7 +14,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     public fun parse(): ASTNode = parseInternal(root)
 
     fun canParse(parse: () -> Boolean): Boolean {
-        val marker = builder.mark()!!
+        val marker = builder.mark()
         val res = parse()
         marker.rollbackTo()
         return res
@@ -136,7 +136,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun parseTillSeparatorOrPrevLevel(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean, separatorIsOptional: Boolean) : Boolean {
         if (!onOneLine) skipNewLineBiggerLevel(prevLevel)                                                          // returns false if there is nothing to parse
-        val mark = builder.mark()!!
+        val mark = builder.mark()
         var valueParsed = parseValue()
         if (!onOneLine) skipNewLineBiggerLevel(prevLevel)
         if (valueParsed && (isLastBiggerLevel(prevLevel) || canParse({ parseSeparator() }) || separatorIsOptional)) {
@@ -158,7 +158,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     }
 
     fun parseTillValidValueList(prevLevel: Int, parseValue : () -> Boolean, parseSeparator : () -> Boolean, onOneLine: Boolean) : Boolean {
-        var mark: Marker? = builder.mark()!!
+        var mark: Marker? = builder.mark()
         var nonEmpty = false
         do {
             if (!onOneLine) skipNewLineBiggerLevel(prevLevel);
@@ -167,7 +167,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
                 nonEmpty = true
             }
             else break
-            mark = builder.mark()!!
+            mark = builder.mark()
             if (!onOneLine) skipNewLineBiggerLevel(prevLevel);
         } while ((!builder.eof()) && parseSeparator())
         mark?.rollbackTo()
@@ -348,7 +348,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     fun parseIfElse(level: Int, parseFields: CabalParser.(Int) -> Boolean): Boolean {
         if (parseIfOrElse(level, "if", parseFields)) {
             if (nextLevel() == level) {
-                val marker = builder.mark()!!
+                val marker = builder.mark()
                 skipNewLineBiggerLevel(level - 1)
                 if (parseIfOrElse(level, "else", parseFields)) {
                     marker.drop()
@@ -392,6 +392,6 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
         }
         rootMarker.done(root)
-        return builder.getTreeBuilt()!!
+        return builder.getTreeBuilt()
     }
 }

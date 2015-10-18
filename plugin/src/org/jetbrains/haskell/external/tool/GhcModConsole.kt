@@ -43,7 +43,7 @@ public class GhcModConsole(val project: Project) : ProjectComponent {
 
     companion object {
         fun getInstance(project : Project) =
-            project.getComponent(GhcModConsole::class.java)
+            project.getComponent(GhcModConsole::class.java)!!
 
     }
 

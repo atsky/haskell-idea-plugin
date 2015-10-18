@@ -4,25 +4,17 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import com.intellij.openapi.Disposable
 import com.intellij.debugger.impl.DebuggerStateManager
 import com.intellij.execution.ui.RunnerLayoutUi
-import com.intellij.debugger.ui.impl.VariablesPanel
 import javax.swing.JComponent
 import org.jetbrains.haskell.debugger.frames.HsStackFrame
-import com.intellij.ui.components.JBList
-import javax.swing.event.ListSelectionEvent
 import com.intellij.debugger.impl.DebuggerContextImpl
-import javax.swing.DefaultListModel
+import com.intellij.debugger.impl.DebuggerSession
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.icons.AllIcons
-import javax.swing.ListSelectionModel
 import com.intellij.ui.components.JBScrollPane
-import javax.swing.ListModel
 import com.intellij.xdebugger.impl.frame.XVariablesView
 import com.intellij.xdebugger.impl.XDebugSessionImpl
-import com.intellij.xdebugger.impl.frame.XDebugView
 import com.intellij.debugger.ui.DebuggerContentInfo
 import com.intellij.ui.content.Content
-import com.intellij.openapi.actionSystem.ActionGroup
-import com.intellij.xdebugger.impl.actions.XDebuggerActions
 import org.jetbrains.haskell.util.DefaultListModelWrapper
 
 public class HistoryTab(private val debugSession: XDebugSessionImpl,
@@ -95,7 +87,11 @@ public class HistoryTab(private val debugSession: XDebugSessionImpl,
     }
 
     private inner class MyDebuggerStateManager() : DebuggerStateManager() {
-        override fun setState(context: DebuggerContextImpl?, state: Int, event: Int, description: String?) {
+
+        override fun setState(p0: DebuggerContextImpl,
+                              p1: DebuggerSession.State?,
+                              event: DebuggerSession.Event?,
+                              p3: String?) {
             fireStateChanged(context, event)
         }
 

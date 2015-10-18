@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 public class RamVirtualFileSystem() : NewVirtualFileSystem() {
 
     fun getTarGzRootForLocalFile(entryVFile : VirtualFile) : VirtualFile {
-
         throw UnsupportedOperationException()
     }
 

@@ -32,7 +32,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     abstract fun getGrammar() : Map<String, Rule>
 
     fun mark() : Marker {
-        return builder!!.mark()!!
+        return builder!!.mark()
     }
 
     fun parse(root: IElementType): ASTNode {
@@ -58,7 +58,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
             builder.advanceLexer()
         }
         rootMarker.done(root)
-        return builder.getTreeBuilt()!!
+        return builder.getTreeBuilt()
     }
 
     fun parserWithTree(tree: NonTerminalTree) {
@@ -83,7 +83,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
             }
         }
 
-        marker?.done(type)
+        marker?.done(type!!)
     }
 
     fun findFirst(grammar : Map<String, Rule>) {
