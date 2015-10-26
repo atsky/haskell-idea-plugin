@@ -132,7 +132,7 @@
         <jar destfile="${plugin.destination}/haskell-plugin.jar">
             <fileset dir="${build.dir}/plugin/"/>
         </jar>
-        <copy file="${basedir}/lib/kotlin-runtime.jar" todir="${plugin.destination}"/>
+        <copy file="${build.dir}/kotlinc/lib/lib/kotlin-runtime.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/json-simple-1.1.1.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/commons-compress-1.8.jar" todir="${plugin.destination}"/>
         <copy file="${basedir}/lib/pty4j-0.3.jar" todir="${plugin.destination}"/>
