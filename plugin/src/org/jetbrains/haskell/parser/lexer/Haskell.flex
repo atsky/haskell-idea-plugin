@@ -82,9 +82,9 @@ EOL_COMMENT = "--"[^\n]*
 %%
 
 <TEX> {
-    [^\\]+            { return TokenPackage.getBLOCK_COMMENT(); }
-    "\\begin{code}"   { yybegin(YYINITIAL); return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
-    \\+*              { return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
+    [^\\]+            { return HaskellLexerTokensKt.getBLOCK_COMMENT(); }
+    "\\begin{code}"   { yybegin(YYINITIAL); return HaskellLexerTokensKt.getBLOCK_COMMENT(); }
+    \\+*              { return HaskellLexerTokensKt.getBLOCK_COMMENT(); }
 
 }
 
@@ -105,7 +105,7 @@ EOL_COMMENT = "--"[^\n]*
         int state = yystate();
         yybegin(YYINITIAL);
         zzStartRead = commentStart;
-        return HaskelLexerTokensKt.getBLOCK_COMMENT();
+        return HaskellLexerTokensKt.getBLOCK_COMMENT();
     }
 
     "-}" {
@@ -116,7 +116,7 @@ EOL_COMMENT = "--"[^\n]*
              int state = yystate();
              yybegin(YYINITIAL);
              zzStartRead = commentStart;
-             return HaskelLexerTokensKt.getBLOCK_COMMENT();
+             return HaskellLexerTokensKt.getBLOCK_COMMENT();
         }
     }
 
@@ -151,8 +151,8 @@ EOL_COMMENT = "--"[^\n]*
 }
 
 {white_no_nl}+        { return TokenType.WHITE_SPACE; }
-"\n"                  { return HaskelLexerTokensKt.getNEW_LINE(); }
-{EOL_COMMENT}         { return HaskelLexerTokensKt.getEND_OF_LINE_COMMENT(); }
+"\n"                  { return HaskellLexerTokensKt.getNEW_LINE(); }
+{EOL_COMMENT}         { return HaskellLexerTokensKt.getEND_OF_LINE_COMMENT(); }
 "{"                   { return HaskellLexerTokens.OCURLY; }
 "}"                   { return HaskellLexerTokens.CCURLY; }
 "["                   { return HaskellLexerTokens.OBRACK; }
@@ -270,7 +270,7 @@ EOL_COMMENT = "--"[^\n]*
 "{-# OVERLAPS"          { return HaskellLexerTokens.OVERLAPS; }
 "{-# INCOHERENT"        { return HaskellLexerTokens.INCOHERENT; }
 "#-}"                   { return HaskellLexerTokens.CLOSE_PRAG; }
-"{-#".*"#-}"            { return HaskelLexerTokensKt.getPRAGMA(); }
+"{-#".*"#-}"            { return HaskellLexerTokensKt.getPRAGMA(); }
 
 
 "*"                     { return HaskellLexerTokens.STAR; }
@@ -308,7 +308,7 @@ EOL_COMMENT = "--"[^\n]*
 "#else"[^\n]*         { return CPPTokens.ELSE;}
 
 
-"\\end{code}"         { yybegin(TEX); return HaskelLexerTokensKt.getBLOCK_COMMENT(); }
+"\\end{code}"         { yybegin(TEX); return HaskellLexerTokensKt.getBLOCK_COMMENT(); }
 
 "''"                  { return HaskellLexerTokens.TYQUOTE; }
 "'"                   { return HaskellLexerTokens.SIMPLEQUOTE; }

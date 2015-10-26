@@ -110,7 +110,7 @@ class GrammarParser(val tokens : List<Token>) {
 
 
     fun eof(): Boolean {
-        return current >= tokens.size() - 1;
+        return current >= tokens.size - 1;
     }
 
     fun parseVariant() : Variant {
@@ -118,7 +118,7 @@ class GrammarParser(val tokens : List<Token>) {
         while (true) {
             if (tryMatch(TokenType.STRING)) {
                 val t = text()
-                list.add(RuleRef(t.substring(1, t.length() - 1), false))
+                list.add(RuleRef(t.substring(1, t.length - 1), false))
             } else if (tryMatch(TokenType.ID)) {
                 list.add(RuleRef(text(), true))
             } else {

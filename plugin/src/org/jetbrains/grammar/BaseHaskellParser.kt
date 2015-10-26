@@ -87,10 +87,10 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     }
 
     fun findFirst(grammar : Map<String, Rule>) {
-        for (rule in grammar.values()) {
+        for (rule in grammar.values) {
             rule.makeAnalysis(grammar);
         }
-        for (rule in grammar.values()) {
+        for (rule in grammar.values) {
             rule.makeDeepAnalysis(grammar);
         }
     }

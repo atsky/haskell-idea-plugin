@@ -25,20 +25,20 @@ public open class CabalCompletionContributor() : CompletionContributor() {
 
             when (parent) {
                 is CabalFile -> {
-                    values.addAll(PKG_DESCR_FIELDS.keySet() map {it.concat(":")})
+                    values.addAll(PKG_DESCR_FIELDS.keys.map({it.concat(":")}))
                     values.addAll(TOP_SECTION_NAMES)
                     caseSensitivity = false
                 }
                 is RangedValue -> {
                     if ((parent is Name)) {
                         if (parent.isFlagNameInCondition()) {
-                            values.addAll(parent.getAvailableValues() map { it + ")" })
+                            values.addAll(parent.getAvailableValues().map({ it + ")" }))
                             caseSensitivity = false
                         }
                         else if (parent.getParent() is InvalidField) {
-                            values.addAll(parent.getAvailableValues() map {
-                                if (it in SECTIONS.keySet()) it else it.concat(":")
-                            })
+                            values.addAll(parent.getAvailableValues().map({
+                                if (it in SECTIONS.keys) it else it.concat(":")
+                            }))
                             caseSensitivity = false
                         }
                     }
@@ -65,7 +65,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                     }
                     if (parentField is BuildDependsField) {
                         val project = current.getProject()
-                        values.addAll(CabalInterface(project).getInstalledPackagesList() map { it.name })
+                        values.addAll(CabalInterface(project).getInstalledPackagesList().map({ it.name }))
                     }
                 }
             }

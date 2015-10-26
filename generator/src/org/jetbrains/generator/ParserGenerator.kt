@@ -244,7 +244,7 @@ class ParserGenerator(val grammar: Grammar) {
         } else {
             val elementName = (variant as FinalVariant).elementName
             builder.append(if (elementName != null) {
-                "end(GrammarPackage.get${camelCaseToUpperCase(elementName)}())"
+                "end(HaskellTokensKt.get${camelCaseToUpperCase(elementName)}())"
             } else {
                 "end()"
             })

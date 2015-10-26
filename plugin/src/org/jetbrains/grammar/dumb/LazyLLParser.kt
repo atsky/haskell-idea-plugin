@@ -120,9 +120,9 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                                  val children: List<ResultTree>,
                                  val next: ParserResultCallBack) : ParserState() {
         override fun next(): ParserState {
-            return if (index == variants.size()) {
+            return if (index == variants.size) {
                 throw RuntimeException()
-            } else if (index == variants.size() - 1) {
+            } else if (index == variants.size - 1) {
                 parseVariant(state, variants[index], children, object : ParserResultCallBack() {
                     override fun done(result: ParserResult): ParserState {
                         val nextResult = if (bestResult == null || bestResult.size() < result.size()) {
@@ -148,7 +148,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                         val token = state.getToken()
                         while (!variants[nextIndex].accepts(token)) {
                             nextIndex++
-                            if (nextIndex == variants.size()) {
+                            if (nextIndex == variants.size) {
                                 return next.done(nextResult)
                             }
                         }

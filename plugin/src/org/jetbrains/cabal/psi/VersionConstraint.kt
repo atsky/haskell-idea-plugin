@@ -22,12 +22,12 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
 
     public fun compareTo(other: String): Int? {
         if (!isSimple()) return null
-        val thisVersion  = getVersionValue().split('.') map { it.toInt() }
-        val otherVersion = other.split('.') map { it.toInt() }
+        val thisVersion = getVersionValue().split('.').map({ it.toInt() })
+        val otherVersion = other.split('.').map({ it.toInt() })
 
         fun compareFrom(i: Int): Int {
-            if (i >= thisVersion.size())  return -1
-            if (i >= otherVersion.size()) return 1
+            if (i >= thisVersion.size) return -1
+            if (i >= otherVersion.size) return 1
             if (thisVersion[i] == otherVersion[i]) return compareFrom(i + 1)
             return if (thisVersion[i] < otherVersion[i]) -1 else 1
         }
@@ -42,16 +42,16 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
 
         if (!isSimple()) {
             val baseVersion = getVersionValue().get(0, getVersionValue().length() - 2) as String
-            return givenVersion startsWith baseVersion
+            return givenVersion.startsWith(baseVersion)
         }
 
         if ((comparator == null) || (compareRes == null)) throw IllegalStateException()
 
         return when (comparator) {
             ">=" -> compareRes <= 0
-            ">"  -> compareRes <  0
+            ">" -> compareRes < 0
             "<=" -> compareRes >= 0
-            "<"  -> compareRes >  0
+            "<" -> compareRes > 0
             "==" -> compareRes == 0
             else -> throw IllegalStateException()
         }
@@ -59,7 +59,7 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
 
     public fun isAny(): Boolean = getText().equals("-any")
 
-    public fun isSimple(): Boolean = !(getVersionValue() endsWith '*')
+    public fun isSimple(): Boolean = !(getVersionValue().endsWith('*'))
 
     public fun getComparator(): String? = COMPARATORS firstOrNull { it.equals(this.getFirstChild()!!.getText()!!) }
 
@@ -76,8 +76,7 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
         }
         if (comparator == "==") {
             if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)".toRegex()) || version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.){2,}\\*".toRegex())) return listOf()
-        }
-        else {
+        } else {
             if (version.matches("([0-9]+(\\-[0-9a-zA-Z]+)*\\.)*([0-9]+(\\-[0-9a-zA-Z]+)*)".toRegex())) return listOf()
         }
         return listOf(ErrorMessage(this, "invalid version constraint", "error"))

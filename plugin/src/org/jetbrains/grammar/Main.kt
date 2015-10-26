@@ -33,7 +33,7 @@ fun main(args : Array<String>) {
     }
     for (file in path.listFiles(filter)) {
         val name = file.getName()
-        parseFile(file, File(path, name.substring(0, name.length() - 3) + "_tree.txt"))
+        parseFile(file, File(path, name.substring(0, name.length - 3) + "_tree.txt"))
     }
 }
 

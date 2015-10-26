@@ -21,7 +21,7 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(PKG_DESCR_FIELDS.keySet())
+        res.addAll(PKG_DESCR_FIELDS.keys)
         res.addAll(TOP_SECTION_NAMES)
         return res
     }
