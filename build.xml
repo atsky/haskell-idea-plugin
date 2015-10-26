@@ -69,7 +69,7 @@
     </target>
 
     <target name="download.kotlinc" depends="mk.buid">
-        <get src="https://github.com/JetBrains/kotlin/releases/download/build-0.13.1513/kotlin-compiler-0.13.1513.zip"
+        <get src="https://github.com/JetBrains/kotlin/releases/download/build-1.0.0-beta-1038/kotlin-compiler-1.0.0-beta-1038.zip"
              dest="${build.dir}" skipexisting="true"/>
     </target>
     <target name="mk.buid">
