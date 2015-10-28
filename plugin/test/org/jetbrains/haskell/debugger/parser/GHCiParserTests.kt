@@ -137,7 +137,7 @@ public class GHCiParserTests {
 
     private fun tryParseStoppedAtTest(inputs: Array<String>, expected: HsStackFrameInfo?) {
         val deq = LinkedList<String?>()
-        inputs map { deq.addAll(it.split('\n')) }
+        inputs.map { deq.addAll(it.split('\n')) }
         var actual = GHCiParser.tryParseStoppedAt(deq)
         assertEquals(expected, actual, "Actual: ${actual?.filePosition}, ${actual?.bindings}, ${actual?.functionName}")
     }

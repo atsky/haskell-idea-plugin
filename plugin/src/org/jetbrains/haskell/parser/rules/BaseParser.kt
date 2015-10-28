@@ -44,7 +44,7 @@ public open class BaseParser(public val root: IElementType, public val builder: 
     }
 
     fun mark(): PsiBuilder.Marker {
-        return builder.mark()!!
+        return builder.mark()
     }
 
     inline fun atom(body: () -> Boolean): Boolean {

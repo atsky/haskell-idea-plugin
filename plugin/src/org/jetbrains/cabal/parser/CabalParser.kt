@@ -22,7 +22,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
 
     fun indentSize(str: String): Int {
         val indexOf = str.lastIndexOf('\n')
-        return str.length() - indexOf - 1
+        return str.length - indexOf - 1
     }
 
     fun nextLevel() : Int? {                                  //there can never be two NEW_LINE_INDENT's next to each other
@@ -283,7 +283,7 @@ public class CabalParser(root: IElementType, builder: PsiBuilder) : BaseParser(r
     }
 
     fun parseFieldFrom(level: Int, fields: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>>) : Boolean {
-        for (key in fields.keySet()) {
+        for (key in fields.keys) {
             if (parseField(level, key, fields.get(key)!!.first, fields.get(key)!!.second)) return true
         }
         return false

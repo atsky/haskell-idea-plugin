@@ -21,10 +21,10 @@ public interface FieldContainer: PsiElement {
     }
 
     public fun <T : Field> getField(fieldType: Class<T>, fieldName: String): T?
-            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType) firstOrNull { it.hasName(fieldName) }
+            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType).firstOrNull { it.hasName(fieldName) }
 
     public fun <T : Field> getFields(fieldType: Class<T>, fieldName: String): List<T>
-            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType) filter { it.hasName(fieldName) }
+            = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType).filter { it.hasName(fieldName) }
 
     public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
 

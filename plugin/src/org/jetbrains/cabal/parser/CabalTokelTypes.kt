@@ -12,24 +12,43 @@ import org.jetbrains.cabal.psi.*
 
 public object CabalTokelTypes {
 
+    @JvmField
     val COLON                  : IElementType  = HaskellTokenType(":")
+    @JvmField
     val COMMA                  : IElementType  = HaskellTokenType(",")
+    @JvmField
     val COMMENT                : IElementType  = HaskellTokenType("COMMENT")
+    @JvmField
     val OPEN_PAREN             : IElementType  = HaskellTokenType("(")
+    @JvmField
     val CLOSE_PAREN            : IElementType  = HaskellTokenType(")")
+    @JvmField
     val SLASH                  : IElementType  = HaskellTokenType("/")
+    @JvmField
     val END_OF_LINE_COMMENT    : IElementType  = HaskellTokenType("--")
+    @JvmField
     val STRING                 : IElementType  = HaskellTokenType("string")
+    @JvmField
     val NUMBER                 : IElementType  = HaskellTokenType("number")
+    @JvmField
     val ID                     : IElementType  = HaskellTokenType("id")
+    @JvmField
     val COMPARATOR             : IElementType  = HaskellTokenType("COMPARATOR")
+    @JvmField
     val LOGIC                  : IElementType  = HaskellTokenType("LOGIC")
+    @JvmField
     val EQ                     : IElementType  = HaskellTokenType("=")
+    @JvmField
     val AND                    : IElementType  = HaskellTokenType("&")
+    @JvmField
     val OR                     : IElementType  = HaskellTokenType("|")
+    @JvmField
     val OPEN_CURLY             : IElementType  = HaskellTokenType("{")
+    @JvmField
     val CLOSE_CURLY            : IElementType  = HaskellTokenType("}")
+    @JvmField
     val TAB                    : IElementType  = HaskellTokenType("TAB")
+    @JvmField
     val NEGATION               : IElementType  = HaskellTokenType("!")
 
     val COMMENTS               : TokenSet = TokenSet.create(END_OF_LINE_COMMENT, COMMENT)

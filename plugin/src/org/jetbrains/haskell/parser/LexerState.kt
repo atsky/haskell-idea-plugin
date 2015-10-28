@@ -87,7 +87,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
             } else {
                 val charSequence = builder.getOriginalText()
                 for (i in start..(end-1)) {
-                    if (charSequence.charAt(i) == '\t') {
+                    if (charSequence[i] == '\t') {
                         currentIndent += 8;
                     } else {
                         currentIndent += 1;
@@ -105,7 +105,7 @@ public fun getCachedTokens(builder: PsiBuilder): CachedTokens {
         lineStarts.add(isLineStart)
         isLineStart = false
 
-        currentIndent += builder.getTokenText()!!.length()
+        currentIndent += builder.getTokenText()!!.length
 
         builder.advanceLexer()
     }
@@ -137,7 +137,7 @@ public class LexerState(val tokens: CachedTokens,
         if (currentToken != null) {
             return currentToken == token
         }
-        if (position < tokens.tokens.size() && tokens.tokens[position] == token) {
+        if (position < tokens.tokens.size && tokens.tokens[position] == token) {
             return true
         }
         return false
@@ -150,7 +150,7 @@ public class LexerState(val tokens: CachedTokens,
             }
             return LexerState(tokens, position, readedLexemNumber + 1, null, indentStack)
         }
-        if (position == tokens.tokens.size()) {
+        if (position == tokens.tokens.size) {
             return last()
         }
         if (tokens.tokens[position] == HaskellLexerTokens.OCURLY) {
@@ -170,7 +170,7 @@ public class LexerState(val tokens: CachedTokens,
         }
         val nextPosition = position + 1
 
-        if (nextPosition == tokens.tokens.size()) {
+        if (nextPosition == tokens.tokens.size) {
             return last()
         }
 
@@ -191,17 +191,17 @@ public class LexerState(val tokens: CachedTokens,
     private fun last(): LexerState {
         if (indentStack != null) {
             return LexerState(tokens,
-                    tokens.tokens.size(),
+                    tokens.tokens.size,
                     readedLexemNumber + 1,
                     HaskellLexerTokens.VCCURLY,
                     indentStack.parent)
         } else {
-            return LexerState(tokens, tokens.tokens.size(), readedLexemNumber, null, null)
+            return LexerState(tokens, tokens.tokens.size, readedLexemNumber, null, null)
         }
     }
 
     private fun checkIndent(position: Int): LexerState {
-        if (position == tokens.tokens.size()) {
+        if (position == tokens.tokens.size) {
             return last()
         }
         if (tokens.lineStart[position]) {
@@ -246,14 +246,14 @@ public class LexerState(val tokens: CachedTokens,
         if (currentToken != null) {
             return currentToken
         }
-        if (position < tokens.tokens.size()) {
+        if (position < tokens.tokens.size) {
             return tokens.tokens[position];
         }
         return null;
     }
 
     fun eof(): Boolean {
-        return currentToken == null && position == tokens.tokens.size();
+        return currentToken == null && position == tokens.tokens.size;
     }
 
 

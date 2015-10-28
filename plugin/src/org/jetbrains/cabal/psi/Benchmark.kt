@@ -11,7 +11,7 @@ public class Benchmark(node: ASTNode) : BuildSection(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(BENCHMARK_FIELDS.keySet())
+        res.addAll(BENCHMARK_FIELDS.keys)
         res.addAll(IF_ELSE)
         return res
     }

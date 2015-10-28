@@ -41,7 +41,7 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
             val psiFile = CabalInterface(project).getPsiFile(cabal)
             val executables = psiFile.getExecutables()
 
-            val name = if (executables.size() > 0) {
+            val name = if (executables.size > 0) {
                 executables.get(0).getExecutableName()
             } else {
                 "Default"

@@ -70,7 +70,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                   next: TreeCallback): ParserState {
         //log({ "rule ${rule.name}, state = ${state.lexemNumber}" })
 
-        if (state.readedLexemNumber < cache.size()) {
+        if (state.readedLexemNumber < cache.size) {
             val pair = cache[state.readedLexemNumber][rule.name]
             if (pair != null) {
                 return next.done(pair.first, pair.second)
@@ -97,14 +97,14 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                       variants: List<Variant>,
                       children: List<ResultTree>,
                       next: ParserResultCallBack): ParserState {
-        if (variants.size() == 1) {
+        if (variants.size == 1) {
             return parseVariant(state, variants.first(), children, next)
         } else {
             var i = 0;
             val token = state.getToken()
             while (!variants[i].accepts(token)) {
                 i++
-                if (i == variants.size()) {
+                if (i == variants.size) {
                     return next.fail()
                 }
             }
@@ -192,7 +192,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 }
                 is NonTerminal -> {
                     val ruleToParse = grammar[term.rule]!!
-                    if (!ruleToParse.first!!.contains(state.getToken()) &&
+                    if (!ruleToParse.first!!.containsRaw(state.getToken()) &&
                             !ruleToParse.first!!.contains(HaskellLexerTokens.VCCURLY)) {
                         if (ruleToParse.canBeEmpty) {
                             val nextChildren = ArrayList(children)
@@ -265,7 +265,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                    tree: NonTerminalTree,
                    end: LexerState) {
         val lexemNumber = start.readedLexemNumber
-        while (lexemNumber >= cache.size()) {
+        while (lexemNumber >= cache.size) {
             cache.add(HashMap())
         }
         val hashMap = cache[lexemNumber]

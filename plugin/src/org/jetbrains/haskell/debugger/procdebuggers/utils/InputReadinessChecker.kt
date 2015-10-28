@@ -31,7 +31,7 @@ public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateU
                     socket = serverSocket.accept()
                     connected = true
                 } catch (e: SocketException) {
-                    println(e.getMessage())
+                    println(e.message)
                     running = false
                 }
                 if (connected) {

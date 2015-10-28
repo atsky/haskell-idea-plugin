@@ -25,7 +25,7 @@ public class MainFileField(node: ASTNode) : SingleValueField(node), PathsField {
 
     public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> {
         var res = ArrayList<VirtualFile>()
-        res.addAll((getParentBuildSection()!!.getHsSourceDirs() map { it.getVirtualFile(originalRootDir) }).filterNotNull())
+        res.addAll(getParentBuildSection()!!.getHsSourceDirs().map({ it.getVirtualFile(originalRootDir) }).filterNotNull())
         res.add(originalRootDir)
         return res
     }

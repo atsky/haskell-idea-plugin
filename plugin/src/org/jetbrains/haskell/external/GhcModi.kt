@@ -109,9 +109,9 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
 
                 val lines = ArrayList<String>()
 
-                while (lines.size() < 2 ||
-                (!lines[lines.size() - 2].startsWith("OK") &&
-                !lines[lines.size() - 2].startsWith("NG"))) {
+                while (lines.size < 2 ||
+                (!lines[lines.size - 2].startsWith("OK") &&
+                !lines[lines.size - 2].startsWith("NG"))) {
                     val char = CharArray(16 * 1024)
                     val size = input.read(char)
                     if (size == -1) {
@@ -122,12 +122,12 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                     if (lines.isEmpty()) {
                         lines.add(split[0])
                     } else {
-                        val last = lines.size() - 1
+                        val last = lines.size - 1
                         lines[last] = lines[last] + split[0]
                     }
-                    lines.addAll(split.toList().subList(1, split.size()))
+                    lines.addAll(split.toList().subList(1, split.size))
                 }
-                if (lines[lines.size() - 2].startsWith("NG")) {
+                if (lines[lines.size - 2].startsWith("NG")) {
                     val hyperlinkHandler = object : NotificationListener.Adapter() {
                         override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
                             notification.expire()
@@ -139,7 +139,7 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
                     Notifications.Bus.notify(Notification(
                             "ghc.modi",
                             "ghc-modi failed",
-                            "ghc-modi failed with error: " + lines[lines.size() - 2] +
+                            "ghc-modi failed with error: " + lines[lines.size - 2] +
                             "<br/>You can disable ghc-modi in <a href=\"#\">Settings | Haskell</a>",
                             NotificationType.ERROR, hyperlinkHandler))
                 }

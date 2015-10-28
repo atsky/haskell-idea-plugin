@@ -11,7 +11,7 @@ import org.jetbrains.haskell.psi.TypeSynonym
 public class ImportScope(val import : Import) {
 
 
-    public fun filterDeclarations<A : Declaration>(list : List<A>) : List<A> {
+    public fun <A : Declaration> filterDeclarations(list : List<A>) : List<A> {
         val moduleExports = import.getModuleExports()
         if (moduleExports != null) {
             if (import.hasHiding()) {

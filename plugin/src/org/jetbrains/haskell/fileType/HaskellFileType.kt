@@ -27,6 +27,7 @@ public class HaskellFileType() : LanguageFileType(HaskellLanguage.INSTANCE) {
             "UTF-8"
 
     companion object {
+        @JvmField
         public val INSTANCE: HaskellFileType = HaskellFileType()
         public val DEFAULT_EXTENSION: String = "hs"
     }

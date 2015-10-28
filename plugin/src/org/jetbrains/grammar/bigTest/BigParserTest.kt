@@ -100,7 +100,7 @@ class BigParserTest {
         val data = ByteArray(16384)
 
         while (true) {
-            nRead = ins.read(data, 0, data.size())
+            nRead = ins.read(data, 0, data.size)
             if (nRead == -1) {
                 break;
             }
@@ -132,10 +132,10 @@ class BigParserTest {
             // Read the response body.
             return method.getResponseBody()
         } catch (e: HttpException) {
-            System.err.println("Fatal protocol violation: " + e.getMessage());
+            System.err.println("Fatal protocol violation: " + e.message);
             e.printStackTrace();
         } catch (e: IOException) {
-            System.err.println("Fatal transport error: " + e.getMessage());
+            System.err.println("Fatal transport error: " + e.message);
             e.printStackTrace();
         } finally {
             // Release the connection.
@@ -154,7 +154,7 @@ class BigParserTest {
                 val value = strings[2]
 
                 map.getOrPut(key) { ArrayList<String>() }.add(value)
-                if (map.size() >= MAX_PACKAGES) {
+                if (map.size >= MAX_PACKAGES) {
                     break;
                 }
             }
@@ -177,7 +177,7 @@ class BigParserTest {
             }
 
             val byteArray = file.readBytes()
-            val result = listHaskellFiles(name, ByteInputStream(byteArray, byteArray.size()))
+            val result = listHaskellFiles(name, ByteInputStream(byteArray, byteArray.size))
             if (!result) {
                 packageProblems++;
                 if (failOnError) {

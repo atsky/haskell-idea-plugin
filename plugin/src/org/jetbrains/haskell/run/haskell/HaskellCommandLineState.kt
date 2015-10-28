@@ -58,7 +58,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val params = generalCommandLine.getParametersList()?.getList()
         val env = generalCommandLine.getEnvironment()
         val dir = generalCommandLine.getWorkDirectory()
-        val command = Array(1 + (params?.size() ?: 0), {
+        val command = Array(1 + (params?.size ?: 0), {
             i: Int ->
             if (i == 0) exePath else params!!.get(i - 1)
         })

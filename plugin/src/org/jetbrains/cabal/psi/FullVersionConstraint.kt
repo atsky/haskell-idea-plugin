@@ -9,5 +9,5 @@ public class FullVersionConstraint(node: ASTNode) : PropertyValue(node) {
     public fun getBaseName() : String = getFirstChild()!!.getText()!!
 
     public fun getConstraint() : ComplexVersionConstraint?
-            = (getChildren() firstOrNull { it is ComplexVersionConstraint }) as ComplexVersionConstraint?
+            = (getChildren().firstOrNull { it is ComplexVersionConstraint }) as ComplexVersionConstraint?
 }

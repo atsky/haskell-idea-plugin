@@ -155,10 +155,10 @@ public class HistoryManager(private val debugSession : XDebugSession,
 
         public fun hasNext(): Boolean = historyIndex > 0
 
-        public fun hasPrevious(): Boolean = !allFramesCollected || historyIndex + 1 < historyFrames.size()
+        public fun hasPrevious(): Boolean = !allFramesCollected || historyIndex + 1 < historyFrames.size
 
         public fun currentFrame(): HsHistoryFrame? =
-                if (historyIndex < historyFrames.size()) historyFrames.get(historyIndex) else null
+                if (historyIndex < historyFrames.size) historyFrames.get(historyIndex) else null
 
         public fun moveTo(index: Int) {
             if (index == -1 || index == historyIndex) {
@@ -203,7 +203,7 @@ public class HistoryManager(private val debugSession : XDebugSession,
         }
 
         private fun moveBack() {
-            if (historyIndex + 1 < historyFrames.size()) {
+            if (historyIndex + 1 < historyFrames.size) {
                 if (historyFrames[historyIndex + 1].obsolete) {
                     val syncObject = SyncObject()
                     syncObject.lock()

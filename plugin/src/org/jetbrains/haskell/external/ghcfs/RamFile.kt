@@ -54,7 +54,7 @@ public class RamFile(val fileName: String, val content : String) : VirtualFile()
     }
 
     override fun getLength(): Long {
-        return content.length().toLong()
+        return content.length.toLong()
     }
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {

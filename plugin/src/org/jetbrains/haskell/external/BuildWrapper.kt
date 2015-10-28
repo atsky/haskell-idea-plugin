@@ -71,7 +71,7 @@ class BuildWrapper(val moduleRoot: String,
             val array = extractJsonArray(out)
             return if (array != null) array[0] as JSONObject? else null
         } catch (e : IOException) {
-            Notifications.Bus.notify(Notification("BuildWrapper.Error", "BuildWrapper error", e.getMessage()!!, NotificationType.ERROR))
+            Notifications.Bus.notify(Notification("BuildWrapper.Error", "BuildWrapper error", e.message!!, NotificationType.ERROR))
             return null
         }
     }
@@ -80,7 +80,7 @@ class BuildWrapper(val moduleRoot: String,
     fun extractJsonArray(text : String) : JSONArray? {
         val prefix = "build-wrapper-json:"
         if (text.contains(prefix)) {
-            val jsonText = text.substring(text.indexOf(prefix) + prefix.length())
+            val jsonText = text.substring(text.indexOf(prefix) + prefix.length)
             return JSONValue.parse(jsonText) as? JSONArray
         }
 
@@ -108,7 +108,7 @@ class BuildWrapper(val moduleRoot: String,
 
         val errorPrefix = "At least the following dependencies are missing:"
         if (out.contains(errorPrefix)) {
-            val errorText = out.substring(out.indexOf(errorPrefix) + errorPrefix.length())
+            val errorText = out.substring(out.indexOf(errorPrefix) + errorPrefix.length)
             errorText.substring(0, errorText.indexOf("\n\n"))
             Notifications.Bus.notify(Notification("Cabal.Error",
                                                   "Packages missing",

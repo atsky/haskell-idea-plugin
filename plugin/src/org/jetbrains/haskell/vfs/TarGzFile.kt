@@ -45,8 +45,8 @@ public class TarGzFile(val archiveFile: VirtualFile,
             if (myPath == entryName) {
                 myData = readToArray(tarArchiveInputStream)
             } else if (entryName.startsWith(myPath)) {
-                val name = entryName.substring(myPath.length())
-                if (!name.substring(0, name.length() - 1).contains("/")) {
+                val name = entryName.substring(myPath.length)
+                if (!name.substring(0, name.length - 1).contains("/")) {
                     myChildren.add(name)
                 }
             }
@@ -63,7 +63,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
         val data = ByteArray(16384)
 
         while (true) {
-            nRead = ins.read(data, 0, data.size())
+            nRead = ins.read(data, 0, data.size)
             if (nRead == -1) {
                 break;
             }
@@ -77,7 +77,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun getName(): String {
         val str = if (isDirectory()) {
-            myPath.substring(0, myPath.length() - 1)
+            myPath.substring(0, myPath.length - 1)
         } else {
             myPath
         }
@@ -98,7 +98,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun getParent(): VirtualFile? {
         val str = if (isDirectory()) {
-            myPath.substring(0, myPath.length() - 1)
+            myPath.substring(0, myPath.length - 1)
         } else {
             myPath
         }
@@ -134,7 +134,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun getLength(): Long {
         doInit()
-        return myData!!.size().toLong()
+        return myData!!.size.toLong()
     }
 
     override fun refresh(asynchronous: Boolean, recursive: Boolean, postRunnable: Runnable?) {

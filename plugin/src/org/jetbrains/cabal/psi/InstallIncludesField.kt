@@ -15,5 +15,5 @@ public class InstallIncludesField(node: ASTNode) : MultiValueField(node), PathsF
     public override fun validRelativity(path: File): Boolean = !path.isAbsolute()
 
     public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile>
-            = (getParentBuildSection()!!.getIncludeDirs() map { it.getVirtualFile(originalRootDir) }).filterNotNull()
+            = (getParentBuildSection()!!.getIncludeDirs().map { it.getVirtualFile(originalRootDir) }).filterNotNull()
 }

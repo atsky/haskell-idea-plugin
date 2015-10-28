@@ -83,7 +83,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String {
         val suggestedName: String
-        if (currentSdkName != null && currentSdkName.length() > 0) {
+        if (currentSdkName != null && currentSdkName.length > 0) {
             suggestedName = currentSdkName
         } else {
             val versionString = getVersionString(sdkHome)
@@ -98,7 +98,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun getVersionString(sdkHome: String?): String? {
         val versionString: String? = getGhcVersion(sdkHome)
-        if (versionString != null && versionString.length() == 0) {
+        if (versionString != null && versionString.length == 0) {
             return null
         }
 
@@ -152,7 +152,7 @@ public class HaskellSdkType() : SdkType("GHC") {
         }
 
         private fun getLatestVersion(sdkPaths: List<File>): SDKInfo? {
-            val length = sdkPaths.size()
+            val length = sdkPaths.size
             if (length == 0)
                 return null
             if (length == 1)
@@ -166,7 +166,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                     return d1.version.compareTo(d2.version)
                 }
             })
-            return ghcDirs.get(ghcDirs.size() - 1)
+            return ghcDirs.get(ghcDirs.size - 1)
         }
 
         public fun checkForGhc(path: String): Boolean {
@@ -180,7 +180,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                     return "ghc".equals(FileUtil.getNameWithoutExtension(f), ignoreCase = true)
                 }
             })
-            return children != null && children.size() >= 1
+            return children != null && children.size >= 1
         }
 
         public fun getGhcVersion(homePath: String?): String? {

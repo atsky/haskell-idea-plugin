@@ -17,9 +17,9 @@ public open class Section(node: ASTNode): Field(node), FieldContainer, Checkable
 
     public override fun check(): List<ErrorMessage> = listOf()
 
-    public fun getSectChildren(): List<PsiElement> = getChildren() filter { it is Field }
+    public fun getSectChildren(): List<PsiElement> = getChildren().filter { it is Field }
 
-    public fun getSectTypeNode(): PsiElement = (getChildren() firstOrNull { it is SectionType }) ?: throw IllegalStateException()
+    public fun getSectTypeNode(): PsiElement = (getChildren().firstOrNull { it is SectionType }) ?: throw IllegalStateException()
 
     public fun getSectType(): String = getSectTypeNode().getText()!!
 

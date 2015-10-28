@@ -149,7 +149,7 @@ class ParserGenerator(val grammar: Grammar) {
                 indent {
                     line("Map<String, Rule> grammar = new HashMap<String, Rule>();")
 
-                    for (rule in rules.values()) {
+                    for (rule in rules.values) {
                         if (rule is Rule) {
                             generateRule(this, rule)
                         }
@@ -218,7 +218,7 @@ class ParserGenerator(val grammar: Grammar) {
 
     fun fillVariant(builder : StringBuilder, variant : Variant): StringBuilder {
         if (variant is NonFinalVariant) {
-            if (variant.next.size() == 1) {
+            if (variant.next.size == 1) {
                 fillVariant(builder, variant.next.firstOrNull()!!)
                 val atom = variant.atom
                 if (tokens.containsKey(atom.toString())) {

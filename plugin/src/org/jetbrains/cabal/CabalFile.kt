@@ -37,7 +37,7 @@ public class CabalFile(provider: FileViewProvider) : PsiFileBase(provider, Cabal
         return PsiTreeUtil.getChildrenOfTypeAsList(this, Executable::class.java)
     }
 
-    public fun getFlagNames(): List<String> = PsiTreeUtil.getChildrenOfTypeAsList(this, Flag::class.java) map { it.getFlagName() }
+    public fun getFlagNames(): List<String> = PsiTreeUtil.getChildrenOfTypeAsList(this, Flag::class.java).map { it.getFlagName() }
 
     public fun getDataDir(): Path? = getField(DataDirField::class.java)?.getValue() as Path?
 }

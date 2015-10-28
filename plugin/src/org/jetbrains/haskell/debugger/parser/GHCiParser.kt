@@ -45,12 +45,12 @@ public class GHCiParser() {
         private val FORCE_OUTPUT_PATTERN = "^(\\w+)\\s=\\s(.*)$"
 
         private fun tryCreateFilePosition(line: String): HsFilePosition? {
-            for (i in 0..(FILE_POSITION_PATTERNS.size() - 1)) {
+            for (i in 0..(FILE_POSITION_PATTERNS.size - 1)) {
                 val matcher = Pattern.compile(FILE_POSITION_PATTERNS[i]).matcher(line)
                 if (matcher.matches()) {
                     val path = matcher.group(1)!!
                     val values = IntArray(matcher.groupCount() - 1)
-                    for (j in 0..(values.size() - 1)) {
+                    for (j in 0..(values.size - 1)) {
                         values[j] = Integer.parseInt(matcher.group(j + 2)!!)
                     }
                     return HsFilePosition(path, values[POSITION_PATTERN_PLACES[i][0]], values[POSITION_PATTERN_PLACES[i][1]],
@@ -159,8 +159,8 @@ public class GHCiParser() {
         private fun removeBoldModifier(boldText: String): String {
             val boldStartTag = "\u001B[1m"
             val boldEndTag = "\u001B[0m"
-            val startIndex = if (boldText.startsWith(boldStartTag)) boldStartTag.length() else 0
-            val endIndex = if (boldText.endsWith(boldEndTag)) boldText.length() - boldEndTag.length() else boldText.length()
+            val startIndex = if (boldText.startsWith(boldStartTag)) boldStartTag.length else 0
+            val endIndex = if (boldText.endsWith(boldEndTag)) boldText.length - boldEndTag.length else boldText.length
             return boldText.substring(startIndex, endIndex)
         }
 

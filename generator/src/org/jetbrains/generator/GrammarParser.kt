@@ -37,7 +37,7 @@ class GrammarParser(val tokens : List<Token>) {
         while (true) {
             if (tryMatch(TokenType.STRING)) {
                 val tokenText = text()
-                list.add(TokenDescription(tokenText.substring(1, tokenText.length() - 1), getNext()!!.text, true))
+                list.add(TokenDescription(tokenText.substring(1, tokenText.length - 1), getNext()!!.text, true))
             } else if (tryMatch(TokenType.ID)) {
                 val tokenText = text()
 
@@ -75,9 +75,9 @@ class GrammarParser(val tokens : List<Token>) {
     }
 
     fun getNext(): Token? {
-        if (current < tokens.size()) {
+        if (current < tokens.size) {
             current++
-            return if (current < tokens.size()) tokens[current] else null;
+            return if (current < tokens.size) tokens[current] else null;
         } else {
             return null;
         }

@@ -22,14 +22,15 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
 
     public override fun check(): List<ErrorMessage> {
         if (isBool()) return listOf()
-        if (getTestName() in VALID_TESTS_NAMES) {
+        val testName = getTestName()
+        if (testName != null && testName in VALID_TESTS_NAMES) {
             return listOf()
         }
         return listOf(ErrorMessage(this, "invalid test name", "error"))
     }
 
     public fun isBool(): Boolean {
-        return (getChildren().size() == 0)
+        return (getChildren().size == 0)
     }
 
     public fun getTestName(): String? {

@@ -10,7 +10,7 @@ public class SourceRepo(node: ASTNode) : Section(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(SOURCE_REPO_FIELDS.keySet())
+        res.addAll(SOURCE_REPO_FIELDS.keys)
         return res
     }
 

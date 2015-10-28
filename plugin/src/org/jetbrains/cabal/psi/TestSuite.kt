@@ -13,7 +13,7 @@ public class TestSuite(node: ASTNode) : BuildSection(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(TEST_SUITE_FIELDS.keySet())
+        res.addAll(TEST_SUITE_FIELDS.keys)
         res.addAll(IF_ELSE)
         return res
     }

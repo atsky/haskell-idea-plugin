@@ -92,7 +92,7 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
                 ":m +Control.Concurrent\n",
                 "let $HANDLE_NAME = ($connectToHostPort) $host $INPUT_READINESS_PORT\n",
                 ":set stop $stopCmd\n")
-        commands map { enqueueCommandWithPriority(HiddenCommand.createInstance(it)) }
+        commands.map { enqueueCommandWithPriority(HiddenCommand.createInstance(it)) }
     }
 
     private inner class EvaluationPrintCallback(val expressionType: String,

@@ -114,10 +114,10 @@ public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseR
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as LocalBindingList
         var bindingsAreEq = true
-        if (list.size() != othCasted.list.size()) {
+        if (list.size != othCasted.list.size) {
             bindingsAreEq = false
         } else {
-            for (i in 0..list.size() - 1) {
+            for (i in 0..list.size - 1) {
                 if (list.get(i) != othCasted.list.get(i)) {
                     bindingsAreEq = false
                     break
@@ -136,10 +136,10 @@ public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HsStackFrameInfo
         var bindingsAreEq = true
-        if (bindings != null && othCasted.bindings != null && bindings!!.size() != othCasted.bindings!!.size()) {
+        if (bindings != null && othCasted.bindings != null && bindings!!.size != othCasted.bindings!!.size) {
             bindingsAreEq = false
         } else {
-            for (i in 0..bindings!!.size() - 1) {
+            for (i in 0..bindings!!.size - 1) {
                 if (bindings!!.get(i) != othCasted.bindings!!.get(i)) {
                     bindingsAreEq = false
                     break
@@ -215,10 +215,10 @@ public class HistoryResult(public val frames: ArrayList<HsHistoryFrameInfo>,
         if (other == null || other.javaClass != this.javaClass) return false
         val othCasted = other as HistoryResult
         var framesAreEq = true
-        if (frames.size() != othCasted.frames.size()) {
+        if (frames.size != othCasted.frames.size) {
             framesAreEq = false
         } else {
-            for (i in 0..frames.size() - 1) {
+            for (i in 0..frames.size - 1) {
                 if (frames.get(i) != othCasted.frames.get(i)) {
                     framesAreEq = false
                     break

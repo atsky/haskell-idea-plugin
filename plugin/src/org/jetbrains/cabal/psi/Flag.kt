@@ -10,7 +10,7 @@ public class Flag(node: ASTNode) : Section(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(FLAG_FIELDS.keySet())
+        res.addAll(FLAG_FIELDS.keys)
         return res
     }
 

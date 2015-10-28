@@ -12,7 +12,7 @@ import java.lang.IllegalStateException
 public class ComplexVersionConstraint(node: ASTNode) : PropertyValue(node)  {
 
     public fun satisfyConstraint(givenVersion: String): Boolean {
-        val elements = getChildren() filter { it is VersionConstraint }
+        val elements = getChildren().filter { it is VersionConstraint }
 
         fun findLogicOrNullFromRange(startOffset: Int, endOffset: Int): PsiElement? {
             for (i in startOffset..endOffset - 1) {
@@ -24,7 +24,7 @@ public class ComplexVersionConstraint(node: ASTNode) : PropertyValue(node)  {
 
         fun checkConstraint(i: Int) = (elements[i] as VersionConstraint).satisfyConstraint(givenVersion)
 
-        if (elements.size() == 0) throw IllegalStateException()
+        if (elements.size == 0) throw IllegalStateException()
         var res = checkConstraint(0)
 
         for (i in elements.indices) {

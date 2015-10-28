@@ -75,7 +75,7 @@ public class HaskellProgramRunner() : GenericProgramRunner<GenericDebuggerRunner
             return null
         }
         try {
-            if (debuggerManager.getDebugSessions().size() != 0) {
+            if (debuggerManager.getDebugSessions().size != 0) {
                 Notifications.Bus.notify(Notification("", GENERAL_DEBUGGING_TITLE, MULTI_DEBUGGING_MSG, NotificationType.WARNING))
                 focusDebugToolWindow(debuggerManager, project)
                 return null

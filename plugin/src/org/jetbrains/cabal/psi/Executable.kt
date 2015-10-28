@@ -29,7 +29,7 @@ public class Executable(node: ASTNode) : BuildSection(node) {
 
     public override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
-        res.addAll(EXECUTABLE_FIELDS.keySet())
+        res.addAll(EXECUTABLE_FIELDS.keys)
         res.addAll(IF_ELSE)
         return res
     }

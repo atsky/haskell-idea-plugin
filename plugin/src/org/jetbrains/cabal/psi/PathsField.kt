@@ -22,7 +22,7 @@ public interface PathsField: PsiElement {
 
     public fun validRelativity(path: File): Boolean = true
 
-    public final fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
+    public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
 
     public fun getParentBuildSection(): BuildSection? {
         var parent = getParent()
@@ -36,23 +36,23 @@ public interface PathsField: PsiElement {
     public fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf(originalRootDir)
 
 
-    public final fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
+    public fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
 
         fun getParentPathFrom(sourceDir: VirtualFile) = File(prefixPath.getPathWithParent(sourceDir)).getParent()
 
         fun findFileByPath(path: String) = originalRootDir.getFileSystem().findFileByPath(path.replace(File.separatorChar, '/'))
 
         if (!validRelativity(prefixPath.getFile())) return listOf()
-        val parentPaths = (getSourceDirs(originalRootDir) map { getParentPathFrom(it) }).filterNotNull()
-        return (parentPaths map { findFileByPath(it) }).filterNotNull() filter { it.isDirectory() }
+        val parentPaths = (getSourceDirs(originalRootDir).map { getParentPathFrom(it) }).filterNotNull()
+        return (parentPaths.map { findFileByPath(it) }).filterNotNull().filter { it.isDirectory() }
     }
 
-    public final fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
+    public fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
         val parentDirs = getParentDirs(prefixPath, originalRootDir)
         val completionFiles = ArrayList<VirtualFile>()
         for (dir in parentDirs) {
-            completionFiles.addAll(dir.getChildren()!! filter { isValidCompletionFile(it) })
+            completionFiles.addAll(dir.getChildren()!!.filter { isValidCompletionFile(it) })
         }
-        return completionFiles map { it.getName().concat(if (it.isDirectory()) "/" else "") }
+        return completionFiles.map { it.getName().concat(if (it.isDirectory()) "/" else "") }
     }
 }

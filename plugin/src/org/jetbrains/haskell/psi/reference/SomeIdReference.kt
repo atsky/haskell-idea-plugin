@@ -21,7 +21,7 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         val module = Module.findModule(someId)
         if (module != null) {
             val text = someId.getText()!!
-            if (Character.isUpperCase(text.charAt(0))) {
+            if (Character.isUpperCase(text[0])) {
                 //for (function in ModuleScope(module).getVisibleTypes()) {
                 //    if (function.getName() == text) {
                 //        return function

@@ -156,15 +156,15 @@ public class JSONConverter {
         }
 
         fun <R: ParseResult>InfoSwitch<R>.case(vararg caseStrings: String, action: () -> R?) {
-            if(!this.someCaseMatched && caseStrings any { it.equals(this.info) }) {
+            if(!this.someCaseMatched && caseStrings.any { it.equals(this.info) }) {
                 this.result = action()
                 this.someCaseMatched = true
             }
         }
 
-        private fun switchInfo<R: ParseResult>(json: JSONObject,
-                                               defaultAction: (JSONObject) -> R?,
-                                               cases: InfoSwitch<R>.() -> Unit): R? {
+        private fun <R: ParseResult> switchInfo(json: JSONObject,
+                                                defaultAction: (JSONObject) -> R?,
+                                                cases: InfoSwitch<R>.() -> Unit): R? {
             val infoSwitch = InfoSwitch<R>(json.getString(INFO_TAG))
             infoSwitch.cases()
             if(infoSwitch.someCaseMatched) {
@@ -173,10 +173,10 @@ public class JSONConverter {
             return defaultAction(json)
         }
 
-        private fun switchInfoOrThrow<R: ParseResult>(json: JSONObject, throwMsg: String, cases: InfoSwitch<R>.() -> Unit): R? =
+        private fun <R: ParseResult> switchInfoOrThrow(json: JSONObject, throwMsg: String, cases: InfoSwitch<R>.() -> Unit): R? =
             switchInfo(json, { throw RuntimeException(throwMsg) }, cases)
 
-        private fun switchInfoOrNull<R: ParseResult>(json: JSONObject, cases: InfoSwitch<R>.() -> Unit): R? =
+        private fun <R: ParseResult> switchInfoOrNull(json: JSONObject, cases: InfoSwitch<R>.() -> Unit): R? =
             switchInfo(json, { null }, cases)
     }
 }

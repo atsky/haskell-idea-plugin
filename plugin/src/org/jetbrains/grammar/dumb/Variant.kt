@@ -78,7 +78,7 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
     }
 
     override fun accepts(token: IElementType?): Boolean {
-        return canBeEmpty || hasCurly || first!!.contains(token)
+        return canBeEmpty || hasCurly || first!!.containsRaw(token)
     }
 
     override fun makeAnalysis(grammar: Map<String, Rule>) {

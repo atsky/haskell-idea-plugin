@@ -55,7 +55,7 @@ public fun getRelativePath(base: String, path: String): String {
     val fpath = File(path).getCanonicalPath()
 
     if (fpath.startsWith(bpath)) {
-        return fpath.substring(bpath.length() + 1)
+        return fpath.substring(bpath.length + 1)
     } else {
         throw RuntimeException("Base path " + base + "is wrong to " + path);
     }

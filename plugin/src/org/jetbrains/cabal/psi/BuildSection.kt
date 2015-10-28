@@ -12,7 +12,7 @@ import java.io.File
 public open class BuildSection(node: ASTNode): Section(node) {
 
     private fun <F : MultiValueField, V : PropertyValue> getFieldsValues(fieldT: Class<F>, valueT: Class<V>): List<V>
-            = getFields(fieldT) flatMap { it.getValues(valueT) }
+            = getFields(fieldT).flatMap { it.getValues(valueT) }
 
     public fun getHsSourceDirs(): List<Path> = getFieldsValues(HsSourceDirsField::class.java, Path::class.java)
 
