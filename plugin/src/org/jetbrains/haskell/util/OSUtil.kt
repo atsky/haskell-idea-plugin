@@ -1,15 +1,15 @@
 package org.jetbrains.haskell.util
 
-import java.io.File
+import com.intellij.openapi.util.SystemInfo
 
 public object OSUtil {
     val newLine = System.getProperty("line.separator").toString();
 
-    val osName = System.getProperty("os.name")!!.toLowerCase();
+    public val isLinux: Boolean = SystemInfo.isLinux
 
-    public val isWindows: Boolean = (osName.indexOf("win") >= 0)
+    public val isWindows: Boolean = SystemInfo.isWindows
 
-    public val isMac: Boolean = (osName.indexOf("mac") >= 0) || (osName.indexOf("darwin") >= 0);
+    public val isMac: Boolean = SystemInfo.isMac
 
     @JvmStatic
     public fun getCabalData(): String {
