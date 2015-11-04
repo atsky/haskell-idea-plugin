@@ -1,10 +1,12 @@
 package org.jetbrains.haskell.sdk
 
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import org.jdom.Element
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.haskell.icons.HaskellIcons
@@ -17,35 +19,143 @@ import java.util.*
 import org.jetbrains.haskell.util.GHCVersion
 import org.jetbrains.haskell.util.GHCUtil
 import org.jetbrains.haskell.sdk.HaskellSdkType.SDKInfo
+import kotlin.text.Regex
 
 public class HaskellSdkType() : SdkType("GHC") {
 
-    class SDKInfo(val sdkPath : File) {
-        val ghcHome: File
-        val version: GHCVersion = GHCUtil.getVersion(sdkPath.getName())
+    companion object {
+        private val WINDOWS_EXECUTABLE_SUFFIXES = arrayOf("cmd", "exe", "bat", "com")
+        public val INSTANCE: HaskellSdkType = HaskellSdkType()
+        private val GHC_ICON: Icon = HaskellIcons.HASKELL
 
-        init {
-            ghcHome = if (SystemInfo.isMac && sdkPath.getAbsolutePath().contains("GHC.framework")) {
-                File(sdkPath, "usr")
+        private fun getLatestVersion(ghcPaths: List<File>): SDKInfo? {
+            val length = ghcPaths.size
+            if (length == 0)
+                return null
+            if (length == 1)
+                return SDKInfo(ghcPaths[0])
+            val ghcDirs = ArrayList<SDKInfo>()
+            for (name in ghcPaths) {
+                ghcDirs.add(SDKInfo(name))
+            }
+            Collections.sort(ghcDirs, object : Comparator<SDKInfo> {
+                override fun compare(d1: SDKInfo, d2: SDKInfo): Int {
+                    return d1.version.compareTo(d2.version)
+                }
+            })
+            return ghcDirs.get(ghcDirs.size - 1)
+        }
+
+        public fun checkForGhc(path: String): Boolean {
+            val file = File(path)
+            if (file.isDirectory) {
+                val children = file.listFiles(object : FileFilter {
+                    override fun accept(f: File): Boolean {
+                        if (f.isDirectory)
+                            return false
+                        return f.name == "ghc"
+                    }
+                })
+                return children.isNotEmpty()
             } else {
-                sdkPath
+                return isGhc(file.name)
             }
         }
+
+        fun isGhc(name : String) : Boolean =
+                name == "ghc" || name.matches("ghc-[.0-9*]+".toRegex())
+
+
+        public fun getGhcVersion(ghcPath: File): String? {
+            if (ghcPath.isDirectory) {
+                return null
+            }
+            try {
+                return ProcessRunner(null).executeOrFail(ghcPath.toString(), "--numeric-version").trim()
+            } catch (ex: Exception) {
+                // ignore
+            }
+
+            return null
+        }
+    }
+
+    class SDKInfo(val ghcPath: File) {
+        val version: GHCVersion = getVersion(ghcPath.name)
+
+        companion object {
+            fun getVersion(name: String?): GHCVersion {
+                val versionStr : List<String> = if (name == null) {
+                    listOf<String>()
+                } else {
+                    name.split("[^0-9]+".toRegex()).filter { !it.isEmpty() }
+                }
+                val parts = ArrayList<Int>()
+                for (part in versionStr) {
+                    if (part.isEmpty())
+                        continue
+                    try {
+                        parts.add(part.toInt())
+                    } catch (nfex: NumberFormatException) {
+                        // ignore
+                    }
+
+                }
+                return GHCVersion(parts)
+            }
+        }
+
+    }
+
+    override fun getHomeChooserDescriptor(): FileChooserDescriptor? {
+        val isWindows = SystemInfo.isWindows
+        return object : FileChooserDescriptor(true, false, false, false, false, false) {
+            @Throws(Exception::class)
+            override fun validateSelectedFiles(files: Array<VirtualFile>?) {
+                if (files!!.size != 0) {
+                    if (!isValidSdkHome(files[0].path)) {
+                        throw Exception("Not valid ghc " + files[0].name)
+                    }
+                }
+            }
+
+            override fun isFileVisible(file: VirtualFile, showHiddenFiles: Boolean): Boolean {
+                if (!file.isDirectory) {
+                    if (!file.name.toLowerCase().startsWith("ghc")) {
+                        return false
+                    }
+                    if (isWindows) {
+                        val path = file.path
+                        var looksExecutable = false
+                        for (ext in WINDOWS_EXECUTABLE_SUFFIXES) {
+                            if (path.endsWith(ext)) {
+                                looksExecutable = true
+                                break
+                            }
+                        }
+                        return looksExecutable && super.isFileVisible(file, showHiddenFiles)
+                    }
+                }
+                return super.isFileVisible(file, showHiddenFiles)
+            }
+        }.withTitle("Select GHC executable").withShowHiddenFiles(SystemInfo.isUnix)
     }
 
     override fun suggestHomePath(): String? {
         val versions: List<File>
         if (SystemInfo.isLinux) {
-            val versionsRoot = File("/usr/lib")
-            if (!versionsRoot.isDirectory()) {
+            val versionsRoot = File("/usr/bin")
+            if (!versionsRoot.isDirectory) {
                 return null
             }
             versions = (versionsRoot.listFiles(object : FilenameFilter {
                 override fun accept(dir: File, name: String): Boolean {
-                    return name.toLowerCase().startsWith("ghc") && File(dir, name).isDirectory()
+                    return !File(dir, name).isDirectory && isGhc(name.toLowerCase())
                 }
             })?.toList() ?: listOf())
         } else if (SystemInfo.isWindows) {
+            throw UnsupportedOperationException();
+            /*
             var progFiles = System.getenv("ProgramFiles(x86)")
             if (progFiles == null) {
                 progFiles = System.getenv("ProgramFiles")
@@ -53,10 +163,13 @@ public class HaskellSdkType() : SdkType("GHC") {
             if (progFiles == null)
                 return null
             val versionsRoot = File(progFiles, "Haskell Platform")
-            if (!versionsRoot.isDirectory())
+            if (!versionsRoot.isDirectory)
                 return progFiles
             versions = versionsRoot.listFiles()?.toList() ?: listOf()
+            */
         } else if (SystemInfo.isMac) {
+            throw UnsupportedOperationException();
+            /*
             val macVersions = ArrayList<File>()
             val versionsRoot = File("/Library/Frameworks/GHC.framework/Versions/")
             if (versionsRoot.isDirectory()) {
@@ -67,14 +180,13 @@ public class HaskellSdkType() : SdkType("GHC") {
                 macVersions.addAll(brewVersionsRoot.listFiles()?.toList() ?: listOf())
             }
             versions = macVersions
+            */
         } else {
             return null
         }
         val latestVersion = getLatestVersion(versions)
-        if (latestVersion == null)
-            return null
-
-        return latestVersion.ghcHome.getAbsolutePath()
+        
+        return latestVersion?.ghcPath?.getAbsolutePath()
     }
 
     override fun isValidSdkHome(path: String?): Boolean {
@@ -97,7 +209,10 @@ public class HaskellSdkType() : SdkType("GHC") {
     }
 
     override fun getVersionString(sdkHome: String?): String? {
-        val versionString: String? = getGhcVersion(sdkHome)
+        if (sdkHome == null) {
+            return null;
+        }
+        val versionString: String? = getGhcVersion(File(sdkHome))
         if (versionString != null && versionString.length == 0) {
             return null
         }
@@ -140,61 +255,4 @@ public class HaskellSdkType() : SdkType("GHC") {
         return false
     }
 
-
-    companion object {
-
-        public val INSTANCE: HaskellSdkType = HaskellSdkType()
-        private val GHC_ICON: Icon = HaskellIcons.HASKELL
-
-        fun getBinDirectory(path: String) :  File {
-            return File(path, "bin")
-
-        }
-
-        private fun getLatestVersion(sdkPaths: List<File>): SDKInfo? {
-            val length = sdkPaths.size
-            if (length == 0)
-                return null
-            if (length == 1)
-                return SDKInfo(sdkPaths[0])
-            val ghcDirs = ArrayList<SDKInfo>()
-            for (name in sdkPaths) {
-                ghcDirs.add(SDKInfo(name))
-            }
-            Collections.sort(ghcDirs, object : Comparator<SDKInfo> {
-                override fun compare(d1: SDKInfo, d2: SDKInfo): Int {
-                    return d1.version.compareTo(d2.version)
-                }
-            })
-            return ghcDirs.get(ghcDirs.size - 1)
-        }
-
-        public fun checkForGhc(path: String): Boolean {
-            val bin = getBinDirectory(path)
-            if (!bin.isDirectory())
-                return false
-            val children = bin.listFiles(object : FileFilter {
-                override fun accept(f: File): Boolean {
-                    if (f.isDirectory())
-                        return false
-                    return "ghc".equals(FileUtil.getNameWithoutExtension(f), ignoreCase = true)
-                }
-            })
-            return children != null && children.size >= 1
-        }
-
-        public fun getGhcVersion(homePath: String?): String? {
-            if (homePath == null || !File(homePath).isDirectory()) {
-                return null
-            }
-            try {
-                val cmd = getBinDirectory(homePath).getAbsolutePath() + File.separator + "ghc"
-                return ProcessRunner(null).executeOrFail(cmd, "--numeric-version").trim()
-            } catch (ex: Exception) {
-                // ignore
-            }
-
-            return null
-        }
-    }
 }

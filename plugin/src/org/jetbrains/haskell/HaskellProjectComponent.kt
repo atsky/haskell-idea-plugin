@@ -33,23 +33,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
         });
     }
 
-    fun packageNotFound(pkg: String) {
-        invokeInUI {
-            val result = Messages.showDialog(
-                    project,
-                    pkg + " not found. You can install it by cabal or set path in settings.",
-                    pkg + " executable not found",
-                    arrayOf("Install", "Open settings", "Close"),
-                    0,
-                    null)
-            if (result == 0) {
-                CabalInterface(project).install(pkg)
-            } else if (result == 1) {
-                ShowSettingsUtil.getInstance()!!.editConfigurable(project, HaskellConfigurable());
-            }
-        }
-    }
-
     fun getHaskellModules(): List<Module> {
         val moduleManager = ModuleManager.getInstance(project)!!
         return moduleManager.getModules().filter { ModuleType.get(it) == HaskellModuleType.INSTANCE }
@@ -97,10 +80,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
                         ShowSettingsUtil.getInstance()!!.editConfigurable(project, HaskellConfigurable());
                     }
                 }
-            } else {
-                if (!GhcMod.сheck()) {
-                    packageNotFound("ghc-mod")
-                }
             }
         }
     }
@@ -117,19 +96,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
     }
 
     override fun disposeComponent() {
-    }
-
-    @Deprecated("")
-    private fun removeTempDir() {
-        for (module in getHaskellModules()) {
-            val path = module.getModuleFile()?.getParent()?.getPath()
-            if (path != null) {
-                val buildWrapperPath = File(path, ".buildwrapper")
-                if (buildWrapperPath.exists()) {
-                    deleteRecursive(buildWrapperPath)
-                }
-            }
-        }
     }
 
 }
