@@ -1,65 +1,47 @@
 package org.jetbrains.haskell.sdk
 
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.projectRoots.SdkAdditionalData
-import com.intellij.openapi.projectRoots.SdkModel
 import org.jdom.Element
-import org.jetbrains.haskell.util.OSUtil
 
 
-public class HaskellSdkAdditionalData(cabalPath: String?,
-                                      cabalLibPath: String?) : SdkAdditionalData, Cloneable {
-
-
-    private var myCabalPath: String? = cabalPath
-    private var myCabalDataPath: String? = cabalLibPath
-
-
-    public override fun clone() : Any {
-        return super<Cloneable>.clone()
-    }
-
-    public fun save(element: Element): Unit {
-        if (myCabalPath != null) {
-            element.setAttribute(CABAL_PATH, myCabalPath!!)
-        }
-        if (myCabalDataPath != null) {
-            element.setAttribute(CABAL_DATA_PATH, myCabalDataPath!!)
-        }
-    }
-
-    public fun getCabalPath(): String {
-        return if (myCabalPath == null) "" else myCabalPath!!
-    }
-
-    public fun getCabalDataPath(): String {
-        return if (myCabalDataPath == null) "" else myCabalDataPath!!
-    }
-
-    public fun setCabalPath(cabalPath: String?): Unit {
-        this.myCabalPath = cabalPath
-    }
-
+class HaskellSdkAdditionalData(ghciPath: String?,
+                               ghcpkgPath: String?,
+                               cabalPath: String?) : SdkAdditionalData {
 
     companion object {
+        private val GHCI_PATH = "ghci_path"
+        private val GHC_PKG_PATH = "ghcpkg_path"
         private val CABAL_PATH = "cabal_path"
-        private val CABAL_DATA_PATH = "cabal_data_path"
-
-        fun getDefaultCabalPath() : String {
-            return "/usr/bin/cabal"
-        }
-
-        fun getDefaultCabalDataPath() : String {
-            return OSUtil.getCabalData()
-        }
 
         public fun load(element: Element): HaskellSdkAdditionalData {
-            val data = HaskellSdkAdditionalData(null, null)
-            data.myCabalPath = element.getAttributeValue(CABAL_PATH) ?: getDefaultCabalPath()
-            data.myCabalDataPath = element.getAttributeValue(CABAL_DATA_PATH) ?: getDefaultCabalDataPath()
+            val data = HaskellSdkAdditionalData(null, null, null)
+            data.ghciPath = element.getAttributeValue(GHCI_PATH)
+            data.ghcPkgPath = element.getAttributeValue(GHC_PKG_PATH)
+            data.cabalPath = element.getAttributeValue(CABAL_PATH)
+
             return data
         }
 
     }
 
+    var ghciPath: String? = ghciPath
+    var ghcPkgPath: String? = ghcpkgPath
+    var cabalPath: String? = cabalPath
+
+    override fun clone() : Any {
+        throw CloneNotSupportedException()
+    }
+
+    fun save(element: Element): Unit {
+        if (ghciPath != null) {
+            element.setAttribute(GHC_PKG_PATH, ghcPkgPath)
+        }
+        if (ghcPkgPath != null) {
+            element.setAttribute(GHC_PKG_PATH, ghcPkgPath)
+        }
+        if (cabalPath != null) {
+            element.setAttribute(CABAL_PATH, cabalPath!!)
+        }
+
+    }
 }

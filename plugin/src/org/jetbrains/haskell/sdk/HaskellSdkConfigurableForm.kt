@@ -9,17 +9,15 @@ import com.intellij.ui.DocumentAdapter
 import javax.swing.event.DocumentEvent
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 
-public open class HaskellSdkConfigurableForm() {
+class HaskellSdkConfigurableForm() {
     public var isModified: Boolean = false
+    private val ghciPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
+    private val ghcpkgPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
     private val cabalPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
-    private val cabalLibPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
 
-    public open fun getContentPanel(): JComponent {
+
+    public fun getContentPanel(): JComponent {
         val panel = JPanel(GridBagLayout())
-
-        val base = gridBagConstraints {
-            insets = Insets(2, 0, 2, 3)
-        }
 
         val listener : DocumentAdapter = object : DocumentAdapter() {
 
@@ -29,62 +27,62 @@ public open class HaskellSdkConfigurableForm() {
 
         };
 
-        cabalPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
-        cabalLibPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
+        ghciPathField.getTextField().getDocument().addDocumentListener(listener)
+        ghcpkgPathField.getTextField().getDocument().addDocumentListener(listener)
+        cabalPathField.getTextField().getDocument().addDocumentListener(listener)
 
-        panel.add(JLabel("Cabal executable path"), base.setConstraints {
-            anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridy = 0;
-        })
 
-        panel.add(cabalPathField, base.setConstraints {
-            gridx = 1;
-            gridy = 0;
-            fill = GridBagConstraints.HORIZONTAL
-            weightx = 1.0
-        })
-
-        panel.add(Box.createHorizontalStrut(1), base.setConstraints {
-            gridx = 2;
-            gridy = 0;
-            weightx = 0.1
-        })
-
-        panel.add(JLabel("Cabal data path"), base.setConstraints {
-            anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridy = 1;
-        })
-
-        panel.add(cabalLibPathField, base.setConstraints {
-            gridx = 1;
-            gridy = 1;
-            fill = GridBagConstraints.HORIZONTAL
-            weightx = 1.0
-        })
-
-        panel.add(Box.createHorizontalStrut(1), base.setConstraints {
-            gridx = 2;
-            gridy = 1;
-            weightx = 0.1
-        })
-
+        addLine(panel, 0, "ghci", ghciPathField)
+        addLine(panel, 1, "ghc-pkg", ghcpkgPathField)
+        addLine(panel, 2, "cabal", cabalPathField)
 
         return panel
 
     }
 
-    public open fun getCabalPath(): String {
-        return cabalPathField.getText()!!
-    }
-    public open fun getCabalLibPath(): String {
-        return cabalLibPathField.getText()!!
+    private fun addLine(panel: JPanel, y: Int, label: String, textField: TextFieldWithBrowseButton) {
+        val base = gridBagConstraints {
+            insets = Insets(2, 0, 2, 3)
+            gridy = y;
+        }
+        panel.add(JLabel(label), base.setConstraints {
+            anchor = GridBagConstraints.LINE_START
+            gridx = 0;
+        })
+
+        panel.add(textField, base.setConstraints {
+            gridx = 1;
+            fill = GridBagConstraints.HORIZONTAL
+            weightx = 1.0
+        })
+
+        panel.add(Box.createHorizontalStrut(1), base.setConstraints {
+            gridx = 2;
+            weightx = 0.1
+        })
     }
 
-    public open fun init(cabalPath : String, cabalLibPath : String): Unit {
-        this.cabalPathField.setText(cabalPath)
-        this.cabalLibPathField.setText(cabalLibPath)
+    public fun getCabalPath(): String {
+        return cabalPathField.getText()
+    }
+
+    public fun getGhciPath(): String {
+        return ghciPathField.getText()
+    }
+
+    public fun getGhcpkgPath(): String {
+        return ghcpkgPathField.getText()
+    }
+
+
+    public fun init(ghciPath : String,
+                    ghcpkgPath : String,
+                    cabalPath : String): Unit {
+
+        ghciPathField.setText(ghciPath)
+        ghcpkgPathField.setText(ghcpkgPath)
+        cabalPathField.setText(cabalPath)
+
     }
 
 

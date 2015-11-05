@@ -5,10 +5,12 @@ import com.intellij.openapi.projectRoots.AdditionalDataConfigurable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkAdditionalData
 import com.intellij.openapi.projectRoots.SdkModificator
+import org.jetbrains.haskell.util.OSUtil
+import java.io.File
 import javax.swing.*
 
 public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
-    private val myForm: HaskellSdkConfigurableForm = HaskellSdkConfigurableForm()
+    private val form: HaskellSdkConfigurableForm = HaskellSdkConfigurableForm()
 
     private var mySdk: Sdk? = null
 
@@ -17,16 +19,18 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
     }
 
     override fun createComponent(): JComponent {
-        return JPanel(); //myForm.getContentPanel()
+        return form.getContentPanel()
     }
 
     override fun isModified(): Boolean {
-        return myForm.isModified
+        return form.isModified
     }
 
     override fun apply() {
-        /*
-        val newData = HaskellSdkAdditionalData(myForm.getCabalPath(), myForm.getCabalLibPath())
+        val newData = HaskellSdkAdditionalData(
+                form.getGhciPath(),
+                form.getGhcpkgPath(),
+                form.getCabalPath())
 
         val modificator = mySdk!!.getSdkModificator()
         modificator.setSdkAdditionalData(newData)
@@ -35,31 +39,46 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
                 modificator.commitChanges()
             }
         })
-        */
-        myForm.isModified = false
+        form.isModified = false
     }
 
     override fun reset() {
-        /*
-        val data = mySdk!!.getSdkAdditionalData()
+        val sdk = mySdk!!
+        val data = sdk.getSdkAdditionalData()
 
-        val ghcData: HaskellSdkAdditionalData?
         if (data != null) {
-            if (!(data is HaskellSdkAdditionalData)) {
+            if (data !is HaskellSdkAdditionalData) {
                 return
             }
-            ghcData = (data as HaskellSdkAdditionalData)
-            val cabalPath = ghcData?.getCabalPath() ?: ""
-            val cabalDataPath = ghcData?.getCabalDataPath() ?: ""
+            val ghcData: HaskellSdkAdditionalData = data
+            val ghciPath = ghcData.ghciPath ?: ""
+            val ghcPkgPath = ghcData.ghcPkgPath ?: ""
+            val cabalPath = ghcData.cabalPath ?: ""
 
-            myForm.init(cabalPath, cabalDataPath)
+            form.init(ghciPath, ghcPkgPath, cabalPath)
         } else {
-            myForm.init(HaskellSdkAdditionalData.getDefaultCabalPath(),
-                        HaskellSdkAdditionalData.getDefaultCabalDataPath())
+            val file = File(sdk.homePath)
+            val version = extractVersion(file.getName())
+            val parent = file.getParent()
+            form.init(
+                    File(parent, OSUtil.getExe("ghci-" + version)).toString(),
+                    File(parent, OSUtil.getExe("ghc-pkg-" + version)).toString(),
+                    File(parent, OSUtil.getExe("cabal")).toString())
         }
-        */
 
-        myForm.isModified = false
+        form.isModified = false
+    }
+
+    private fun extractVersion(name: String) : String {
+        val trimmedName = OSUtil.removeExtension(name);
+
+        if (trimmedName == "ghc") {
+            return ""
+        }
+        if (trimmedName.startsWith("ghc-")) {
+            return name.substring(4)
+        }
+        return ""
     }
 
     override fun disposeUIResources() {
