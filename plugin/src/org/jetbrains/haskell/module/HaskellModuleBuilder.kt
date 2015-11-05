@@ -31,7 +31,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
     override fun getBuilderId() = "haskell.module.builder"
 
     override fun modifySettingsStep(settingsStep: SettingsStep): ModuleWizardStep? =
-        StdModuleTypes.JAVA!!.modifySettingsStep(settingsStep, this)
+            StdModuleTypes.JAVA!!.modifySettingsStep(settingsStep, this)
 
     override fun getBigIcon(): Icon = HaskellIcons.HASKELL_BIG
 
@@ -40,7 +40,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
     override fun getPresentableName(): String? = "Haskell"
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> =
-        getModuleType().createWizardSteps(wizardContext, this, modulesProvider)
+            getModuleType().createWizardSteps(wizardContext, this, modulesProvider)
 
     override fun getModuleType(): HaskellModuleType {
         return HaskellModuleType.INSTANCE
@@ -77,7 +77,17 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
     }
 
     public fun makeCabal(path: String, name: String) {
-        val text = "name:              " + name + "\n" + "version:           1.0\n" + "Build-Type:        Simple\n" + "cabal-version:     >= 1.2\n" + "\n" + "executable " + name + "\n" + "  main-is:         Main.hs\n" + "  hs-source-dirs:  src\n" + "  build-depends:   base\n"
+        val text = """
+             name:              $name
+             version:           1.0
+             Build-Type:        Simple
+             cabal-version:     >= 1.2
+
+             executable $name
+                main-is:         Main.hs
+                hs-source-dirs:  src
+                build-depends:   base
+             """.trimIndent()
         val writer = FileWriter(path)
         writer.write(text)
         writer.close()
