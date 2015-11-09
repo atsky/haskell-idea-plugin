@@ -30,7 +30,7 @@ public class CabalJspInterface{
 
     public Process configure(String ghcPath) throws IOException {
         if (ghcPath != null) {
-            return runCommand("configure", "-w", ghcPath + File.separator + "bin" + File.separator + "ghc");
+            return runCommand("configure", "-w", ghcPath);
         } else {
             return runCommand("configure");
 
