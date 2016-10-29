@@ -192,7 +192,7 @@ class LazyLLParser(val grammar: Map<String, Rule>, val cached: CachedTokens) {
                 }
                 is NonTerminal -> {
                     val ruleToParse = grammar[term.rule]!!
-                    if (!ruleToParse.first!!.containsRaw(state.getToken()) &&
+                    if (!ruleToParse.first!!.contains(state.getToken()) &&
                             !ruleToParse.first!!.contains(HaskellLexerTokens.VCCURLY)) {
                         if (ruleToParse.canBeEmpty) {
                             val nextChildren = ArrayList(children)

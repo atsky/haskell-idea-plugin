@@ -108,7 +108,7 @@ public class LocalBinding(var name: String?,
     }
 }
 
-public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseResult() {
+public class LocalBindingList(public val list: List<LocalBinding>) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
@@ -129,7 +129,7 @@ public class LocalBindingList(public val list: ArrayList<LocalBinding>) : ParseR
 }
 
 public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
-                                   var bindings: ArrayList<LocalBinding>?,
+                                   var bindings: List<LocalBinding>?,
                                    val functionName: String?) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
@@ -208,7 +208,7 @@ public class MoveHistResult(public val filePosition: HsFilePosition?,
     }
 }
 
-public class HistoryResult(public val frames: ArrayList<HsHistoryFrameInfo>,
+public class HistoryResult(public val frames: List<HsHistoryFrameInfo>,
                            public val full: Boolean) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true

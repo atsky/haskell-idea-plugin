@@ -40,7 +40,7 @@ public class DebuggerConfigurable() : Configurable {
         private val TRACE_CHECKBOX_LABEL = "Switch off ':trace' command"
         private val PRINT_DEBUG_OUTPUT_LABEL = "Print debugger output to stdout"
     }
-    private val selectDebuggerComboBox: ComboBox = ComboBox(DefaultComboBoxModel(arrayOf(ITEM_GHCI, ITEM_REMOTE)))
+    private val selectDebuggerComboBox: ComboBox<*> = ComboBox(DefaultComboBoxModel(arrayOf(ITEM_GHCI, ITEM_REMOTE)))
     private val remoteDebuggerPathField: TextFieldWithBrowseButton = TextFieldWithBrowseButton()
     private val traceSwitchOffCheckBox: JCheckBox = JCheckBox(TRACE_CHECKBOX_LABEL, false)
     private val printDebugOutputCheckBox: JCheckBox = JCheckBox(PRINT_DEBUG_OUTPUT_LABEL, false)

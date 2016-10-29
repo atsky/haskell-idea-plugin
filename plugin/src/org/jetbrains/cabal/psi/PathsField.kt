@@ -53,6 +53,6 @@ public interface PathsField: PsiElement {
         for (dir in parentDirs) {
             completionFiles.addAll(dir.getChildren()!!.filter { isValidCompletionFile(it) })
         }
-        return completionFiles.map { it.getName().concat(if (it.isDirectory()) "/" else "") }
+        return completionFiles.map { it.name + (if (it.isDirectory()) "/" else "") }
     }
 }

@@ -107,7 +107,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     }
 
-    override fun getHomeChooserDescriptor(): FileChooserDescriptor? {
+    override fun getHomeChooserDescriptor(): FileChooserDescriptor {
         val isWindows = SystemInfo.isWindows
         return object : FileChooserDescriptor(true, false, false, false, false, false) {
             @Throws(Exception::class)
@@ -220,8 +220,8 @@ public class HaskellSdkType() : SdkType("GHC") {
         return versionString
     }
 
-    override fun createAdditionalDataConfigurable(sdkModel: SdkModel?,
-                                                  sdkModificator: SdkModificator?): AdditionalDataConfigurable? {
+    override fun createAdditionalDataConfigurable(sdkModel: SdkModel,
+                                                  sdkModificator: SdkModificator): AdditionalDataConfigurable {
         return HaskellSdkConfigurable();
     }
 
@@ -251,7 +251,7 @@ public class HaskellSdkType() : SdkType("GHC") {
     override fun setupSdkPaths(sdk: Sdk) {
     }
 
-    override fun isRootTypeApplicable(`type`: OrderRootType?): Boolean {
+    override fun isRootTypeApplicable(rootType: OrderRootType): Boolean {
         return false
     }
 

@@ -32,7 +32,7 @@ import org.jetbrains.haskell.debugger.utils.UIUtils
 public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
     private val PANEL_LABEL: String = "Select breakpoint:"
     private val DEBUG_NOT_STARTED_ITEM: String = "start debug process to enable"
-    private val breaksComboBox: ComboBox = ComboBox(DefaultComboBoxModel(arrayOf(DEBUG_NOT_STARTED_ITEM)))
+    private val breaksComboBox: ComboBox<String> = ComboBox(DefaultComboBoxModel(arrayOf(DEBUG_NOT_STARTED_ITEM)))
     private val mainPanel: JPanel = JPanel(GridLayout(1, 0))
 
     init {

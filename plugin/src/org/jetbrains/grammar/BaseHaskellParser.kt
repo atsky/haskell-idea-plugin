@@ -104,12 +104,12 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     }
 
     fun many(str : String, vararg next : Variant): NonTerminalVariant {
-        val list = next.toArrayList()
+        val list = next.toList()
         return NonTerminalVariant(NonTerminal(str), list)
     }
 
     fun many(tokenType : HaskellTokenType, vararg next : Variant): NonTerminalVariant {
-        val list = next.toArrayList()
+        val list = next.toList()
         return NonTerminalVariant(Terminal(tokenType), list)
     }
 

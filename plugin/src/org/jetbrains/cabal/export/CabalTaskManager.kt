@@ -9,7 +9,7 @@ import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 public class CabalTaskManager() : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
 
-    @Throws(ExternalSystemException::class)
+
     override fun cancelTask(id: ExternalSystemTaskId, listener: ExternalSystemTaskNotificationListener): Boolean {
         return false
     }

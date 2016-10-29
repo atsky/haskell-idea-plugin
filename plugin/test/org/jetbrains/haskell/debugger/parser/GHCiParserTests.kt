@@ -1,10 +1,6 @@
 package org.jetbrains.haskell.debugger.parser
 
 import org.junit.Test as test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.assertFalse
-import kotlin.test.fail
 import org.jetbrains.haskell.debugger.parser.BreakpointCommandResult
 import org.jetbrains.haskell.debugger.parser.HsFilePosition
 import org.jetbrains.haskell.debugger.parser.GHCiParser
@@ -17,6 +13,7 @@ import org.jetbrains.haskell.debugger.parser.LocalBindingList
 import org.jetbrains.haskell.debugger.parser.ExpressionType
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
+import org.junit.Assert
 
 /**
  * Tests for GHCiParser class
@@ -59,13 +56,13 @@ public class GHCiParserTests {
         val deq = LinkedList<String?>()
         deq.add(input)
         var actual = GHCiParser.parseSetBreakpointCommandResult(deq)
-        assertEquals(expected, actual, "Actual: ${actual?.breakpointNumber}, ${actual?.position}")
+        Assert.assertEquals(expected, actual)
     }
 
     private fun parseSetBreakpointCommandResultExceptionTest(deq: LinkedList<String?>) {
         try {
             GHCiParser.parseSetBreakpointCommandResult(deq)
-            fail("RuntimeException is expected")
+            Assert.fail("RuntimeException is expected")
         } catch (e: RuntimeException) {}
     }
 
@@ -93,7 +90,7 @@ public class GHCiParserTests {
     @test fun tryParseStoppedAtTraceOutputTest() {
         var expected: HsStackFrameInfo? = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 16, 4, 47),
-                arrayOf(LocalBinding("a", "Integer", "8"), LocalBinding("_result", "[Integer]", "_")).toArrayList(),
+                arrayOf(LocalBinding("a", "Integer", "8"), LocalBinding("_result", "[Integer]", "_")).toList(),
                 null)
         tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.traceOutput), expected)
     }
@@ -101,7 +98,7 @@ public class GHCiParserTests {
     @test fun tryParseStoppedAtWithPreSymbolsTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 37, 4, 47),
-                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toList(),
                 null)
         tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.traceOutput, TryParseStoppedAtInputs.withPreSymbols), expected)
     }
@@ -109,7 +106,7 @@ public class GHCiParserTests {
     @test fun tryParseStoppedAtWithPreStoppedAtTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 4, 37, 4, 47),
-                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("right", "[a]", "_"), LocalBinding("_result", "[a]", "_")).toList(),
                 null)
         tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt), expected)
     }
@@ -117,7 +114,7 @@ public class GHCiParserTests {
     @test fun tryParseStoppedAtMultilineTest() {
         var expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 3, 1, 5, 56),
-                arrayOf(LocalBinding("_result", "[a]", "_")).toArrayList(),
+                arrayOf(LocalBinding("_result", "[a]", "_")).toList(),
                 null)
         tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt, TryParseStoppedAtInputs.multiline), expected)
     }
@@ -125,7 +122,7 @@ public class GHCiParserTests {
     @test fun tryParseStoppedAtWithPointStopTest() {
         val expected = HsStackFrameInfo(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22),
-                arrayOf(LocalBinding("_result", "a1", "_")).toArrayList(),
+                arrayOf(LocalBinding("_result", "a1", "_")).toList(),
                 null)
         tryParseStoppedAtTest(arrayOf(TryParseStoppedAtInputs.withPreStoppedAt,
                 TryParseStoppedAtInputs.multiline,
@@ -139,7 +136,7 @@ public class GHCiParserTests {
         val deq = LinkedList<String?>()
         inputs.map { deq.addAll(it.split('\n')) }
         var actual = GHCiParser.tryParseStoppedAt(deq)
-        assertEquals(expected, actual, "Actual: ${actual?.filePosition}, ${actual?.bindings}, ${actual?.functionName}")
+        Assert.assertEquals(expected, actual)
     }
 
     @test fun parseMoveHistResultUsualTest() {
@@ -148,7 +145,7 @@ public class GHCiParserTests {
                         "n :: Integer"
         var expected: MoveHistResult? = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 3, 10, 3, 14),
-                LocalBindingList(arrayOf(LocalBinding("_result", "Bool", null), LocalBinding("n", "Integer", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "Bool", null), LocalBinding("n", "Integer", null)).toList()))
         parseMoveHistResultTest(usual, expected)
     }
 
@@ -157,7 +154,7 @@ public class GHCiParserTests {
                         "_result :: a1"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 3, 1, 4, 22),
-                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toList()))
         parseMoveHistResultTest(multiline, expected)
     }
 
@@ -166,7 +163,7 @@ public class GHCiParserTests {
                         "_result :: a1"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22),
-                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "a1", null)).toList()))
         parseMoveHistResultTest(pointStop, expected)
     }
 
@@ -176,7 +173,7 @@ public class GHCiParserTests {
                         "r2 :: Integer"
         var expected = MoveHistResult(
                 HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 10, 9, 10, 16),
-                LocalBindingList(arrayOf(LocalBinding("_result", "IO ()", null), LocalBinding("r2", "Integer", null)).toArrayList()))
+                LocalBindingList(arrayOf(LocalBinding("_result", "IO ()", null), LocalBinding("r2", "Integer", null)).toList()))
         parseMoveHistResultTest(stopped, expected)
     }
 
@@ -192,7 +189,7 @@ public class GHCiParserTests {
         val deq = LinkedList<String?>()
         deq.addAll(input.split('\n'))
         var actual = GHCiParser.parseMoveHistResult(deq)
-        assertEquals(expected, actual, "Actual: ${actual?.filePosition}, ${actual?.filePosition}, ${actual?.bindingList}")
+        Assert.assertEquals(expected, actual)
     }
 
     @test fun parseExpressionTypeSimpleTest() {
@@ -239,14 +236,14 @@ public class GHCiParserTests {
 
     private fun parseExpressionTypeTest (input: String, expected: ExpressionType?) {
         val actual = GHCiParser.parseExpressionType(input)
-        assertEquals(expected, actual, "Actual: ${actual?.expression}, ${actual?.expressionType}")
+        Assert.assertEquals(expected, actual)
     }
 
     private object ParseHistoryResultTestInputs {
         val frames = arrayOf(HsHistoryFrameInfo(-1, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 10, 4, 14)),
                 HsHistoryFrameInfo(-2, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 1, 5, 30)),
                 HsHistoryFrameInfo(-3, "iter", HsFilePosition("/home/marat-x/HaskellTestSpace/Main/Main.hs", 4, 22, 4, 22))
-        ).toArrayList()
+        ).toList()
     }
 
     @test fun parseHistoryResultNormalTest() {
@@ -271,6 +268,6 @@ public class GHCiParserTests {
         val deq = LinkedList<String?>()
         deq.addAll(input.split('\n'))
         var actual = GHCiParser.parseHistoryResult(deq)
-        assertEquals(expected, actual, "Actual: ${actual.frames}, ${actual.full}")
+        Assert.assertEquals(expected, actual)
     }
 }

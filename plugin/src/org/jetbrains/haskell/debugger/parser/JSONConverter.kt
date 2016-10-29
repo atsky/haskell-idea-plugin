@@ -155,7 +155,7 @@ public class JSONConverter {
             public var result: R? = null
         }
 
-        fun <R: ParseResult>InfoSwitch<R>.case(vararg caseStrings: String, action: () -> R?) {
+        private fun <R: ParseResult>InfoSwitch<R>.case(vararg caseStrings: String, action: () -> R?) {
             if(!this.someCaseMatched && caseStrings.any { it.equals(this.info) }) {
                 this.result = action()
                 this.someCaseMatched = true

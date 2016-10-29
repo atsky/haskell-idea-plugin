@@ -20,12 +20,14 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             val values = ArrayList<String>()
             val current = parameters.getPosition()
             val parent = current.getParent()
-            if (parent == null) { return }
+            if (parent == null) {
+                return
+            }
             var caseSensitivity = true
 
             when (parent) {
                 is CabalFile -> {
-                    values.addAll(PKG_DESCR_FIELDS.keys.map({it.concat(":")}))
+                    values.addAll(PKG_DESCR_FIELDS.keys.map { it + ":" })
                     values.addAll(TOP_SECTION_NAMES)
                     caseSensitivity = false
                 }
@@ -34,15 +36,13 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                         if (parent.isFlagNameInCondition()) {
                             values.addAll(parent.getAvailableValues().map({ it + ")" }))
                             caseSensitivity = false
-                        }
-                        else if (parent.getParent() is InvalidField) {
+                        } else if (parent.getParent() is InvalidField) {
                             values.addAll(parent.getAvailableValues().map({
-                                if (it in SECTIONS.keys) it else it.concat(":")
+                                if (it in SECTIONS.keys) it else it + ":"
                             }))
                             caseSensitivity = false
                         }
-                    }
-                    else values.addAll(parent.getAvailableValues())
+                    } else values.addAll(parent.getAvailableValues())
                 }
                 is InvalidValue -> {
                     if (parent.getParent() is BoolField) {

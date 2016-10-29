@@ -3,13 +3,13 @@ package org.jetbrains.haskell.debugger.procdebuggers
 import java.io.File
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import java.util.ArrayList
-import kotlin.test.assertNotNull
 import com.intellij.execution.process.OSProcessHandler
 import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 import java.io.InputStreamReader
 import com.intellij.openapi.vfs.CharsetToolkit
 import java.io.InputStream
 import com.intellij.execution.process.ProcessOutputTypes
+import org.junit.Assert
 
 public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
     companion object {
@@ -66,7 +66,7 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
     override fun createDebugger(file: File, respondent: DebugRespondent): GHCiDebugger {
         val filePath = file.getAbsolutePath()
         val ghciPath = DebuggerTest.properties?.getProperty(pathPropertyName)
-        assertNotNull(ghciPath, "Path to ghci not found ($pathPropertyName property inside unittest.properties)")
+        Assert.assertNotNull(ghciPath, "Path to ghci not found ($pathPropertyName property inside unittest.properties)")
         val command: ArrayList<String> = arrayListOf(ghciPath!!, filePath)
         command.add("-package")
         command.add("network")

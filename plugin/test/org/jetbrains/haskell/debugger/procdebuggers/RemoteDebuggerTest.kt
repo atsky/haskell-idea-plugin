@@ -11,8 +11,8 @@ import org.jetbrains.haskell.debugger.prochandlers.HaskellDebugProcessHandler
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessListener
 import org.jetbrains.haskell.debugger.RemoteDebugProcessStateUpdater
-import kotlin.test.assertNotNull
 import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
+import org.junit.Assert
 
 public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
@@ -42,7 +42,7 @@ public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
         streamHandler.start()
 
         val debuggerPath = DebuggerTest.properties?.getProperty(pathPropertyName)
-        assertNotNull(debuggerPath, "Path to remote debugger not found ($pathPropertyName property inside unittest.properties)")
+        Assert.assertNotNull(debuggerPath, "Path to remote debugger not found ($pathPropertyName property inside unittest.properties)")
 
         val command: ArrayList<String> = arrayListOf(debuggerPath!!, "-m${filePath}", "-p${streamHandler.getPort()}")
         val builder = ProcessBuilder(command)

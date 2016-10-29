@@ -60,7 +60,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
     }
 
     public override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
-        return SyntaxHighlighterBase.pack(keys1.getRaw(tokenType))
+        return SyntaxHighlighterBase.pack(keys1.get(tokenType))
     }
 
 

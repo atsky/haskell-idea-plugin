@@ -13,7 +13,7 @@ import org.jetbrains.generator.grammar.RuleRef
  * Created by atsky on 11/7/14.
  */
 
-fun getTokens(lexer : GrammarLexer) : List<Token> {
+private fun getTokens(lexer : GrammarLexer) : List<Token> {
     val list = ArrayList<Token>();
     while (true) {
         val tokenType = lexer.yylex()

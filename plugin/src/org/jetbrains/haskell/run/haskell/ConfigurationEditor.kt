@@ -8,12 +8,12 @@ class ConfigurationEditor(modules: Array<Module>) : SettingsEditor<CabalRunConfi
 
     private val programParams: ProgramParamsPanel
 
-    override fun applyEditorTo(s: CabalRunConfiguration?) {
-        programParams.applyTo(s!!)
+    override fun applyEditorTo(s: CabalRunConfiguration) {
+        programParams.applyTo(s)
     }
 
-    override fun resetEditorFrom(s: CabalRunConfiguration?) {
-        programParams.reset(s!!)
+    override fun resetEditorFrom(s: CabalRunConfiguration) {
+        programParams.reset(s)
     }
 
     override fun createEditor(): JComponent {

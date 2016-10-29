@@ -40,7 +40,7 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
         if (!getHaskellModules().isEmpty()) {
-            val paths = System.getenv("PATH")!!.split(File.pathSeparator.toRegex()).toTypedArray().toArrayList()
+            val paths = System.getenv("PATH")!!.split(File.pathSeparator.toRegex()).toTypedArray().toMutableList()
 
             val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
             if (sdk != null && sdk.getSdkType() is HaskellSdkType) {

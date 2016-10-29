@@ -27,7 +27,7 @@ public class ShowTypeAction : AnAction() {
         val aType : String
     )
 
-    fun typeInfoFromString(str : String) : TypeInfo? {
+    private fun typeInfoFromString(str : String) : TypeInfo? {
         val matcher = Pattern.compile("(\\d+) (\\d+) (\\d+) (\\d+) \"(.*)\"").matcher(str)
         if (matcher.matches()) {
             return TypeInfo(

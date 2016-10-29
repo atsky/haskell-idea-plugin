@@ -7,9 +7,6 @@ import org.junit.Test
 import org.junit.Before
 import org.junit.After
 import java.io.File
-import kotlin.test.assertTrue
-import kotlin.test.assertNotNull
-import kotlin.test.assertEquals
 import java.util.Properties
 import java.io.FileInputStream
 import org.jetbrains.haskell.debugger.frames.HsHistoryFrame
@@ -20,23 +17,24 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator
 import com.intellij.xdebugger.frame.XValue
 import org.jetbrains.haskell.debugger.frames.HsDebugValue
 import org.jetbrains.haskell.debugger.protocol.CommandCallback
+import org.junit.Assert
 
 public abstract class DebuggerTest<T : ProcessDebugger> {
 
     companion object {
 
-        public val PROPERTIES_FILE: String = "unittest.properties"
-        public val TEST_MODULE_FILE: String = "TestMain.hs"
+        val PROPERTIES_FILE: String = "unittest.properties"
+        val TEST_MODULE_FILE: String = "TestMain.hs"
 
-        public val MAIN_LINE: Int = 10
-        public val QSORT_LINE: Int = 6
+        val MAIN_LINE: Int = 10
+        val QSORT_LINE: Int = 6
 
-        public var properties: Properties? = null
+        var properties: Properties? = null
 
         init {
             properties = Properties()
             val filePath = javaClass.getResource("/$PROPERTIES_FILE")?.getFile()
-            assertNotNull(filePath)
+            Assert.assertNotNull(filePath)
             properties!!.load(FileInputStream(filePath!!))
         }
 
@@ -159,14 +157,14 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
     private var debugger: T? = null
     private var respondent: TestRespondent? = null
 
-    private fun assertResult(expected: Result) = assertEquals(expected, respondent?.result)
+    private fun assertResult(expected: Result) = Assert.assertEquals(expected, respondent?.result)
 
     @Before public fun setupDebugger() {
         val url = this.javaClass.getResource("/${TEST_MODULE_FILE}")
         val file = url?.getFile()
-        assertNotNull(file)
+        Assert.assertNotNull(file)
         val testFile = File(file!!)
-        assertTrue(testFile.exists())
+        Assert.assertTrue(testFile.exists())
 
         syncObject = SyncObject()
         respondent = TestRespondent()
@@ -207,11 +205,11 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         withAwait { debugger!!.trace(null) }
         assertResult(Result.BREAKPOINT_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", MAIN_LINE))!!.breakpoint, respondent!!.breakpoint)
-        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
-        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
-        assertEquals(8, filePosition?.rawStartSymbol)
-        assertEquals(57, filePosition?.rawEndSymbol)
+        Assert.assertEquals(respondent!!.breakpoints.get(BreakpointPosition("Main", MAIN_LINE))!!.breakpoint, respondent!!.breakpoint)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawEndLine)
+        Assert.assertEquals(8, filePosition?.rawStartSymbol)
+        Assert.assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     @Test public fun resumeTest() {
@@ -245,10 +243,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         withAwait { debugger!!.stepInto() }
         assertResult(Result.POSITION_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
-        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
-        assertEquals(16, filePosition?.rawStartSymbol)
-        assertEquals(57, filePosition?.rawEndSymbol)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawEndLine)
+        Assert.assertEquals(16, filePosition?.rawStartSymbol)
+        Assert.assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     @Test public fun stepLocalTest() {
@@ -267,10 +265,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
         withAwait { debugger!!.runToPosition("Main", MAIN_LINE) }
         assertResult(Result.POSITION_REACHED)
         val filePosition = respondent!!.context?.threadInfo?.topFrameInfo?.filePosition
-        assertEquals(MAIN_LINE, filePosition?.rawStartLine)
-        assertEquals(MAIN_LINE, filePosition?.rawEndLine)
-        assertEquals(8, filePosition?.rawStartSymbol)
-        assertEquals(57, filePosition?.rawEndSymbol)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawStartLine)
+        Assert.assertEquals(MAIN_LINE, filePosition?.rawEndLine)
+        Assert.assertEquals(8, filePosition?.rawStartSymbol)
+        Assert.assertEquals(57, filePosition?.rawEndSymbol)
     }
 
     @Test public fun uncaughtExceptionBreakpointTest1() {
@@ -319,10 +317,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
                 override fun errorOccurred(errorMessage: String) = withSignal { evalResult = null }
             })
         }
-        assertTrue(evalResult is HsDebugValue)
+        Assert.assertTrue(evalResult is HsDebugValue)
         with (evalResult as HsDebugValue) {
-            assertEquals("Int", binding.typeName)
-            assertEquals("_", binding.value)
+            Assert.assertEquals("Int", binding.typeName)
+            Assert.assertEquals("_", binding.value)
         }
     }
 
@@ -334,10 +332,10 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
                 override fun errorOccurred(errorMessage: String) = withSignal { evalResult = null }
             })
         }
-        assertTrue(evalResult is HsDebugValue)
+        Assert.assertTrue(evalResult is HsDebugValue)
         with (evalResult as HsDebugValue) {
-            assertEquals("Int", binding.typeName)
-            assertEquals("_", binding.value)
+            Assert.assertEquals("Int", binding.typeName)
+            Assert.assertEquals("_", binding.value)
         }
     }
 
@@ -350,6 +348,6 @@ public abstract class DebuggerTest<T : ProcessDebugger> {
                 override fun execAfterParsing(result: LocalBinding?) = withSignal { forceResult = result }
             })
         }
-        assertEquals("[4,2,3]", forceResult?.value)
+        Assert.assertEquals("[4,2,3]", forceResult?.value)
     }
 }

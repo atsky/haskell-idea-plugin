@@ -3,7 +3,7 @@ package org.jetbrains.haskell.util
 class GHCVersion constructor(private val version: List<Int>) : Comparable<GHCVersion> {
 
     companion object {
-        fun fromString(version : String) = GHCVersion(version.split(".").map { it.toInt() }.toArrayList())
+        fun fromString(version : String) = GHCVersion(version.split(".").map { it.toInt() }.toList())
     }
 
     override fun equals(other: Any?): Boolean {

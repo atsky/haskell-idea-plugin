@@ -6,7 +6,6 @@ import org.jetbrains.cabal.CabalFile
 import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import kotlin.Set
 
 public interface FieldContainer: PsiElement {
 
