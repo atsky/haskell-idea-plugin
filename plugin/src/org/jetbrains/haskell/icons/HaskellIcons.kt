@@ -7,16 +7,15 @@ import javax.swing.*
 /**
  * @author Evgeny.Kurbatsky
  */
-public object HaskellIcons {
-    public val HASKELL_BIG: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell24.png")
-    public val HASKELL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell16.png")
-    public val DEFAULT: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell16.png")
-    public val APPLICATION: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/application.png")
+object HaskellIcons {
+    val HASKELL_BIG: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell24.png")
+    val HASKELL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell16.png")
+    val DEFAULT: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell16.png")
+    val APPLICATION: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/application.png")
     @JvmField
-    public val CABAL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/cabal.png")
-    public val BIG: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell.png")
-    public val UPDATE: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/update.png")
-    @JvmField
-    public val REPL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/repl.png")
-    public val HAMLET: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/yesod16.png")
+    val CABAL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/cabal.png")
+    val BIG: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell.png")
+    val UPDATE: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/update.png")
+    @JvmField val REPL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/repl.png")
+    val HAMLET: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/yesod16.png")
 }
