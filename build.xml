@@ -9,6 +9,7 @@
     <property name="haskell.lexer.result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
     <property name="idea" value="${build.dir}/idea"/>
+    <!--  <property name="idea.download.url" value="https://download.jetbrains.com/idea/ideaIC-2016.3.6-no-jdk.tar.gz"/>  -->
     <property name="idea.download.url" value="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/ideaIC/143.379.11/ideaIC-143.379.11.zip"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
     <property name="build.number" value="snapshot"/>
@@ -21,9 +22,13 @@
     <path id="build.classpath">
         <fileset dir="${idea}/lib">
             <include name="*.jar"/>
+            <exclude name="kotlin-reflect.jar"/>
+            <exclude name="kotlin-runtime.jar"/>
         </fileset>
         <fileset dir="${basedir}/lib">
             <include name="*.jar"/>
+            <exclude name="kotlin-reflect.jar"/>
+            <exclude name="kotlin-runtime.jar"/>
         </fileset>
     </path>
 
@@ -107,19 +112,18 @@
         <get src="${idea.download.url}"
              dest="${build.dir}" skipexisting="true"/>
     </target>
-
-    <target name="download.kotlinc" depends="mk.buid">
-        <get src="https://github.com/JetBrains/kotlin/releases/download/build-1.0.0-beta-1038/kotlin-compiler-1.0.0-beta-1038.zip"
-             dest="${build.dir}" skipexisting="true"/>
-    </target>
     <target name="mk.buid">
         <mkdir dir="${build.dir}"/>
     </target>
-    <!-- Download IntelliJ IDEA distribution -->
-    <target name="kotlinc" depends="download.kotlinc">
+
+    <!-- Download Kotlin compiler -->
+    <target name="kotlinc" depends="mk.buid">
+        <get src="https://github.com/JetBrains/kotlin/releases/download/v1.1/kotlin-compiler-1.1.zip"
+             dest="${build.dir}" skipexisting="true"/>
         <unzip dest="${build.dir}">
             <fileset dir="${build.dir}" includes="kotlin-compiler-*.zip"/>
         </unzip>
+        <delete file="${build.dir}/kotlin-compiler-1.1.zip" />
     </target>
 
     <target name="get.dependencies" depends="kotlinc, idea">

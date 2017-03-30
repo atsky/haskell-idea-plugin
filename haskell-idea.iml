@@ -38,5 +38,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="httpclient-4.3.6" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>
