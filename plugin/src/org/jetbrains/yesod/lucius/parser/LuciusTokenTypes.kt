@@ -8,31 +8,66 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
-public interface LuciusTokenTypes {
-    companion object {
+object LuciusTokenTypes {
 
-        public val IDENTIFIER: IElementType = LuciusToken("identifier")
-        public val NEWLINE: IElementType = LuciusToken("newline")
-        public val INTERPOLATION: IElementType = LuciusToken("interpolatoin")
-        public val FUNCTION: IElementType = LuciusToken("function")
-        public val STRING: IElementType = LuciusToken("string")
-        public val NUMBER: IElementType = LuciusToken("number")
-        public val DOT_IDENTIFIER: IElementType = LuciusToken("dot_indentifier")
-        public val SHARP_IDENTIFIER: IElementType = LuciusToken("sharp_indentifier")
-        public val AT_IDENTIFIER: IElementType = LuciusToken("at_indentifier")
-        public val COLON_IDENTIFIER: IElementType = LuciusToken("colon_indentifier")
-        public val CC_IDENTIFIER: IElementType = LuciusToken("cc_indentifier")
-        public val HYPERLINK: IElementType = LuciusToken("hyperlink")
+    @JvmField
+    val IDENTIFIER: IElementType = LuciusToken("identifier")
 
-        public val COMMENT_START: IElementType = LuciusToken("/*")
-        public val COMMENT_END: IElementType = LuciusToken("*/")
-        public val END_INTERPOLATION: IElementType = LuciusToken("}")
-        public val COLON: IElementType = LuciusToken(":")
+    @JvmField
+    val NEWLINE: IElementType = LuciusToken("newline")
 
-        public val ANY: IElementType = LuciusCompositeElementType("ANY")
-        public val COMMENT: IElementType = LuciusCompositeElementType("COMMENT")
-        public val ATTRIBUTE: IElementType = LuciusCompositeElementType("ATTRIBUTE")
+    @JvmField
+    val INTERPOLATION: IElementType = LuciusToken("interpolatoin")
 
-        public val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
-    }
+    @JvmField
+    val FUNCTION: IElementType = LuciusToken("function")
+
+    @JvmField
+    val STRING: IElementType = LuciusToken("string")
+
+    @JvmField
+    val NUMBER: IElementType = LuciusToken("number")
+
+    @JvmField
+    val DOT_IDENTIFIER: IElementType = LuciusToken("dot_indentifier")
+
+    @JvmField
+    val SHARP_IDENTIFIER: IElementType = LuciusToken("sharp_indentifier")
+
+    @JvmField
+    val AT_IDENTIFIER: IElementType = LuciusToken("at_indentifier")
+
+    @JvmField
+    val COLON_IDENTIFIER: IElementType = LuciusToken("colon_indentifier")
+
+    @JvmField
+    val CC_IDENTIFIER: IElementType = LuciusToken("cc_indentifier")
+
+    @JvmField
+    val HYPERLINK: IElementType = LuciusToken("hyperlink")
+
+    @JvmField
+    val COMMENT_START: IElementType = LuciusToken("/*")
+
+    @JvmField
+    val COMMENT_END: IElementType = LuciusToken("*/")
+
+    @JvmField
+    val END_INTERPOLATION: IElementType = LuciusToken("}")
+
+    @JvmField
+    val COLON: IElementType = LuciusToken(":")
+
+    @JvmField
+    val ANY: IElementType = LuciusCompositeElementType("ANY")
+
+    @JvmField
+    val COMMENT: IElementType = LuciusCompositeElementType("COMMENT")
+
+    @JvmField
+    val ATTRIBUTE: IElementType = LuciusCompositeElementType("ATTRIBUTE")
+
+    @JvmField
+    val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
+
 }

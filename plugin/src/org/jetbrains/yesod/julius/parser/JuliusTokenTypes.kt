@@ -8,22 +8,41 @@ import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 
-public interface JuliusTokenTypes {
-    companion object {
+object JuliusTokenTypes {
 
-        public val NEWLINE: IElementType = JuliusToken("newline")
-        public val KEYWORD: IElementType = JuliusToken("keyword")
-        public val NUMBER: IElementType = JuliusToken("number")
-        public val STRING: IElementType = JuliusToken("string")
-        public val DOT_IDENTIFIER: IElementType = JuliusToken("dot_identifier")
-        public val INTERPOLATION: IElementType = JuliusToken("interpolation")
-        public val END_INTERPOLATION: IElementType = JuliusToken("}")
-        public val COMMENT: IElementType = JuliusToken("//")
-        public val COMMENT_END: IElementType = JuliusToken("*/")
-        public val COMMENT_START: IElementType = JuliusToken("/*")
+    @JvmField
+    val NEWLINE: IElementType = JuliusToken("newline")
 
-        public val ANY: IElementType = JuliusCompositeElementType("ANY")
+    @JvmField
+    val KEYWORD: IElementType = JuliusToken("keyword")
 
-        public val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
-    }
+    @JvmField
+    val NUMBER: IElementType = JuliusToken("number")
+
+    @JvmField
+    val STRING: IElementType = JuliusToken("string")
+
+    @JvmField
+    val DOT_IDENTIFIER: IElementType = JuliusToken("dot_identifier")
+
+    @JvmField
+    val INTERPOLATION: IElementType = JuliusToken("interpolation")
+
+    @JvmField
+    val END_INTERPOLATION: IElementType = JuliusToken("}")
+
+    @JvmField
+    val COMMENT: IElementType = JuliusToken("//")
+
+    @JvmField
+    val COMMENT_END: IElementType = JuliusToken("*/")
+
+    @JvmField
+    val COMMENT_START: IElementType = JuliusToken("/*")
+
+    @JvmField
+    val ANY: IElementType = JuliusCompositeElementType("ANY")
+
+    @JvmField
+    val WHITESPACES: TokenSet = TokenSet.create(TokenType.WHITE_SPACE)
 }

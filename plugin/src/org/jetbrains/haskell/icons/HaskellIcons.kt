@@ -16,6 +16,8 @@ object HaskellIcons {
     val CABAL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/cabal.png")
     val BIG: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/haskell.png")
     val UPDATE: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/update.png")
-    @JvmField val REPL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/repl.png")
+    @JvmField
+    val REPL: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/repl.png")
+    @JvmField
     val HAMLET: Icon = IconLoader.getIcon("/org/jetbrains/haskell/icons/yesod16.png")
 }
