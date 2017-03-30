@@ -40,7 +40,7 @@ public class JuliusFileType private constructor() : LanguageFileType(JuliusLangu
 
     companion object {
         public val INSTANCE: JuliusFileType = JuliusFileType()
-        NonNls
+
         public val DEFAULT_EXTENSION: String = "julius"
     }
 }

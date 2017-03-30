@@ -41,7 +41,6 @@ public class LuciusFileType private constructor() : LanguageFileType(LuciusLangu
 
     companion object {
         public val INSTANCE: LuciusFileType = LuciusFileType()
-        NonNls
         public val DEFAULT_EXTENSION: String = "lucius"
     }
 }

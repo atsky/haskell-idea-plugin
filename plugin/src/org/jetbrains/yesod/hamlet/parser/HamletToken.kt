@@ -5,9 +5,8 @@ package org.jetbrains.yesod.hamlet.parser
  */
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.annotations.NonNls
 
 import org.jetbrains.yesod.hamlet.HamletLanguage
 
 
-public class HamletToken(NonNls debugName: String) : IElementType(debugName, HamletLanguage.INSTANCE)
+class HamletToken(debugName: String) : IElementType(debugName, HamletLanguage.INSTANCE)
