@@ -8,9 +8,8 @@
     <property name="cabal.lexer.flex.file" value="plugin/src/org/jetbrains/cabal/parser/Cabal.flex"/>
     <property name="haskell.lexer.result.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/_HaskellLexer.java"/>
     <property name="haskell.lexer.flex.file" value="plugin/src/org/jetbrains/haskell/parser/lexer/Haskell.flex"/>
-    <property name="idea" value="${build.dir}/idea"/>
-    <!--  <property name="idea.download.url" value="https://download.jetbrains.com/idea/ideaIC-2016.3.6-no-jdk.tar.gz"/>  -->
-    <property name="idea.download.url" value="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea/ideaIC/143.379.11/ideaIC-143.379.11.zip"/>
+    <property name="idea" value="${build.dir}/idea-IC-163.15188.11"/>
+    <property name="idea.download.url" value="https://download.jetbrains.com/idea/ideaIC-2016.3.6-no-jdk.tar.gz"/>
     <property name="plugin.destination" value="${build.dir}/haskell-plugin/lib/" />
     <property name="build.number" value="snapshot"/>
 
@@ -96,13 +95,11 @@
 
 
     <!-- Unpack idea-*.zip file -->
-    <target name="idea" depends="download.idea" description="Unzip downloaded artifacts and set up idea.home">
+    <target name="idea" depends="download.idea" description="Extract downloaded artifacts and set up idea.home">
         <delete dir="${idea}"/>
         <mkdir dir="${idea}"/>
         <basename property="idea.filename" file="${idea.download.url}"/>
-        <unzip dest="${build.dir}/idea">
-            <fileset dir="${build.dir}" includes="${idea.filename}"/>
-        </unzip>
+        <untar src="${build.dir}/${idea.filename}" dest="${build.dir}" compression="gzip"/>
     </target>
 
     <!-- Download IntelliJ IDEA distribution -->
