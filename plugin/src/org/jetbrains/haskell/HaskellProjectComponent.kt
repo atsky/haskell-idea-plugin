@@ -50,37 +50,6 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
             if (OSUtil.isMac) {
                 paths.add("/usr/local/bin")
             }
-            val ghcFound = paths.any {
-                File(it, OSUtil.getExe("ghc")).exists()
-            }
-            if (!ghcFound) {
-
-                Messages.showDialog(
-                        project,
-                        GHC_PATH_NOT_FOUND,
-                        "ghc not found",
-                        arrayOf("Close"),
-                        0,
-                        null)
-            }
-
-
-
-            val cabalFound = CabalInterface(project).checkVersion()
-            if (!cabalFound) {
-                invokeInUI {
-                    val result = Messages.showDialog(
-                            project,
-                            "Cabal executable not found. Please add it to PATH or specify path in settings",
-                            "Cabal not found",
-                            arrayOf("Open settings", "Close"),
-                            0,
-                            null)
-                    if (result == 0) {
-                        ShowSettingsUtil.getInstance()!!.editConfigurable(project, HaskellConfigurable());
-                    }
-                }
-            }
         }
     }
 
