@@ -8,7 +8,7 @@
     <idea-version since-build="139.1659"/>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
-    <depends>com.intellij.modules.xdebugger</depends>
+    <!-- <depends>com.intellij.modules.xdebugger</depends> -->
 
     <application-components>
         <component>
@@ -71,11 +71,13 @@
 
         <!-- Debugger 'Force evaluation' action. Added to context menu of variables in 'Variables' window of current
         frame under inspection-->
+        <!-- Disable debugger
         <action class="org.jetbrains.haskell.debugger.frames.ForceEvaluationAction"
                 id="Haskell.Debugger.ForceEvaluation"
                 text="Force evaluation">
             <add-to-group group-id="XDebugger.ValueGroup"/>
         </action>
+        -->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -155,6 +157,7 @@
         <applicationConfigurable groupId="language" instance="org.jetbrains.haskell.config.HaskellConfigurable"/>
 
         <!--Haskell debugger-->
+        <!-- Disable debugger
         <programRunner implementation="org.jetbrains.haskell.debugger.HaskellProgramRunner"/>
         <xdebugger.breakpointType
                 implementation="org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointType"/>
@@ -164,6 +167,7 @@
         <applicationService serviceImplementation="org.jetbrains.haskell.debugger.config.HaskellDebugSettings"/>
         <lang.findUsagesProvider language="Haskell"
                                  implementationClass="org.jetbrains.haskell.findUsages.HaskellFindUsagesProvider"/>
+        -->
         <!--
         Disabled, since it's hard to support
         <executor implementation="org.jetbrains.haskell.debugger.DebugConsoleExecutor"/>
@@ -195,7 +199,9 @@
     </extensions>
 
     <extensionPoints>
+        <!-- Disable debugger
         <extensionPoint qualifiedName="Haskell.breakpointHandler"
                         interface="org.jetbrains.haskell.debugger.breakpoints.HaskellBreakpointHandlerFactory"/>
+        -->
     </extensionPoints>
 </idea-plugin>
