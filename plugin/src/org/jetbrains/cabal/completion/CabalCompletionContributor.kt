@@ -12,10 +12,10 @@ import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.cabal.CabalFile
 import java.util.*
 
-public open class CabalCompletionContributor() : CompletionContributor() {
+open class CabalCompletionContributor : CompletionContributor() {
 
-    public override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet): Unit {
-        if (parameters.getCompletionType() == CompletionType.BASIC) {
+    override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet): Unit {
+        if (parameters.completionType == CompletionType.BASIC) {
 
             val values = ArrayList<String>()
             val current = parameters.getPosition()
@@ -59,9 +59,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
                 is Identifier -> {
                     var parentField = parent
                     while ((parentField !is Field) && (parentField !is CabalFile) && (parentField != null)) {
-                        // TODO Look like a bug in Kotlin.
-                        val parentFieldVal = parentField
-                        parentField = parentFieldVal.getParent()
+                        parentField = parentField.parent
                     }
                     if (parentField is BuildDependsField) {
                         val project = current.getProject()
@@ -71,7 +69,7 @@ public open class CabalCompletionContributor() : CompletionContributor() {
             }
 
             for (value in values) {
-                val lookupElemBuilder = LookupElementBuilder.create(value)!!.withCaseSensitivity(caseSensitivity)!!
+                val lookupElemBuilder = LookupElementBuilder.create(value).withCaseSensitivity(caseSensitivity)!!
                 result.addElement(lookupElemBuilder)
             }
         }

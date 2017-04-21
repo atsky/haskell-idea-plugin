@@ -13,7 +13,7 @@ import javax.swing.*
 import java.io.File
 import java.io.IOException
 
-public class CabalModuleBuilder() : AbstractExternalModuleBuilder<CabalProjectSettings>(SYSTEM_ID, CabalProjectSettings()) {
+class CabalModuleBuilder() : AbstractExternalModuleBuilder<CabalProjectSettings>(SYSTEM_ID, CabalProjectSettings()) {
 
     @Throws(ConfigurationException::class)
     override fun setupRootModel(modifiableRootModel: ModifiableRootModel?) {

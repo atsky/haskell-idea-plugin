@@ -36,25 +36,25 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiElement
 
-private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")!!
+private val KEY: Key<CabalMessageView> = Key.create("CabalMessageView.KEY")
 
-public class CabalPackageShort(
+class CabalPackageShort(
         val name: String,
         val availableVersions: List<String>,
         val isInstalled: Boolean)
 
 val cabalLock = Object()
 
-public class CabalInterface(val project: Project) {
+class CabalInterface(val project: Project) {
 
     companion object {
-        public fun findCabal(module: Module): VirtualFile? {
+        fun findCabal(module: Module): VirtualFile? {
             val children = module.getModuleFile()?.getParent()?.getChildren()
             var cabalFile: VirtualFile? = null;
 
             if (children != null) {
                 for (file in children) {
-                    if ("cabal".equals(file.getExtension())) {
+                    if ("cabal" == file.getExtension()) {
                         cabalFile = file;
                         break;
                     }
@@ -66,7 +66,7 @@ public class CabalInterface(val project: Project) {
             return null;
         }
 
-        public fun findCabal(file: PsiElement): VirtualFile? {
+        fun findCabal(file: PsiElement): VirtualFile? {
             val module = ModuleUtilCore.findModuleForPsiElement(file)
             return findCabal(module!!)
         }
@@ -110,7 +110,7 @@ public class CabalInterface(val project: Project) {
         return process
     }
 
-    public fun checkVersion(): Boolean {
+    fun checkVersion(): Boolean {
         try {
             ProcessRunner(null).executeOrFail(getProgramPath(), "-V")
             return true;
@@ -119,15 +119,15 @@ public class CabalInterface(val project: Project) {
         }
     }
 
-    public fun configure(cabalFile: VirtualFile): Process {
+    fun configure(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "configure")
     }
 
-    public fun build(cabalFile: VirtualFile): Process {
+    fun build(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "build")
     }
 
-    public fun clean(cabalFile: VirtualFile): Process {
+    fun clean(cabalFile: VirtualFile): Process {
         return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "clean")
     }
 
@@ -157,7 +157,7 @@ public class CabalInterface(val project: Project) {
     }
 
 
-    public fun getPackagesList(): List<CabalPackageShort> {
+    fun getPackagesList(): List<CabalPackageShort> {
         try {
             val path = joinPath(getRepo(), "00-index.cache")
 
@@ -205,7 +205,7 @@ public class CabalInterface(val project: Project) {
     }
 
 
-    public fun getInstalledPackagesList(): List<CabalPackageShort> {
+    fun getInstalledPackagesList(): List<CabalPackageShort> {
         try {
             val ghcPkg = if (OSUtil.isMac && File("/usr/local/bin/ghc-pkg").exists()) {
                 "/usr/local/bin/ghc-pkg"
@@ -251,7 +251,7 @@ public class CabalInterface(val project: Project) {
         }
     }
 
-    public fun update(): Unit {
+    fun update(): Unit {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
@@ -262,7 +262,7 @@ public class CabalInterface(val project: Project) {
         });
     }
 
-    public fun install(pkg: String) {
+    fun install(pkg: String) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {

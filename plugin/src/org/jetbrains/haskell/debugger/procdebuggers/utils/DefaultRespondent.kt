@@ -9,7 +9,7 @@ import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.parser.HsHistoryFrameInfo
 import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescription
 
-public class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
+class DefaultRespondent(val debugProcess: HaskellDebugProcess) : DebugRespondent {
 
     private val session = debugProcess.session!!
 

@@ -6,7 +6,7 @@ import com.intellij.openapi.options.ConfigurationException
 import org.jetbrains.cabal.settings.CabalProjectSettings
 
 
-public class CabalProjectSettingsControl(initialSettings: CabalProjectSettings)
+class CabalProjectSettingsControl(initialSettings: CabalProjectSettings)
                        : AbstractExternalProjectSettingsControl<CabalProjectSettings>(initialSettings) {
 
     override fun fillExtraControls(content: PaintAwarePanel, indentLevel: Int) {  }

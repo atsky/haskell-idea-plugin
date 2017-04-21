@@ -7,10 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.cabal.util.CabalConstantsKt;
 
-@State(name = "CabalLocalSettings", storages = {@Storage(file = StoragePathMacros.WORKSPACE_FILE)} )
+@State(name = "CabalLocalSettings", storages = {@Storage(file = StoragePathMacros.WORKSPACE_FILE)})
 public class CabalLocalSettings extends AbstractExternalSystemLocalSettings
-        implements PersistentStateComponent<AbstractExternalSystemLocalSettings.State>
-{
+        implements PersistentStateComponent<AbstractExternalSystemLocalSettings.State> {
 
     public CabalLocalSettings(@NotNull Project project) {
         super(CabalConstantsKt.getSYSTEM_ID(), project);

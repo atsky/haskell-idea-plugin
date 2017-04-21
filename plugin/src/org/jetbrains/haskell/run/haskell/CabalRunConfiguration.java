@@ -28,18 +28,18 @@ import java.util.Map;
 
 public final class CabalRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule> implements CommonProgramRunConfigurationParameters {
     private static final Logger LOG = Logger.getInstance("ideah.run.CabalRunConfiguration");
-    public static final String EXECUTABLE_NAME_ELEMENT = "executableName";
-    public static final String PARAMETERS_ELEMENT = "parameters";
-    public static final String WORKING_DIR = "workingDir";
-    public static final String ENVIRONMENT_VARIABLES = "environmetVariables";
-    public static final String VAR_ENTRY_NAME = "var";
+    static final String EXECUTABLE_NAME_ELEMENT = "executableName";
+    static final String PARAMETERS_ELEMENT = "parameters";
+    static final String WORKING_DIR = "workingDir";
+    static final String ENVIRONMENT_VARIABLES = "environmetVariables";
+    static final String VAR_ENTRY_NAME = "var";
 
     private String myWorkingDir;
     private String myExecutableName;
     private String myProgramParameters;
     private Map<String, String> myEnvs = new HashMap<String, String>();
 
-    public CabalRunConfiguration(String name, Project project, ConfigurationFactory factory) {
+    CabalRunConfiguration(String name, Project project, ConfigurationFactory factory) {
         super(name, new RunConfigurationModule(project), factory);
     }
 

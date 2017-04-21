@@ -8,7 +8,7 @@ import com.intellij.util.messages.Topic
 import org.jetbrains.cabal.settings.*
 
 
-public class CabalSettings(project: Project)
+class CabalSettings(project: Project)
         : AbstractExternalSystemSettings<CabalSettings, CabalProjectSettings, CabalSettingsListener>(CabalSettingsListener.TOPIC, project) {
 
     override fun subscribe(listener: ExternalSystemSettingsListener<CabalProjectSettings>) {
