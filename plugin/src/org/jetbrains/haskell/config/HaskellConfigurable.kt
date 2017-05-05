@@ -22,7 +22,6 @@ public class HaskellConfigurable() : Configurable {
     private val cabalPathField = TextFieldWithBrowseButton()
     private val cabalDataPathField = TextFieldWithBrowseButton()
     private val ghcMod = TextFieldWithBrowseButton()
-    private val ghcModi = TextFieldWithBrowseButton()
     private val useGhcMod = JBCheckBox("Use ghc-mod automatic check (turn off if you have problems with ghc-mod)")
     private val usePty = JBCheckBox("Use pseudo terminal for project running")
 
@@ -96,7 +95,6 @@ public class HaskellConfigurable() : Configurable {
         addLabeledControl(0, "cabal executable", cabalPathField)
         addLabeledControl(1, "cabal data path", cabalDataPathField)
         addLabeledControl(2, "ghc-mod executable", ghcMod)
-        addLabeledControl(3, "ghc-modi executable", ghcModi)
 
         val defaultChangeListener = object : ChangeListener {
             override fun stateChanged(p0: ChangeEvent) {
@@ -138,7 +136,6 @@ public class HaskellConfigurable() : Configurable {
         state.cabalPath = cabalPathField.getTextField()!!.getText()
         state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
         state.ghcModPath = ghcMod.getTextField()!!.getText()
-        state.ghcModiPath = ghcModi.getTextField()!!.getText()
         state.useGhcMod = useGhcMod.isSelected()
         state.usePtyProcess = usePty.isSelected()
 
@@ -155,7 +152,6 @@ public class HaskellConfigurable() : Configurable {
         cabalPathField.getTextField()!!.setText(state.cabalPath ?: "")
         cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
         ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
-        ghcModi.getTextField()!!.setText(state.ghcModiPath ?: "")
         useGhcMod.setSelected(state.useGhcMod!!)
         usePty.setSelected(state.usePtyProcess!!)
 

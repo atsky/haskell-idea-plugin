@@ -29,6 +29,7 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
 
     public static class State {
         public String ghcModPath;
+        @Deprecated
         public String ghcModiPath;
         public String cabalPath;
         public String cabalDataPath;
@@ -50,10 +51,6 @@ public class HaskellSettings implements PersistentStateComponent<HaskellSettings
 
         if (myState.ghcModPath == null) {
             myState.ghcModPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("ghc-mod");
-        }
-
-        if (myState.ghcModiPath == null) {
-            myState.ghcModiPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("ghc-modi");
         }
 
         if (myState.useGhcMod == null) {

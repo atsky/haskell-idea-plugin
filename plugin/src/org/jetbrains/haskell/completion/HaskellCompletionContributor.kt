@@ -25,8 +25,8 @@ public class HaskellCompletionContributor() : CompletionContributor() {
 
             /*
             val moduleContent = BuildWrapper.getModuleContentDir(psiElement)
-            val path = getRelativePath(moduleContent!!.getPath(),
-                    parameters.getOriginalFile().getVirtualFile()!!.getPath())
+            val path = getRelativePath(moduleContent!!.getGhcModPath(),
+                    parameters.getOriginalFile().getVirtualFile()!!.getGhcModPath())
             val names = BuildWrapper.init(psiElement).namesinscope(path)
             if (names != null) {
                 for (value in names) {

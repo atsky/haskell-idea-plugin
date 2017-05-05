@@ -17,10 +17,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
-/**
- * Created by atsky on 06/01/15.
- */
-public class GhcModConsole(val project: Project) : ProjectComponent {
+class GhcModConsole(val project: Project) : ProjectComponent {
     var editor : EditorEx? = null
 
     override fun getComponentName(): String = "GhcModConsole"

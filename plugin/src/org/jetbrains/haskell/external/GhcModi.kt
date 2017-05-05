@@ -3,21 +3,14 @@ package org.jetbrains.haskell.external
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.ProjectComponent
 import org.jetbrains.haskell.config.HaskellSettings
-import java.io.InputStream
-import java.io.OutputStream
-import java.io.Writer
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
-import com.intellij.openapi.module.ModuleManager
 import java.io.File
-import java.util.regex.Pattern
 import java.util.ArrayList
 import com.intellij.notification.Notifications
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
-import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.progress.ProgressIndicator
 import org.jetbrains.haskell.util.ProcessRunner
 import com.intellij.notification.NotificationListener
 import javax.swing.event.HyperlinkEvent
@@ -28,10 +21,7 @@ import org.jetbrains.haskell.sdk.HaskellSdkType
 import org.jetbrains.haskell.external.tool.GhcModConsole
 import org.jetbrains.haskell.util.OSUtil
 
-/**
- * Created by atsky on 15/06/14.
- */
-public class GhcModi(val project: Project, val settings: HaskellSettings) : ProjectComponent {
+class GhcModi(val project: Project, val settings: HaskellSettings) : ProjectComponent {
     var process: Process? = null;
 
     override fun projectOpened() {}
@@ -60,12 +50,12 @@ public class GhcModi(val project: Project, val settings: HaskellSettings) : Proj
         } else {
             null
         }
-        process = ProcessRunner(project.getBaseDir()!!.getPath()).getProcess(listOf(getPath()), ghcHome)
-        GhcModConsole.getInstance(project).append("start ${getPath()}\n", GhcModConsole.MessageType.INFO)
+        process = ProcessRunner(project.baseDir!!.getPath()).getProcess(listOf(getGhcModPath(), "legacy-interactive"), ghcHome)
+        GhcModConsole.getInstance(project).append("start ${getGhcModPath()}\n", GhcModConsole.MessageType.INFO)
     }
 
-    fun getPath(): String {
-        return settings.getState().ghcModiPath!!
+    fun getGhcModPath(): String {
+        return settings.state.ghcModPath
     }
 
 

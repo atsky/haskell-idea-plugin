@@ -9,9 +9,6 @@ import javax.swing.JPanel
 import java.awt.BorderLayout
 import com.intellij.execution.impl.ConsoleViewImpl
 
-/**
- * Created by atsky on 04/01/15.
- */
 class GhcModToolWindowFactory() : ToolWindowFactory {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
