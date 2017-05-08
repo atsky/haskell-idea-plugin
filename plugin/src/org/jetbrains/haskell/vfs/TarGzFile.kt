@@ -18,10 +18,10 @@ import java.io.File
 /**
  * Created by atsky on 09/05/14.
  */
-public class TarGzFile(val archiveFile: VirtualFile,
+class TarGzFile(val archiveFile: VirtualFile,
                        val myPath: String) : VirtualFile() {
 
-    var isInit = false;
+    var isInit = false
     var myData: ByteArray? = null
     val myChildren = ArrayList<String>()
 
@@ -29,19 +29,19 @@ public class TarGzFile(val archiveFile: VirtualFile,
         if (isInit) {
             return true
         }
-        val archiveIns = archiveFile.getInputStream()
+        val archiveIns = archiveFile.inputStream
         val bin = BufferedInputStream(archiveIns)
-        val gzIn = GzipCompressorInputStream(bin);
+        val gzIn = GzipCompressorInputStream(bin)
 
 
         val tarArchiveInputStream = TarArchiveInputStream(gzIn)
 
         while (true) {
-            val entry = tarArchiveInputStream.getNextTarEntry();
+            val entry = tarArchiveInputStream.nextTarEntry
             if (entry == null) {
                 break
             }
-            val entryName = entry.getName() ?: ""
+            val entryName = entry.name ?: ""
             if (myPath == entryName) {
                 myData = readToArray(tarArchiveInputStream)
             } else if (entryName.startsWith(myPath)) {
@@ -65,18 +65,18 @@ public class TarGzFile(val archiveFile: VirtualFile,
         while (true) {
             nRead = ins.read(data, 0, data.size)
             if (nRead == -1) {
-                break;
+                break
             }
-            buffer.write(data, 0, nRead);
+            buffer.write(data, 0, nRead)
         }
 
-        buffer.flush();
+        buffer.flush()
 
-        return buffer.toByteArray();
+        return buffer.toByteArray()
     }
 
     override fun getName(): String {
-        val str = if (isDirectory()) {
+        val str = if (isDirectory) {
             myPath.substring(0, myPath.length - 1)
         } else {
             myPath
@@ -88,7 +88,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
     override fun getFileSystem(): VirtualFileSystem = CabalVirtualFileSystem.INSTANCE
 
     override fun getPath(): String =
-            archiveFile.getPath() + "!" + myPath
+            archiveFile.path + "!" + myPath
 
     override fun isWritable() = false
 
@@ -97,7 +97,7 @@ public class TarGzFile(val archiveFile: VirtualFile,
     override fun isValid() = true
 
     override fun getParent(): VirtualFile? {
-        val str = if (isDirectory()) {
+        val str = if (isDirectory) {
             myPath.substring(0, myPath.length - 1)
         } else {
             myPath
@@ -121,15 +121,15 @@ public class TarGzFile(val archiveFile: VirtualFile,
 
     override fun contentsToByteArray(): ByteArray {
         doInit()
-        return myData!!;
+        return myData!!
     }
 
     override fun getTimeStamp(): Long {
-        return archiveFile.getTimeStamp()
+        return archiveFile.timeStamp
     }
 
     override fun getModificationStamp(): Long {
-        return archiveFile.getModificationStamp()
+        return archiveFile.modificationStamp
     }
 
     override fun getLength(): Long {

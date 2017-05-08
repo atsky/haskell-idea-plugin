@@ -26,21 +26,21 @@ import com.intellij.xdebugger.XDebugSession
  * Created by vlad on 8/5/14.
  */
 
-public class HistoryManager(private val debugSession : XDebugSession,
+class HistoryManager(private val debugSession : XDebugSession,
                             private val debugProcess: HaskellDebugProcess) {
-    public val HISTORY_SIZE: Int = 20
+    val HISTORY_SIZE: Int = 20
 
-    public class StackState(public val historyIndex: Int,
-                            public val realHistIndex: Int,
-                            public val allFramesCollected: Boolean,
-                            public val historyFrames: List<HsHistoryFrame>,
-                            public val historyFramesLines: List<*>)
+    class StackState(val historyIndex: Int,
+                            val realHistIndex: Int,
+                            val allFramesCollected: Boolean,
+                            val historyFrames: List<HsHistoryFrame>,
+                            val historyFramesLines: List<*>)
 
 
     private val historyStack: HsHistoryStack = HsHistoryStack(debugProcess)
 
-    private var historyPanel: HistoryTab? = null;
-    private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.getSession()!!.getProject(),
+    private var historyPanel: HistoryTab? = null
+    private val historyHighlighter = HsExecutionPointHighlighter(debugProcess.session!!.project,
             HsExecutionPointHighlighter.HighlighterType.HISTORY)
     private val backAction: SwitchableAction = object : SwitchableAction("back", "Move back along history", Actions.Back) {
         override fun actionPerformed(e: AnActionEvent?) {
@@ -70,17 +70,17 @@ public class HistoryManager(private val debugSession : XDebugSession,
         }
     }
 
-    public fun initHistoryTab(debugSession : XDebugSessionImpl) {
+    fun initHistoryTab(debugSession : XDebugSessionImpl) {
         historyPanel = HistoryTab(debugSession, debugProcess, this)
     }
 
-    public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?): Unit =
+    fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?): Unit =
             historyStack.withRealFrameUpdate(finalCallback)
 
-    public fun indexSelected(index: Int): Unit = historyStack.moveTo(index)
+    fun indexSelected(index: Int): Unit = historyStack.moveTo(index)
 
-    public fun setHistoryFramesInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
-        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({ ->
+    fun setHistoryFramesInfo(initial: HsHistoryFrameInfo, others: ArrayList<HsHistoryFrameInfo>, full: Boolean) {
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.session!!.project, Runnable({ ->
             historyPanel!!.addHistoryLine(initial.toString())
             for (info in others) {
                 historyPanel!!.addHistoryLine(info.toString())
@@ -91,22 +91,22 @@ public class HistoryManager(private val debugSession : XDebugSession,
         }))
     }
 
-    public fun registerContent(ui: RunnerLayoutUi) {
+    fun registerContent(ui: RunnerLayoutUi) {
         initHistoryTab(debugSession as XDebugSessionImpl)
         val context = ui.createContent("history", historyPanel!!.getComponent(), "History", null, null)
-        context.setCloseable(false)
+        context.isCloseable = false
         ui.addContent(context)
-        ui.getOptions().setToFocus(context, XDebuggerUIConstants.LAYOUT_VIEW_BREAKPOINT_CONDITION)
+        ui.options.setToFocus(context, XDebuggerUIConstants.LAYOUT_VIEW_BREAKPOINT_CONDITION)
     }
 
-    public fun registerActions(topToolbar: DefaultActionGroup) {
+    fun registerActions(topToolbar: DefaultActionGroup) {
         topToolbar.addSeparator()
         topToolbar.add(backAction)
         topToolbar.add(forwardAction)
     }
 
-    public fun historyChanged(hasNext: Boolean, hasPrevious: Boolean, stackFrame: HsStackFrame?) {
-        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), Runnable({ ->
+    fun historyChanged(hasNext: Boolean, hasPrevious: Boolean, stackFrame: HsStackFrame?) {
+        AppUIUtil.invokeLaterIfProjectAlive(debugProcess.session!!.project, Runnable({ ->
             backAction.enabled = hasPrevious
             forwardAction.enabled = hasNext
             historyPanel!!.stackChanged(stackFrame)
@@ -118,34 +118,34 @@ public class HistoryManager(private val debugSession : XDebugSession,
         }))
     }
 
-    public fun clean(): Unit = historyChanged(false, false, null)
+    fun clean(): Unit = historyChanged(false, false, null)
 
-    public fun historyFrameAppeared(frame: HsHistoryFrame): Unit = historyStack.addFrame(frame)
+    fun historyFrameAppeared(frame: HsHistoryFrame): Unit = historyStack.addFrame(frame)
 
-    public fun resetHistoryStack(): Unit = historyStack.clear()
+    fun resetHistoryStack(): Unit = historyStack.clear()
 
-    public fun markHistoryFramesAsObsolete(): Unit = historyStack.markFramesAsObsolete()
+    fun markHistoryFramesAsObsolete(): Unit = historyStack.markFramesAsObsolete()
 
     // save/load state managing
     private val states: Deque<StackState> = ArrayDeque()
-    public fun saveState(): Unit = states.addLast(historyStack.save())
-    public fun loadState(): Unit = AppUIUtil.invokeLaterIfProjectAlive(debugProcess.getSession()!!.getProject(), {
+    fun saveState(): Unit = states.addLast(historyStack.save())
+    fun loadState(): Unit = AppUIUtil.invokeLaterIfProjectAlive(debugProcess.session!!.project, {
         historyStack.loadFrom(states.pollLast()!!)
     })
-    public fun hasSavedStates(): Boolean = !states.isEmpty()
+    fun hasSavedStates(): Boolean = !states.isEmpty()
 
     private inner class HsHistoryStack(private val debugProcess: HaskellDebugProcess) {
-        public var historyIndex: Int = 0
+        var historyIndex: Int = 0
             private set
         private var realHistIndex: Int = 0
         private var allFramesCollected = false
         private val historyFrames: java.util.ArrayList<HsHistoryFrame> = ArrayList()
 
-        public fun addFrame(frame: HsHistoryFrame) {
+        fun addFrame(frame: HsHistoryFrame) {
             historyFrames.add(frame)
         }
 
-        public fun clear() {
+        fun clear() {
             historyIndex = 0
             realHistIndex = 0
             allFramesCollected = false
@@ -153,14 +153,14 @@ public class HistoryManager(private val debugSession : XDebugSession,
             updateHistory()
         }
 
-        public fun hasNext(): Boolean = historyIndex > 0
+        fun hasNext(): Boolean = historyIndex > 0
 
-        public fun hasPrevious(): Boolean = !allFramesCollected || historyIndex + 1 < historyFrames.size
+        fun hasPrevious(): Boolean = !allFramesCollected || historyIndex + 1 < historyFrames.size
 
-        public fun currentFrame(): HsHistoryFrame? =
+        fun currentFrame(): HsHistoryFrame? =
                 if (historyIndex < historyFrames.size) historyFrames.get(historyIndex) else null
 
-        public fun moveTo(index: Int) {
+        fun moveTo(index: Int) {
             if (index == -1 || index == historyIndex) {
             } else if (index < historyIndex) {
                 val it = historyIndex - index
@@ -253,13 +253,13 @@ public class HistoryManager(private val debugSession : XDebugSession,
 
         private fun updateHistory() = historyChanged(hasNext(), hasPrevious(), currentFrame())
 
-        public fun markFramesAsObsolete() {
+        fun markFramesAsObsolete() {
             for (frame in historyFrames) {
                 frame.obsolete = true
             }
         }
 
-        public fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
+        fun withRealFrameUpdate(finalCallback: ((MoveHistResult?) -> Unit)?) {
             if (realHistIndex == historyIndex) {
                 finalCallback?.invoke(null)
                 return
@@ -271,10 +271,10 @@ public class HistoryManager(private val debugSession : XDebugSession,
             }
         }
 
-        public fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames),
-                historyPanel!!.getHistoryFramesModel().getElements())
+        fun save(): StackState = StackState(historyIndex, realHistIndex, allFramesCollected, ArrayList(historyFrames),
+                historyPanel!!.getHistoryFramesModel().elements)
 
-        public fun loadFrom(state: StackState) {
+        fun loadFrom(state: StackState) {
             historyIndex = state.historyIndex
             realHistIndex = state.realHistIndex
             allFramesCollected = state.allFramesCollected

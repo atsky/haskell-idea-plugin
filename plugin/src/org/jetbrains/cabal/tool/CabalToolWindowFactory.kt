@@ -46,7 +46,7 @@ import org.jetbrains.cabal.tool.CabalToolWindowFactory.PackageData
 import java.awt.Color
 
 
-public class CabalToolWindowFactory() : ToolWindowFactory {
+class CabalToolWindowFactory : ToolWindowFactory {
     private var toolWindow: ToolWindow? = null
     private var packages: JTree? = null
     private var project: Project? = null
@@ -59,7 +59,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         this.toolWindow = toolWindow
         val contentFactory = ContentFactory.SERVICE.getInstance()
         val content = contentFactory!!.createContent(createToolWindowPanel(), "", false)
-        toolWindow.getContentManager()!!.addContent(content)
+        toolWindow.contentManager!!.addContent(content)
     }
 
     private fun createToolWindowPanel(): JComponent {
@@ -71,7 +71,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
         treeModel = DefaultTreeModel(getTree(packagesList, installedPackagesList, ""))
         val tree = Tree(treeModel)
-        tree.setCellRenderer(object : TreeCellRenderer {
+        tree.cellRenderer = object : TreeCellRenderer {
             override fun getTreeCellRendererComponent(tree: JTree,
                                                       value: Any?,
                                                       selected: Boolean,
@@ -80,28 +80,28 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
                                                       row: Int,
                                                       hasFocus: Boolean): Component {
 
-                val userObject = (value as DefaultMutableTreeNode).getUserObject()
+                val userObject = (value as DefaultMutableTreeNode).userObject
                 if (userObject == null) {
                     return JLabel()
                 }
                 val packageData = userObject as PackageData
                 val label = JLabel(packageData.text)
                 if (packageData.installed) {
-                    label.setForeground(Color(0, 140, 0))
+                    label.foreground = Color(0, 140, 0)
                 }
                 return label
             }
 
-        })
+        }
 
         tree.addMouseListener(object : MouseAdapter() {
             override fun mousePressed(e: MouseEvent) {
                 if (SwingUtilities.isRightMouseButton(e)) {
-                    val path = tree.getPathForLocation(e.getX(), e.getY());
+                    val path = tree.getPathForLocation(e.x, e.y)
                     if (path == null) {
                         return
                     }
-                    val pathArray = path.getPath()
+                    val pathArray = path.path
 
                     val packageName = pathArray[1] as DefaultMutableTreeNode
                     val packageVersion: DefaultMutableTreeNode? = if (pathArray.size == 3) {
@@ -110,19 +110,19 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
                         null
                     }
 
-                    val menu = JPopupMenu();
+                    val menu = JPopupMenu()
                     menu.add(JMenuItem(object: AbstractAction("Install") {
                         override fun actionPerformed(e: ActionEvent) {
-                            install((packageName.getUserObject() as PackageData).text,
-                                    (packageVersion?.getUserObject() as PackageData?)?.text)
+                            install((packageName.userObject as PackageData).text,
+                                    (packageVersion?.userObject as PackageData?)?.text)
                         }
 
                     }))
-                    menu.show(tree, e.getX(), e.getY());
+                    menu.show(tree, e.x, e.y)
                 }
             }
         })
-        tree.setRootVisible(false);
+        tree.isRootVisible = false
         packages = tree
 
         panel.add(JBScrollPane(packages), BorderLayout.CENTER)
@@ -148,7 +148,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
         }
 
-        return root;
+        return root
     }
 
     fun updateTree(text: String) {
@@ -169,7 +169,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
     private fun getToolbar(): JComponent {
         val panel = JPanel()
 
-        panel.setLayout(BoxLayout(panel, BoxLayout.X_AXIS))
+        panel.layout = BoxLayout(panel, BoxLayout.X_AXIS)
 
 
         val group = DefaultActionGroup()
@@ -177,13 +177,13 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
 
         val actionToolBar = ActionManager.getInstance()!!.createActionToolbar("CabalTool", group, true)!!
 
-        panel.add(actionToolBar.getComponent()!!)
+        panel.add(actionToolBar.component!!)
 
 
         val searchTextField = SearchTextField()
         searchTextField.addDocumentListener(object : DocumentAdapter() {
             override fun textChanged(e: DocumentEvent?) {
-                updateTree(searchTextField.getText()!!)
+                updateTree(searchTextField.text!!)
             }
 
         })
@@ -193,7 +193,7 @@ public class CabalToolWindowFactory() : ToolWindowFactory {
         return panel
     }
 
-    inner final class UpdateAction : AnAction("Update",
+    inner class UpdateAction : AnAction("Update",
             "Update packages list",
             HaskellIcons.UPDATE) {
 

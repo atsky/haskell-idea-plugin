@@ -13,21 +13,21 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 
 import java.util.ArrayList
 
-public open class Section(node: ASTNode): Field(node), FieldContainer, Checkable {
+open class Section(node: ASTNode): Field(node), FieldContainer, Checkable {
 
-    public override fun check(): List<ErrorMessage> = listOf()
+    override fun check(): List<ErrorMessage> = listOf()
 
-    public fun getSectChildren(): List<PsiElement> = getChildren().filter { it is Field }
+    fun getSectChildren(): List<PsiElement> = children.filter { it is Field }
 
-    public fun getSectTypeNode(): PsiElement = (getChildren().firstOrNull { it is SectionType }) ?: throw IllegalStateException()
+    fun getSectTypeNode(): PsiElement = (children.firstOrNull { it is SectionType }) ?: throw IllegalStateException()
 
-    public fun getSectType(): String = getSectTypeNode().getText()!!
+    fun getSectType(): String = getSectTypeNode().text!!
 
     protected open fun getSectName(): String? {
-        var node = getFirstChild()
+        var node = firstChild
         while ((node != null) && (node !is Name)) {
-            node = node.getNextSibling()
+            node = node.nextSibling
         }
-        return (node as? Name)?.getText()
+        return (node as? Name)?.text
     }
 }

@@ -6,7 +6,7 @@ import com.intellij.psi.PsiReference
 import org.jetbrains.haskell.psi.reference.SomeIdReference
 
 
-public class SomeId(node: ASTNode) : ASTWrapperPsiElement(node) {
+class SomeId(node: ASTNode) : ASTWrapperPsiElement(node) {
 
     override fun getReference(): PsiReference? {
         return SomeIdReference(this)

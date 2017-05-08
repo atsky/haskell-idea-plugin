@@ -10,10 +10,10 @@ import org.jetbrains.haskell.psi.reference.ValueReference
 /**
  * Created by atsky on 11/18/14.
  */
-public class QVar(node : ASTNode) : ASTWrapperPsiElement(node), PsiNamedElement {
+class QVar(node : ASTNode) : ASTWrapperPsiElement(node), PsiNamedElement {
 
     override fun getName(): String? {
-        return getText()
+        return text
     }
 
     override fun setName(p0: String): PsiElement? {

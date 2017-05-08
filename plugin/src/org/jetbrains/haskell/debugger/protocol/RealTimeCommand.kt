@@ -9,4 +9,4 @@ import org.jetbrains.haskell.debugger.parser.ParseResult
 /**
  * Command like setting breakpoint
  */
-public abstract class RealTimeCommand<R : ParseResult?>(callback: CommandCallback<R>?) : AbstractCommand<R>(callback)
+abstract class RealTimeCommand<R : ParseResult?>(callback: CommandCallback<R>?) : AbstractCommand<R>(callback)

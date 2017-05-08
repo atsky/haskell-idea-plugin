@@ -9,8 +9,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.yesod.hamlet.HamletLanguage
 
 
-public class HamletCompositeElementType(val debugName: String) :
-        IElementType(debugName, HamletLanguage.INSTANCE) {
-
-}
+class HamletCompositeElementType(val debugName: String) :
+        IElementType(debugName, HamletLanguage.INSTANCE)
 

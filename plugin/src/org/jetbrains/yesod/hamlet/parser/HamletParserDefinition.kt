@@ -20,7 +20,7 @@ import org.jetbrains.yesod.hamlet.HamletLanguage
 import org.jetbrains.yesod.hamlet.psi.*
 
 
-public class HamletParserDefinition : ParserDefinition {
+class HamletParserDefinition : ParserDefinition {
     override fun createLexer(project: Project): Lexer {
         return HamletLexer()
     }
@@ -46,43 +46,43 @@ public class HamletParserDefinition : ParserDefinition {
     }
 
     override fun createElement(astNode: ASTNode): PsiElement {
-        if (astNode.getElementType() === HamletTokenTypes.TAG) {
+        if (astNode.elementType === HamletTokenTypes.TAG) {
             return org.jetbrains.yesod.hamlet.psi.Tag(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.DOCTYPE) {
+        if (astNode.elementType === HamletTokenTypes.DOCTYPE) {
             return org.jetbrains.yesod.hamlet.psi.Doctype(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.STRING) {
+        if (astNode.elementType === HamletTokenTypes.STRING) {
             return org.jetbrains.yesod.hamlet.psi.String(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.DOT_IDENTIFIER) {
+        if (astNode.elementType === HamletTokenTypes.DOT_IDENTIFIER) {
             return org.jetbrains.yesod.hamlet.psi.DotIdentifier(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.COLON_IDENTIFIER) {
+        if (astNode.elementType === HamletTokenTypes.COLON_IDENTIFIER) {
             return org.jetbrains.yesod.hamlet.psi.ColonIdentifier(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.INTERPOLATION) {
+        if (astNode.elementType === HamletTokenTypes.INTERPOLATION) {
             return org.jetbrains.yesod.hamlet.psi.Interpolation(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.SHARP_IDENTIFIER) {
+        if (astNode.elementType === HamletTokenTypes.SHARP_IDENTIFIER) {
             return org.jetbrains.yesod.hamlet.psi.SharpIdentifier(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.OPERATOR) {
+        if (astNode.elementType === HamletTokenTypes.OPERATOR) {
             return org.jetbrains.yesod.hamlet.psi.Operator(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.COMMENT) {
+        if (astNode.elementType === HamletTokenTypes.COMMENT) {
             return org.jetbrains.yesod.hamlet.psi.Comment(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.ESCAPE) {
+        if (astNode.elementType === HamletTokenTypes.ESCAPE) {
             return org.jetbrains.yesod.hamlet.psi.Escape(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.END_INTERPOLATION) {
+        if (astNode.elementType === HamletTokenTypes.END_INTERPOLATION) {
             return org.jetbrains.yesod.hamlet.psi.Interpolation(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.ATTRIBUTE) {
+        if (astNode.elementType === HamletTokenTypes.ATTRIBUTE) {
             return Attribute(astNode)
         }
-        if (astNode.getElementType() === HamletTokenTypes.ATTRIBUTE_VALUE) {
+        if (astNode.elementType === HamletTokenTypes.ATTRIBUTE_VALUE) {
             return org.jetbrains.yesod.hamlet.psi.AttributeValue(astNode)
         }
         return ASTWrapperPsiElement(astNode)
@@ -98,6 +98,6 @@ public class HamletParserDefinition : ParserDefinition {
 
     companion object {
 
-        public var HAMLET_FILE: IFileElementType = IFileElementType(HamletLanguage.INSTANCE)
+        var HAMLET_FILE: IFileElementType = IFileElementType(HamletLanguage.INSTANCE)
     }
 }

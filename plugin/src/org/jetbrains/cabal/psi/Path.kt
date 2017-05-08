@@ -17,31 +17,31 @@ import java.io.FilenameFilter
 import java.util.ArrayList
 import com.intellij.psi.PsiReference
 
-public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
+open class Path(node: ASTNode) : PropertyValue(node), Checkable {
 
-    public override fun getReference(): PsiReference? {
+    override fun getReference(): PsiReference? {
         val originalRootDir = getCabalRootFile()
         if (originalRootDir == null) return null
         val refFile: VirtualFile? = getVirtualFile(originalRootDir)
-        if ((refFile == null) || (refFile.isDirectory())) return null
-        val resolveTo = getManager()?.findFile(refFile)
+        if ((refFile == null) || (refFile.isDirectory)) return null
+        val resolveTo = manager?.findFile(refFile)
         if (resolveTo == null) return null
         return FilePsiReference(this, resolveTo)
     }
 
-    public fun getParentField(): PathsField = getParent() as PathsField
+    fun getParentField(): PathsField = parent as PathsField
 
-    public fun getDefaultTextRange(): TextRange = TextRange(0, getText().length)
+    fun getDefaultTextRange(): TextRange = TextRange(0, text.length)
 
-    public fun getFile(): File = File(getText())
+    fun getFile(): File = File(text)
 
-    public fun getFilename(): String = getFile().getName()
+    fun getFilename(): String = getFile().name
 
-    public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
+    fun getCabalFile(): CabalFile = (containingFile as CabalFile)
 
-    public fun isAbsolute(): Boolean = getFile().isAbsolute()
+    fun isAbsolute(): Boolean = getFile().isAbsolute
 
-    public fun isWildcard(): Boolean {
+    fun isWildcard(): Boolean {
         val parentField = getParentField() as Field
         if (parentField.hasName("extra-source-files") || parentField.hasName("data-files")) {
             return getFilename().matches("^\\*\\.(.+)$".toRegex())
@@ -49,7 +49,7 @@ public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
         return false
     }
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         val originalRootFile = getCabalRootFile()!!
         if (isWildcard()) {
             val parentDir = getVirtualParentDir(originalRootFile)
@@ -63,14 +63,14 @@ public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
         return listOf()
     }
 
-    public fun getFileWithParent(parent: VirtualFile): VirtualFile? {
-        if (isAbsolute()) return findFileByPath(parent.getFileSystem(), getText())
-        return findFileByRelativePath(parent, getText())
+    fun getFileWithParent(parent: VirtualFile): VirtualFile? {
+        if (isAbsolute()) return findFileByPath(parent.fileSystem, text)
+        return findFileByRelativePath(parent, text)
     }
 
-    public fun getPathWithParent(parent: VirtualFile): String = if (isAbsolute()) getText() else File(parent.getPath(), getText()).getPath()
+    fun getPathWithParent(parent: VirtualFile): String = if (isAbsolute()) text else File(parent.path, text).path
 
-    public fun getVirtualFile(originalRootDir: VirtualFile): VirtualFile? {
+    fun getVirtualFile(originalRootDir: VirtualFile): VirtualFile? {
         val parentField = getParentField()
         if (!parentField.validRelativity(getFile())) return null
         for (sourceDir in parentField.getSourceDirs(originalRootDir)) {
@@ -80,14 +80,14 @@ public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
         return null
     }
 
-    public fun getVirtualParentDir(originalRootDir: VirtualFile): VirtualFile? {
+    fun getVirtualParentDir(originalRootDir: VirtualFile): VirtualFile? {
         val parentField = getParentField()
         if (!parentField.validRelativity(getFile())) return null
         for (sourceDir in parentField.getSourceDirs(originalRootDir)) {
             val filePath = getPathWithParent(sourceDir)
-            val dirPath  = File(filePath).getParent()
-            val dir = if (dirPath == null) null else findFileByPath(originalRootDir.getFileSystem(), dirPath)
-            if ((dir != null) && dir.isDirectory()) return dir
+            val dirPath  = File(filePath).parent
+            val dir = if (dirPath == null) null else findFileByPath(originalRootDir.fileSystem, dirPath)
+            if ((dir != null) && dir.isDirectory) return dir
         }
         return null
     }
@@ -99,9 +99,9 @@ public open class Path(node: ASTNode) : PropertyValue(node), Checkable {
             = virtualSystem.findFileByPath(path.replace(File.separatorChar, '/'))
 
     private fun filterByWildcard(parentDir: VirtualFile): List<VirtualFile> {
-        val ext = getFile().getName().replace("^\\*(\\..+)$".toRegex(), "$1")
-        return parentDir.getChildren()?.filter { it.getName().matches("^[^.]*\\Q${ext}\\E$".toRegex()) }  ?:  listOf()
+        val ext = getFile().name.replace("^\\*(\\..+)$".toRegex(), "$1")
+        return parentDir.children?.filter { it.name.matches("^[^.]*\\Q${ext}\\E$".toRegex()) }  ?:  listOf()
     }
 
-    private fun getCabalRootFile(): VirtualFile? = getCabalFile().getVirtualFile()?.getParent()
+    private fun getCabalRootFile(): VirtualFile? = getCabalFile().virtualFile?.parent
 }

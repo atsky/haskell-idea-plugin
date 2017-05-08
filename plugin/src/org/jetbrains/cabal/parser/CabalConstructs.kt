@@ -31,7 +31,7 @@ fun makeFields(body : FieldsBuilder.() -> Unit) : Map<String, Pair<IElementType,
 }
 // https://github.com/ghc/packages-Cabal/blob/master/Cabal/Distribution/PackageDescription/Parse.hs
 
-public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("name",               CT.NAME_FIELD,       { parseIdValue(CT.NAME) })
     field("version",            CT.VERSION,          { parseVersionValue() } )
     field("cabal-version",      CT.CABAL_VERSION,    { parseSimpleVersionConstraint() })
@@ -57,7 +57,7 @@ public val PKG_DESCR_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) ->
     field("extra-tmp-files",    CT.EXTRA_TMP,        CabalParser::parsePathList)
 }
 
-public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("build-depends",  CT.BUILD_DEPENDS,  { l -> parseConstraintList(l) })
     field("other-modules",  CT.OTHER_MODULES,  CabalParser::parseIdList)
     field("hs-source-dirs", CT.HS_SOURCE_DIRS, CabalParser::parsePathList)
@@ -95,19 +95,19 @@ public val BUILD_INFO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
     field("other-languages",    CT.MULTI_VAL, CabalParser::parseLanguageList)
 }
 
-public val LIBRARY_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val LIBRARY_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("exposed-modules", CT.EXPOSED_MODULES, CabalParser::parseIdList)
     field("exposed", CT.EXPOSED, { parseBool() })
     addAll(BUILD_INFO_FIELDS)
 }
 
-public val EXECUTABLE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val EXECUTABLE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("main-is", CT.MAIN_FILE, { parsePath() } )
     addAll(BUILD_INFO_FIELDS)
 }
 
 
-public val TEST_SUITE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val TEST_SUITE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("type",        CT.TYPE,  { parseIdValue(CT.TEST_SUITE_TYPE) })
     field("main-is",     CT.MAIN_FILE, { parsePath() })
     field("test-module", CT.TEST_MODULE, { parseIdValue(CT.IDENTIFIER) })
@@ -115,20 +115,20 @@ public val TEST_SUITE_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -
 }
 
 
-public val BENCHMARK_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val BENCHMARK_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("type",    CT.TYPE,      { parseIdValue(CT.BENCHMARK_TYPE) })
     field("main-is", CT.MAIN_FILE, { parsePath() })
     addAll(BUILD_INFO_FIELDS)
 }
 
 
-public val FLAG_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val FLAG_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("description", CT.SINGLE_VAL, CabalParser::parseFreeForm)
     field("default",     CT.BOOL_FIELD, { parseBool() })
     field("manual",      CT.BOOL_FIELD, { parseBool() })
 }
 
-public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
+val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>> = makeFields {
     field("location", CT.REPO_LOCATION, { parseTokenValue(CT.URL) })
     field("type",     CT.TYPE,          { parseIdValue(CT.REPO_TYPE) })
     field("subdir",   CT.REPO_SUBDIR,   { parsePath() })
@@ -137,7 +137,7 @@ public val SOURCE_REPO_FIELDS: Map<String, Pair<IElementType, CabalParser.(Int) 
     field("branch",   CT.SINGLE_VAL,    { parseTokenValue(CT.TOKEN) })
 }
 
-public val SECTION_TYPES: Map<String, IElementType> = mapOf(
+val SECTION_TYPES: Map<String, IElementType> = mapOf(
         "flag"                  to CT.FLAG          ,
         "executable"            to CT.EXECUTABLE    ,
         "library"               to CT.LIBRARY       ,
@@ -150,7 +150,7 @@ public val SECTION_TYPES: Map<String, IElementType> = mapOf(
 
 private fun parseFun(f : CabalParser.(Int) -> Boolean) = f
 
-public val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
+val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
                                        Map<String, Pair<IElementType, CabalParser.(Int) -> Boolean>>?
                                                                                                         >> = mapOf(
         "executable"            to Pair(parseFun { parseSectionName() },     EXECUTABLE_FIELDS) ,
@@ -163,7 +163,7 @@ public val SECTIONS: Map<String, Pair< CabalParser.(Int) -> Boolean,
         "else"                  to Pair(parseFun { true},                    null)
 )
 
-public val TOP_SECTION_NAMES: List<String> = listOf(
+val TOP_SECTION_NAMES: List<String> = listOf(
         "flag",
         "executable",
         "library",
@@ -172,12 +172,12 @@ public val TOP_SECTION_NAMES: List<String> = listOf(
         "source-repository"
 )
 
-public val IF_ELSE: List<String> = listOf(
+val IF_ELSE: List<String> = listOf(
         "if",
         "else"
 )
 
-public val BUILD_INFO_SECTIONS: List<String> = listOf(
+val BUILD_INFO_SECTIONS: List<String> = listOf(
         "executable",
         "library",
         "test-suite",
@@ -186,12 +186,12 @@ public val BUILD_INFO_SECTIONS: List<String> = listOf(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-public val REPO_KIND_VALS : List<String> = listOf(
+val REPO_KIND_VALS : List<String> = listOf(
         "this",
         "head"
 )
 
-public val REPO_TYPE_VALS : List<String> = listOf(
+val REPO_TYPE_VALS : List<String> = listOf(
         "darcs",
         "git",
         "svn",
@@ -204,31 +204,31 @@ public val REPO_TYPE_VALS : List<String> = listOf(
         "monotone"
 )
 
-public val TS_TYPE_VALS : List<String> = listOf(
+val TS_TYPE_VALS : List<String> = listOf(
         "exitcode-stdio-1.0",
         "detailed-0.9",
         "detailed-1.0"
 )
 
-public val BENCH_TYPE_VALS: List<String> = listOf(
+val BENCH_TYPE_VALS: List<String> = listOf(
         "exitcode-stdio-1.0"
 )
 
-public val BUILD_TYPE_VALS : List<String> = listOf(
+val BUILD_TYPE_VALS : List<String> = listOf(
         "Simple",
         "Configure",
         "Custom",
         "Make"
 )
 
-public val BOOL_VALS : List<String> = listOf(
+val BOOL_VALS : List<String> = listOf(
         "true",
         "True",
         "false",
         "False"
 )
 
-public val COMPILER_VALS : List<String> = listOf(
+val COMPILER_VALS : List<String> = listOf(
         "ghc",
         "nhc",
         "yhc",
@@ -239,7 +239,7 @@ public val COMPILER_VALS : List<String> = listOf(
         "lhc"
 )
 
-public val LANGUAGE_VALS : List<String> = listOf(
+val LANGUAGE_VALS : List<String> = listOf(
         "Haskell98",
         "Haskell2010"
 )

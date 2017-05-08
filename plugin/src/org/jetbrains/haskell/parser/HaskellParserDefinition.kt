@@ -23,7 +23,7 @@ import java.util.ArrayList
 import org.jetbrains.grammar.HaskellLexerTokens
 
 
-public class HaskellParserDefinition() : ParserDefinition {
+class HaskellParserDefinition : ParserDefinition {
     val HASKELL_FILE = IFileElementType(HaskellLanguage.INSTANCE)
 
     override fun createLexer(project: Project?): Lexer = HaskellLexer()
@@ -53,7 +53,7 @@ public class HaskellParserDefinition() : ParserDefinition {
 
 
     override fun createElement(node: ASTNode?): PsiElement {
-        val elementType = node!!.getElementType()
+        val elementType = node!!.elementType
         if (elementType is HaskellCompositeElementType) {
             val constructor = elementType.constructor
             if (constructor != null) {

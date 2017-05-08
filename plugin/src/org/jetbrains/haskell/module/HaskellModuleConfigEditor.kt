@@ -11,13 +11,13 @@ import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationEditorProv
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState
 import java.util.ArrayList
 
-public class HaskellModuleConfigEditor() : ModuleConfigurationEditorProvider {
+class HaskellModuleConfigEditor : ModuleConfigurationEditorProvider {
 
     override fun createEditors(state: ModuleConfigurationState?): Array<ModuleConfigurationEditor> {
-        val module = state!!.getRootModel()!!.getModule()
+        val module = state!!.rootModel!!.module
 
-        return arrayOf(ContentEntriesEditor(module.getName(), state),
+        return arrayOf(ContentEntriesEditor(module.name, state),
                 //PackagesEditor(state, module.getProject()),
-                OutputEditor(state));
+                OutputEditor(state))
     }
 }

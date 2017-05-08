@@ -13,7 +13,7 @@ class HaskellSdkAdditionalData(ghciPath: String?,
         private val GHC_PKG_PATH = "ghcpkg_path"
         private val CABAL_PATH = "cabal_path"
 
-        public fun load(element: Element): HaskellSdkAdditionalData {
+        fun load(element: Element): HaskellSdkAdditionalData {
             val data = HaskellSdkAdditionalData(null, null, null)
             data.ghciPath = element.getAttributeValue(GHCI_PATH)
             data.ghcPkgPath = element.getAttributeValue(GHC_PKG_PATH)

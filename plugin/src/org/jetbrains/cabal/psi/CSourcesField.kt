@@ -7,7 +7,7 @@ import org.jetbrains.cabal.psi.PathsField
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.io.File
 
-public class CSourcesField(node: ASTNode) : MultiValueField(node), PathsField {
+class CSourcesField(node: ASTNode) : MultiValueField(node), PathsField {
 
-    public override fun validVirtualFile(file: VirtualFile): Boolean = !file.isDirectory()
+    override fun validVirtualFile(file: VirtualFile): Boolean = !file.isDirectory
 }

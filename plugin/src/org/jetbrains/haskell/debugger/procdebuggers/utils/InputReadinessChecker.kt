@@ -5,7 +5,7 @@ import java.net.Socket
 import java.net.SocketException
 import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 
-public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateUpdater)
+class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateUpdater)
 : Runnable {
 
     companion object {
@@ -13,11 +13,11 @@ public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateU
     }
 
     private var running = true
-    public var connected: Boolean = false
+    var connected: Boolean = false
         private set
 
     private val serverSocket: ServerSocket = ServerSocket(0)
-    public val INPUT_READINESS_PORT: Int = serverSocket.getLocalPort()
+    val INPUT_READINESS_PORT: Int = serverSocket.localPort
 
     override fun run() {
 
@@ -48,19 +48,19 @@ public class InputReadinessChecker(val debugStateUpdater: GHCiDebugProcessStateU
             running = false
             connected = false
             socket?.close()
-            if (!serverSocket.isClosed()) {
+            if (!serverSocket.isClosed) {
                 serverSocket.close()
             }
         }
     }
 
-    public fun start() {
+    fun start() {
         Thread(this).start()
     }
 
-    public fun stop() {
+    fun stop() {
         running = false
-        if (!serverSocket.isClosed()) {
+        if (!serverSocket.isClosed) {
             serverSocket.close()
         }
     }

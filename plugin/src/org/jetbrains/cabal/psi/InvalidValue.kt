@@ -7,10 +7,10 @@ import org.jetbrains.cabal.psi.InvalidField
 import org.jetbrains.cabal.highlight.ErrorMessage
 import com.intellij.openapi.util.TextRange
 
-public open class InvalidValue(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
+open class InvalidValue(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
-    public override fun check(): List<ErrorMessage> {
-        if (getText()!! == "") {
+    override fun check(): List<ErrorMessage> {
+        if (text!! == "") {
             return listOf(ErrorMessage(this, "invalid empty value", "error", isAfterNodeError = true))
         }
         return listOf(ErrorMessage(this, "invalid value", "error"))

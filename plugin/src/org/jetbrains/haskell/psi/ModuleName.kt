@@ -35,15 +35,15 @@ import org.jetbrains.haskell.scope.GlobalScope
 /**
  * Created by atsky on 3/29/14.
  */
-public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
+class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
 
     override fun getReference(): PsiReference? {
         return ModuleReference(this)
     }
 
-    public fun findModuleFile(): HaskellFile? {
-        val nameToFind = getText()!!
-        val module = ModuleUtilCore.findModuleForPsiElement(this);
+    fun findModuleFile(): HaskellFile? {
+        val nameToFind = text!!
+        val module = ModuleUtilCore.findModuleForPsiElement(this)
 
         if (module == null) {
             return null
@@ -65,11 +65,11 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
         }
 
         if (result != null) {
-            val psiFile = PsiManager.getInstance(getProject()).findFile(result!!)
+            val psiFile = PsiManager.getInstance(project).findFile(result!!)
             return psiFile as HaskellFile
         }
 
-        val haskellFile = GlobalScope.getModule(getProject(), nameToFind)
+        val haskellFile = GlobalScope.getModule(project, nameToFind)
         if (haskellFile != null) {
             return haskellFile
         }
@@ -79,19 +79,19 @@ public class ModuleName(node: ASTNode) : ASTWrapperPsiElement(node) {
 
 
     fun trace(suffix: String, dir: VirtualFile, function: (String, VirtualFile) -> Boolean): Boolean {
-        for (file in dir.getChildren()!!) {
-            if (file.isDirectory()) {
-                if (!trace(suffix + file.getName() + ".", file, function)) {
-                    return false;
+        for (file in dir.children!!) {
+            if (file.isDirectory) {
+                if (!trace(suffix + file.name + ".", file, function)) {
+                    return false
                 }
             } else {
-                if (file.getFileType() == HaskellFileType.INSTANCE) {
-                    if (!function(suffix + file.getNameWithoutExtension(), file)) {
-                        return false;
+                if (file.fileType == HaskellFileType.INSTANCE) {
+                    if (!function(suffix + file.nameWithoutExtension, file)) {
+                        return false
                     }
                 }
             }
         }
-        return true;
+        return true
     }
 }

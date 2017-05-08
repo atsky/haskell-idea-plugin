@@ -6,8 +6,8 @@ package org.jetbrains.yesod.hamlet
 
 import com.intellij.lang.Language
 
-public class HamletLanguage : Language("Hamlet", "text/hamlet") {
+class HamletLanguage : Language("Hamlet", "text/hamlet") {
     companion object {
-        public val INSTANCE: HamletLanguage = HamletLanguage()
+        val INSTANCE: HamletLanguage = HamletLanguage()
     }
 }

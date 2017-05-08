@@ -37,14 +37,14 @@ import org.jetbrains.haskell.debugger.repl.DebugConsoleFactory
 import com.intellij.openapi.project.Project
 import org.jetbrains.haskell.debugger.config.DebuggerType
 
-public class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
+class HaskellCommandLineState(environment: ExecutionEnvironment, val configuration: CabalRunConfiguration) : CommandLineState(environment) {
 
 
-    protected override fun startProcess(): ProcessHandler {
+    override fun startProcess(): ProcessHandler {
         val generalCommandLine = createCommandLine()
         val processHandler: ProcessHandler =
-                if (HaskellSettings.getInstance().getState().usePtyProcess!!) {
-                    OSProcessHandler(getPtyProcess(generalCommandLine)!!, generalCommandLine.getCommandLineString(),
+                if (HaskellSettings.getInstance().state.usePtyProcess!!) {
+                    OSProcessHandler(getPtyProcess(generalCommandLine)!!, generalCommandLine.commandLineString,
                             CharsetToolkit.UTF8_CHARSET)
                 } else {
                     OSProcessHandler(generalCommandLine)
@@ -54,19 +54,19 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     private fun getPtyProcess(generalCommandLine: GeneralCommandLine): PtyProcess? {
-        val exePath = generalCommandLine.getExePath()
-        val params = generalCommandLine.getParametersList().getList()
-        val env = generalCommandLine.getEnvironment()
-        val dir = generalCommandLine.getWorkDirectory()
-        val command = Array(1 + (params.size ?: 0), {
+        val exePath = generalCommandLine.exePath
+        val params = generalCommandLine.parametersList.list
+        val env = generalCommandLine.environment
+        val dir = generalCommandLine.workDirectory
+        val command = Array(1 + params.size, {
             i: Int ->
             if (i == 0) exePath else params.get(i - 1)
         })
-        return PtyProcess.exec(command, env, dir?.getAbsolutePath(), true)
+        return PtyProcess.exec(command, env, dir?.absolutePath, true)
     }
 
     private fun getDependencies(): List<FullVersionConstraint> {
-        val module = configuration.getModule()
+        val module = configuration.module
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
         }
@@ -78,12 +78,12 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
      * Returns pair of main file path and path to the sources directory
      */
     private fun getPaths(): Pair<String, String> {
-        val module = configuration.getModule()
+        val module = configuration.module
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
         }
         val exec = getExecutable(module)
-        val mainFileName: String? = exec.getMainFile()?.getText()
+        val mainFileName: String? = exec.getMainFile()?.text
         if (mainFileName == null) {
             throw ExecutionException("Error while starting debug process: no main file specified in executable section")
         }
@@ -103,20 +103,20 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         }
         val exec = tryGetExecWithNameFromConfig(cabalFile)
         if (exec == null) {
-            throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.getMyExecutableName()}")
+            throw ExecutionException("Error while starting debug process: cabal file does not contain executable ${configuration.myExecutableName}")
         }
         return exec
     }
 
     private fun startGHCiDebugProcess(): HaskellDebugProcessHandler {
-        val module = configuration.getModule()
+        val module = configuration.module
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
         }
         val paths = getPaths()
         val filePath = paths.first
         val srcDirPath = paths.second
-        val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.getSdk()!!.getHomeDirectory(), "ghci")
+        val ghciPath = GHCUtil.getCommandPath(ModuleRootManager.getInstance(module)!!.sdk!!.homeDirectory, "ghci")
         if (ghciPath == null) {
             throw ExecutionException("Error while starting debug process: ghci path not specified")
         }
@@ -133,7 +133,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     private fun startRemoteDebugProcess(): HaskellDebugProcessHandler {
-        val module = configuration.getModule()
+        val module = configuration.module
         if (module == null) {
             throw ExecutionException("Error while starting debug process: module not specified")
         }
@@ -144,8 +144,8 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         val streamHandler = RemoteDebugStreamHandler()
         streamHandler.start()
 
-        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val debuggerPath = HaskellDebugSettings.getInstance().getState().remoteDebuggerPath
+        val baseDir = module.moduleFile!!.parent!!.canonicalPath!!
+        val debuggerPath = HaskellDebugSettings.getInstance().state.remoteDebuggerPath
         if (debuggerPath == null) {
             throw ExecutionException("Cannot run remote debugger: path not specified")
         }
@@ -164,8 +164,8 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
         }
     }
 
-    public fun executeDebug(project: Project, executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
-        val debuggerType = HaskellDebugSettings.getInstance().getState().debuggerType
+    fun executeDebug(project: Project, executor: Executor, runner: ProgramRunner<out RunnerSettings>): ExecutionResult {
+        val debuggerType = HaskellDebugSettings.getInstance().state.debuggerType
         val processHandler = if (debuggerType == DebuggerType.GHCI) {
             startGHCiDebugProcess()
         } else {
@@ -178,15 +178,15 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     private fun createCommandLine(): GeneralCommandLine {
-        val module = configuration.getModule()
+        val module = configuration.module
         if (module == null) {
             throw ExecutionException("Module not specified")
         }
 
-        val name = configuration.getMyExecutableName()!!
+        val name = configuration.myExecutableName!!
         val commandLine = GeneralCommandLine()
 
-        val baseDir = module.getModuleFile()!!.getParent()!!.getCanonicalPath()
+        val baseDir = module.moduleFile!!.parent!!.canonicalPath
 
         val exePath = joinPath(baseDir!!, "dist", "build", name, OSUtil.getExe(name))
 
@@ -194,17 +194,17 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
             throw CantRunException("Cannot run: " + exePath)
         }
 
-        commandLine.withWorkDirectory(configuration.getWorkingDirectory())
-        commandLine.setExePath(exePath)
-        val parameters = configuration.getProgramParameters()
+        commandLine.withWorkDirectory(configuration.workingDirectory)
+        commandLine.exePath = exePath
+        val parameters = configuration.programParameters
         if (parameters != null) {
-            commandLine.getParametersList().addParametersString(parameters)
+            commandLine.parametersList.addParametersString(parameters)
         }
         return commandLine
     }
 
     private fun tryGetCabalFile(module: Module): CabalFile? {
-        val project = configuration.getProject()
+        val project = configuration.project
 
         val cabalVirtualFile = CabalInterface.findCabal(module)
         if (cabalVirtualFile == null) {
@@ -216,7 +216,7 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
 
     private fun tryGetExecWithNameFromConfig(cabalFile: CabalFile): Executable? {
         val execs = cabalFile.getExecutables()
-        val neededExecName = configuration.getMyExecutableName()
+        val neededExecName = configuration.myExecutableName
         for (exec in execs) {
             if (exec.getExecutableName() == neededExecName) {
                 return exec
@@ -226,8 +226,8 @@ public class HaskellCommandLineState(environment: ExecutionEnvironment, val conf
     }
 
     private fun tryGetSrcDirFullPath(mainFileName: String, module: Module, correspondingExec: Executable): String? {
-        val baseDirPath = module.getModuleFile()!!.getParent()!!.getCanonicalPath()!!
-        val srcDirs: List<String> = correspondingExec.getHsSourceDirs().map { it.getText() }
+        val baseDirPath = module.moduleFile!!.parent!!.canonicalPath!!
+        val srcDirs: List<String> = correspondingExec.getHsSourceDirs().map { it.text }
         for (srcDir in srcDirs) {
             val path = joinPath(baseDirPath, srcDir, mainFileName)
             val vFile = LocalFileSystem.getInstance()!!.findFileByIoFile(File(path))

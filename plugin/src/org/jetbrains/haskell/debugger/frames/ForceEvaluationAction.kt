@@ -15,7 +15,7 @@ import org.jetbrains.haskell.debugger.HaskellDebugProcess
  *
  * @author Habibullin Marat
  */
-public class ForceEvaluationAction(): XDebuggerTreeActionBase() {
+class ForceEvaluationAction : XDebuggerTreeActionBase() {
     override fun perform(node: XValueNodeImpl?, nodeName: String, actionEvent: AnActionEvent?) {
         if(node == null || actionEvent == null) {
             return
@@ -28,7 +28,7 @@ public class ForceEvaluationAction(): XDebuggerTreeActionBase() {
     }
 
     private fun tryGetDebugProcess(actionEvent: AnActionEvent): HaskellDebugProcess? {
-        val project = actionEvent.getProject()
+        val project = actionEvent.project
         if(project == null) {
             return null
         }
@@ -36,15 +36,15 @@ public class ForceEvaluationAction(): XDebuggerTreeActionBase() {
         if(debuggerManager == null) {
             return null
         }
-        val session = debuggerManager.getCurrentSession()
+        val session = debuggerManager.currentSession
         if(session == null) {
             return null
         }
-        return session.getDebugProcess() as HaskellDebugProcess
+        return session.debugProcess as HaskellDebugProcess
     }
 
     private fun forceSetValue(node: XValueNodeImpl, debugProcess: HaskellDebugProcess) {
-        val hsDebugValue = node.getValueContainer() as HsDebugValue
+        val hsDebugValue = node.valueContainer as HsDebugValue
         debugProcess.forceSetValue(hsDebugValue.binding)
         if(hsDebugValue.binding.value != null) {
             node.setPresentation(null, XRegularValuePresentation(hsDebugValue.binding.value as String, hsDebugValue.binding.typeName), false)

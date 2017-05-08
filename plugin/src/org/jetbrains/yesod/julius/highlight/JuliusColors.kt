@@ -6,12 +6,12 @@ package org.jetbrains.yesod.julius.highlight
 
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
-public interface JuliusColors {
+interface JuliusColors {
     companion object {
-        public val COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_COMMENT")
-        public val STRING: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_STRING")
-        public val DOT_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_DOTIDENTIFIER")
-        public val NUMBER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_NUMBER")
-        public val INTERPOLATION: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_INTERPOLATION")
+        val COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_COMMENT")
+        val STRING: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_STRING")
+        val DOT_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_DOTIDENTIFIER")
+        val NUMBER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_NUMBER")
+        val INTERPOLATION: TextAttributesKey = TextAttributesKey.createTextAttributesKey("JULIUS_INTERPOLATION")
     }
 }

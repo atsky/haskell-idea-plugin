@@ -10,10 +10,10 @@ import java.io.File
  * @author Habibullin Marat
  */
 
-public open class ParseResult
+open class ParseResult
 
-public class BreakpointCommandResult(public val breakpointNumber: Int,
-                                     public val position: HsFilePosition) : ParseResult() {
+class BreakpointCommandResult(val breakpointNumber: Int,
+                                     val position: HsFilePosition) : ParseResult() {
 
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
@@ -22,31 +22,31 @@ public class BreakpointCommandResult(public val breakpointNumber: Int,
         return breakpointNumber == othCasted.breakpointNumber && position.equals(othCasted.position)
     }
     override fun hashCode(): Int {
-        val prime = 31;
-        var result = 1;
+        val prime = 31
+        var result = 1
         result = prime * result + breakpointNumber
         result = prime * result + position.hashCode()
         return result
     }
 }
 
-public class HsFilePosition(public val filePath: String,
-                            public val rawStartLine: Int,
-                            public val rawStartSymbol: Int,
-                            public val rawEndLine: Int,
-                            public val rawEndSymbol: Int)
+class HsFilePosition(val filePath: String,
+                            val rawStartLine: Int,
+                            val rawStartSymbol: Int,
+                            val rawEndLine: Int,
+                            val rawEndSymbol: Int)
 : ParseResult() {
     // zero based start line number
-    public val normalizedStartLine: Int = rawStartLine - 1
-    public val normalizedStartSymbol: Int = rawStartSymbol
+    val normalizedStartLine: Int = rawStartLine - 1
+    val normalizedStartSymbol: Int = rawStartSymbol
     // zero based end line number
-    public val normalizedEndLine: Int = rawEndLine - 1
+    val normalizedEndLine: Int = rawEndLine - 1
     // ghci returns value for end symbol that is less for 1 than idea uses. so normalizedEndSymbol contains corrected one
-    public val normalizedEndSymbol: Int = rawEndSymbol + 1
+    val normalizedEndSymbol: Int = rawEndSymbol + 1
 
-    public val simplePath: String = filePath.substring(if (filePath.contains("/")) filePath.lastIndexOf('/') + 1 else 0)
+    val simplePath: String = filePath.substring(if (filePath.contains("/")) filePath.lastIndexOf('/') + 1 else 0)
 
-    public fun spanToString(): String {
+    fun spanToString(): String {
         if (rawStartLine == rawEndLine) {
             if (rawStartSymbol == rawEndSymbol) {
                 return "$rawStartLine:$rawStartSymbol"
@@ -57,7 +57,7 @@ public class HsFilePosition(public val filePath: String,
             return "($rawStartLine,$rawStartSymbol)-($rawEndLine,$rawEndSymbol)"
         }
     }
-    public fun getFileName(): String = File(filePath).getName()
+    fun getFileName(): String = File(filePath).name
 
     override fun toString(): String = "${getFileName()}:${spanToString()}"
 
@@ -70,8 +70,8 @@ public class HsFilePosition(public val filePath: String,
                 rawEndSymbol == othCasted.rawEndSymbol
     }
     override fun hashCode(): Int {
-        val prime = 31;
-        var result = 1;
+        val prime = 31
+        var result = 1
         result = prime * result + filePath.hashCode()
         result = prime * result + rawStartLine
         result = prime * result + rawEndLine
@@ -81,15 +81,15 @@ public class HsFilePosition(public val filePath: String,
     }
 }
 
-public class BreakInfo(public val breakIndex: Int, public val srcSpan: HsFilePosition) : ParseResult()
-public class BreakInfoList(public val list: ArrayList<BreakInfo>) : ParseResult()
+class BreakInfo(val breakIndex: Int, val srcSpan: HsFilePosition) : ParseResult()
+class BreakInfoList(val list: ArrayList<BreakInfo>) : ParseResult()
 
-public class ExceptionResult(public val message: String) : ParseResult()
+class ExceptionResult(val message: String) : ParseResult()
 
 //public class CallInfo(public val index: Int, public val function: String, public val position: FilePosition): ParseResult()
 //public class HistoryResult(public val list: ArrayList<CallInfo>) : ParseResult()
 
-public class LocalBinding(var name: String?,
+class LocalBinding(var name: String?,
                           var typeName: String?,
                           var value: String?) : ParseResult() {
     override fun equals(other: Any?): Boolean {
@@ -99,8 +99,8 @@ public class LocalBinding(var name: String?,
         return name == othCasted.name && typeName == othCasted.typeName && value == othCasted.value
     }
     override fun hashCode(): Int {
-        val prime = 31;
-        var result = 1;
+        val prime = 31
+        var result = 1
         result = prime * result + (name?.hashCode() ?: 0)
         result = prime * result + (typeName?.hashCode() ?: 0)
         result = prime * result + (value?.hashCode() ?: 0)
@@ -108,7 +108,7 @@ public class LocalBinding(var name: String?,
     }
 }
 
-public class LocalBindingList(public val list: List<LocalBinding>) : ParseResult() {
+class LocalBindingList(val list: List<LocalBinding>) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
@@ -128,7 +128,7 @@ public class LocalBindingList(public val list: List<LocalBinding>) : ParseResult
     }
 }
 
-public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
+open class HsStackFrameInfo(val filePosition: HsFilePosition?,
                                    var bindings: List<LocalBinding>?,
                                    val functionName: String?) : ParseResult() {
     override fun equals(other: Any?): Boolean {
@@ -150,9 +150,9 @@ public open class HsStackFrameInfo(val filePosition: HsFilePosition?,
     }
 }
 
-public class HsHistoryFrameInfo(public val index: Int,
-                                public val function: String?,
-                                public val filePosition: HsFilePosition?) : ParseResult() {
+class HsHistoryFrameInfo(val index: Int,
+                                val function: String?,
+                                val filePosition: HsFilePosition?) : ParseResult() {
 
     override fun toString(): String {
         return if (function != null) "$function : $filePosition" else filePosition.toString()
@@ -166,8 +166,8 @@ public class HsHistoryFrameInfo(public val index: Int,
     }
 
     override fun hashCode(): Int {
-        val prime = 31;
-        var result = 1;
+        val prime = 31
+        var result = 1
         result = prime * result + index
         result = prime * result + (function?.hashCode() ?: 0)
         result = prime * result + (filePosition?.hashCode() ?: 0)
@@ -175,8 +175,8 @@ public class HsHistoryFrameInfo(public val index: Int,
     }
 }
 
-public class ExpressionType(public val expression: String,
-                            public val expressionType: String) : ParseResult() {
+class ExpressionType(val expression: String,
+                            val expressionType: String) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
@@ -185,21 +185,21 @@ public class ExpressionType(public val expression: String,
     }
 
     override fun hashCode(): Int {
-        val prime = 31;
-        var result = 1;
+        val prime = 31
+        var result = 1
         result = prime * result + expression.hashCode()
         result = prime * result + expressionType.hashCode()
         return result
     }
 }
 
-public class EvalResult(public val expressionType: String,
-                        public val expressionValue: String) : ParseResult()
+class EvalResult(val expressionType: String,
+                        val expressionValue: String) : ParseResult()
 
-public class ShowOutput(public val output: String) : ParseResult()
+class ShowOutput(val output: String) : ParseResult()
 
-public class MoveHistResult(public val filePosition: HsFilePosition?,
-                            public val bindingList: LocalBindingList) : ParseResult() {
+class MoveHistResult(val filePosition: HsFilePosition?,
+                            val bindingList: LocalBindingList) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
@@ -208,8 +208,8 @@ public class MoveHistResult(public val filePosition: HsFilePosition?,
     }
 }
 
-public class HistoryResult(public val frames: List<HsHistoryFrameInfo>,
-                           public val full: Boolean) : ParseResult() {
+class HistoryResult(val frames: List<HsHistoryFrameInfo>,
+                           val full: Boolean) : ParseResult() {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other == null || other.javaClass != this.javaClass) return false
@@ -229,4 +229,4 @@ public class HistoryResult(public val frames: List<HsHistoryFrameInfo>,
     }
 }
 
-public class JSONResult(public val json: JSONObject) : ParseResult()
+class JSONResult(val json: JSONObject) : ParseResult()

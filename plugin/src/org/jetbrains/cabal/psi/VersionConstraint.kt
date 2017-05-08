@@ -8,7 +8,7 @@ import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.lang.IllegalStateException
 
-public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
+class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
 
     companion object {
         val COMPARATORS: List<String> = listOf(
@@ -20,7 +20,7 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
         )
     }
 
-    public fun compareTo(other: String): Int? {
+    fun compareTo(other: String): Int? {
         if (!isSimple()) return null
         val thisVersion = getVersionValue().split('.').map({ it.toInt() })
         val otherVersion = other.split('.').map({ it.toInt() })
@@ -34,7 +34,7 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
         return compareFrom(0)
     }
 
-    public fun satisfyConstraint(givenVersion: String): Boolean {
+    fun satisfyConstraint(givenVersion: String): Boolean {
         val comparator = getComparator()
         val compareRes = compareTo(givenVersion)
 
@@ -57,20 +57,20 @@ public class VersionConstraint(node: ASTNode) : PropertyValue(node), Checkable {
         }
     }
 
-    public fun isAny(): Boolean = getText().equals("-any")
+    fun isAny(): Boolean = text.equals("-any")
 
-    public fun isSimple(): Boolean = !(getVersionValue().endsWith('*'))
+    fun isSimple(): Boolean = !(getVersionValue().endsWith('*'))
 
-    public fun getComparator(): String? = COMPARATORS.firstOrNull { it.equals(this.getFirstChild()!!.getText()!!) }
+    fun getComparator(): String? = COMPARATORS.firstOrNull { it.equals(this.firstChild!!.text!!) }
 
-    public fun getVersion(): String = this.getLastChild()!!.getText()!!
+    fun getVersion(): String = this.lastChild!!.text!!
 
-    public fun getVersionValue(): String = (getVersion().replace("(\\-[0-9a-zA-Z]+)+\\.".toRegex(), "\\.")).replace("(\\-[0-9a-zA-Z]+)+$".toRegex(), "")
+    fun getVersionValue(): String = (getVersion().replace("(\\-[0-9a-zA-Z]+)+\\.".toRegex(), "\\.")).replace("(\\-[0-9a-zA-Z]+)+$".toRegex(), "")
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         val comparator = getComparator() ?: return listOf()
         val version = getVersion()
-        if (getParent()!! is CabalVersionField) {
+        if (parent!! is CabalVersionField) {
             if ((comparator == ">=") && (version.matches("[0-9]+\\.[0-9]+".toRegex()))) return listOf()
             return listOf(ErrorMessage(this, "invalid cabal version constraint", "error"))
         }

@@ -10,9 +10,9 @@ import com.intellij.psi.TokenType
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.util.ArrayList
 
-public class FullCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
+class FullCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, ConditionPart::class.java).flatMap { it.checkBrackets() }
     }
 }

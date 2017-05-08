@@ -6,15 +6,15 @@ import org.jetbrains.cabal.psi.Name
 import org.jetbrains.cabal.psi.Section
 import java.util.ArrayList
 
-public class Flag(node: ASTNode) : Section(node) {
+class Flag(node: ASTNode) : Section(node) {
 
-    public override fun getAvailableFieldNames(): List<String> {
+    override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
         res.addAll(FLAG_FIELDS.keys)
         return res
     }
 
-    public fun getFlagName(): String {
+    fun getFlagName(): String {
         val res = getSectName()?.toLowerCase()
         if (res == null) throw IllegalStateException()
         return res

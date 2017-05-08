@@ -9,10 +9,10 @@ import org.jetbrains.cabal.settings.CabalSettings
 import org.jetbrains.cabal.settings.CabalSettingsListener
 import org.jetbrains.cabal.util.*
 
-public class ImportFromCabalControl()
-        : AbstractImportFromExternalSystemControl<CabalProjectSettings, CabalSettingsListener, CabalSettings>(
+class ImportFromCabalControl
+    : AbstractImportFromExternalSystemControl<CabalProjectSettings, CabalSettingsListener, CabalSettings>(
                 SYSTEM_ID,
-                CabalSettings(ProjectManager.getInstance()!!.getDefaultProject()),
+                CabalSettings(ProjectManager.getInstance()!!.defaultProject),
                 CabalProjectSettings(),
                 true
         ) {

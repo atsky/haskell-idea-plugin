@@ -19,7 +19,7 @@ import org.jetbrains.cabal.parser.CabalParser
 import org.jetbrains.cabal.parser.CabalCompositeElementType
 import com.intellij.lang.ParserDefinition.SpaceRequirements
 
-public class CabalParserDefinition() : ParserDefinition {
+class CabalParserDefinition : ParserDefinition {
     var CABAL_FILE: IFileElementType = IFileElementType(CabalLanguage.INSTANCE)
 
 
@@ -61,8 +61,8 @@ public class CabalParserDefinition() : ParserDefinition {
     }
 
     override fun createElement(node: ASTNode?): PsiElement {
-        if (node!!.getElementType() is CabalCompositeElementType) {
-            return ((node.getElementType() as CabalCompositeElementType)).contructor(node)
+        if (node!!.elementType is CabalCompositeElementType) {
+            return ((node.elementType as CabalCompositeElementType)).contructor(node)
         } else {
             return ASTWrapperPsiElement(node)
         }

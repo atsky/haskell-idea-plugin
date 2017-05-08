@@ -10,7 +10,7 @@ import org.jetbrains.grammar.HaskellLexerTokens
  * Created by atsky on 14/11/14.
  */
 
-public abstract class Variant {
+abstract class Variant {
 
     fun add(tokenType : HaskellTokenType): NonTerminalVariant {
         return NonTerminalVariant(Terminal(tokenType), listOf(this))
@@ -25,17 +25,17 @@ public abstract class Variant {
 
     abstract fun isCanBeEmpty(): Boolean
 
-    abstract fun makeDeepAnalysis(grammar: Map<String, Rule>);
+    abstract fun makeDeepAnalysis(grammar: Map<String, Rule>)
 
-    abstract fun accepts(token: IElementType?): Boolean;
+    abstract fun accepts(token: IElementType?): Boolean
 
 }
 
-public class TerminalVariant(val elementType: IElementType?) : Variant() {
+class TerminalVariant(val elementType: IElementType?) : Variant() {
 
 
     override fun isCanBeEmpty(): Boolean {
-        return true;
+        return true
     }
 
     override fun makeDeepAnalysis(grammar: Map<String, Rule>) {
@@ -46,13 +46,13 @@ public class TerminalVariant(val elementType: IElementType?) : Variant() {
     }
 }
 
-public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Variant() {
-    public var canBeEmpty: Boolean = false;
-    public var hasCurly: Boolean = false;
-    public var first: Set<IElementType>? = null;
+class NonTerminalVariant(val term: Term, val next: List<Variant>) : Variant() {
+    var canBeEmpty: Boolean = false
+    var hasCurly: Boolean = false
+    var first: Set<IElementType>? = null
 
     override fun isCanBeEmpty(): Boolean {
-        return canBeEmpty;
+        return canBeEmpty
     }
 
     override fun toString(): String {
@@ -82,7 +82,7 @@ public class NonTerminalVariant(val term: Term, val next: List<Variant>) : Varia
     }
 
     override fun makeAnalysis(grammar: Map<String, Rule>) {
-        canBeEmpty = true;
+        canBeEmpty = true
 
         if (term is NonTerminal) {
             val rule = grammar[term.rule]!!

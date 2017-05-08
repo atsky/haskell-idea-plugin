@@ -27,11 +27,11 @@ import com.intellij.xdebugger.XDebugProcess
 import org.jetbrains.haskell.debugger.HaskellDebugProcess
 import org.jetbrains.haskell.debugger.config.DebuggerType
 
-public class HaskellLineBreakpointType():
+class HaskellLineBreakpointType :
         XLineBreakpointTypeBase (HaskellLineBreakpointType.ID, HaskellLineBreakpointType.TITLE, HaskellDebuggerEditorsProvider())
 {
     companion object {
-        public val ID: String = "haskell-line-breakpoint"
+        val ID: String = "haskell-line-breakpoint"
         private val TITLE: String = "Haskell breakpoints"
     }
 
@@ -41,7 +41,7 @@ public class HaskellLineBreakpointType():
      * Checks if specified line with number {@code lineNumber} can be used for setting breakpoint on it
      */
     override fun canPutAt(file: VirtualFile, lineNumber: Int, project: Project): Boolean {
-        if(file.getFileType() == HaskellFileType.INSTANCE) {
+        if(file.fileType == HaskellFileType.INSTANCE) {
             val canStopAtLine = checkLineInSourceFile(file, lineNumber, project)
             if(canStopAtLine) {
                 return debuggerIsNotBusy(project)
@@ -54,7 +54,7 @@ public class HaskellLineBreakpointType():
      * Creates panel in breakpoint's context menu with list of available breakpoints to set on the line
      */
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>? {
-        if(HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
+        if(HaskellDebugSettings.getInstance().state.debuggerType == DebuggerType.REMOTE) {
             if(selectBreakpointPanel == null) {
                 selectBreakpointPanel = SelectBreakPropertiesPanel()
             }
@@ -81,7 +81,7 @@ public class HaskellLineBreakpointType():
     }
 
     private fun debuggerIsNotBusy(project: Project): Boolean {
-        val debugProcess = XDebuggerManager.getInstance(project)?.getCurrentSession()?.getDebugProcess() as? HaskellDebugProcess
+        val debugProcess = XDebuggerManager.getInstance(project)?.currentSession?.debugProcess as? HaskellDebugProcess
         if (debugProcess != null && !debugProcess.isReadyForNextCommand()) {
             UIUtils.notifyCommandInProgress()
             return false

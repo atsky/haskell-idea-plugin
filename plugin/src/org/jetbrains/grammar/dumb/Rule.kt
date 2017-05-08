@@ -5,13 +5,13 @@ import java.util.ArrayList
 import java.util.HashSet
 
 
-class Rule(public val name : String,
-           public val variants : List<Variant>,
-           public val left : List<Variant>) {
+class Rule(val name : String,
+           val variants : List<Variant>,
+           val left : List<Variant>) {
 
-    public var done : Boolean = false;
-    public var canBeEmpty : Boolean = false;
-    public var first : Set<IElementType>? = null;
+    var done : Boolean = false
+    var canBeEmpty : Boolean = false
+    var first : Set<IElementType>? = null
 
     override fun toString() : String {
         val n = name + ":\n"

@@ -9,16 +9,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.io.File
 
 
-public open class BuildSection(node: ASTNode): Section(node) {
+open class BuildSection(node: ASTNode): Section(node) {
 
     private fun <F : MultiValueField, V : PropertyValue> getFieldsValues(fieldT: Class<F>, valueT: Class<V>): List<V>
             = getFields(fieldT).flatMap { it.getValues(valueT) }
 
-    public fun getHsSourceDirs(): List<Path> = getFieldsValues(HsSourceDirsField::class.java, Path::class.java)
+    fun getHsSourceDirs(): List<Path> = getFieldsValues(HsSourceDirsField::class.java, Path::class.java)
 
-    public fun getIncludeDirs() : List<Path> = getFieldsValues(IncludeDirsField::class.java, Path::class.java)
+    fun getIncludeDirs() : List<Path> = getFieldsValues(IncludeDirsField::class.java, Path::class.java)
 
-    public fun getBuildDepends(): List<FullVersionConstraint>
+    fun getBuildDepends(): List<FullVersionConstraint>
             = getFieldsValues(BuildDependsField::class.java, FullVersionConstraint::class.java)
 
 }

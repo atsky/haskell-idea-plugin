@@ -11,7 +11,7 @@ import java.awt.*
 import com.intellij.openapi.externalSystem.service.settings.AbstractImportFromExternalSystemControl
 import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalProjectImportBuilder
 
-public class SimpleCabalStep(context: WizardContext) : AbstractImportFromExternalSystemWizardStep(context) {
+class SimpleCabalStep(context: WizardContext) : AbstractImportFromExternalSystemWizardStep(context) {
 
     private val myComponent = JPanel(BorderLayout())
 
@@ -19,7 +19,7 @@ public class SimpleCabalStep(context: WizardContext) : AbstractImportFromExterna
     private var myControl: ImportFromCabalControl? = null
 
     override fun getBuilder(): CabalProjectImportBuilder? {
-        return getWizardContext().getProjectBuilder() as CabalProjectImportBuilder
+        return wizardContext.projectBuilder as CabalProjectImportBuilder
     }
 
     override fun getComponent(): JComponent {
@@ -42,26 +42,26 @@ public class SimpleCabalStep(context: WizardContext) : AbstractImportFromExterna
     @Throws(ConfigurationException::class)
     override fun validate(): Boolean {
         myControl?.apply()
-        if (myControl?.getProjectFormatPanel() != null) {
-            myControl!!.getProjectFormatPanel()!!.updateData(getWizardContext())
+        if (myControl?.projectFormatPanel != null) {
+            myControl!!.projectFormatPanel!!.updateData(wizardContext)
         }
-        val builder = getBuilder()
+        val builder = builder
         if (builder == null) {
             return false
         }
-        builder.ensureProjectIsDefined(getWizardContext())
+        builder.ensureProjectIsDefined(wizardContext)
         return true
     }
 
 
     private fun initSimpleCabalControl() {
-        val builder = getBuilder()
+        val builder = builder
         if (builder == null) {
             return
         }
-        builder.prepare(getWizardContext())
-        myControl = builder.getControl(getWizardContext().getProject())
-        myComponent.add(myControl!!.getComponent())
+        builder.prepare(wizardContext)
+        myControl = builder.getControl(wizardContext.project)
+        myComponent.add(myControl!!.component)
         mySettingsInitialised = true
     }
 }

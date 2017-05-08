@@ -14,7 +14,7 @@ import org.jetbrains.generator.grammar.RuleRef
  */
 
 private fun getTokens(lexer : GrammarLexer) : List<Token> {
-    val list = ArrayList<Token>();
+    val list = ArrayList<Token>()
     while (true) {
         val tokenType = lexer.yylex()
         if (tokenType == null) {
@@ -28,7 +28,7 @@ private fun getTokens(lexer : GrammarLexer) : List<Token> {
         }
         list.add(Token(tokenType, lexer.yytext()))
     }
-    return list;
+    return list
 }
 
 fun main(args : Array<String>) {

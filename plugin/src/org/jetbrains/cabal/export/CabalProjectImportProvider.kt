@@ -8,33 +8,33 @@ import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExtern
 import org.jetbrains.cabal.util.*
 
 
-public class CabalProjectImportProvider(builder: CabalProjectImportBuilder): AbstractExternalProjectImportProvider(builder, SYSTEM_ID) {
+class CabalProjectImportProvider(builder: CabalProjectImportBuilder): AbstractExternalProjectImportProvider(builder, SYSTEM_ID) {
 
 
-    public override fun canImport(fileOrDirectory: VirtualFile, project: Project?): Boolean {
-        return !fileOrDirectory.isDirectory() && ("cabal".equals(fileOrDirectory.getExtension()));
+    override fun canImport(fileOrDirectory: VirtualFile, project: Project?): Boolean {
+        return !fileOrDirectory.isDirectory && ("cabal".equals(fileOrDirectory.extension))
     }
 
     public override fun canImportFromFile(file: VirtualFile?): Boolean {
-        return "cabal".equals(file?.getExtension())
+        return "cabal".equals(file?.extension)
     }
 
-    public override fun getPathToBeImported(file: VirtualFile?): String? {
+    override fun getPathToBeImported(file: VirtualFile?): String? {
         if (file == null)       return null
-        if (file.isDirectory()) return file.getPath()
-        return file.getParent()!!.getPath()
+        if (file.isDirectory) return file.path
+        return file.parent!!.path
     }
 
-    public override fun canCreateNewProject(): Boolean {
-        return true;
+    override fun canCreateNewProject(): Boolean {
+        return true
     }
 
-    public override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
+    override fun createSteps(context: WizardContext?): Array<ModuleWizardStep> {
 //        return array(ExternalModuleSettingsStep(CabalModuleBuilder(), CabalProjectSettingsControl(CabalProjectSettings())))
         return arrayOf(SimpleCabalStep(context!!))
     }
 
-    public override fun getFileSample(): String? {
-        return "<b>Cabal</b> project file (*.cabal)";
+    override fun getFileSample(): String? {
+        return "<b>Cabal</b> project file (*.cabal)"
     }
 }

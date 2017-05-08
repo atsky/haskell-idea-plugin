@@ -25,7 +25,7 @@ import com.intellij.execution.process.ProcessHandler
 import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
 import org.jetbrains.haskell.debugger.parser.LocalBinding
 
-public abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
+abstract class SimpleDebuggerImpl(val debugRespondent: DebugRespondent,
                                          debugProcessHandler: ProcessHandler,
                                          consoleView: ConsoleView?) : QueueDebugger(debugProcessHandler, consoleView) {
 

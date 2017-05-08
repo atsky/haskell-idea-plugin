@@ -13,7 +13,7 @@ import javax.swing.*
 import java.util.HashMap
 
 
-public class HaskellColorsAndFontsPage : ColorSettingsPage {
+class HaskellColorsAndFontsPage : ColorSettingsPage {
     override fun getDisplayName(): String {
         return "Haskell"
     }

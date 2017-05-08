@@ -12,7 +12,7 @@ import javax.swing.*
 import java.util.HashMap
 
 
-public class CabalColorsAndFontsPage : ColorSettingsPage {
+class CabalColorsAndFontsPage : ColorSettingsPage {
     override fun getDisplayName(): String {
         return "Cabal"
     }

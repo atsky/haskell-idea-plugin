@@ -5,9 +5,9 @@ import javax.swing.Icon
 import com.intellij.icons.AllIcons
 import org.jetbrains.annotations.NonNls
 
-public class DebugConsoleExecutor(): Executor() {
+class DebugConsoleExecutor : Executor() {
     companion object {
-        public val EXECUTOR_ID: String = "DebugConsole"
+        val EXECUTOR_ID: String = "DebugConsole"
     }
     override fun getToolWindowId(): String? = "Run"
     override fun getToolWindowIcon(): Icon? = AllIcons.Toolwindows.ToolWindowDebugger

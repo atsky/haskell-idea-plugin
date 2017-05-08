@@ -6,6 +6,4 @@ import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.InvalidValue
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class InvalidConditionPart(node: ASTNode) : InvalidValue(node) {
-
-}
+class InvalidConditionPart(node: ASTNode) : InvalidValue(node)

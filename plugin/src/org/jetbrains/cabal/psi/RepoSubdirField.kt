@@ -7,9 +7,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import java.util.ArrayList
 import java.io.File
 
-public class RepoSubdirField(node: ASTNode) : SingleValueField(node), PathsField {
+class RepoSubdirField(node: ASTNode) : SingleValueField(node), PathsField {
 
-    public override fun validVirtualFile(file: VirtualFile): Boolean = true
+    override fun validVirtualFile(file: VirtualFile): Boolean = true
 
-    public override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf()
+    override fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf()
 }

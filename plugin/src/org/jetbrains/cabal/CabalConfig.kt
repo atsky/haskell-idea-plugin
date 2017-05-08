@@ -9,7 +9,7 @@ import java.io.File
  * @since 6/15/15.
  */
 
-class CabalConfing() {
+class CabalConfing {
     var inizialized = false
     var remoteRepoCache: String = joinPath(OSUtil.getCabalData(), "packages")
 

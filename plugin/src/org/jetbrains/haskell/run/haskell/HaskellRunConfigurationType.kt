@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.haskell.icons.HaskellIcons
 import javax.swing.*
 
-class HaskellRunConfigurationType() : ConfigurationType {
+class HaskellRunConfigurationType : ConfigurationType {
 
     private val myFactory: ConfigurationFactory
 

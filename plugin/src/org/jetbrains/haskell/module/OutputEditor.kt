@@ -6,23 +6,23 @@ import com.intellij.openapi.roots.ui.configuration.ModuleElementsEditor
 import org.jetbrains.annotations.Nls
 import javax.swing.*
 
-public class OutputEditor(state: ModuleConfigurationState) : ModuleElementsEditor(state) {
+class OutputEditor(state: ModuleConfigurationState) : ModuleElementsEditor(state) {
     private val myCompilerOutputEditor: BuildElementsEditor
 
-    protected override fun createComponentImpl(): JComponent {
+    override fun createComponentImpl(): JComponent {
         return myCompilerOutputEditor.createComponentImpl()!!
     }
 
-    public override fun saveData(): Unit {
+    override fun saveData(): Unit {
         myCompilerOutputEditor.saveData()
     }
 
-    public override fun getDisplayName(): String {
+    override fun getDisplayName(): String {
         return "Paths"
     }
 
-    public override fun getHelpTopic(): String {
-        return myCompilerOutputEditor.getHelpTopic()!!
+    override fun getHelpTopic(): String {
+        return myCompilerOutputEditor.helpTopic!!
     }
 
     init {

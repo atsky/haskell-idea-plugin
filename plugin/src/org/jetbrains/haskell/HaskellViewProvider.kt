@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 
-public class HaskellViewProvider(manager: PsiManager,
+class HaskellViewProvider(manager: PsiManager,
                                  virtualFile: VirtualFile,
                                  eventSystemEnabled: Boolean,
                                  language: Language) :

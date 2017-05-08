@@ -29,7 +29,7 @@ import org.jetbrains.haskell.debugger.utils.UIUtils
  *
  * @author Habibullin Marat
  */
-public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
+class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLineBreakpoint<XBreakpointProperties<out Any?>>>() {
     private val PANEL_LABEL: String = "Select breakpoint:"
     private val DEBUG_NOT_STARTED_ITEM: String = "start debug process to enable"
     private val breaksComboBox: ComboBox<String> = ComboBox(DefaultComboBoxModel(arrayOf(DEBUG_NOT_STARTED_ITEM)))
@@ -37,7 +37,7 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
 
     init {
         UIUtils.addLabeledControl(mainPanel, 0, PANEL_LABEL, breaksComboBox)
-        breaksComboBox.setEnabled(false)
+        breaksComboBox.isEnabled = false
     }
 
     private var debugManager: XDebuggerManager? = null
@@ -52,11 +52,11 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
      */
     override fun saveTo(breakpoint: XLineBreakpoint<XBreakpointProperties<out Any?>>) {
         if(debuggingInProgress()) {
-            val selectedIndex = breaksComboBox.getSelectedIndex()
+            val selectedIndex = breaksComboBox.selectedIndex
             if (selectedIndex != lastSelectedIndex && debugProcess != null) {
                 breakpoint.putUserData(HaskellLineBreakpointHandler.INDEX_IN_BREAKS_LIST_KEY, selectedIndex)
-                val moduleName = HaskellUtils.getModuleName(debugManager!!.getCurrentSession()!!.getProject(), breakpoint.getSourcePosition()!!.getFile())
-                debugProcess?.removeBreakpoint(moduleName, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine()))
+                val moduleName = HaskellUtils.getModuleName(debugManager!!.currentSession!!.project, breakpoint.sourcePosition!!.file)
+                debugProcess?.removeBreakpoint(moduleName, HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.line))
                 debugProcess?.addBreakpointByIndex(moduleName, breaksList!!.get(selectedIndex).breakIndex, breakpoint)
             }
         }
@@ -74,7 +74,7 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
         val project = breakpoint.getUserData(HaskellLineBreakpointHandler.PROJECT_KEY)
         if(project != null) {
             debugManager = XDebuggerManager.getInstance(project)
-            val justDebugProcess = debugManager?.getCurrentSession()?.getDebugProcess()
+            val justDebugProcess = debugManager?.currentSession?.debugProcess
             if(justDebugProcess != null) {
                 debugProcess = justDebugProcess as HaskellDebugProcess
             } else {
@@ -100,6 +100,6 @@ public class SelectBreakPropertiesPanel : XBreakpointCustomPropertiesPanel<XLine
     }
 
     private fun debuggingInProgress(): Boolean {
-        return debugManager?.getCurrentSession() != null
+        return debugManager?.currentSession != null
     }
 }

@@ -14,7 +14,7 @@ import org.jetbrains.generator.grammar.FinalVariant
  * Created by atsky on 11/7/14.
  */
 class GrammarParser(val tokens : List<Token>) {
-    var current : Int = -1;
+    var current : Int = -1
 
     fun parseGrammar( ) : Grammar? {
         match("token")
@@ -24,11 +24,11 @@ class GrammarParser(val tokens : List<Token>) {
 
         val rules = parseRules()
 
-        return Grammar(tokens, rules);
+        return Grammar(tokens, rules)
     }
 
     fun text(): String {
-        return tokens[current].text;
+        return tokens[current].text
     }
 
     fun parseTokens( ) : List<TokenDescription> {
@@ -48,7 +48,7 @@ class GrammarParser(val tokens : List<Token>) {
         }
 
 
-        return list;
+        return list
     }
 
     fun match(text: String) {
@@ -61,25 +61,25 @@ class GrammarParser(val tokens : List<Token>) {
     fun match(expected: TokenType) : Token {
         val next = getNext()
         if (next == null || next.type != expected) {
-            throw ParserException(next, "${expected} expected, but ${next?.type}");
+            throw ParserException(next, "${expected} expected, but ${next?.type}")
         }
-        return next;
+        return next
     }
 
     fun tryMatch(type: TokenType): Boolean {
         if (getNext()!!.type != type) {
-            current--;
+            current--
             return false
         }
-        return true;
+        return true
     }
 
     fun getNext(): Token? {
         if (current < tokens.size) {
             current++
-            return if (current < tokens.size) tokens[current] else null;
+            return if (current < tokens.size) tokens[current] else null
         } else {
-            return null;
+            return null
         }
     }
 
@@ -88,7 +88,7 @@ class GrammarParser(val tokens : List<Token>) {
         while (!eof()) {
             list.add(parseRule())
         }
-        return list;
+        return list
     }
 
     fun parseRule() : Rule {
@@ -100,7 +100,7 @@ class GrammarParser(val tokens : List<Token>) {
         while (true) {
             variants.add(parseVariant())
             if (!tryMatch(VBAR)) {
-                break;
+                break
             }
         }
 
@@ -110,7 +110,7 @@ class GrammarParser(val tokens : List<Token>) {
 
 
     fun eof(): Boolean {
-        return current >= tokens.size - 1;
+        return current >= tokens.size - 1
     }
 
     fun parseVariant() : Variant {
@@ -134,12 +134,12 @@ class GrammarParser(val tokens : List<Token>) {
             null
         }
 
-        var variant : Variant = FinalVariant(name);
+        var variant : Variant = FinalVariant(name)
 
         for (ref in list.reversed()) {
             variant = NonFinalVariant(ref, listOf(variant))
         }
 
-        return variant;
+        return variant
     }
 }

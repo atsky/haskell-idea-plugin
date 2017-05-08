@@ -9,17 +9,17 @@ import org.jetbrains.haskell.highlight.HaskellHighlighter
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class CabalAnnotator() : Annotator {
+class CabalAnnotator : Annotator {
 
-    public override fun annotate(element: PsiElement, holder: AnnotationHolder): Unit {
+    override fun annotate(element: PsiElement, holder: AnnotationHolder): Unit {
         fun keyword(e : PsiElement) {
-            holder.createInfoAnnotation(e, null)?.setTextAttributes(CabalHighlighter.CABAL_PROPERTY)
+            holder.createInfoAnnotation(e, null)?.textAttributes = CabalHighlighter.CABAL_PROPERTY
         }
 
         fun handle(errMsg: ErrorMessage?) {
             if (errMsg == null) return
             if (errMsg.isAfterNode) {
-                val endOffset = errMsg.place.getTextRange()!!.getEndOffset()
+                val endOffset = errMsg.place.textRange!!.endOffset
                 val place = TextRange(endOffset - 1, endOffset)
                 if (errMsg.severity == "error")   holder.createErrorAnnotation(place, errMsg.text)
                 if (errMsg.severity == "warning") holder.createWarningAnnotation(place, errMsg.text)

@@ -8,7 +8,7 @@ import org.jetbrains.haskell.psi.reference.ConstructorReference
 /**
  * Created by atsky on 28/11/14.
  */
-public class Pattern(node : ASTNode) : ASTWrapperPsiElement(node) {
-    public fun getExpression(): Expression? =
+class Pattern(node : ASTNode) : ASTWrapperPsiElement(node) {
+    fun getExpression(): Expression? =
             findChildByClass(Expression::class.java)
 }

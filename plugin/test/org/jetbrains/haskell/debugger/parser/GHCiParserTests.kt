@@ -20,7 +20,7 @@ import org.junit.Assert
  *
  * @author Habibullin Marat
  */
-public class GHCiParserTests {
+class GHCiParserTests {
     @test fun parseSetBreakpointCommandResultColumnsRangeTest() {
         val outputWithColumnsRange = "Breakpoint 0 activated at /home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs:3:12-13"
         var expected: BreakpointCommandResult? = BreakpointCommandResult(0, HsFilePosition("/home/marat-x/IdeaProjects/HaskellTestModule/src/Mine.hs", 3, 12, 3, 13))

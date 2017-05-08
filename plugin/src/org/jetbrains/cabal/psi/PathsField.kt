@@ -14,45 +14,45 @@ import java.io.FilenameFilter
 import java.io.File
 import java.util.ArrayList
 
-public interface PathsField: PsiElement {
+interface PathsField: PsiElement {
 
-    public fun isValidCompletionFile(file: VirtualFile): Boolean = true
+    fun isValidCompletionFile(file: VirtualFile): Boolean = true
 
-    public fun validVirtualFile(file: VirtualFile): Boolean
+    fun validVirtualFile(file: VirtualFile): Boolean
 
-    public fun validRelativity(path: File): Boolean = true
+    fun validRelativity(path: File): Boolean = true
 
-    public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
+    fun getCabalFile(): CabalFile = (containingFile as CabalFile)
 
-    public fun getParentBuildSection(): BuildSection? {
-        var parent = getParent()
+    fun getParentBuildSection(): BuildSection? {
+        var parent = parent
         while (parent != null) {
             if (parent is BuildSection) return parent
-            parent = parent.getParent()
+            parent = parent.parent
         }
         return null
     }
 
-    public fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf(originalRootDir)
+    fun getSourceDirs(originalRootDir: VirtualFile): List<VirtualFile> = listOf(originalRootDir)
 
 
-    public fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
+    fun getParentDirs(prefixPath: Path, originalRootDir: VirtualFile): List<VirtualFile> {
 
-        fun getParentPathFrom(sourceDir: VirtualFile) = File(prefixPath.getPathWithParent(sourceDir)).getParent()
+        fun getParentPathFrom(sourceDir: VirtualFile) = File(prefixPath.getPathWithParent(sourceDir)).parent
 
-        fun findFileByPath(path: String) = originalRootDir.getFileSystem().findFileByPath(path.replace(File.separatorChar, '/'))
+        fun findFileByPath(path: String) = originalRootDir.fileSystem.findFileByPath(path.replace(File.separatorChar, '/'))
 
         if (!validRelativity(prefixPath.getFile())) return listOf()
         val parentPaths = (getSourceDirs(originalRootDir).map { getParentPathFrom(it) }).filterNotNull()
-        return (parentPaths.map { findFileByPath(it) }).filterNotNull().filter { it.isDirectory() }
+        return (parentPaths.map { findFileByPath(it) }).filterNotNull().filter { it.isDirectory }
     }
 
-    public fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
+    fun getNextAvailableFile(prefixPath: Path, originalRootDir: VirtualFile): List<String> {
         val parentDirs = getParentDirs(prefixPath, originalRootDir)
         val completionFiles = ArrayList<VirtualFile>()
         for (dir in parentDirs) {
-            completionFiles.addAll(dir.getChildren()!!.filter { isValidCompletionFile(it) })
+            completionFiles.addAll(dir.children!!.filter { isValidCompletionFile(it) })
         }
-        return completionFiles.map { it.name + (if (it.isDirectory()) "/" else "") }
+        return completionFiles.map { it.name + (if (it.isDirectory) "/" else "") }
     }
 }

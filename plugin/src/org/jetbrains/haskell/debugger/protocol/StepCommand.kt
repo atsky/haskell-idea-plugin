@@ -13,7 +13,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
  * Created by vlad on 7/17/14.
  */
 
-public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
+abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 : AbstractCommand<HsStackFrameInfo?>(callback) {
 
     override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = GHCiParser.tryParseStoppedAt(output)
@@ -22,7 +22,7 @@ public abstract class StepCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             JSONConverter.stoppedAtFromJSON(output)
 
 
-    public class StandardStepCallback(val debugger: ProcessDebugger,
+    class StandardStepCallback(val debugger: ProcessDebugger,
                                       val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
         override fun execBeforeSending() = debugRespondent.resetHistoryStack()

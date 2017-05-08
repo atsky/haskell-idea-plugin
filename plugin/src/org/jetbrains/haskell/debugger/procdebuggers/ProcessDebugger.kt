@@ -13,51 +13,51 @@ import org.jetbrains.haskell.debugger.parser.MoveHistResult
 import org.jetbrains.haskell.debugger.parser.HistoryResult
 import org.jetbrains.haskell.debugger.parser.ParseResult
 
-public interface ProcessDebugger {
+interface ProcessDebugger {
 
-    public fun isReadyForNextCommand(): Boolean
+    fun isReadyForNextCommand(): Boolean
 
-    public fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback)
+    fun evaluateExpression(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback)
 
-    public fun trace(line: String?)
+    fun trace(line: String?)
 
-    public fun setBreakpoint(module: String, line: Int)
+    fun setBreakpoint(module: String, line: Int)
 
-    public fun removeBreakpoint(module: String, breakpointNumber: Int)
+    fun removeBreakpoint(module: String, breakpointNumber: Int)
 
-    public fun setExceptionBreakpoint(uncaughtOnly: Boolean)
+    fun setExceptionBreakpoint(uncaughtOnly: Boolean)
 
-    public fun removeExceptionBreakpoint()
+    fun removeExceptionBreakpoint()
 
-    public fun close()
+    fun close()
 
-    public fun stepInto()
+    fun stepInto()
 
-    public fun stepOver()
+    fun stepOver()
 
-    public fun runToPosition(module: String, line: Int)
+    fun runToPosition(module: String, line: Int)
 
-    public fun resume()
+    fun resume()
 
-    public fun prepareDebugger()
+    fun prepareDebugger()
 
-    public fun back(callback: CommandCallback<MoveHistResult?>?)
+    fun back(callback: CommandCallback<MoveHistResult?>?)
 
-    public fun forward(callback: CommandCallback<MoveHistResult?>?)
+    fun forward(callback: CommandCallback<MoveHistResult?>?)
 
-    public fun print(binding: String, printCallback: CommandCallback<LocalBinding?>)
+    fun print(binding: String, printCallback: CommandCallback<LocalBinding?>)
 
-    public fun force(binding: String, forceCallback: CommandCallback<LocalBinding?>)
+    fun force(binding: String, forceCallback: CommandCallback<LocalBinding?>)
 
-    public fun history(callback: CommandCallback<HistoryResult?>)
+    fun history(callback: CommandCallback<HistoryResult?>)
 
-    public fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition)
+    fun updateBinding(binding: LocalBinding, lock: Lock, condition: Condition)
 
-    public fun enqueueCommand(command: AbstractCommand<*>)
+    fun enqueueCommand(command: AbstractCommand<*>)
 
-    public fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>?
+    fun oldestExecutedCommand(): AbstractCommand<out ParseResult?>?
 
-    public fun removeOldestExecutedCommand()
+    fun removeOldestExecutedCommand()
 
-    public fun setReadyForInput()
+    fun setReadyForInput()
 }

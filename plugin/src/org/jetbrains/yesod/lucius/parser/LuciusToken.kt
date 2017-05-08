@@ -10,4 +10,4 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.yesod.lucius.LuciusLanguage
 
 
-public class LuciusToken(debugName: String) : IElementType(debugName, LuciusLanguage.INSTANCE)
+class LuciusToken(debugName: String) : IElementType(debugName, LuciusLanguage.INSTANCE)

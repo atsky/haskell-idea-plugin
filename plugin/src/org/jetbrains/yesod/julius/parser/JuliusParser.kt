@@ -13,17 +13,17 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.tree.TokenSet
 
 
-public class JuliusParser : PsiParser {
+class JuliusParser : PsiParser {
     override fun parse(root: IElementType, psiBuilder: PsiBuilder): ASTNode {
         val rootmMarker = psiBuilder.mark()
         parseText(psiBuilder)
         rootmMarker.done(root)
-        return psiBuilder.getTreeBuilt()
+        return psiBuilder.treeBuilt
     }
 
-    public fun parseText(psiBuilder: PsiBuilder) {
+    fun parseText(psiBuilder: PsiBuilder) {
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token == JuliusTokenTypes.COMMENT) {
                 parseCommentInLine(psiBuilder)
             } else if (token == JuliusTokenTypes.COMMENT_START) {
@@ -44,22 +44,22 @@ public class JuliusParser : PsiParser {
         }
     }
 
-    public fun parseKeyword(psiBuilder: PsiBuilder) {
+    fun parseKeyword(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.KEYWORD)
     }
 
-    public fun parseCommentInLine(psiBuilder: PsiBuilder) {
+    fun parseCommentInLine(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         parseUntil(psiBuilder)
         tagMarker.done(JuliusTokenTypes.COMMENT)
     }
 
-    public fun parseCommentWithEnd(psiBuilder: PsiBuilder) {
+    fun parseCommentWithEnd(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token == JuliusTokenTypes.COMMENT_END) {
                 psiBuilder.advanceLexer()
                 break
@@ -69,9 +69,9 @@ public class JuliusParser : PsiParser {
         tagMarker.done(JuliusTokenTypes.COMMENT)
     }
 
-    public fun parseUntil(psiBuilder: PsiBuilder) {
+    fun parseUntil(psiBuilder: PsiBuilder) {
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token == JuliusTokenTypes.NEWLINE) {
                 psiBuilder.advanceLexer()
                 break
@@ -80,31 +80,31 @@ public class JuliusParser : PsiParser {
         }
     }
 
-    public fun parseAny(psiBuilder: PsiBuilder) {
+    fun parseAny(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(JuliusTokenTypes.ANY)
     }
 
-    public fun parseString(psiBuilder: PsiBuilder) {
+    fun parseString(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.STRING)
     }
 
-    public fun parseNumber(psiBuilder: PsiBuilder) {
+    fun parseNumber(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.NUMBER)
     }
 
-    public fun parseInterpolation(psiBuilder: PsiBuilder) {
+    fun parseInterpolation(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.INTERPOLATION)
 
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token == JuliusTokenTypes.END_INTERPOLATION) {
                 parseEndInterpolation(psiBuilder)
                 break
@@ -113,13 +113,13 @@ public class JuliusParser : PsiParser {
         }
     }
 
-    public fun parseEndInterpolation(psiBuilder: PsiBuilder) {
+    fun parseEndInterpolation(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.END_INTERPOLATION)
     }
 
-    public fun parseDotIdentifier(psiBuilder: PsiBuilder) {
+    fun parseDotIdentifier(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(JuliusTokenTypes.DOT_IDENTIFIER)

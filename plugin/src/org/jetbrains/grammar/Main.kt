@@ -32,7 +32,7 @@ fun main(args : Array<String>) {
 
     }
     for (file in path.listFiles(filter)) {
-        val name = file.getName()
+        val name = file.name
         parseFile(file, File(path, name.substring(0, name.length - 3) + "_tree.txt"))
     }
 }
@@ -56,7 +56,7 @@ fun parseFile(inFile : File, outFile : File) {
     //evaluateManyTimes(cachedTokens, grammar)
 
     val parser = LazyLLParser(grammar, cachedTokens)
-    parser.writeLog = true;
+    parser.writeLog = true
     val tree = parser.parse()
     stream.println(tree?.prettyPrint(0))
     stream.close()
@@ -65,7 +65,7 @@ fun parseFile(inFile : File, outFile : File) {
 private fun printTokens(cachedTokens: CachedTokens) {
     var state = newLexerState(cachedTokens)
     while (state.getToken() != null) {
-        println(state.getToken());
+        println(state.getToken())
         state = state.next()
     }
 }

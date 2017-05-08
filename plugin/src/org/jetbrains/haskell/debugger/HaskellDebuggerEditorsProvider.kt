@@ -21,14 +21,14 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.psi.PsiDocumentManager
 
-public class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
+class HaskellDebuggerEditorsProvider : XDebuggerEditorsProvider() {
 
     override fun createDocument(project: Project,
                                 text: String,
                                 sourcePosition: XSourcePosition?,
                                 mode: EvaluationMode): Document {
         if(sourcePosition != null) {
-            val hsPsiFile = PsiFileFactory.getInstance(project)!!.createFileFromText(sourcePosition.getFile().getName(),
+            val hsPsiFile = PsiFileFactory.getInstance(project)!!.createFileFromText(sourcePosition.file.name,
                     HaskellFileType.INSTANCE,
                     text)
             val hsDocument = PsiDocumentManager.getInstance(project)!!.getDocument(hsPsiFile)

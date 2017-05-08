@@ -9,16 +9,16 @@ import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.cabal.highlight.ErrorMessage
 import java.util.ArrayList
 
-public class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable {
+class BuildDependsField(node: ASTNode) : MultiValueField(node), Checkable {
 
-    public fun getPackageNames(): List<String> = getValues(FullVersionConstraint::class.java).map { it.getBaseName() }
+    fun getPackageNames(): List<String> = getValues(FullVersionConstraint::class.java).map { it.getBaseName() }
 
-    public fun getConstraintsWithName(name: String): List<FullVersionConstraint>
+    fun getConstraintsWithName(name: String): List<FullVersionConstraint>
             = getValues(FullVersionConstraint::class.java).filter { it.getBaseName().equals(name) }
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         val packageConstraints = getValues(FullVersionConstraint::class.java)
-        val installedPackages  = CabalInterface(getProject()).getInstalledPackagesList()
+        val installedPackages  = CabalInterface(project).getInstalledPackagesList()
         var res = ArrayList<ErrorMessage>()
         for (constraint in packageConstraints) {
             val constrName = constraint.getBaseName()

@@ -11,12 +11,12 @@ import org.jetbrains.cabal.highlight.ErrorMessage
 /**
  * Created by atsky on 13/12/13.
  */
-public class Name(node: ASTNode) : PropertyValue(node), RangedValue {
+class Name(node: ASTNode) : PropertyValue(node), RangedValue {
 
-    public override fun getAvailableValues(): List<String> {
-        val parent = getParent()
+    override fun getAvailableValues(): List<String> {
+        val parent = parent
         if (isFlagNameInCondition()) {
-            return (getContainingFile() as CabalFile).getFlagNames()
+            return (containingFile as CabalFile).getFlagNames()
         }
         else if (parent is InvalidField) {
             return (parent.getParent() as FieldContainer).getAvailableFieldNames()
@@ -25,27 +25,27 @@ public class Name(node: ASTNode) : PropertyValue(node), RangedValue {
         return listOf()
     }
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         if (isFlagNameInCondition()) {
-            if (getText().toLowerCase() in (getContainingFile() as CabalFile).getFlagNames()) return listOf()
+            if (text.toLowerCase() in (containingFile as CabalFile).getFlagNames()) return listOf()
             return listOf(ErrorMessage(this, "invalid flag name", "error"))
         }
-        if (getParent() is Section) {
-            if (getNode().getText().matches("^\\S+$".toRegex())) return listOf()
+        if (parent is Section) {
+            if (node.text.matches("^\\S+$".toRegex())) return listOf()
             return listOf(ErrorMessage(this, "invalid section name", "error"))
         }
-        if (getNode().getText().matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$".toRegex())) return listOf()
+        if (node.text.matches("^([a-zA-Z0-9]+-)*[a-zA-Z0-9]+$".toRegex())) return listOf()
         return listOf(ErrorMessage(this, "invalid name", "error"))
     }
 
-    public fun isFlagNameInCondition(): Boolean {
-        val parent = getParent()!!
+    fun isFlagNameInCondition(): Boolean {
+        val parent = parent!!
         if ((parent is SimpleCondition) && (parent.getTestName() == "flag")) return true
         if (parent is InvalidConditionPart) {
-            var prevElement = getPrevSibling()
+            var prevElement = prevSibling
             while (prevElement != null) {
-                if (prevElement.getText() == "flag") return true
-                prevElement = prevElement.getPrevSibling()
+                if (prevElement.text == "flag") return true
+                prevElement = prevElement.prevSibling
             }
         }
         return false

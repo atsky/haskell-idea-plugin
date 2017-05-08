@@ -16,16 +16,16 @@ import org.jetbrains.haskell.psi.ConstructorDeclaration
  */
 class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
         constructor,
-        TextRange(0, constructor.getTextRange()!!.getLength())) {
+        TextRange(0, constructor.textRange!!.length)) {
 
     override fun resolve(): PsiElement? {
         for (declaration in getConstructorsList()) {
-            if (declaration.getDeclarationName() == constructor.getText()) {
+            if (declaration.getDeclarationName() == constructor.text) {
                 return declaration.getTypeVariable()
             }
         }
 
-        return null;
+        return null
     }
 
     fun getConstructorsList() : List<ConstructorDeclaration> {
@@ -37,7 +37,7 @@ class ConstructorReference(val constructor: QCon) : PsiReferenceBase<QCon>(
     }
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
-        return constructor;
+        return constructor
     }
 
     override fun getVariants(): Array<Any> {

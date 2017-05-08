@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 /**
  * Created by atsky on 09/05/14.
  */
-public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
+class CabalVirtualFileSystem : NewVirtualFileSystem() {
 
     fun getTarGzRootForLocalFile(entryVFile : VirtualFile) : VirtualFile {
 
@@ -28,9 +28,9 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    override fun isDirectory(file: VirtualFile) = file.isDirectory()
+    override fun isDirectory(file: VirtualFile) = file.isDirectory
 
-    override fun getTimeStamp(file: VirtualFile): Long = file.getTimeStamp()
+    override fun getTimeStamp(file: VirtualFile): Long = file.timeStamp
 
     override fun setTimeStamp(file: VirtualFile, timeStamp: Long) {
         throw UnsupportedOperationException()
@@ -43,11 +43,11 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     override fun contentsToByteArray(file: VirtualFile): ByteArray {
-        val stream = file.getInputStream()!!
-        return FileUtil.loadBytes(stream, file.getLength().toInt())
+        val stream = file.inputStream!!
+        return FileUtil.loadBytes(stream, file.length.toInt())
     }
 
-    override fun getInputStream(file: VirtualFile) = file.getInputStream()!!
+    override fun getInputStream(file: VirtualFile) = file.inputStream!!
 
     override fun getOutputStream(file: VirtualFile,
                                  requestor: Any?,
@@ -56,7 +56,7 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    override fun getLength(file: VirtualFile) = file.getLength()
+    override fun getLength(file: VirtualFile) = file.length
 
     override fun getProtocol(): String = "tar"
 
@@ -65,7 +65,7 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
         val firstPart = path.substring(0, lastIndexOf)
         val secondPart = path.substring(lastIndexOf + 1)
         val archiveFile = LocalFileSystem.getInstance()!!.findFileByPath(firstPart)!!
-        return TarGzFile(archiveFile, secondPart);
+        return TarGzFile(archiveFile, secondPart)
     }
 
     override fun refresh(asynchronous: Boolean) {
@@ -118,6 +118,6 @@ public class CabalVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     companion object {
-        public val INSTANCE : CabalVirtualFileSystem = CabalVirtualFileSystem()
+        val INSTANCE : CabalVirtualFileSystem = CabalVirtualFileSystem()
     }
 }

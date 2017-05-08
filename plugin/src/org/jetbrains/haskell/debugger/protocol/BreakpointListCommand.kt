@@ -15,7 +15,7 @@ import org.jetbrains.haskell.debugger.parser.BreakInfo
  * Created by vlad on 7/31/14.
  */
 
-public class BreakpointListCommand(val module: String,
+class BreakpointListCommand(val module: String,
                                    val lineNumber: Int? = null,
                                    syncObj: SyncObject,
                                    callback: CommandCallback<BreakInfoList?>)
@@ -35,7 +35,7 @@ public class BreakpointListCommand(val module: String,
     override fun parseJSONOutput(output: JSONObject): BreakInfoList? = JSONConverter.breaksListFromJSON(output)
 
     companion object {
-        public class DefaultCallback(private val resultList: ArrayList<BreakInfo>)
+        class DefaultCallback(private val resultList: ArrayList<BreakInfo>)
         : CommandCallback<BreakInfoList?>() {
             override fun execAfterParsing(result: BreakInfoList?) {
                 if(result != null) {

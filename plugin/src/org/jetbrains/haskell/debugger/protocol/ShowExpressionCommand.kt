@@ -15,7 +15,7 @@ import org.json.simple.JSONObject
  * Created by vlad on 7/23/14.
  */
 
-public class ShowExpressionCommand(val expression: String, callback: CommandCallback<ShowOutput?>)
+class ShowExpressionCommand(val expression: String, callback: CommandCallback<ShowOutput?>)
 : RealTimeCommand<ShowOutput?>(callback) {
 
     /*
@@ -30,7 +30,7 @@ public class ShowExpressionCommand(val expression: String, callback: CommandCall
     }
 
     companion object {
-        public class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)
+        class StandardShowExpressionCallback(val expressionType: String?, val callback: XDebuggerEvaluator.XEvaluationCallback)
         : CommandCallback<ShowOutput?>() {
             override fun execAfterParsing(result: ShowOutput?) {
                 if (result == null) {

@@ -16,7 +16,7 @@ class TarGzArchive(val file : File) {
 
     init {
         val bin = BufferedInputStream(FileInputStream(file))
-        val gzIn = GzipCompressorInputStream(bin);
+        val gzIn = GzipCompressorInputStream(bin)
 
 
         val tarArchiveInputStream = TarArchiveInputStream(gzIn)
@@ -24,15 +24,15 @@ class TarGzArchive(val file : File) {
         var file = ArrayList<String>()
 
         while (true) {
-            val entry = tarArchiveInputStream.getNextTarEntry();
+            val entry = tarArchiveInputStream.nextTarEntry
 
             if (entry == null) {
                 break
             }
 
-            file.add(entry.getName())
+            file.add(entry.name)
         }
-        filesList = file;
+        filesList = file
         bin.close()
     }
 }

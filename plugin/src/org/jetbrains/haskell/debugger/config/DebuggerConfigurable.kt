@@ -32,7 +32,7 @@ import java.awt.event.ActionEvent
  *
  * @author Habibullin Marat
  */
-public class DebuggerConfigurable() : Configurable {
+class DebuggerConfigurable : Configurable {
     companion object {
         private val ITEM_GHCI = "GHCi"
         private val ITEM_REMOTE = "Remote"
@@ -69,9 +69,9 @@ public class DebuggerConfigurable() : Configurable {
             override fun textChanged(e: DocumentEvent?) {
                 isModified = true
             }
-        };
+        }
         selectDebuggerComboBox.addItemListener(itemListener)
-        remoteDebuggerPathField.getTextField()!!.getDocument()!!.addDocumentListener(docListener)
+        remoteDebuggerPathField.textField!!.document!!.addDocumentListener(docListener)
         traceSwitchOffCheckBox.addItemListener(itemListener)
         printDebugOutputCheckBox.addItemListener(itemListener)
 
@@ -80,15 +80,15 @@ public class DebuggerConfigurable() : Configurable {
         UIUtils.addLabeledControl(result, 1, "Remote debugger path:", remoteDebuggerPathField)
         result.add(traceSwitchOffCheckBox, gridBagConstraints {
             anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridwidth = 2;
-            gridy = 2;
+            gridx = 0
+            gridwidth = 2
+            gridy = 2
         })
         result.add(printDebugOutputCheckBox, gridBagConstraints {
             anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridwidth = 2;
-            gridy = 3;
+            gridx = 0
+            gridwidth = 2
+            gridy = 3
         })
         result.add(JPanel(), gridBagConstraints { gridx = 0; gridy = 4; weighty = 10.0 })
         return result
@@ -101,12 +101,12 @@ public class DebuggerConfigurable() : Configurable {
      * debug settings object
      */
     override fun apply() {
-        val ghciSelected = selectDebuggerComboBox.getSelectedIndex() == 0
-        val remotePath = remoteDebuggerPathField.getTextField()!!.getText()
-        val traceSwitchedOff = traceSwitchOffCheckBox.isSelected()
-        val printDebugOutput = printDebugOutputCheckBox.isSelected()
+        val ghciSelected = selectDebuggerComboBox.selectedIndex == 0
+        val remotePath = remoteDebuggerPathField.textField!!.text
+        val traceSwitchedOff = traceSwitchOffCheckBox.isSelected
+        val printDebugOutput = printDebugOutputCheckBox.isSelected
 
-        val state = HaskellDebugSettings.getInstance().getState()
+        val state = HaskellDebugSettings.getInstance().state
         state.debuggerType = if (ghciSelected) DebuggerType.GHCI else DebuggerType.REMOTE
         state.remoteDebuggerPath = remotePath
         state.traceOff = traceSwitchedOff
@@ -120,11 +120,11 @@ public class DebuggerConfigurable() : Configurable {
      * debug settings object
      */
     override fun reset() {
-        val state = HaskellDebugSettings.getInstance().getState()
-        selectDebuggerComboBox.setSelectedIndex(if (state.debuggerType == DebuggerType.GHCI) 0 else 1)
-        traceSwitchOffCheckBox.setSelected(state.traceOff)
-        remoteDebuggerPathField.getTextField()!!.setText(state.remoteDebuggerPath)
-        printDebugOutputCheckBox.setSelected(state.printDebugOutput)
+        val state = HaskellDebugSettings.getInstance().state
+        selectDebuggerComboBox.selectedIndex = if (state.debuggerType == DebuggerType.GHCI) 0 else 1
+        traceSwitchOffCheckBox.isSelected = state.traceOff
+        remoteDebuggerPathField.textField!!.text = state.remoteDebuggerPath
+        printDebugOutputCheckBox.isSelected = state.printDebugOutput
 
         isModified = false
     }

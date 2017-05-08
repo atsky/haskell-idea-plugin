@@ -7,31 +7,31 @@ import java.io.File
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
 
-public interface FieldContainer: PsiElement {
+interface FieldContainer: PsiElement {
 
-    public open fun getAvailableFieldNames(): List<String> = listOf()
+    fun getAvailableFieldNames(): List<String> = listOf()
 
-    public fun <T : Field> getField(fieldType: Class<T>): T? {
+    fun <T : Field> getField(fieldType: Class<T>): T? {
         return PsiTreeUtil.findChildOfType(this, fieldType)
     }
 
-    public fun <T : Field> getFields(fieldType: Class<T>): List<T> {
+    fun <T : Field> getFields(fieldType: Class<T>): List<T> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType)
     }
 
-    public fun <T : Field> getField(fieldType: Class<T>, fieldName: String): T?
+    fun <T : Field> getField(fieldType: Class<T>, fieldName: String): T?
             = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType).firstOrNull { it.hasName(fieldName) }
 
-    public fun <T : Field> getFields(fieldType: Class<T>, fieldName: String): List<T>
+    fun <T : Field> getFields(fieldType: Class<T>, fieldName: String): List<T>
             = PsiTreeUtil.getChildrenOfTypeAsList(this, fieldType).filter { it.hasName(fieldName) }
 
-    public fun getCabalFile(): CabalFile = (getContainingFile() as CabalFile)
+    fun getCabalFile(): CabalFile = (containingFile as CabalFile)
 
-    public fun getCabalVirtualFile(): VirtualFile? = getCabalFile().getVirtualFile()
+    fun getCabalVirtualFile(): VirtualFile? = getCabalFile().virtualFile
 
-    public fun getCabalRootPath(): String? = getCabalRootFile()?.getPath()
+    fun getCabalRootPath(): String? = getCabalRootFile()?.path
 
-    public fun getCabalRootFile(): VirtualFile? = getCabalVirtualFile()?.getParent()
+    fun getCabalRootFile(): VirtualFile? = getCabalVirtualFile()?.parent
 
-    public fun getFileSystem(): VirtualFileSystem? = getCabalVirtualFile()?.getFileSystem()
+    fun getFileSystem(): VirtualFileSystem? = getCabalVirtualFile()?.fileSystem
 }

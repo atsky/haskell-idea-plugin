@@ -9,7 +9,7 @@ import org.jetbrains.haskell.util.OSUtil
 import java.io.File
 import javax.swing.*
 
-public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
+class HaskellSdkConfigurable : AdditionalDataConfigurable {
     private val form: HaskellSdkConfigurableForm = HaskellSdkConfigurableForm()
 
     private var mySdk: Sdk? = null
@@ -32,8 +32,8 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
                 form.getGhcpkgPath(),
                 form.getCabalPath())
 
-        val modificator = mySdk!!.getSdkModificator()
-        modificator.setSdkAdditionalData(newData)
+        val modificator = mySdk!!.sdkModificator
+        modificator.sdkAdditionalData = newData
         ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {
             override fun run() {
                 modificator.commitChanges()
@@ -44,7 +44,7 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
 
     override fun reset() {
         val sdk = mySdk!!
-        val data = sdk.getSdkAdditionalData()
+        val data = sdk.sdkAdditionalData
 
         if (data != null) {
             if (data !is HaskellSdkAdditionalData) {
@@ -58,8 +58,8 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
             form.init(ghciPath, ghcPkgPath, cabalPath)
         } else {
             val file = File(sdk.homePath)
-            val version = extractVersion(file.getName())
-            val parent = file.getParent()
+            val version = extractVersion(file.name)
+            val parent = file.parent
             form.init(
                     File(parent, OSUtil.getExe("ghci-" + version)).toString(),
                     File(parent, OSUtil.getExe("ghc-pkg-" + version)).toString(),
@@ -70,7 +70,7 @@ public class HaskellSdkConfigurable() : AdditionalDataConfigurable {
     }
 
     private fun extractVersion(name: String) : String {
-        val trimmedName = OSUtil.removeExtension(name);
+        val trimmedName = OSUtil.removeExtension(name)
 
         if (trimmedName == "ghc") {
             return ""

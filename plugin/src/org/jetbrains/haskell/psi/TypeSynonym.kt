@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil
 /**
  * Created by atsky on 11/21/14.
  */
-public class TypeSynonym(node : ASTNode) : Declaration(node) {
+class TypeSynonym(node : ASTNode) : Declaration(node) {
 
     override fun getDeclarationName(): String? {
         return getNameElement()?.getNameText()

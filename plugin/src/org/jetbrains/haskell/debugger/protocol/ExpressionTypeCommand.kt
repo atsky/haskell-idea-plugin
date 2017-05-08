@@ -11,11 +11,11 @@ import org.json.simple.JSONObject
  * Created by vlad on 7/23/14.
  */
 
-public class ExpressionTypeCommand(val expression: String, callback: CommandCallback<ExpressionType?>?)
+class ExpressionTypeCommand(val expression: String, callback: CommandCallback<ExpressionType?>?)
 : RealTimeCommand<ExpressionType?>(callback) {
     override fun getText(): String = ":type $expression\n"
 
-    override fun parseGHCiOutput(output: Deque<String?>): ExpressionType? = GHCiParser.parseExpressionType(output.getFirst()!!)
+    override fun parseGHCiOutput(output: Deque<String?>): ExpressionType? = GHCiParser.parseExpressionType(output.first!!)
 
     override fun parseJSONOutput(output: JSONObject): ExpressionType? {
         throw UnsupportedOperationException()

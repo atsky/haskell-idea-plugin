@@ -11,8 +11,8 @@ import com.intellij.execution.ui.ConsoleView
 import com.intellij.openapi.application.ApplicationManager
 
 
-public object DebugConsoleFactory {
-    public fun createDebugConsole(project: Project,
+object DebugConsoleFactory {
+    fun createDebugConsole(project: Project,
                                   processHandler: HaskellDebugProcessHandler): ConsoleView {
         val console = ConsoleViewImpl(project, false)
 

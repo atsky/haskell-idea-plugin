@@ -10,7 +10,7 @@ import org.jetbrains.haskell.psi.TypeVariable
 /**
  * Created by atsky on 13/02/15.
  */
-public class HaskellFindUsagesProvider : FindUsagesProvider {
+class HaskellFindUsagesProvider : FindUsagesProvider {
     override fun getWordsScanner() = HaskellWordsScanner()
 
     override fun canFindUsagesFor(psiElement: PsiElement): Boolean {
@@ -20,19 +20,19 @@ public class HaskellFindUsagesProvider : FindUsagesProvider {
         if (psiElement is TypeVariable) {
             return true
         }
-        return false;
+        return false
     }
 
-    override fun getHelpId(psiElement: PsiElement) = com.intellij.lang.HelpID.FIND_OTHER_USAGES;
+    override fun getHelpId(psiElement: PsiElement) = com.intellij.lang.HelpID.FIND_OTHER_USAGES
 
     override fun getType(element: PsiElement): String = "value"
 
     override fun getDescriptiveName(element: PsiElement): String {
-        return element.getText()
+        return element.text
     }
 
     override fun getNodeText(element: PsiElement, useFullName: Boolean): String {
-        return element.getText()
+        return element.text
     }
 
 }

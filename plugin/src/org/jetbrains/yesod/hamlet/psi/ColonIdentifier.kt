@@ -7,4 +7,4 @@ package org.jetbrains.yesod.hamlet.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 
-public class ColonIdentifier(node: ASTNode) : ASTWrapperPsiElement(node)
+class ColonIdentifier(node: ASTNode) : ASTWrapperPsiElement(node)

@@ -8,10 +8,10 @@ import org.jetbrains.annotations.Nullable
 /**
  * Created by atsky on 4/25/14.
  */
-public class HaskellQuickDocumentationProvider() : DocumentationProvider {
+class HaskellQuickDocumentationProvider : DocumentationProvider {
 
     override fun getQuickNavigateInfo(element: PsiElement?, originalElement: PsiElement?): String? {
-        return null;
+        return null
     }
 
     override fun getUrlFor(element: PsiElement?, originalElement: PsiElement?): MutableList<String>? {

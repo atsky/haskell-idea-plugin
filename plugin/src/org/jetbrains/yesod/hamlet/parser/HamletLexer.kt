@@ -7,4 +7,4 @@ package org.jetbrains.yesod.hamlet.parser
 import com.intellij.lexer.FlexAdapter
 import java.io.Reader
 
-public class HamletLexer : FlexAdapter(_HamletLexer(null as Reader?))
+class HamletLexer : FlexAdapter(_HamletLexer(null as Reader?))

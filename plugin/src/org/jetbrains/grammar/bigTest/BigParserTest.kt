@@ -38,22 +38,22 @@ class BigParserTest {
 
     fun listHaskellFiles(packageName: String, stream: InputStream): Boolean {
         val bin = BufferedInputStream(stream)
-        val gzIn = GzipCompressorInputStream(bin);
+        val gzIn = GzipCompressorInputStream(bin)
 
         val tarArchiveInputStream = TarArchiveInputStream(gzIn)
 
         while (true) {
-            val entry = tarArchiveInputStream.getNextTarEntry();
+            val entry = tarArchiveInputStream.nextTarEntry
 
             if (entry == null) {
                 break
             }
 
-            val name = entry.getName()
+            val name = entry.name
             if (name.endsWith(".hs")) {
                 val content = readToArray(tarArchiveInputStream)
                 if (!testFile(packageName, name, content)) {
-                    return false;
+                    return false
                 }
             }
         }
@@ -81,16 +81,16 @@ class BigParserTest {
                 if (failOnError) {
                     println(String(content))
                 }
-                return false;
+                return false
             }
         } catch (e: Exception) {
             println(packageName + " - " + name + " - exception")
             if (failOnError) {
                 println(String(content))
             }
-            return false;
+            return false
         }
-        return true;
+        return true
     }
 
     fun readToArray(ins: InputStream): ByteArray {
@@ -102,44 +102,44 @@ class BigParserTest {
         while (true) {
             nRead = ins.read(data, 0, data.size)
             if (nRead == -1) {
-                break;
+                break
             }
-            buffer.write(data, 0, nRead);
+            buffer.write(data, 0, nRead)
         }
 
-        buffer.flush();
+        buffer.flush()
 
-        return buffer.toByteArray();
+        return buffer.toByteArray()
     }
 
     fun fetchUrl(url: String): ByteArray? {
-        val client = HttpClient();
+        val client = HttpClient()
 
 
-        val method = GetMethod(url);
+        val method = GetMethod(url)
 
         // Provide custom retry handler is necessary
 
-        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-                DefaultHttpMethodRetryHandler(3, false));
+        method.params.setParameter(HttpMethodParams.RETRY_HANDLER,
+                DefaultHttpMethodRetryHandler(3, false))
 
         try {
-            val statusCode = client.executeMethod(method);
+            val statusCode = client.executeMethod(method)
 
             if (statusCode != HttpStatus.SC_OK) {
-                System.err.println("Method failed: " + method.getStatusLine());
+                System.err.println("Method failed: " + method.statusLine)
             }
             // Read the response body.
-            return method.getResponseBody()
+            return method.responseBody
         } catch (e: HttpException) {
-            System.err.println("Fatal protocol violation: " + e.message);
-            e.printStackTrace();
+            System.err.println("Fatal protocol violation: " + e.message)
+            e.printStackTrace()
         } catch (e: IOException) {
-            System.err.println("Fatal transport error: " + e.message);
-            e.printStackTrace();
+            System.err.println("Fatal transport error: " + e.message)
+            e.printStackTrace()
         } finally {
             // Release the connection.
-            method.releaseConnection();
+            method.releaseConnection()
         }
         return null
     }
@@ -155,7 +155,7 @@ class BigParserTest {
 
                 map.getOrPut(key) { ArrayList<String>() }.add(value)
                 if (map.size >= MAX_PACKAGES) {
-                    break;
+                    break
                 }
             }
         }
@@ -179,7 +179,7 @@ class BigParserTest {
             val byteArray = file.readBytes()
             val result = listHaskellFiles(name, ByteInputStream(byteArray, byteArray.size))
             if (!result) {
-                packageProblems++;
+                packageProblems++
                 if (failOnError) {
                     break
                 }

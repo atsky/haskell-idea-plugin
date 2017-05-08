@@ -18,8 +18,8 @@ fun main(args: Array<String>) {
     val grammar = HaskellParser(null).getGrammar()
 
     for ((name, rule) in grammar) {
-        rule.makeAnalysis(grammar);
-            println("rule ${name} {")
+        rule.makeAnalysis(grammar)
+        println("rule ${name} {")
             println("  can be empty: " + rule.canBeEmpty)
             println("  first: " + rule.first)
             println("}")

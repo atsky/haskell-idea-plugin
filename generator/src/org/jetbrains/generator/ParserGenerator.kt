@@ -31,9 +31,9 @@ class ParserGenerator(val grammar: Grammar) {
 
         for (token in grammar.tokens) {
             if (token.useText) {
-                tokens["'${token.text}'"] = token;
+                tokens["'${token.text}'"] = token
             } else {
-                tokens[token.text] = token;
+                tokens[token.text] = token
             }
         }
 
@@ -41,15 +41,15 @@ class ParserGenerator(val grammar: Grammar) {
             rules[rule.name] = rule
         }
 
-        this.tokens = tokens;
-        this.rules = rules;
-        this.fakeRules = fakeRules;
+        this.tokens = tokens
+        this.rules = rules
+        this.fakeRules = fakeRules
     }
 
     fun generate() {
         generateLexerTokens(grammar.tokens)
         generateTokens()
-        generateParser();
+        generateParser()
     }
 
     fun generateLexerTokens(tokens: List<TokenDescription>) {
@@ -65,7 +65,7 @@ class ParserGenerator(val grammar: Grammar) {
             indent {
                 for (token in tokens) {
                     val name = token.name.toUpperCase()
-                    line("public static HaskellTokenType ${name} = new HaskellTokenType(\"${token.text}\");");
+                    line("public static HaskellTokenType ${name} = new HaskellTokenType(\"${token.text}\");")
                 }
             }
             line("}")
@@ -110,7 +110,7 @@ class ParserGenerator(val grammar: Grammar) {
 
     fun camelCaseToUpperCase(string: String): String {
         val result = StringBuilder()
-        var first = true;
+        var first = true
         for (char in string) {
             if (Character.isUpperCase(char)) {
                 if (!first) {
@@ -120,9 +120,9 @@ class ParserGenerator(val grammar: Grammar) {
             } else {
                 result.append(Character.toUpperCase(char))
             }
-            first = false;
+            first = false
         }
-        return result.toString();
+        return result.toString()
     }
 
     fun generateParser() {
@@ -155,7 +155,7 @@ class ParserGenerator(val grammar: Grammar) {
                         }
                     }
 
-                    line("return grammar;");
+                    line("return grammar;")
                 }
                 line("}")
             }
@@ -179,7 +179,7 @@ class ParserGenerator(val grammar: Grammar) {
                 line("List<Variant> variants = new ArrayList<Variant>();")
                 line("List<Variant> left = new ArrayList<Variant>();")
                 for (varinant in rule.variants) {
-                    generateVariant(this, rule, varinant);
+                    generateVariant(this, rule, varinant)
                 }
                 line("grammar.put(\"${rule.name}\", new Rule(\"${rule.name}\", variants, left));")
             }

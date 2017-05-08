@@ -6,7 +6,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager
 
-public class CabalTaskManager() : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
+class CabalTaskManager : ExternalSystemTaskManager<ExternalSystemExecutionSettings> {
 
 
 
@@ -15,7 +15,7 @@ public class CabalTaskManager() : ExternalSystemTaskManager<ExternalSystemExecut
     }
 
     @Throws(ExternalSystemException::class)
-    public override fun executeTasks(
+    override fun executeTasks(
             id: ExternalSystemTaskId,
             taskNames: MutableList<String>,
             projectPath: String,

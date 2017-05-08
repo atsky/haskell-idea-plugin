@@ -8,10 +8,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import sun.reflect.generics.tree.TypeSignature
 import org.jetbrains.haskell.psi.TypeSynonym
 
-public class ImportScope(val import : Import) {
+class ImportScope(val import : Import) {
 
 
-    public fun <A : Declaration> filterDeclarations(list : List<A>) : List<A> {
+    fun <A : Declaration> filterDeclarations(list : List<A>) : List<A> {
         val moduleExports = import.getModuleExports()
         if (moduleExports != null) {
             if (import.hasHiding()) {

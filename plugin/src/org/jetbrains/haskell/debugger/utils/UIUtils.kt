@@ -15,9 +15,9 @@ import javax.swing.Box
 /**
  * @author Habibullin Marat
  */
-public class UIUtils {
+class UIUtils {
     companion object {
-        public fun addLabeledControl(panel: JPanel,
+        fun addLabeledControl(panel: JPanel,
                                      row: Int,
                                      label: String,
                                      component: JComponent,
@@ -41,7 +41,7 @@ public class UIUtils {
             })
         }
 
-        public fun notifyCommandInProgress() {
+        fun notifyCommandInProgress() {
             val msg = "Some command is in progress, it must finish first"
             Notifications.Bus.notify(Notification("", "Can't perform action", msg, NotificationType.WARNING))
         }

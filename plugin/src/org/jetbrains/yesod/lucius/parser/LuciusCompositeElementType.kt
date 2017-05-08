@@ -9,7 +9,5 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.yesod.lucius.LuciusLanguage
 
 
-public class LuciusCompositeElementType(val debugName: String) :
-        IElementType(debugName, LuciusLanguage.INSTANCE) {
-
-}
+class LuciusCompositeElementType(val debugName: String) :
+        IElementType(debugName, LuciusLanguage.INSTANCE)

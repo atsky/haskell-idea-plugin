@@ -15,18 +15,18 @@ import org.jetbrains.haskell.psi.util.HaskellElementFactory
  */
 class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
         typeRef,
-        TextRange(0, typeRef.getTextRange()!!.getLength())) {
+        TextRange(0, typeRef.textRange!!.length)) {
 
     override fun resolve(): PsiElement? {
-        val module = Module.findModule(getElement()!!)
+        val module = Module.findModule(element!!)
         if (module != null) {
             for (aType in ModuleScope(module).getVisibleDataDeclarations()) {
-                if (aType.getDeclarationName() == typeRef.getText()) {
+                if (aType.getDeclarationName() == typeRef.text) {
                     return aType.getNameElement()
                 }
             }
             for (aType in ModuleScope(module).getVisibleTypeSynonyms()) {
-                if (aType.getDeclarationName() == typeRef.getText()) {
+                if (aType.getDeclarationName() == typeRef.text) {
                     return aType.getNameElement()
                 }
             }
@@ -41,8 +41,8 @@ class TypeReference(val typeRef: TypeVariable) : PsiReferenceBase<TypeVariable>(
 
     override fun handleElementRename(newElementName: String?): PsiElement? {
         if (newElementName != null) {
-            val qcon = HaskellElementFactory.createExpressionFromText(getElement().getProject(), newElementName)
-            getElement().getFirstChild().replace(qcon)
+            val qcon = HaskellElementFactory.createExpressionFromText(element.project, newElementName)
+            element.firstChild.replace(qcon)
             return qcon
         } else {
             return null

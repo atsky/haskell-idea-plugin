@@ -29,8 +29,8 @@ class GhcModConsole(val project: Project) : ProjectComponent {
     }
 
     override fun projectOpened() {
-        editor = ConsoleViewUtil.setupConsoleEditor(project, false, false);
-        editor!!.getSettings().setUseSoftWraps(true)
+        editor = ConsoleViewUtil.setupConsoleEditor(project, false, false)
+        editor!!.settings.isUseSoftWraps = true
     }
 
     override fun projectClosed() {
@@ -46,26 +46,26 @@ class GhcModConsole(val project: Project) : ProjectComponent {
 
     fun append(text: String, type : MessageType) {
         ApplicationManager.getApplication().invokeLater({
-            val document = editor!!.getDocument()
+            val document = editor!!.document
 
-            val msgStart = document.getTextLength()
-            document.insertString(document.getTextLength(), text)
+            val msgStart = document.textLength
+            document.insertString(document.textLength, text)
             val layer = HighlighterLayer.CARET_ROW + 1
 
             val attributes = EditorColorsManager.getInstance()
-                    .getGlobalScheme().getAttributes(type.key);
+                    .globalScheme.getAttributes(type.key)
 
-            editor?.getMarkupModel()?.addRangeHighlighter(
+            editor?.markupModel?.addRangeHighlighter(
                     msgStart,
-                    document.getTextLength(),
+                    document.textLength,
                     layer,
                     attributes,
                     HighlighterTargetArea.EXACT_RANGE)
 
-            val line = document.getLineCount() - 1
-            editor?.getScrollingModel()?.scrollTo(LogicalPosition(line, 0), ScrollType.MAKE_VISIBLE)
+            val line = document.lineCount - 1
+            editor?.scrollingModel?.scrollTo(LogicalPosition(line, 0), ScrollType.MAKE_VISIBLE)
 
-        });
+        })
     }
 
     enum class MessageType(val key : TextAttributesKey) {

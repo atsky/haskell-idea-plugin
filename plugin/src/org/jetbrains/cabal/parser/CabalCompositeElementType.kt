@@ -7,9 +7,9 @@ import org.jetbrains.cabal.CabalLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.lang.ASTNode
 
-public class CabalCompositeElementType(val myDebugName: String, val contructor : (ASTNode) -> PsiElement) : IElementType(myDebugName, CabalLanguage.INSTANCE) {
+class CabalCompositeElementType(val myDebugName: String, val contructor : (ASTNode) -> PsiElement) : IElementType(myDebugName, CabalLanguage.INSTANCE) {
 
-    public fun getDebugName(): String {
+    fun getDebugName(): String {
         return myDebugName
     }
 

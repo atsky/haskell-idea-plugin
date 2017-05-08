@@ -10,7 +10,7 @@ import com.intellij.xdebugger.frame.XNamedValue
  * Created by vlad on 7/23/14.
  */
 
-public class HsDebuggerEvaluator (val debugger: ProcessDebugger): XDebuggerEvaluator() {
+class HsDebuggerEvaluator (val debugger: ProcessDebugger): XDebuggerEvaluator() {
 
     override fun evaluate(expression: String, callback: XDebuggerEvaluator.XEvaluationCallback, expressionPosition: XSourcePosition?) {
         debugger.evaluateExpression(expression, callback)

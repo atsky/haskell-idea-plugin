@@ -27,11 +27,11 @@ import com.intellij.openapi.editor.markup.HighlighterLayer
  *
  * @author Habibullin Marat
  */
-public class HsExecutionPointHighlighter(private val myProject: Project,
+class HsExecutionPointHighlighter(private val myProject: Project,
                                          private val highlighterType: HsExecutionPointHighlighter.HighlighterType
                                          = HsExecutionPointHighlighter.HighlighterType.STACK_FRAME) {
 
-    public enum class HighlighterType {
+    enum class HighlighterType {
         STACK_FRAME,
         HISTORY
     }
@@ -46,7 +46,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
 
     private val updateRequested = AtomicBoolean()
 
-    public fun show(stackFrame: HsStackFrame, useSelection: Boolean, gutterIconRenderer: GutterIconRenderer?) {
+    fun show(stackFrame: HsStackFrame, useSelection: Boolean, gutterIconRenderer: GutterIconRenderer?) {
         updateRequested.set(false)
         if (stackFrame.hackSourcePosition == null) {
             hide()
@@ -59,7 +59,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
                 filePosition = stackFrame.stackFrameInfo.filePosition
 
                 myOpenFileDescriptor = XSourcePositionImpl.createOpenFileDescriptor(myProject, stackFrame.hackSourcePosition!!)
-                myOpenFileDescriptor!!.setUseCurrentWindow(true)
+                myOpenFileDescriptor!!.isUseCurrentWindow = true
 
                 myGutterIconRenderer = gutterIconRenderer
                 myUseSelection = useSelection
@@ -69,7 +69,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
         })
     }
 
-    public fun hide() {
+    fun hide() {
         AppUIUtil.invokeOnEdt(object : Runnable {
             override fun run() {
                 updateRequested.set(false)
@@ -98,7 +98,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
         }
 
         if (myUseSelection) {
-            myEditor!!.getSelectionModel().removeSelection()
+            myEditor!!.selectionModel.removeSelection()
         }
 
         myRangeHighlighter!!.dispose()
@@ -107,26 +107,26 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
 
     private fun addHighlighter() {
         if (filePosition != null) {
-            val document = myEditor!!.getDocument()
+            val document = myEditor!!.document
             val startLineOffset = document.getLineStartOffset(filePosition!!.normalizedStartLine)
             val endLineOffset = document.getLineStartOffset(filePosition!!.normalizedEndLine)
             val startOffset = startLineOffset + filePosition!!.normalizedStartSymbol - 1
             val endOffset = endLineOffset + filePosition!!.normalizedEndSymbol - 1
             if (myUseSelection) {
-                myEditor!!.getSelectionModel().setSelection(startOffset, endOffset)
+                myEditor!!.selectionModel.setSelection(startOffset, endOffset)
                 return
             }
 
             if (myRangeHighlighter != null) return
 
-            myRangeHighlighter = myEditor!!.getMarkupModel().addRangeHighlighter(
+            myRangeHighlighter = myEditor!!.markupModel.addRangeHighlighter(
                     startOffset,
                     endOffset,
                     getHighlightLayer(),
                     getTextAttributes(),
                     HighlighterTargetArea.EXACT_RANGE)
             myRangeHighlighter!!.putUserData(EXECUTION_POINT_HIGHLIGHTER_KEY!!, true)
-            myRangeHighlighter!!.setGutterIconRenderer(myGutterIconRenderer)
+            myRangeHighlighter!!.gutterIconRenderer = myGutterIconRenderer
         }
     }
 
@@ -137,19 +137,19 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
     private fun getTextAttributes(): TextAttributes? {
         when (highlighterType) {
             HsExecutionPointHighlighter.HighlighterType.STACK_FRAME ->
-                return EditorColorsManager.getInstance()!!.getGlobalScheme().getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
+                return EditorColorsManager.getInstance()!!.globalScheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
             HsExecutionPointHighlighter.HighlighterType.HISTORY -> {
-                val scheme = EditorColorsManager.getInstance()!!.getGlobalScheme()
+                val scheme = EditorColorsManager.getInstance()!!.globalScheme
                 val attr1 = scheme.getAttributes(DebuggerColors.EXECUTIONPOINT_ATTRIBUTES)
                 val attr2 = scheme.getAttributes(DebuggerColors.BREAKPOINT_ATTRIBUTES)
                 if (attr1 == null) {
                     return null
                 }
-                return TextAttributes(mix(attr1.getForegroundColor(), attr2?.getForegroundColor()),
-                        mix(attr1.getBackgroundColor(), attr2?.getBackgroundColor()),
-                        mix(attr1.getEffectColor(), attr2?.getEffectColor()),
-                        attr1.getEffectType(),
-                        attr1.getFontType())
+                return TextAttributes(mix(attr1.foregroundColor, attr2?.foregroundColor),
+                        mix(attr1.backgroundColor, attr2?.backgroundColor),
+                        mix(attr1.effectColor, attr2?.effectColor),
+                        attr1.effectType,
+                        attr1.fontType)
             }
             else -> return null
         }
@@ -173,7 +173,7 @@ public class HsExecutionPointHighlighter(private val myProject: Project,
         if (b == null) {
             return a
         }
-        return Color((a.getRed() + b.getRed()) / 2, (a.getGreen() + b.getGreen()) / 2, (a.getBlue() + b.getBlue()) / 2,
-                (a.getAlpha() + b.getAlpha()) / 2)
+        return Color((a.red + b.red) / 2, (a.green + b.green) / 2, (a.blue + b.blue) / 2,
+                (a.alpha + b.alpha) / 2)
     }
 }

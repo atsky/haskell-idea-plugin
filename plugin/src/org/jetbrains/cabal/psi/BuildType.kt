@@ -5,9 +5,9 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.parser.*
 import org.jetbrains.cabal.psi.PropertyValue
 
-public class BuildType(node: ASTNode) : PropertyValue(node), RangedValue  {
+class BuildType(node: ASTNode) : PropertyValue(node), RangedValue  {
 
-    public override fun getAvailableValues(): List<String> {
+    override fun getAvailableValues(): List<String> {
         return BUILD_TYPE_VALS
     }
 }

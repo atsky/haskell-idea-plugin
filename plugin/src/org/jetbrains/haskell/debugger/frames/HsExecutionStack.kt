@@ -9,7 +9,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
  * @author Habibullin Marat
  * @see    XExecutionStack
  */
-public class HsExecutionStack(private val debugger: ProcessDebugger,
+class HsExecutionStack(private val debugger: ProcessDebugger,
                               private val threadInfo: ProgramThreadInfo) : XExecutionStack(threadInfo.name) {
     private val topFrame: HsStackFrame? = HsTopStackFrame(debugger, threadInfo.topFrameInfo)
     override fun getTopFrame(): XStackFrame? = topFrame

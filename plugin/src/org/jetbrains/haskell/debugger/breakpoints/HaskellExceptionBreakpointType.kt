@@ -18,13 +18,13 @@ import javax.swing.JLabel
  * Created by vlad on 8/6/14.
  */
 
-public class HaskellExceptionBreakpointType() :
+class HaskellExceptionBreakpointType :
         XBreakpointType<XBreakpoint<HaskellExceptionBreakpointProperties>, HaskellExceptionBreakpointProperties>(
                 HaskellExceptionBreakpointType.ID,
                 HaskellExceptionBreakpointType.TITLE) {
 
     companion object {
-        public val ID: String = "haskell-exception-breakpoint"
+        val ID: String = "haskell-exception-breakpoint"
         private val TITLE: String = "Haskell exception breakpoints"
     }
 

@@ -8,7 +8,7 @@ import org.jetbrains.haskell.HaskellLanguage
 import org.jetbrains.haskell.psi.ModuleName
 import org.jetbrains.haskell.psi.Module
 
-public class HaskellFile(provider: FileViewProvider) : PsiFileBase(provider, HaskellLanguage.INSTANCE) {
+class HaskellFile(provider: FileViewProvider) : PsiFileBase(provider, HaskellLanguage.INSTANCE) {
 
     override fun getFileType(): FileType {
         return HaskellFileType.INSTANCE
@@ -18,5 +18,5 @@ public class HaskellFile(provider: FileViewProvider) : PsiFileBase(provider, Has
         visitor.visitFile(this)
     }
 
-    public fun getModule() : Module? = findChildByClass(Module::class.java)
+    fun getModule() : Module? = findChildByClass(Module::class.java)
 }

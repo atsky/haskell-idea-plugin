@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
  * Created by atsky on 11/21/14.
  */
 
-public class QNameExpression(node: ASTNode) : Expression(node) {
+class QNameExpression(node: ASTNode) : Expression(node) {
     override fun traverse(visitor: (Expression) -> Unit) {
         visitor(this)
     }
@@ -24,6 +24,6 @@ public class QNameExpression(node: ASTNode) : Expression(node) {
 
 
     override fun getReference(): PsiReference? {
-        return null;
+        return null
     }
 }

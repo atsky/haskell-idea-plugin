@@ -10,7 +10,7 @@ import java.util.ArrayList
  *
  * @author Habibullin Marat
  */
-public class JSONConverter {
+class JSONConverter {
     companion object {
         private val WRONG_OUTPUT_MSG = "Wrong JSON output occured while handling command"
         private val INFO_TAG = "info"
@@ -42,12 +42,12 @@ public class JSONConverter {
 
         private val EVALUATED_MSG = "evaluated"
 
-        public fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? =
+        fun checkExceptionFromJSON(json: JSONObject): ExceptionResult? =
             switchInfoOrNull(json) {
                 case(WARNING_MSG, EXCEPTION_MSG) { ExceptionResult(json.getString("message")) }
             }
 
-        public fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? =
+        fun breakpointCommandResultFromJSON(json: JSONObject): BreakpointCommandResult? =
             switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - set breakpoint") {
                 case(BREAKPOINT_SET_MSG) {
                     BreakpointCommandResult(json.getInt("index"), filePositionFromJSON(json.getObject("src_span"))!!)
@@ -55,7 +55,7 @@ public class JSONConverter {
                 case(BREAKPOINT_NOT_SET_MSG) { null }
             }
 
-        public fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? =
+        fun stoppedAtFromJSON(json: JSONObject): HsStackFrameInfo? =
             switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - flow command") {
                 case(PAUSED_MSG) {
                     HsStackFrameInfo(filePositionFromJSON(json.getObject("src_span")),
@@ -65,7 +65,7 @@ public class JSONConverter {
                 case(FINISHED_MSG) { null }
             }
 
-        public fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? =
+        fun moveHistResultFromJSON(json: JSONObject): MoveHistResult? =
             switchInfoOrThrow(json, WRONG_OUTPUT_MSG + " - move through history") {
                 case(BACK_MSG, FORWARD_MSG) {
                     MoveHistResult(filePositionFromJSON(json.getObject("src_span")),
@@ -73,21 +73,21 @@ public class JSONConverter {
                 }
             }
 
-        public fun expressionTypeFromJSON(json: JSONObject): ExpressionType =
+        fun expressionTypeFromJSON(json: JSONObject): ExpressionType =
             switchInfoOrThrow<ExpressionType>(json, WRONG_OUTPUT_MSG + " - expression type") {
                 case(EXPRESSION_TYPE_MSG) {
                     ExpressionType("<unknown>", json.getString("type"))
                 }
             } as ExpressionType
 
-        public fun evalResultFromJSON(json: JSONObject): EvalResult =
+        fun evalResultFromJSON(json: JSONObject): EvalResult =
             switchInfoOrThrow<EvalResult>(json, WRONG_OUTPUT_MSG + " - eval") {
                 case(EVALUATED_MSG) {
                     EvalResult(json.getString("type"), json.getString("value"))
                 }
             } as EvalResult
 
-        public fun historyResultFromJSON(json: JSONObject): HistoryResult =
+        fun historyResultFromJSON(json: JSONObject): HistoryResult =
             switchInfoOrThrow<HistoryResult>(json, WRONG_OUTPUT_MSG + " - get history") {
                 case(HISTORY_MSG) {
                     HistoryResult(ArrayList(json.getArray("history").toArray().map {
@@ -100,7 +100,7 @@ public class JSONConverter {
                 }
             } as HistoryResult
 
-        public fun breaksListFromJSON(json: JSONObject): BreakInfoList =
+        fun breaksListFromJSON(json: JSONObject): BreakInfoList =
             switchInfoOrThrow<BreakInfoList>(json, WRONG_OUTPUT_MSG + " - breakpoints list") {
                 case(BREAK_LIST_FOR_LINE_INFO) {
                     val indexSpanArray = json.getArray(BREAKS_TAG)
@@ -112,7 +112,7 @@ public class JSONConverter {
                 }
             } as BreakInfoList
 
-        public fun parseJSONObject(string: String): JSONResult {
+        fun parseJSONObject(string: String): JSONResult {
             val parser = JSONParser()
             return JSONResult(parser.parse(string) as JSONObject)
         }
@@ -151,8 +151,8 @@ public class JSONConverter {
                 }))
 
         private class InfoSwitch<R: ParseResult>(val info: String) {
-            public var someCaseMatched: Boolean = false
-            public var result: R? = null
+            var someCaseMatched: Boolean = false
+            var result: R? = null
         }
 
         private fun <R: ParseResult>InfoSwitch<R>.case(vararg caseStrings: String, action: () -> R?) {

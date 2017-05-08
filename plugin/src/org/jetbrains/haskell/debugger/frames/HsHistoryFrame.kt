@@ -10,7 +10,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
  * Created by vlad on 8/5/14.
  */
 
-public class HsHistoryFrame(debugger: ProcessDebugger, stackFrameInfo: HsStackFrameInfo) :
+class HsHistoryFrame(debugger: ProcessDebugger, stackFrameInfo: HsStackFrameInfo) :
         HsStackFrame(debugger, stackFrameInfo) {
 
     override fun tryGetBindings() {

@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.util.PsiTreeUtil
 
 
-public class ValueDefinition(node : ASTNode) : ASTWrapperPsiElement(node) {
+class ValueDefinition(node : ASTNode) : ASTWrapperPsiElement(node) {
     fun getQNameExpression(): QNameExpression? =
             findChildByClass(QNameExpression::class.java)
 

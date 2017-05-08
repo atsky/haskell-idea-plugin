@@ -26,7 +26,7 @@ import org.jetbrains.grammar.dumb.NonTerminalVariant
 abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
     companion object {
-        var cache : Map<String, Rule>? = null;
+        var cache : Map<String, Rule>? = null
     }
 
     abstract fun getGrammar() : Map<String, Rule>
@@ -39,7 +39,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
         val marker = builder!!.mark()
         val cachedTokens = getCachedTokens(builder)
-        marker.rollbackTo();
+        marker.rollbackTo()
 
         val rootMarker = mark()
 
@@ -58,7 +58,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
             builder.advanceLexer()
         }
         rootMarker.done(root)
-        return builder.getTreeBuilt()
+        return builder.treeBuilt
     }
 
     fun parserWithTree(tree: NonTerminalTree) {
@@ -73,7 +73,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
                 is TerminalTree -> {
                     if (child.haskellToken != HaskellLexerTokens.VOCURLY &&
                         child.haskellToken != HaskellLexerTokens.VCCURLY) {
-                        if (child.haskellToken == builderNotNull.getTokenType()) {
+                        if (child.haskellToken == builderNotNull.tokenType) {
                             builderNotNull.advanceLexer()
                         } else if (child.haskellToken != HaskellLexerTokens.SEMI) {
                             throw RuntimeException()
@@ -88,10 +88,10 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
 
     fun findFirst(grammar : Map<String, Rule>) {
         for (rule in grammar.values) {
-            rule.makeAnalysis(grammar);
+            rule.makeAnalysis(grammar)
         }
         for (rule in grammar.values) {
-            rule.makeDeepAnalysis(grammar);
+            rule.makeDeepAnalysis(grammar)
         }
     }
 
@@ -118,7 +118,7 @@ abstract class BaseHaskellParser(val builder: PsiBuilder?) {
     }
 
     fun addVar(variants : MutableList<Variant>, variant : Variant): Variant {
-        variants.add(variant);
-        return variant;
+        variants.add(variant)
+        return variant
     }
 }

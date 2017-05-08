@@ -4,5 +4,4 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.SingleValueField
 
-public class VersionField(node: ASTNode) : SingleValueField(node) {
-}
+class VersionField(node: ASTNode) : SingleValueField(node)

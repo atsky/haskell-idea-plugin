@@ -14,10 +14,9 @@ import java.io.File
  * @since 6/15/15.
  */
 
-class CabalApplicationComponent() : ApplicationComponent {
+class CabalApplicationComponent : ApplicationComponent {
     companion object {
-        @JvmStatic
-        public fun getInstance(): CabalApplicationComponent =
+        @JvmStatic fun getInstance(): CabalApplicationComponent =
                 ApplicationManager.getApplication().getComponent(CabalApplicationComponent::class.java)!!
     }
 

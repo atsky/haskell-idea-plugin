@@ -6,19 +6,19 @@ package org.jetbrains.yesod.lucius.highlight
 
 import com.intellij.openapi.editor.colors.TextAttributesKey
 
-public interface LuciusColors {
+interface LuciusColors {
     companion object {
 
-        public val COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_COMMENT")
-        public val AT_RULE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_ATRULE")
-        public val ATTRIBUTE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_ATTRIBUTE")
-        public val DOT_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_DOTIDENTIFIER")
-        public val SHARP_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_SHARPIDENTIFIER")
-        public val COLON_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_COLONIDENTIFIER")
-        public val CC_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_CCIDENTIFIER")
-        public val INTERPOLATION: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_INTERPOLATION")
-        public val NUMBER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_NUMBER")
-        public val STRING: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_STRING")
+        val COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_COMMENT")
+        val AT_RULE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_ATRULE")
+        val ATTRIBUTE: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_ATTRIBUTE")
+        val DOT_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_DOTIDENTIFIER")
+        val SHARP_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_SHARPIDENTIFIER")
+        val COLON_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_COLONIDENTIFIER")
+        val CC_IDENTIFIER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_CCIDENTIFIER")
+        val INTERPOLATION: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_INTERPOLATION")
+        val NUMBER: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_NUMBER")
+        val STRING: TextAttributesKey = TextAttributesKey.createTextAttributesKey("LUCIUS_STRING")
     }
 
 }

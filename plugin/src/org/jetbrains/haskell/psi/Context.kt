@@ -6,6 +6,4 @@ import com.intellij.lang.ASTNode
 /**
  * Created by atsky on 13/02/15.
  */
-public class Context(node : ASTNode) : ASTWrapperPsiElement(node) {
-
-}
+class Context(node : ASTNode) : ASTWrapperPsiElement(node)

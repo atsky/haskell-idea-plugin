@@ -7,4 +7,4 @@ package org.jetbrains.yesod.julius.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 
-public class Interpolation(node: ASTNode) : ASTWrapperPsiElement(node)
+class Interpolation(node: ASTNode) : ASTWrapperPsiElement(node)

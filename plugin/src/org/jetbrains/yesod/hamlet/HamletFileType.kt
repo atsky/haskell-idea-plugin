@@ -10,7 +10,7 @@ import org.jetbrains.haskell.icons.HaskellIcons
 
 import javax.swing.*
 
-public class HamletFileType private constructor() : LanguageFileType(HamletLanguage.INSTANCE) {
+class HamletFileType private constructor() : LanguageFileType(HamletLanguage.INSTANCE) {
 
     private val myIcon: Icon
 
@@ -39,7 +39,7 @@ public class HamletFileType private constructor() : LanguageFileType(HamletLangu
     }
 
     companion object {
-        public val INSTANCE: HamletFileType = HamletFileType()
-        public val DEFAULT_EXTENSION: String = "hamlet"
+        val INSTANCE: HamletFileType = HamletFileType()
+        val DEFAULT_EXTENSION: String = "hamlet"
     }
 }

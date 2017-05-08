@@ -12,10 +12,10 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 
 import java.util.Arrays
 
-public class HamletCompletionContributor : CompletionContributor() {
+class HamletCompletionContributor : CompletionContributor() {
 
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-        if (parameters.getCompletionType() === CompletionType.BASIC) {
+        if (parameters.completionType === CompletionType.BASIC) {
             for (tagName in TAGS) {
                 result.addElement(LookupElementBuilder.create(tagName))
             }
@@ -27,7 +27,7 @@ public class HamletCompletionContributor : CompletionContributor() {
 
     companion object {
 
-        public var ATTRIBUTES: List<String> = Arrays.asList(
+        var ATTRIBUTES: List<String> = Arrays.asList(
                 "accept",     "accept-charset", "accesskey",       "action",      "align",       "itemprop",
                 "alt",        "async",          "autocomplete",    "autofocus",   "autoplay",    "autosave",
                 "bgcolor",    "border",         "buffered",        "challenge",   "charset",     "checked",
@@ -53,7 +53,7 @@ public class HamletCompletionContributor : CompletionContributor() {
                 "value",      "width",          "wrap"
         )
 
-        public var TAGS: List<String> = Arrays.asList(
+        var TAGS: List<String> = Arrays.asList(
                 "a",          "abbr",       "address",  "area",      "b",        "base",
                 "bdo",        "blockquote", "body",     "br",        "button",   "caption",
                 "cite",       "code",       "col",      "colgroup",  "dd",       "del",

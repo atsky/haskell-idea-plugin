@@ -2,17 +2,16 @@ package org.jetbrains.haskell.util
 
 import com.intellij.openapi.util.SystemInfo
 
-public object OSUtil {
-    val newLine = System.getProperty("line.separator").toString();
+object OSUtil {
+    val newLine = System.getProperty("line.separator").toString()
 
-    public val isLinux: Boolean = SystemInfo.isLinux
+    val isLinux: Boolean = SystemInfo.isLinux
 
-    public val isWindows: Boolean = SystemInfo.isWindows
+    val isWindows: Boolean = SystemInfo.isWindows
 
-    public val isMac: Boolean = SystemInfo.isMac
+    val isMac: Boolean = SystemInfo.isMac
 
-    @JvmStatic
-    public fun getCabalData(): String {
+    @JvmStatic fun getCabalData(): String {
         return if (isWindows) {
             joinPath(System.getenv("AppData")!!, "cabal")
         } else if (isMac) {
@@ -22,8 +21,7 @@ public object OSUtil {
         }
     }
 
-    @JvmStatic
-    public fun getCabalConfig(): String {
+    @JvmStatic fun getCabalConfig(): String {
         return if (isWindows) {
             joinPath(System.getenv("AppData")!!, "cabal", "config")
         } else {
@@ -31,16 +29,15 @@ public object OSUtil {
         }
     }
 
-    @JvmStatic
-    public fun getDefaultCabalBin(): String = joinPath(getCabalData(), "bin")
+    @JvmStatic fun getDefaultCabalBin(): String = joinPath(getCabalData(), "bin")
 
     fun getProgramDataFolder(name: String): String {
         return if (isWindows) {
-            joinPath(System.getenv("AppData")!!, name);
+            joinPath(System.getenv("AppData")!!, name)
         } else if (isMac) {
-            joinPath(System.getProperty("user.home")!!, "Library", "Application Support", name);
+            joinPath(System.getProperty("user.home")!!, "Library", "Application Support", name)
         } else {
-            joinPath(System.getProperty("user.home")!!, "." + name);
+            joinPath(System.getProperty("user.home")!!, "." + name)
         }
     }
 

@@ -4,7 +4,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import javax.swing.*
 
-public class HiFileType() : FileType {
+class HiFileType : FileType {
 
 
     override fun getName(): String {
@@ -37,6 +37,6 @@ public class HiFileType() : FileType {
 
 
     companion object {
-        public val INSTANCE: HiFileType = HiFileType()
+        val INSTANCE: HiFileType = HiFileType()
     }
 }

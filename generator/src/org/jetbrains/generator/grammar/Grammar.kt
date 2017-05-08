@@ -6,6 +6,4 @@ package org.jetbrains.generator.grammar
 class Grammar(
     val tokens : List<TokenDescription>,
     val rules : List<Rule>
-) {
-
-}
+)

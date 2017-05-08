@@ -9,7 +9,7 @@ import org.jetbrains.yesod.cassius.CassiusFileType
 import org.jetbrains.yesod.lucius.LuciusFileType
 
 
-public class HaskellFileTypeFactory() : FileTypeFactory() {
+class HaskellFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {
         consumer.consume(HaskellFileType.INSTANCE, HaskellFileType.DEFAULT_EXTENSION)
         consumer.consume(CabalFileType.INSTANCE, CabalFileType.DEFAULT_EXTENSION)

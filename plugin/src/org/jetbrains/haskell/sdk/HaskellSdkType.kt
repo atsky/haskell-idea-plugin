@@ -21,11 +21,11 @@ import org.jetbrains.haskell.util.GHCUtil
 import org.jetbrains.haskell.sdk.HaskellSdkType.SDKInfo
 import kotlin.text.Regex
 
-public class HaskellSdkType() : SdkType("GHC") {
+class HaskellSdkType : SdkType("GHC") {
 
     companion object {
         private val WINDOWS_EXECUTABLE_SUFFIXES = arrayOf("cmd", "exe", "bat", "com")
-        public val INSTANCE: HaskellSdkType = HaskellSdkType()
+        val INSTANCE: HaskellSdkType = HaskellSdkType()
         private val GHC_ICON: Icon = HaskellIcons.HASKELL
 
         private fun getLatestVersion(ghcPaths: List<File>): SDKInfo? {
@@ -46,7 +46,7 @@ public class HaskellSdkType() : SdkType("GHC") {
             return ghcDirs.get(ghcDirs.size - 1)
         }
 
-        public fun checkForGhc(path: String): Boolean {
+        fun checkForGhc(path: String): Boolean {
             val file = File(path)
             if (file.isDirectory) {
                 val children = file.listFiles(object : FileFilter {
@@ -66,7 +66,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                 name == "ghc" || name.matches("ghc-[.0-9*]+".toRegex())
 
 
-        public fun getGhcVersion(ghcPath: File): String? {
+        fun getGhcVersion(ghcPath: File): String? {
             if (ghcPath.isDirectory) {
                 return null
             }
@@ -154,7 +154,7 @@ public class HaskellSdkType() : SdkType("GHC") {
                 }
             })?.toList() ?: listOf())
         } else if (SystemInfo.isWindows) {
-            throw UnsupportedOperationException();
+            throw UnsupportedOperationException()
             /*
             var progFiles = System.getenv("ProgramFiles(x86)")
             if (progFiles == null) {
@@ -168,7 +168,7 @@ public class HaskellSdkType() : SdkType("GHC") {
             versions = versionsRoot.listFiles()?.toList() ?: listOf()
             */
         } else if (SystemInfo.isMac) {
-            throw UnsupportedOperationException();
+            throw UnsupportedOperationException()
             /*
             val macVersions = ArrayList<File>()
             val versionsRoot = File("/Library/Frameworks/GHC.framework/Versions/")
@@ -186,7 +186,7 @@ public class HaskellSdkType() : SdkType("GHC") {
         }
         val latestVersion = getLatestVersion(versions)
         
-        return latestVersion?.ghcPath?.getAbsolutePath()
+        return latestVersion?.ghcPath?.absolutePath
     }
 
     override fun isValidSdkHome(path: String?): Boolean {
@@ -210,7 +210,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun getVersionString(sdkHome: String?): String? {
         if (sdkHome == null) {
-            return null;
+            return null
         }
         val versionString: String? = getGhcVersion(File(sdkHome))
         if (versionString != null && versionString.length == 0) {
@@ -222,7 +222,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
     override fun createAdditionalDataConfigurable(sdkModel: SdkModel,
                                                   sdkModificator: SdkModificator): AdditionalDataConfigurable {
-        return HaskellSdkConfigurable();
+        return HaskellSdkConfigurable()
     }
 
 
@@ -234,7 +234,7 @@ public class HaskellSdkType() : SdkType("GHC") {
 
 
     override fun loadAdditionalData(additional: Element?): SdkAdditionalData? {
-        return HaskellSdkAdditionalData.load(additional!!);
+        return HaskellSdkAdditionalData.load(additional!!)
     }
     override fun getPresentableName(): String {
         return "GHC"
@@ -245,7 +245,7 @@ public class HaskellSdkType() : SdkType("GHC") {
     }
 
     override fun getIconForAddAction(): Icon {
-        return getIcon()
+        return icon
     }
 
     override fun setupSdkPaths(sdk: Sdk) {

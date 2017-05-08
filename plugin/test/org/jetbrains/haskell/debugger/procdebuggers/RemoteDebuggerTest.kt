@@ -14,12 +14,12 @@ import org.jetbrains.haskell.debugger.RemoteDebugProcessStateUpdater
 import org.jetbrains.haskell.debugger.GHCiDebugProcessStateUpdater
 import org.junit.Assert
 
-public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
+class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
 
     companion object {
-        public val pathPropertyName: String = "remotePath"
+        val pathPropertyName: String = "remotePath"
 
-        public class TestRemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler,
+        class TestRemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler,
                                               listener: ProcessListener) : OSProcessHandler(process, null, null) {
             init {
                 streamHandler.processHandler = this
@@ -36,7 +36,7 @@ public class RemoteDebuggerTest : DebuggerTest<RemoteDebugger>() {
     private var listener: RemoteDebugProcessStateUpdater? = null
 
     override fun createDebugger(file: File, respondent: DebugRespondent): RemoteDebugger {
-        val filePath = file.getAbsolutePath()
+        val filePath = file.absolutePath
 
         val streamHandler = RemoteDebugStreamHandler()
         streamHandler.start()

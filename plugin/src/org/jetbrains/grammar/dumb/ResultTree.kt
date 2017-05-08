@@ -6,14 +6,14 @@ import org.jetbrains.haskell.parser.HaskellTokenType
 /**
  * Created by atsky on 11/17/14.
  */
-abstract class ResultTree() {
+abstract class ResultTree {
     abstract fun size(): Int
 
 }
 
 class TerminalTree(val haskellToken: HaskellTokenType) : ResultTree() {
     override fun toString(): String {
-        return "'" + haskellToken.myName + "'";
+        return "'" + haskellToken.myName + "'"
     }
 
     override fun size(): Int = 1
@@ -26,7 +26,7 @@ class NonTerminalTree(val rule : String,
     val mySize : Int
 
     init {
-        var size = 0;
+        var size = 0
         for (child in children) {
             size += child.size()
         }
@@ -58,6 +58,6 @@ class NonTerminalTree(val rule : String,
     }
 
     override fun size(): Int {
-        return mySize;
+        return mySize
     }
 }

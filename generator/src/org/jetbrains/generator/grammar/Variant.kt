@@ -5,7 +5,7 @@ import java.util.TreeSet
 /**
  * Created by atsky on 11/7/14.
  */
-abstract class Variant() {
+abstract class Variant {
     abstract fun fillElements(elementSet: TreeSet<String>)
 
 }

@@ -7,9 +7,9 @@ import com.intellij.psi.util.PsiTreeUtil
 /**
  * Created by atsky on 28/11/14.
  */
-public class LambdaExpression(node: ASTNode) : Expression(node) {
+class LambdaExpression(node: ASTNode) : Expression(node) {
 
-    public fun getPatterns(): List<Pattern> =
+    fun getPatterns(): List<Pattern> =
             PsiTreeUtil.getChildrenOfTypeAsList(this, Pattern::class.java)
 
 

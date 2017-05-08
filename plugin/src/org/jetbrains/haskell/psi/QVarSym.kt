@@ -6,6 +6,4 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 /**
  * Created by atsky on 12/3/14.
  */
-public class QVarSym(node : ASTNode) : ASTWrapperPsiElement(node) {
-
-}
+class QVarSym(node : ASTNode) : ASTWrapperPsiElement(node)

@@ -8,7 +8,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
 import com.intellij.openapi.externalSystem.service.project.ExternalSystemProjectResolver
 
-public class CabalProjectResolver(): ExternalSystemProjectResolver<ExternalSystemExecutionSettings> {
+class CabalProjectResolver : ExternalSystemProjectResolver<ExternalSystemExecutionSettings> {
 
     @Throws(ExternalSystemException::class, IllegalArgumentException::class, IllegalStateException::class)
     override fun resolveProjectInfo(id: ExternalSystemTaskId,

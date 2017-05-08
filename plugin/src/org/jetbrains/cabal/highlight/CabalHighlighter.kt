@@ -11,12 +11,12 @@ import org.jetbrains.haskell.highlight.HaskellHighlighter
 import com.intellij.openapi.editor.HighlighterColors
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 
-public class CabalHighlighter : SyntaxHighlighterBase() {
+class CabalHighlighter : SyntaxHighlighterBase() {
     companion object {
-        public val CABAL_STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
-        public val CABAL_COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val CABAL_PROPERTY: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
-        public val CABAL_COLON: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_COLON", DefaultLanguageHighlighterColors.SEMICOLON)
+        val CABAL_STRING_LITERAL: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
+        val CABAL_COMMENT: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
+        val CABAL_PROPERTY: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
+        val CABAL_COLON: TextAttributesKey = TextAttributesKey.createTextAttributesKey("CABAL_COLON", DefaultLanguageHighlighterColors.SEMICOLON)
     }
 
 

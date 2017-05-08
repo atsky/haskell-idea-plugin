@@ -17,9 +17,9 @@ import java.util.*
 /**
  * @author Habibullin Marat
  */
-public abstract class DebugProcessStateUpdater() : ProcessListener {
-    protected val printDebuggerOutput: Boolean = HaskellDebugSettings.getInstance().getState().printDebugOutput
-    public var debugger: ProcessDebugger? = null
+abstract class DebugProcessStateUpdater : ProcessListener {
+    protected val printDebuggerOutput: Boolean = HaskellDebugSettings.getInstance().state.printDebugOutput
+    var debugger: ProcessDebugger? = null
 
     override fun startNotified(event: ProcessEvent?) { }
 
@@ -27,24 +27,24 @@ public abstract class DebugProcessStateUpdater() : ProcessListener {
 
     override fun processWillTerminate(event: ProcessEvent?, willBeDestroyed: Boolean) { }
 
-    public abstract fun close()
+    abstract fun close()
 }
 
-public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
+class GHCiDebugProcessStateUpdater : DebugProcessStateUpdater() {
     private val inputReadinessChecker: InputReadinessChecker
     private var collectedOutput: StringBuilder = StringBuilder()
 
-    public val processStopped: AtomicBoolean = AtomicBoolean(false)
+    val processStopped: AtomicBoolean = AtomicBoolean(false)
 
     init {
         inputReadinessChecker = InputReadinessChecker(this)
         inputReadinessChecker.start()
     }
 
-    public val INPUT_READINESS_PORT: Int = inputReadinessChecker.INPUT_READINESS_PORT
+    val INPUT_READINESS_PORT: Int = inputReadinessChecker.INPUT_READINESS_PORT
 
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        val text = event?.getText()
+        val text = event?.text
         if (text != null) {
             if (printDebuggerOutput) {
                 print(text)
@@ -56,7 +56,7 @@ public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
         }
     }
 
-    public fun checkCollected() {
+    fun checkCollected() {
         val oldestExecutedCommand = debugger?.oldestExecutedCommand()
         val outputIsDefinite = oldestExecutedCommand is RealTimeCommand
         if (simpleReadinessCheck() &&
@@ -78,9 +78,9 @@ public class GHCiDebugProcessStateUpdater() : DebugProcessStateUpdater() {
     }
 }
 
-public class RemoteDebugProcessStateUpdater() : DebugProcessStateUpdater() {
+class RemoteDebugProcessStateUpdater : DebugProcessStateUpdater() {
     override fun onTextAvailable(event: ProcessEvent?, outputType: Key<out Any?>?) {
-        val text = event?.getText()
+        val text = event?.text
         if (text != null) {
             if (printDebuggerOutput) {
                 print(text)

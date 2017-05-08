@@ -20,7 +20,7 @@ class ErrorMessage(
 
     override fun toString(): String {
         return "Error: " + text + "\n" +
-                "in " + file + " " + line + ":" + column + "-" + eLine + ":" + eColumn;
+                "in " + file + " " + line + ":" + column + "-" + eLine + ":" + eColumn
     }
 
     companion object {

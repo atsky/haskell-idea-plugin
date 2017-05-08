@@ -27,7 +27,7 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescripti
  * Created by vlad on 7/17/14.
  */
 
-public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
+abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
 : AbstractCommand<HsStackFrameInfo?>(callback) {
 
     override fun parseGHCiOutput(output: Deque<String?>): HsStackFrameInfo? = GHCiParser.tryParseStoppedAt(output)
@@ -36,7 +36,7 @@ public abstract class FlowCommand(callback: CommandCallback<HsStackFrameInfo?>?)
             JSONConverter.stoppedAtFromJSON(output)
 
 
-    public class StandardFlowCallback(val debugger: ProcessDebugger,
+    class StandardFlowCallback(val debugger: ProcessDebugger,
                                       val debugRespondent: DebugRespondent) : CommandCallback<HsStackFrameInfo?>() {
 
         override fun execBeforeSending() = debugRespondent.resetHistoryStack()

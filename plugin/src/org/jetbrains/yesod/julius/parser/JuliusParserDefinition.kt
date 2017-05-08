@@ -23,7 +23,7 @@ import org.jetbrains.yesod.julius.psi.Number
  * @author Leyla H
  */
 
-public class JuliusParserDefinition : ParserDefinition {
+class JuliusParserDefinition : ParserDefinition {
     override fun createLexer(project: Project): Lexer {
         return JuliusLexer()
     }
@@ -50,25 +50,25 @@ public class JuliusParserDefinition : ParserDefinition {
 
     override fun createElement(astNode: ASTNode): PsiElement {
 
-        if (astNode.getElementType() === JuliusTokenTypes.KEYWORD) {
+        if (astNode.elementType === JuliusTokenTypes.KEYWORD) {
             return org.jetbrains.yesod.julius.psi.Keyword(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.COMMENT) {
+        if (astNode.elementType === JuliusTokenTypes.COMMENT) {
             return org.jetbrains.yesod.julius.psi.Comment(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.NUMBER) {
+        if (astNode.elementType === JuliusTokenTypes.NUMBER) {
             return org.jetbrains.yesod.julius.psi.Number(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.DOT_IDENTIFIER) {
+        if (astNode.elementType === JuliusTokenTypes.DOT_IDENTIFIER) {
             return org.jetbrains.yesod.julius.psi.DotIdentifier(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.INTERPOLATION) {
+        if (astNode.elementType === JuliusTokenTypes.INTERPOLATION) {
             return org.jetbrains.yesod.julius.psi.Interpolation(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.STRING) {
+        if (astNode.elementType === JuliusTokenTypes.STRING) {
             return org.jetbrains.yesod.julius.psi.String(astNode)
         }
-        if (astNode.getElementType() === JuliusTokenTypes.END_INTERPOLATION) {
+        if (astNode.elementType === JuliusTokenTypes.END_INTERPOLATION) {
             return org.jetbrains.yesod.julius.psi.Interpolation(astNode)
         }
         return ASTWrapperPsiElement(astNode)
@@ -84,6 +84,6 @@ public class JuliusParserDefinition : ParserDefinition {
 
     companion object {
 
-        public var JULIUS_FILE: IFileElementType = IFileElementType(JuliusLanguage.INSTANCE)
+        var JULIUS_FILE: IFileElementType = IFileElementType(JuliusLanguage.INSTANCE)
     }
 }

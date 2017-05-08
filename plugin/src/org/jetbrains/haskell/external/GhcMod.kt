@@ -22,7 +22,7 @@ object GhcMod {
     var errorReported : Boolean = false
 
     fun getPath() : String {
-        return HaskellSettings.getInstance().getState().ghcModPath!!
+        return HaskellSettings.getInstance().state.ghcModPath!!
     }
 
     fun getModuleContent(module : String) : List<Pair<String, String?>> {
@@ -96,9 +96,9 @@ object GhcMod {
     fun сheck() : Boolean {
         try {
             ProcessRunner(null).executeOrFail(getPath())
-            return true;
+            return true
         } catch(e : IOException) {
-            return false;
+            return false
         }
     }
 

@@ -4,6 +4,4 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.cabal.parser.CabalTokelTypes
 import org.jetbrains.cabal.psi.SingleValueField
 
-public class TestModuleField(node: ASTNode) : SingleValueField(node) {
-
-}
+class TestModuleField(node: ASTNode) : SingleValueField(node)

@@ -15,15 +15,15 @@ import org.jetbrains.haskell.psi.Expression
  */
 class ValueReference(val referenceExpression: QVar) : PsiReferenceBase<QVar>(
         referenceExpression,
-        TextRange(0, referenceExpression.getTextRange()!!.getLength())) {
+        TextRange(0, referenceExpression.textRange!!.length)) {
 
     override fun resolve(): PsiElement? {
-        val parent = referenceExpression.getParent()
+        val parent = referenceExpression.parent
         if (parent !is Expression) {
-            return null;
+            return null
         }
         return ExpressionScope(parent).getVisibleVariables().firstOrNull {
-            it.getText() == getValue()
+            it.text == value
         }
     }
 

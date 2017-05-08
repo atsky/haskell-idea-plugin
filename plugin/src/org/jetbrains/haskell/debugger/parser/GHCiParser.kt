@@ -9,7 +9,7 @@ import java.util.Deque
  * @author Habibullin Marat
  */
 
-public class GHCiParser() {
+class GHCiParser {
     // we can put here functions to parse some known things like 'parseSetBreakpointResult' ect...
     companion object {
         // the strings above are used as patterns for regexps
@@ -57,13 +57,13 @@ public class GHCiParser() {
                             values[POSITION_PATTERN_PLACES[i][2]], values[POSITION_PATTERN_PLACES[i][3]])
                 }
             }
-            return null;
+            return null
         }
 
         /**
          * Returns line where breakpoint was activated and breakpoint number, null if not activated
          */
-        public fun parseSetBreakpointCommandResult(output: Deque<String?>): BreakpointCommandResult? {
+        fun parseSetBreakpointCommandResult(output: Deque<String?>): BreakpointCommandResult? {
             val it = output.descendingIterator()
             while (it.hasNext()) {
                 val line = it.next()!!
@@ -77,7 +77,7 @@ public class GHCiParser() {
                         return BreakpointCommandResult(breakpointNumber, filePosition)
                     }
                 } else if (matcher2.matches()) {
-                    return null;
+                    return null
                 }
             }
             throw RuntimeException("Wrong GHCi output occured while handling SetBreakpointCommand result")
@@ -87,7 +87,7 @@ public class GHCiParser() {
          * Parses ghci output that appears on reaching some position in file under debugging (after commands :continue,
          * :trace, :step, :steplocal).
          */
-        public fun tryParseStoppedAt(output: Deque<String?>): HsStackFrameInfo? {
+        fun tryParseStoppedAt(output: Deque<String?>): HsStackFrameInfo? {
             val it = output.descendingIterator()
             var filePosition: HsFilePosition?
             val localBindings = ArrayList<LocalBinding>()
@@ -125,7 +125,7 @@ public class GHCiParser() {
             return LocalBindingList(localBindings)
         }
 
-        public fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
+        fun parseMoveHistResult(output: Deque<String?>): MoveHistResult? {
             var position: String
             val line = output.pollFirst()!!
             val matcher1 = Pattern.compile(STOPPED_AT_PATTERN).matcher(line.trim())
@@ -181,7 +181,7 @@ public class GHCiParser() {
             return null
         }
 
-        public fun parseExpressionType(string: String): ExpressionType? {
+        fun parseExpressionType(string: String): ExpressionType? {
             val matcher = Pattern.compile(EXPRESSION_TYPE_PATTERN).matcher(string.trim())
             if (matcher.matches()) {
                 return ExpressionType(matcher.group(1)!!, matcher.group(2)!!)
@@ -189,7 +189,7 @@ public class GHCiParser() {
             return null
         }
 
-        public fun tryParseShowOutput(output: Deque<String?>): ShowOutput? {
+        fun tryParseShowOutput(output: Deque<String?>): ShowOutput? {
             val line = output.firstOrNull()
             if (line != null) {
                 val matcher = Pattern.compile(SHOW_RESULT_PATTERN).matcher(line)
@@ -197,10 +197,10 @@ public class GHCiParser() {
                     return ShowOutput(matcher.group(1)!!)
                 }
             }
-            return null;
+            return null
         }
 
-        public fun parseHistoryResult(output: Deque<String?>): HistoryResult {
+        fun parseHistoryResult(output: Deque<String?>): HistoryResult {
             var full = false
             val list = ArrayList<HsHistoryFrameInfo>()
             for (line in output) {
@@ -217,7 +217,7 @@ public class GHCiParser() {
             return HistoryResult(list, full)
         }
 
-        public fun tryParseAnyPrintCommandOutput(output: Deque<String?>): LocalBinding? {
+        fun tryParseAnyPrintCommandOutput(output: Deque<String?>): LocalBinding? {
             for (line in output) {
                 if (line != null) {
                     val matcher = Pattern.compile(FORCE_OUTPUT_PATTERN).matcher(line)

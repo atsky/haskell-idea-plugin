@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  * Created by vlad on 7/15/14.
  */
 
-public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Unit) : Runnable {
+class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Unit) : Runnable {
 
     private val highPriorityCommands = LinkedList<AbstractCommand<out ParseResult?>>()
     private val lowPriorityCommands = LinkedList<AbstractCommand<out ParseResult?>>()
@@ -21,7 +21,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
     private val readyCondition = inputLock.newCondition()
 
     private val someCommandInProgress: AtomicBoolean = AtomicBoolean(false)
-    public fun someCommandInProgress(): Boolean = someCommandInProgress.get()
+    fun someCommandInProgress(): Boolean = someCommandInProgress.get()
 
     override fun run() {
         while (running) {
@@ -47,7 +47,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
      * Adds new command to the queue.
      * @param highPriority should be set to true in another command's callback, so that the sequence of commands could be executed at once
      */
-    public fun addCommand(command: AbstractCommand<out ParseResult?>, highPriority: Boolean = false) {
+    fun addCommand(command: AbstractCommand<out ParseResult?>, highPriority: Boolean = false) {
         inputLock.lock()
         if (highPriority) {
             highPriorityCommands.addLast(command)
@@ -58,11 +58,11 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
         inputLock.unlock()
     }
 
-    public fun start() {
+    fun start() {
         Thread(this).start()
     }
 
-    public fun stop() {
+    fun stop() {
         inputLock.lock()
         running = false
         readyCondition.signal()
@@ -70,7 +70,7 @@ public class CommandQueue(val execute: (AbstractCommand<out ParseResult?>) -> Un
         inputLock.unlock()
     }
 
-    public fun setReadyForInput() {
+    fun setReadyForInput() {
         inputLock.lock()
         ready = true
         readyCondition.signal()

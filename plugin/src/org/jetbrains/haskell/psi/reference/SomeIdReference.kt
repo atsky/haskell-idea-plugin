@@ -15,12 +15,12 @@ import java.util.ArrayList
  */
 class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
         someId,
-        TextRange(0, someId.getTextRange()!!.getLength())) {
+        TextRange(0, someId.textRange!!.length)) {
 
     override fun resolve(): PsiElement? {
         val module = Module.findModule(someId)
         if (module != null) {
-            val text = someId.getText()!!
+            val text = someId.text!!
             if (Character.isUpperCase(text[0])) {
                 //for (function in ModuleScope(module).getVisibleTypes()) {
                 //    if (function.getName() == text) {
@@ -40,7 +40,7 @@ class SomeIdReference(val someId : SomeId) : PsiReferenceBase<SomeId>(
                 //}
             }
         }
-        return null;
+        return null
     }
 
 

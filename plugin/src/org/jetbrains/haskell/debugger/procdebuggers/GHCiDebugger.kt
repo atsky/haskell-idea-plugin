@@ -21,7 +21,7 @@ import org.json.simple.JSONObject
  * Created by vlad on 7/11/14.
  */
 
-public class GHCiDebugger(debugRespondent: DebugRespondent,
+class GHCiDebugger(debugRespondent: DebugRespondent,
                           debugProcessHandler: ProcessHandler,
                           consoleView: ConsoleView?, val INPUT_READINESS_PORT: Int)
 : SimpleDebuggerImpl(debugRespondent, debugProcessHandler, consoleView) {
@@ -30,7 +30,7 @@ public class GHCiDebugger(debugRespondent: DebugRespondent,
         private val HANDLE_NAME = "__debug_handle"
         private val TEMP_BINDING_NAME = "__debug_temporary"
         private val TRACE_COMMAND_APPENDIX = " >> (withSocketsDo $ $HANDLE_NAME >>= \\ h -> hPutChar h (chr 1) >> hClose h)"
-        public val PROMPT_LINE: String = "debug> "
+        val PROMPT_LINE: String = "debug> "
     }
 
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = true

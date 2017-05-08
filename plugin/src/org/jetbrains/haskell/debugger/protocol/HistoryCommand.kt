@@ -15,7 +15,7 @@ import org.jetbrains.haskell.debugger.breakpoints.HaskellLineBreakpointDescripti
 /**
  * Created by vlad on 8/7/14.
  */
-public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTimeCommand<HistoryResult?>(callback) {
+class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTimeCommand<HistoryResult?>(callback) {
 
     override fun getText(): String {
         return ":history\n"
@@ -25,7 +25,7 @@ public class HistoryCommand(callback: CommandCallback<HistoryResult?>) : RealTim
 
     override fun parseJSONOutput(output: JSONObject): HistoryResult? = JSONConverter.historyResultFromJSON(output)
 
-    public class DefaultHistoryCallback(val debugger: ProcessDebugger,
+    class DefaultHistoryCallback(val debugger: ProcessDebugger,
                                         val debugRespondent: DebugRespondent,
                                         val historyFrame: HsHistoryFrame,
                                         val breakpoint: HaskellLineBreakpointDescription?) : CommandCallback<HistoryResult?>() {

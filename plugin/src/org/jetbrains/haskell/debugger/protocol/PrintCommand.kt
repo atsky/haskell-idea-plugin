@@ -11,7 +11,7 @@ import org.json.simple.JSONObject
  * Created by vlad on 8/5/14.
  */
 
-public class PrintCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>)
+class PrintCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>)
 : RealTimeCommand<LocalBinding?>(callback) {
     override fun getText(): String = ":sprint $bindingName\n"
 
@@ -22,7 +22,7 @@ public class PrintCommand(private val bindingName: String, callback: CommandCall
     }
 
     companion object {
-        public class StandardPrintCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition)
+        class StandardPrintCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition)
         : CommandCallback<LocalBinding?>() {
             override fun execAfterParsing(result: LocalBinding?) {
                 syncObject.lock()

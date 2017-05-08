@@ -9,7 +9,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
 
-public class JuliusFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, JuliusLanguage.INSTANCE) {
+class JuliusFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, JuliusLanguage.INSTANCE) {
 
     override fun getFileType(): FileType {
         return JuliusFileType.INSTANCE

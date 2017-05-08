@@ -5,10 +5,10 @@ package org.jetbrains.generator
  */
 
 
-class TextGenerator() {
+class TextGenerator {
     val data : StringBuilder = StringBuilder()
 
-    var indent : Int = 0;
+    var indent : Int = 0
 
 
     fun line() {

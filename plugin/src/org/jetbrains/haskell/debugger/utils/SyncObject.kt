@@ -15,17 +15,17 @@ import java.util.concurrent.locks.ReentrantLock
  *
  * @author Habibullin Marat
  */
-public class SyncObject() {
+class SyncObject {
     private val lock: Lock = ReentrantLock()
     private val condition: Condition = lock.newCondition()
     private var conditionSignaled: Boolean = false
 
-    public fun lock(): Unit = lock.lock()
-    public fun unlock(): Unit = lock.unlock()
-    public fun signaled(): Boolean = conditionSignaled
-    public fun signal(): Unit {
+    fun lock(): Unit = lock.lock()
+    fun unlock(): Unit = lock.unlock()
+    fun signaled(): Boolean = conditionSignaled
+    fun signal(): Unit {
         conditionSignaled = true
         condition.signal()
     }
-    public fun await(): Unit = condition.await()
+    fun await(): Unit = condition.await()
 }

@@ -17,7 +17,7 @@ import com.intellij.ui.components.JBCheckBox
 import javax.swing.event.ChangeListener
 import javax.swing.event.ChangeEvent
 
-public class HaskellConfigurable() : Configurable {
+class HaskellConfigurable : Configurable {
     private var isModified = false
     private val cabalPathField = TextFieldWithBrowseButton()
     private val cabalDataPathField = TextFieldWithBrowseButton()
@@ -57,14 +57,14 @@ public class HaskellConfigurable() : Configurable {
         val listener : DocumentAdapter = object : DocumentAdapter() {
 
             override fun textChanged(e: DocumentEvent?) {
-                isModified = true;
+                isModified = true
             }
 
-        };
+        }
 
-        cabalPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
-        cabalDataPathField.getTextField()!!.getDocument()!!.addDocumentListener(listener)
-        ghcMod.getTextField()!!.getDocument()!!.addDocumentListener(listener)
+        cabalPathField.textField!!.document!!.addDocumentListener(listener)
+        cabalDataPathField.textField!!.document!!.addDocumentListener(listener)
+        ghcMod.textField!!.document!!.addDocumentListener(listener)
 
         val base = gridBagConstraints {
             insets = Insets(2, 0, 2, 3)
@@ -74,20 +74,20 @@ public class HaskellConfigurable() : Configurable {
         fun addLabeledControl(row : Int, label : String, component : JComponent) {
             result.add(JLabel(label), base.setConstraints {
                 anchor = GridBagConstraints.LINE_START
-                gridx = 0;
-                gridy = row;
+                gridx = 0
+                gridy = row
             })
 
             result.add(component, base.setConstraints {
-                gridx = 1;
-                gridy = row;
+                gridx = 1
+                gridy = row
                 fill = GridBagConstraints.HORIZONTAL
                 weightx = 1.0
             })
 
             result.add(Box.createHorizontalStrut(1), base.setConstraints {
-                gridx = 2;
-                gridy = row;
+                gridx = 2
+                gridy = row
                 weightx = 0.1
             })
         }
@@ -98,7 +98,7 @@ public class HaskellConfigurable() : Configurable {
 
         val defaultChangeListener = object : ChangeListener {
             override fun stateChanged(p0: ChangeEvent) {
-                isModified = true;
+                isModified = true
             }
         }
         useGhcMod.addChangeListener(defaultChangeListener)
@@ -106,38 +106,38 @@ public class HaskellConfigurable() : Configurable {
 
         result.add(useGhcMod, base.setConstraints {
             anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridwidth = 2;
-            gridy = 4;
+            gridx = 0
+            gridwidth = 2
+            gridy = 4
         })
         result.add(usePty, base.setConstraints {
             anchor = GridBagConstraints.LINE_START
-            gridx = 0;
-            gridwidth = 2;
-            gridy = 5;
+            gridx = 0
+            gridwidth = 2
+            gridy = 5
         })
 
 
         result.add(Box.createVerticalStrut(1), base.setConstraints {
-            gridy = 6;
-            weighty = 2.0;
+            gridy = 6
+            weighty = 2.0
         })
 
 
         return result
     }
 
-    public fun getIcon(): Icon {
+    fun getIcon(): Icon {
         return HaskellIcons.HASKELL
     }
 
     override fun apply() {
-        val state = HaskellSettings.getInstance().getState()
-        state.cabalPath = cabalPathField.getTextField()!!.getText()
-        state.cabalDataPath = cabalDataPathField.getTextField()!!.getText()
-        state.ghcModPath = ghcMod.getTextField()!!.getText()
-        state.useGhcMod = useGhcMod.isSelected()
-        state.usePtyProcess = usePty.isSelected()
+        val state = HaskellSettings.getInstance().state
+        state.cabalPath = cabalPathField.textField!!.text
+        state.cabalDataPath = cabalDataPathField.textField!!.text
+        state.ghcModPath = ghcMod.textField!!.text
+        state.useGhcMod = useGhcMod.isSelected
+        state.usePtyProcess = usePty.isSelected
 
         isModified = false
     }
@@ -148,12 +148,12 @@ public class HaskellConfigurable() : Configurable {
     override fun getHelpTopic(): String? = null
 
     override fun reset() {
-        val state = HaskellSettings.getInstance().getState()
-        cabalPathField.getTextField()!!.setText(state.cabalPath ?: "")
-        cabalDataPathField.getTextField()!!.setText(state.cabalDataPath ?: "")
-        ghcMod.getTextField()!!.setText(state.ghcModPath ?: "")
-        useGhcMod.setSelected(state.useGhcMod!!)
-        usePty.setSelected(state.usePtyProcess!!)
+        val state = HaskellSettings.getInstance().state
+        cabalPathField.textField!!.text = state.cabalPath ?: ""
+        cabalDataPathField.textField!!.text = state.cabalDataPath ?: ""
+        ghcMod.textField!!.text = state.ghcModPath ?: ""
+        useGhcMod.isSelected = state.useGhcMod!!
+        usePty.isSelected = state.usePtyProcess!!
 
         isModified = false
     }

@@ -5,9 +5,9 @@ import com.intellij.lang.ASTNode
 /**
  * Created by atsky on 11/21/14.
  */
-public class ParenthesisExpression(node : ASTNode) : Expression(node) {
+class ParenthesisExpression(node : ASTNode) : Expression(node) {
 
-    public fun getExpression(): Expression? =
+    fun getExpression(): Expression? =
         findChildByClass(Expression::class.java)
 
 

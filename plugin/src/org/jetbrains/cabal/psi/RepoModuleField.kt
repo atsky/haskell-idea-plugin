@@ -6,6 +6,4 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.cabal.psi.SingleValueField
 import org.jetbrains.cabal.parser.CabalTokelTypes
 
-public class RepoModuleField(node: ASTNode) : SingleValueField(node) {
-
-}
+class RepoModuleField(node: ASTNode) : SingleValueField(node)

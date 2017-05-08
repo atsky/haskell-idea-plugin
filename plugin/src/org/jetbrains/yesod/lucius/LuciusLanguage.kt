@@ -6,8 +6,8 @@ package org.jetbrains.yesod.lucius
 
 import com.intellij.lang.Language
 
-public class LuciusLanguage : Language("Lucius", "text/lucius") {
+class LuciusLanguage : Language("Lucius", "text/lucius") {
     companion object {
-        public val INSTANCE: LuciusLanguage = LuciusLanguage()
+        val INSTANCE: LuciusLanguage = LuciusLanguage()
     }
 }

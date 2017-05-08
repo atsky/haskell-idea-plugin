@@ -20,10 +20,10 @@ import com.intellij.psi.PsiFile
 
 class ModuleReference(moduleName : ModuleName) : PsiReferenceBase<ModuleName>(
         moduleName,
-        TextRange(0, moduleName.getTextRange()!!.getLength())) {
+        TextRange(0, moduleName.textRange!!.length)) {
 
     override fun resolve(): PsiFile? {
-        return getElement()!!.findModuleFile()
+        return element!!.findModuleFile()
     }
 
     override fun getVariants(): Array<Any> = arrayOf()

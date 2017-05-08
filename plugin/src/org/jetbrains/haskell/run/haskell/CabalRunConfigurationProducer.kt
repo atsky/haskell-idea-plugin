@@ -15,13 +15,13 @@ import org.jetbrains.cabal.CabalInterface
 import org.jetbrains.haskell.fileType.HaskellFile
 
 
-public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRunConfiguration>(HaskellRunConfigurationType.INSTANCE) {
+class CabalRunConfigurationProducer : RunConfigurationProducer<CabalRunConfiguration>(HaskellRunConfigurationType.INSTANCE) {
 
 
     override fun setupConfigurationFromContext(configuration: CabalRunConfiguration?,
                                                context: ConfigurationContext?,
                                                sourceElement: Ref<PsiElement>?): Boolean {
-        val file = sourceElement!!.get()!!.getContainingFile()
+        val file = sourceElement!!.get()!!.containingFile
         if (file !is HaskellFile) {
             return false
         }
@@ -32,7 +32,7 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
             }
             val project = file.getProject()
 
-            val module = ProjectRootManager.getInstance(project)!!.getFileIndex().getModuleForFile(virtualFile)
+            val module = ProjectRootManager.getInstance(project)!!.fileIndex.getModuleForFile(virtualFile)
 
             val cabal = CabalInterface.findCabal(module!!)
             if (cabal == null) {
@@ -47,14 +47,14 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
                 "Default"
             }
 
-            configuration!!.setMyExecutableName(name)
-            configuration.setModule(module)
+            configuration!!.myExecutableName = name
+            configuration.module = module
 
-            val baseDir = project.getBaseDir()
+            val baseDir = project.baseDir
             if (baseDir != null) {
-                configuration.setWorkingDirectory(baseDir.getPath())
+                configuration.workingDirectory = baseDir.path
             }
-            configuration.setName(configuration.suggestedName())
+            configuration.name = configuration.suggestedName()
             return true
         } catch (ex: Exception) {
             LOG.error(ex)
@@ -64,11 +64,11 @@ public class CabalRunConfigurationProducer() : RunConfigurationProducer<CabalRun
     }
 
     override fun isConfigurationFromContext(configuration: CabalRunConfiguration?, context: ConfigurationContext?): Boolean {
-        return context!!.getPsiLocation()!!.getContainingFile() is HaskellFile
+        return context!!.psiLocation!!.containingFile is HaskellFile
     }
 
     companion object {
 
-        private val LOG: Logger = Logger.getInstance("ideah.run.CabalRunConfigurationProducer")!!
+        private val LOG: Logger = Logger.getInstance("ideah.run.CabalRunConfigurationProducer")
     }
 }

@@ -12,11 +12,11 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 
 import java.util.Arrays
 
-public class LuciusCompletionContributor : CompletionContributor() {
+class LuciusCompletionContributor : CompletionContributor() {
 
         override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
 
-                if (parameters.getCompletionType() === CompletionType.BASIC) {
+                if (parameters.completionType === CompletionType.BASIC) {
                         for (tagName in AT_RULES) {
                                 result.addElement(LookupElementBuilder.create(tagName))
                         }
@@ -43,7 +43,7 @@ public class LuciusCompletionContributor : CompletionContributor() {
 
         companion object {
 
-                public var AT_RULES: List<String> = Arrays.asList(
+                var AT_RULES: List<String> = Arrays.asList(
 
                         "@charset",               "@counter-style",             "@document",            "@font-face",
                         "@font-feature-values",   "@import",                    "@keyframes",           "@media",
@@ -57,7 +57,7 @@ public class LuciusCompletionContributor : CompletionContributor() {
                         "@viewport.orientation",  "@viewport.user-zoom",        "@viewport.zoom"
                 )
 
-                public var DATA_TYPES: List<String> = Arrays.asList(
+                var DATA_TYPES: List<String> = Arrays.asList(
 
                         "angle",      "basic-shape", "color",  "frequency",  "gradient",        "image",
                         "integer",    "length",      "number", "percentage", "position",        "ratio",
@@ -66,7 +66,7 @@ public class LuciusCompletionContributor : CompletionContributor() {
 
                 )
 
-                public var FUNCTIONS: List<String> = Arrays.asList(
+                var FUNCTIONS: List<String> = Arrays.asList(
 
                         "attr",                       "calc",        "cubic-bezier",
                         "element",                    "hsl",         "hsla",
@@ -82,7 +82,7 @@ public class LuciusCompletionContributor : CompletionContributor() {
                         "translateZ",                 "url"
                 )
 
-                public var PROPERTIES: List<String> = Arrays.asList(
+                var PROPERTIES: List<String> = Arrays.asList(
 
                         "align-content",             "align-items",               "align-self",                "all",
                         "animation",                 "animation-delay",           "animation-direction",       "animation-duration",
@@ -155,7 +155,7 @@ public class LuciusCompletionContributor : CompletionContributor() {
 
                 )
 
-                public var PSEUDO_CLASSES: List<String> = Arrays.asList(
+                var PSEUDO_CLASSES: List<String> = Arrays.asList(
 
                         "::backdrop",  ":active",         ":any",              ":checked",      ":default",       ":dir",
                         ":disabled",   ":empty",          ":enabled",          ":first",        ":first-child",   ":first-of-type",
@@ -168,12 +168,12 @@ public class LuciusCompletionContributor : CompletionContributor() {
 
                 )
 
-                public var PSEUDO_ELEMENTS: List<String> = Arrays.asList(
+                var PSEUDO_ELEMENTS: List<String> = Arrays.asList(
 
                         "::after", "::before", "::first-letter", "::first-line", "::selection"
                 )
 
-                public var VALUES: List<String> = Arrays.asList(
+                var VALUES: List<String> = Arrays.asList(
 
                         "auto",     "currentColor", "ease",       "ease-in",     "ease-in-out",
                         "ease-out", "inherit",      "initial",    "linear",      "none",

@@ -14,25 +14,25 @@ import com.intellij.psi.PsiElement
 /**
  * @author Evgeny.Kurbatsky
  */
-public class Executable(node: ASTNode) : BuildSection(node) {
+class Executable(node: ASTNode) : BuildSection(node) {
 
-    public fun getExecutableName(): String {
+    fun getExecutableName(): String {
         val res = getSectName()
         if (res == null) throw IllegalStateException()
         return res
     }
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         if (getField(MainFileField::class.java) == null) return listOf(ErrorMessage(getSectTypeNode(), "main-is field is required", "error"))
         return listOf()
     }
 
-    public override fun getAvailableFieldNames(): List<String> {
+    override fun getAvailableFieldNames(): List<String> {
         var res = ArrayList<String>()
         res.addAll(EXECUTABLE_FIELDS.keys)
         res.addAll(IF_ELSE)
         return res
     }
 
-    public fun getMainFile(): Path? = getField(MainFileField::class.java)?.getValue() as Path?
+    fun getMainFile(): Path? = getField(MainFileField::class.java)?.getValue() as Path?
 }

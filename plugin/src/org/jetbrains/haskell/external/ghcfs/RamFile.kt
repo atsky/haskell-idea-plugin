@@ -13,7 +13,7 @@ import com.intellij.psi.PsiFile
 /**
  * Created by atsky on 11/12/14.
  */
-public class RamFile(val fileName: String, val content : String) : VirtualFile() {
+class RamFile(val fileName: String, val content : String) : VirtualFile() {
 
     override fun getName(): String {
         return fileName
@@ -67,7 +67,7 @@ public class RamFile(val fileName: String, val content : String) : VirtualFile()
 
 
     fun getPsiFile(project : Project) : PsiFile? =
-        PsiManager.getInstance(project).findFile(this);
+        PsiManager.getInstance(project).findFile(this)
 
 
 }

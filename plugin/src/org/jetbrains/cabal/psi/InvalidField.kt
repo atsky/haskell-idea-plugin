@@ -6,9 +6,9 @@ import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.Field
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class InvalidField(node: ASTNode) : Field(node), Checkable {
+class InvalidField(node: ASTNode) : Field(node), Checkable {
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         return listOf(ErrorMessage(this, "invalid field", "error"))
     }
 }

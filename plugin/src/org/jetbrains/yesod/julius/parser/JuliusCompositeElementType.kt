@@ -9,7 +9,5 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.yesod.julius.JuliusLanguage
 
 
-public class JuliusCompositeElementType(val debugName: String) :
-        IElementType(debugName, JuliusLanguage.INSTANCE) {
-
-}
+class JuliusCompositeElementType(val debugName: String) :
+        IElementType(debugName, JuliusLanguage.INSTANCE)

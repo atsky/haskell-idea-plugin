@@ -8,12 +8,12 @@ import java.io.InputStreamReader
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 
-public class RemoteDebugStreamHandler: Runnable {
+class RemoteDebugStreamHandler: Runnable {
 
     private var running = true
     private val serverSocket = ServerSocket(0)
-    public var listener: ProcessListener? = null
-    public var processHandler: ProcessHandler? = null
+    var listener: ProcessListener? = null
+    var processHandler: ProcessHandler? = null
 
     override fun run() {
         val socket = serverSocket.accept()
@@ -30,16 +30,16 @@ public class RemoteDebugStreamHandler: Runnable {
         }
     }
 
-    public fun start() {
+    fun start() {
         Thread(this).start()
     }
 
-    public fun stop() {
+    fun stop() {
         running = false
         serverSocket.close()
     }
 
-    public fun getPort(): Int {
-        return serverSocket.getLocalPort()
+    fun getPort(): Int {
+        return serverSocket.localPort
     }
 }

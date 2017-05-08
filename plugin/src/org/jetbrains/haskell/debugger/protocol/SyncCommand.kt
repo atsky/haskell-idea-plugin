@@ -18,7 +18,7 @@ import org.jetbrains.haskell.debugger.parser.JSONConverter
  *
  * @author Habibullin Marat
  */
-public abstract class SyncCommand<T : ParseResult?>(private val syncObject: SyncObject, callback: CommandCallback<T>)
+abstract class SyncCommand<T : ParseResult?>(private val syncObject: SyncObject, callback: CommandCallback<T>)
 : AbstractCommand<T>(callback) {
     override fun handleGHCiOutput(output: Deque<String?>) {
         val result = parseGHCiOutput(output)

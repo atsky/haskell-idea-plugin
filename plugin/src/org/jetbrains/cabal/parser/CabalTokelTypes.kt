@@ -10,7 +10,7 @@ import org.jetbrains.cabal.parser.CabalCompositeElementType
 import org.jetbrains.haskell.parser.HaskellTokenType
 import org.jetbrains.cabal.psi.*
 
-public object CabalTokelTypes {
+object CabalTokelTypes {
 
     @JvmField
     val COLON                  : IElementType  = HaskellTokenType(":")

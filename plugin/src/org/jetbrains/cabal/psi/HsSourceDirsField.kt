@@ -7,14 +7,14 @@ import org.jetbrains.cabal.psi.Checkable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class HsSourceDirsField(node: ASTNode) : MultiValueField(node), PathsField, Checkable {
+class HsSourceDirsField(node: ASTNode) : MultiValueField(node), PathsField, Checkable {
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         if (hasName("hs-source-dir")) return listOf(ErrorMessage(getKeyNode(), "The field \"hs-source-deir\" is deprecated, please, use \"hs-source-dirs\"", "warning"))
         return listOf()
     }
 
-    public override fun isValidCompletionFile(file: VirtualFile): Boolean = file.isDirectory()
+    override fun isValidCompletionFile(file: VirtualFile): Boolean = file.isDirectory
 
-    public override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory()
+    override fun validVirtualFile(file: VirtualFile): Boolean = file.isDirectory
 }

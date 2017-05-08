@@ -49,21 +49,21 @@ class CabalInterface(val project: Project) {
 
     companion object {
         fun findCabal(module: Module): VirtualFile? {
-            val children = module.getModuleFile()?.getParent()?.getChildren()
-            var cabalFile: VirtualFile? = null;
+            val children = module.moduleFile?.parent?.children
+            var cabalFile: VirtualFile? = null
 
             if (children != null) {
                 for (file in children) {
-                    if ("cabal" == file.getExtension()) {
-                        cabalFile = file;
-                        break;
+                    if ("cabal" == file.extension) {
+                        cabalFile = file
+                        break
                     }
                 }
             }
             if (cabalFile != null) {
                 return cabalFile
             }
-            return null;
+            return null
         }
 
         fun findCabal(file: PsiElement): VirtualFile? {
@@ -73,16 +73,16 @@ class CabalInterface(val project: Project) {
     }
 
     fun getProgramPath(): String {
-        return HaskellSettings.getInstance().getState().cabalPath!!
+        return HaskellSettings.getInstance().state.cabalPath!!
     }
 
     fun getDataPath(): String {
-        return HaskellSettings.getInstance().getState().cabalDataPath!!
+        return HaskellSettings.getInstance().state.cabalDataPath!!
     }
 
 
     private fun runCommand(canonicalPath: String, vararg commands: String): Process {
-        val command = LinkedList<String>();
+        val command = LinkedList<String>()
         command.add(getProgramPath())
         for (c in commands) {
             command.add(c)
@@ -90,18 +90,18 @@ class CabalInterface(val project: Project) {
         val process = ProcessRunner(canonicalPath).getProcess(command)
         ApplicationManager.getApplication()!!.invokeLater({
             val ijMessageView = MessageView.SERVICE.getInstance(project)!!
-            for (content in ijMessageView.getContentManager()!!.getContents()) {
+            for (content in ijMessageView.contentManager!!.contents) {
                 val cabalMessageView = content.getUserData(KEY)
                 if (cabalMessageView != null) {
-                    ijMessageView.getContentManager()?.removeContent(content, true)
+                    ijMessageView.contentManager?.removeContent(content, true)
                 }
             }
             val cabalMessageView = CabalMessageView(project, process)
-            val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.getComponent(), "Cabal console", true)
+            val content: Content = ContentFactory.SERVICE.getInstance()!!.createContent(cabalMessageView.component, "Cabal console", true)
             content.putUserData(KEY, cabalMessageView)
 
-            ijMessageView.getContentManager()!!.addContent(content)
-            ijMessageView.getContentManager()!!.setSelectedContent(content)
+            ijMessageView.contentManager!!.addContent(content)
+            ijMessageView.contentManager!!.setSelectedContent(content)
 
             val messageToolWindow = ToolWindowManager.getInstance(project)?.getToolWindow(ToolWindowId.MESSAGES_WINDOW)
             messageToolWindow?.activate(null)
@@ -113,38 +113,38 @@ class CabalInterface(val project: Project) {
     fun checkVersion(): Boolean {
         try {
             ProcessRunner(null).executeOrFail(getProgramPath(), "-V")
-            return true;
+            return true
         } catch (e: IOException) {
-            return false;
+            return false
         }
     }
 
     fun configure(cabalFile: VirtualFile): Process {
-        return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "configure")
+        return runCommand(cabalFile.parent!!.canonicalPath!!, "configure")
     }
 
     fun build(cabalFile: VirtualFile): Process {
-        return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "build")
+        return runCommand(cabalFile.parent!!.canonicalPath!!, "build")
     }
 
     fun clean(cabalFile: VirtualFile): Process {
-        return runCommand(cabalFile.getParent()!!.getCanonicalPath()!!, "clean")
+        return runCommand(cabalFile.parent!!.canonicalPath!!, "clean")
     }
 
     private fun findCabal(): String? {
-        for (file: VirtualFile in project.getBaseDir()!!.getChildren()!!) {
-            if ("cabal".equals(file.getExtension())) {
+        for (file: VirtualFile in project.baseDir!!.children!!) {
+            if ("cabal".equals(file.extension)) {
                 val cachedDocument: Document? = FileDocumentManager.getInstance().getCachedDocument(file)
                 if (cachedDocument != null) {
                     ApplicationManager.getApplication()!!.runWriteAction(object : Runnable {
-                        public override fun run(): Unit {
+                        override fun run(): Unit {
                             FileDocumentManager.getInstance().saveDocument(cachedDocument)
                         }
 
 
                     })
                 }
-                return file.getParent()?.getCanonicalPath()!!
+                return file.parent?.canonicalPath!!
             }
 
         }
@@ -255,22 +255,22 @@ class CabalInterface(val project: Project) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal update", false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
-                    val process = runCommand(project.getBasePath()!!.toString(), "update")
-                    process.waitFor();
+                    val process = runCommand(project.basePath!!.toString(), "update")
+                    process.waitFor()
                 }
             }
-        });
+        })
     }
 
     fun install(pkg: String) {
         ProgressManager.getInstance().run(object : Task.Backgroundable(project, "cabal install " + pkg, false) {
             override fun run(indicator: ProgressIndicator) {
                 synchronized(cabalLock) {
-                    val process = runCommand(project.getBasePath()!!.toString(), "install", pkg)
+                    val process = runCommand(project.basePath!!.toString(), "install", pkg)
                     process.waitFor()
                 }
             }
-        });
+        })
     }
 
 

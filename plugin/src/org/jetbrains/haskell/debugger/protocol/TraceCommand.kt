@@ -6,7 +6,7 @@ import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
  * Created by vlad on 7/10/14.
  */
 
-public class TraceCommand(val function: String = "main", callback: CommandCallback<HsStackFrameInfo?>?, vararg val params: String)
+class TraceCommand(val function: String = "main", callback: CommandCallback<HsStackFrameInfo?>?, vararg val params: String)
 : FlowCommand(callback) {
 
     override fun getText(): String {

@@ -25,7 +25,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
-public class HaskellModuleBuilder() : ModuleBuilder() {
+class HaskellModuleBuilder : ModuleBuilder() {
 
 
     override fun getBuilderId() = "haskell.module.builder"
@@ -40,7 +40,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
     override fun getPresentableName(): String? = "Haskell"
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> =
-            getModuleType().createWizardSteps(wizardContext, this, modulesProvider)
+            moduleType.createWizardSteps(wizardContext, this, modulesProvider)
 
     override fun getModuleType(): HaskellModuleType {
         return HaskellModuleType.INSTANCE
@@ -48,25 +48,25 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
 
     override fun setupRootModel(rootModel: ModifiableRootModel?) {
         if (myJdk != null) {
-            rootModel!!.setSdk(myJdk)
+            rootModel!!.sdk = myJdk
         } else {
             rootModel!!.inheritSdk()
         }
 
         val contentEntry = doAddContentEntry(rootModel)
         if (contentEntry != null) {
-            val srcPath = getContentEntryPath()!! + File.separator + "src"
+            val srcPath = contentEntryPath!! + File.separator + "src"
             File(srcPath).mkdirs()
             val sourceRoot = LocalFileSystem.getInstance()!!.refreshAndFindFileByPath(FileUtil.toSystemIndependentName(srcPath))
             if (sourceRoot != null) {
                 contentEntry.addSourceFolder(sourceRoot, false, "")
             }
 
-            val hasCabal = File(getContentEntryPath()!!).list()!!.any { it.endsWith(".cabal") }
+            val hasCabal = File(contentEntryPath!!).list()!!.any { it.endsWith(".cabal") }
             if (!hasCabal) {
-                val name = getName()
+                val name = name
                 try {
-                    makeCabal(getContentEntryPath()!! + File.separator + name + ".cabal", name!!)
+                    makeCabal(contentEntryPath!! + File.separator + name + ".cabal", name!!)
                     makeMain(srcPath + File.separator + "Main.hs")
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -76,7 +76,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
 
     }
 
-    public fun makeCabal(path: String, name: String) {
+    fun makeCabal(path: String, name: String) {
         val text = """
              name:              $name
              version:           1.0
@@ -93,7 +93,7 @@ public class HaskellModuleBuilder() : ModuleBuilder() {
         writer.close()
     }
 
-    public fun makeMain(path: String) {
+    fun makeMain(path: String) {
         val text = "module Main where\n" + "\n"
 
         val writer = FileWriter(path)

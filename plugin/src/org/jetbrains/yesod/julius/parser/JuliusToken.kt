@@ -10,4 +10,4 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.yesod.julius.JuliusLanguage
 
 
-public class JuliusToken(debugName: String) : IElementType(debugName, JuliusLanguage.INSTANCE)
+class JuliusToken(debugName: String) : IElementType(debugName, JuliusLanguage.INSTANCE)

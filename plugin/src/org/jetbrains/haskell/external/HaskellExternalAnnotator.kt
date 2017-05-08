@@ -31,7 +31,7 @@ import java.util.regex.Pattern
 import java.util.ArrayList
 import org.jetbrains.haskell.config.HaskellSettings
 
-public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
+class HaskellExternalAnnotator : ExternalAnnotator<PsiFile, List<ErrorMessage>>() {
 
     override fun collectInformation(file: PsiFile): PsiFile {
         return file
@@ -45,30 +45,30 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
         val destinationFiles = HashSet(destination.list()!!.toList())
 
-        for (child in basePath.getChildren()!!) {
-            destinationFiles.remove(child.getName())
-            if (child.getName().equals(".idea")) {
+        for (child in basePath.children!!) {
+            destinationFiles.remove(child.name)
+            if (child.name.equals(".idea")) {
                 continue
             }
-            if (child.getName().equals("dist")) {
+            if (child.name.equals("dist")) {
                 continue
             }
-            if (child.getName().equals(".buildwrapper")) {
+            if (child.name.equals(".buildwrapper")) {
                 continue
             }
-            val destinationFile = File(destination, child.getName())
-            if (child.isDirectory()) {
+            val destinationFile = File(destination, child.name)
+            if (child.isDirectory) {
                 copyContent(child, destinationFile)
             } else {
-                val childTime = child.getModificationStamp()
+                val childTime = child.modificationStamp
                 val document = FileDocumentManager.getInstance().getCachedDocument(child)
                 if (document != null) {
-                    val stream = ByteArrayInputStream(document.getText().toByteArray(child.getCharset()));
+                    val stream = ByteArrayInputStream(document.text.toByteArray(child.charset))
                     copyFile(stream, destinationFile)
                 } else {
-                    val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.getModificationStamp()
+                    val destinationTime = localFileSystem.findFileByIoFile(destinationFile)?.modificationStamp
                     if (destinationTime == null || childTime > destinationTime) {
-                        copyFile(child.getInputStream()!!, destinationFile)
+                        copyFile(child.inputStream!!, destinationFile)
                     }
                 }
             }
@@ -90,9 +90,9 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
         }, ModalityState.any())
 
 
-        val ghcModi = psiFile.getProject().getComponent(GhcModi::class.java)!!
+        val ghcModi = psiFile.project.getComponent(GhcModi::class.java)!!
 
-        val relativePath = getRelativePath(baseDir.getPath(), file.getPath())
+        val relativePath = getRelativePath(baseDir.path, file.path)
 
         val result = ghcModi.runCommand("check $relativePath")
 
@@ -128,7 +128,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
             }
         }, ModalityState.any())
 
-        copyContent(moduleContent, File(moduleContent.getCanonicalPath()!!, ".buildwrapper"))
+        copyContent(moduleContent, File(moduleContent.canonicalPath!!, ".buildwrapper"))
 
         val out = BuildWrapper.init(psiFile).build1(file)
         if (out != null) {
@@ -142,11 +142,11 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
     }
 
     fun getProjectBaseDir(psiFile: PsiFile): VirtualFile? {
-        return psiFile.getProject().getBaseDir()
+        return psiFile.project.baseDir
     }
 
     override fun doAnnotate(psiFile: PsiFile?): List<ErrorMessage> {
-        val file = psiFile!!.getVirtualFile()
+        val file = psiFile!!.virtualFile
         if (file == null) {
             return listOf()
         }
@@ -157,10 +157,10 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
             return listOf()
         }
 
-        if (!(HaskellSettings.getInstance().getState().useGhcMod!!)) {
-            return listOf();
+        if (!(HaskellSettings.getInstance().state.useGhcMod!!)) {
+            return listOf()
         }
-        if (!file.isInLocalFileSystem()) {
+        if (!file.isInLocalFileSystem) {
             return listOf()
         }
         return getResultFromGhcModi(psiFile, baseDir, file)
@@ -176,7 +176,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
 
             val element = file.findElementAt(start)
             val textRange = if (element != null) {
-                element.getTextRange()
+                element.textRange
             } else {
                 TextRange(start, end)
             }
@@ -187,7 +187,7 @@ public class HaskellExternalAnnotator() : ExternalAnnotator<PsiFile, List<ErrorM
                 ErrorMessage.Severity.Error -> HighlightSeverity.ERROR
                 ErrorMessage.Severity.Warning -> HighlightSeverity.WARNING
             }
-            holder.createAnnotation(severity, textRange, error.text, text);
+            holder.createAnnotation(severity, textRange, error.text, text)
         }
     }
 }

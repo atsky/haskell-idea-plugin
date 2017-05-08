@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 /**
  * Created by atsky on 09/05/14.
  */
-public class RamVirtualFileSystem() : NewVirtualFileSystem() {
+class RamVirtualFileSystem : NewVirtualFileSystem() {
 
     fun getTarGzRootForLocalFile(entryVFile : VirtualFile) : VirtualFile {
         throw UnsupportedOperationException()
@@ -26,9 +26,9 @@ public class RamVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    override fun isDirectory(file: VirtualFile) = file.isDirectory()
+    override fun isDirectory(file: VirtualFile) = file.isDirectory
 
-    override fun getTimeStamp(file: VirtualFile): Long = file.getTimeStamp()
+    override fun getTimeStamp(file: VirtualFile): Long = file.timeStamp
 
     override fun setTimeStamp(file: VirtualFile, timeStamp: Long) {
         throw UnsupportedOperationException()
@@ -41,11 +41,11 @@ public class RamVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     override fun contentsToByteArray(file: VirtualFile): ByteArray {
-        val stream = file.getInputStream()!!
-        return FileUtil.loadBytes(stream, file.getLength().toInt())
+        val stream = file.inputStream!!
+        return FileUtil.loadBytes(stream, file.length.toInt())
     }
 
-    override fun getInputStream(file: VirtualFile) = file.getInputStream()!!
+    override fun getInputStream(file: VirtualFile) = file.inputStream!!
 
     override fun getOutputStream(file: VirtualFile,
                                  requestor: Any?,
@@ -54,7 +54,7 @@ public class RamVirtualFileSystem() : NewVirtualFileSystem() {
         throw UnsupportedOperationException()
     }
 
-    override fun getLength(file: VirtualFile) = file.getLength()
+    override fun getLength(file: VirtualFile) = file.length
 
     override fun getProtocol(): String = "ghci"
 
@@ -112,6 +112,6 @@ public class RamVirtualFileSystem() : NewVirtualFileSystem() {
     }
 
     companion object {
-        public val INSTANCE : RamVirtualFileSystem = RamVirtualFileSystem()
+        val INSTANCE : RamVirtualFileSystem = RamVirtualFileSystem()
     }
 }

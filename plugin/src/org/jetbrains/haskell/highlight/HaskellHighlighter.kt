@@ -18,48 +18,48 @@ import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.grammar.HaskellLexerTokens
 
 
-public open class HaskellHighlighter() : SyntaxHighlighterBase() {
+open class HaskellHighlighter : SyntaxHighlighterBase() {
 
     companion object {
-        public val HASKELL_BRACKETS: TextAttributesKey
+        val HASKELL_BRACKETS: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_BRACKETS", DefaultLanguageHighlighterColors.BRACES)
-        public val HASKELL_CLASS: TextAttributesKey
+        val HASKELL_CLASS: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_CLASS")
-        public val HASKELL_CONSTRUCTOR: TextAttributesKey
+        val HASKELL_CONSTRUCTOR: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_CONSTRUCTOR")
-        public val HASKELL_CURLY: TextAttributesKey
+        val HASKELL_CURLY: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_CURLY", DefaultLanguageHighlighterColors.BRACES)
-        public val HASKELL_DOUBLE_COLON: TextAttributesKey
+        val HASKELL_DOUBLE_COLON: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_DOUBLE_COLON")
-        public val HASKELL_EQUAL: TextAttributesKey
+        val HASKELL_EQUAL: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_EQUAL", DefaultLanguageHighlighterColors.IDENTIFIER)
-        public val HASKELL_KEYWORD: TextAttributesKey
+        val HASKELL_KEYWORD: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_KEYWORD", DefaultLanguageHighlighterColors.KEYWORD)
-        public val HASKELL_PARENTHESIS: TextAttributesKey
+        val HASKELL_PARENTHESIS: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_PARENTHESIS", DefaultLanguageHighlighterColors.PARENTHESES)
-        public val HASKELL_STRING_LITERAL: TextAttributesKey
+        val HASKELL_STRING_LITERAL: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_STRING_LITERAL", DefaultLanguageHighlighterColors.STRING)
-        public val HASKELL_SIGNATURE: TextAttributesKey
+        val HASKELL_SIGNATURE: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_SIGNATURE")
-        public val HASKELL_COMMENT: TextAttributesKey
+        val HASKELL_COMMENT: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_COMMENT", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val HASKELL_PRAGMA: TextAttributesKey
+        val HASKELL_PRAGMA: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_PAGMA", DefaultLanguageHighlighterColors.LINE_COMMENT)
-        public val HASKELL_NUMBER: TextAttributesKey
+        val HASKELL_NUMBER: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_NUMBER", DefaultLanguageHighlighterColors.NUMBER)
-        public val HASKELL_TYPE: TextAttributesKey
+        val HASKELL_TYPE: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_TYPE")
-        public val HASKELL_OPERATOR: TextAttributesKey
+        val HASKELL_OPERATOR: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_OPERATOR", DefaultLanguageHighlighterColors.IDENTIFIER)
-        public val HASKELL_IDENTIFIER: TextAttributesKey
+        val HASKELL_IDENTIFIER: TextAttributesKey
                 = TextAttributesKey.createTextAttributesKey("HASKELL_IDENTIFIER", DefaultLanguageHighlighterColors.IDENTIFIER)
     }
 
-    public override fun getHighlightingLexer(): Lexer {
+    override fun getHighlightingLexer(): Lexer {
         return HaskellLexer()
     }
 
-    public override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
+    override fun getTokenHighlights(tokenType: IElementType?): Array<TextAttributesKey> {
         return SyntaxHighlighterBase.pack(keys1.get(tokenType))
     }
 
@@ -68,7 +68,7 @@ public open class HaskellHighlighter() : SyntaxHighlighterBase() {
 
 
 
-    public val DISPLAY_NAMES: MutableMap<TextAttributesKey, Pair<String, HighlightSeverity>> = THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(4)
+    val DISPLAY_NAMES: MutableMap<TextAttributesKey, Pair<String, HighlightSeverity>> = THashMap<TextAttributesKey, Pair<String, HighlightSeverity>>(4)
 
     init {
         keys1 = THashMap<IElementType, TextAttributesKey>()

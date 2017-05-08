@@ -9,7 +9,7 @@ import org.jetbrains.haskell.debugger.parser.LocalBinding
  * @author Habibullin Marat
  */
 
-public class HsDebugValue(val binding: LocalBinding): XNamedValue(binding.name ?: "<no name>") {
+class HsDebugValue(val binding: LocalBinding): XNamedValue(binding.name ?: "<no name>") {
     override fun computePresentation(node: XValueNode, place: XValuePlace) {
         node.setPresentation(null, binding.typeName ?: "<no type>", binding.value ?: "<no value>", false)
     }

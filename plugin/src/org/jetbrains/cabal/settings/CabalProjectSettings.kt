@@ -2,7 +2,7 @@ package org.jetbrains.cabal.settings
 
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
 
-public class CabalProjectSettings() : ExternalProjectSettings() {
+class CabalProjectSettings : ExternalProjectSettings() {
 //
 //    private var myCabalHome: String? = null
 //

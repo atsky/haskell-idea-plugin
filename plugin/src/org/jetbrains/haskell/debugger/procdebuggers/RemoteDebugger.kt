@@ -15,7 +15,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
  * Created by vlad on 7/30/14.
  */
 
-public class RemoteDebugger(debugRespondent: DebugRespondent, debugProcessHandler: ProcessHandler) :
+class RemoteDebugger(debugRespondent: DebugRespondent, debugProcessHandler: ProcessHandler) :
         SimpleDebuggerImpl(debugRespondent, debugProcessHandler, null) {
 
     override val GLOBAL_BREAKPOINT_INDICES: Boolean = false

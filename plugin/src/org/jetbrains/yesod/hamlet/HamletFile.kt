@@ -9,7 +9,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.FileViewProvider
 
-public class HamletFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, HamletLanguage.INSTANCE) {
+class HamletFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, HamletLanguage.INSTANCE) {
 
     override fun getFileType(): FileType {
         return HamletFileType.INSTANCE

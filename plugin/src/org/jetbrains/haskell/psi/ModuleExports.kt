@@ -7,6 +7,4 @@ import com.intellij.psi.util.PsiTreeUtil
 /**
  * Created by atsky on 4/11/14.
  */
-public class ModuleExports(node: ASTNode) : ASTWrapperPsiElement(node) {
-
-}
+class ModuleExports(node: ASTNode) : ASTWrapperPsiElement(node)

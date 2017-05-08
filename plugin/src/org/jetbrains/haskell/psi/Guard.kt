@@ -6,4 +6,4 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 /**
  * Created by atsky on 11/21/14.
  */
-public class Guard(node : ASTNode) : ASTWrapperPsiElement(node)
+class Guard(node : ASTNode) : ASTWrapperPsiElement(node)

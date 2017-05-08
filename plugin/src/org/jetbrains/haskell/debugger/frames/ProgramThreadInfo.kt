@@ -3,16 +3,16 @@ package org.jetbrains.haskell.debugger.frames
 import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
 import java.util.ArrayList
 
-public class ProgramThreadInfo(public val id: String?,
-                            public val name: String,
-                            public val topFrameInfo: HsStackFrameInfo) {
+class ProgramThreadInfo(val id: String?,
+                               val name: String,
+                               val topFrameInfo: HsStackFrameInfo) {
 
-    public enum class State {
+    enum class State {
         RUNNING,
         SUSPENDED,
         KILLED
     }
 
-    public var state: State = State.SUSPENDED
+    var state: State = State.SUSPENDED
         private set
 }

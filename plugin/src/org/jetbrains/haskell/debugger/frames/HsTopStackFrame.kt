@@ -6,7 +6,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.ProcessDebugger
 /**
  * Created by marat-x on 7/22/14.
  */
-public class HsTopStackFrame(debugger: ProcessDebugger,
+class HsTopStackFrame(debugger: ProcessDebugger,
                              stackFrameInfo: HsStackFrameInfo)
 : HsStackFrame(debugger, stackFrameInfo) {
 

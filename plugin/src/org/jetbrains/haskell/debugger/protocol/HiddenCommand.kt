@@ -8,11 +8,11 @@ import org.json.simple.JSONObject
  * Created by vlad on 7/17/14.
  */
 
-public abstract class HiddenCommand
+abstract class HiddenCommand
 : AbstractCommand<ParseResult?>(null) {
 
     companion object {
-        public fun createInstance(command: String): HiddenCommand {
+        fun createInstance(command: String): HiddenCommand {
             return object : HiddenCommand() {
                 override fun getText(): String = command
             }

@@ -16,12 +16,12 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.haskell.external.GhcMod
 
 
-public class HaskellCompletionContributor() : CompletionContributor() {
+class HaskellCompletionContributor : CompletionContributor() {
 
     override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
-        if (parameters.getCompletionType() == CompletionType.BASIC) {
-            val psiElement = parameters.getPosition()
-            val psiFile = parameters.getOriginalPosition()?.getContainingFile()
+        if (parameters.completionType == CompletionType.BASIC) {
+            val psiElement = parameters.position
+            val psiFile = parameters.originalPosition?.containingFile
 
             /*
             val moduleContent = BuildWrapper.getModuleContentDir(psiElement)
@@ -38,16 +38,16 @@ public class HaskellCompletionContributor() : CompletionContributor() {
             */
 
             for (value in KEYWORDS) {
-                result.addElement(LookupElementBuilder.create(value.myName)!!)
+                result.addElement(LookupElementBuilder.create(value.myName))
             }
 
-            if (psiElement.getParent() is ModuleName) {
+            if (psiElement.parent is ModuleName) {
                 for (value in GhcMod.getModulesList()) {
-                    result.addElement(LookupElementBuilder.create(value)!!)
+                    result.addElement(LookupElementBuilder.create(value))
                 }
             } else {
                 for (value in findCompletion(psiElement, psiFile)) {
-                    result.addElement(LookupElementBuilder.create(value.first)!!
+                    result.addElement(LookupElementBuilder.create(value.first)
                                                           .withTypeText(value.second)!!)
                 }
             }
@@ -68,7 +68,7 @@ public class HaskellCompletionContributor() : CompletionContributor() {
                     //    names.add(Pair(export.getText()!!, null))
                     //}
                 } else {
-                    val moduleName = import.getModuleName()!!.getText()
+                    val moduleName = import.getModuleName()!!.text
                     for (name in GhcMod.getModuleContent(moduleName!!)) {
                         names.add(name)
                     }

@@ -5,10 +5,10 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
+class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checkable {
 
     companion object {
-        public val VALID_TESTS_NAMES : List<String> = listOf(
+        val VALID_TESTS_NAMES : List<String> = listOf(
                 "os",
                 "arch",
                 "impl",
@@ -20,7 +20,7 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
         )
     }
 
-    public override fun check(): List<ErrorMessage> {
+    override fun check(): List<ErrorMessage> {
         if (isBool()) return listOf()
         val testName = getTestName()
         if (testName != null && testName in VALID_TESTS_NAMES) {
@@ -29,12 +29,12 @@ public class SimpleCondition(node: ASTNode) : ASTWrapperPsiElement(node), Checka
         return listOf(ErrorMessage(this, "invalid test name", "error"))
     }
 
-    public fun isBool(): Boolean {
-        return (getChildren().size == 0)
+    fun isBool(): Boolean {
+        return (children.size == 0)
     }
 
-    public fun getTestName(): String? {
+    fun getTestName(): String? {
         if (isBool()) return null
-        return getFirstChild()!!.getText()
+        return firstChild!!.text
     }
 }

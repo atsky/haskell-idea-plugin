@@ -19,7 +19,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import org.jetbrains.haskell.sdk.HaskellSdkType
 
 
-public class HaskellProjectComponent(val project: Project) : ProjectComponent {
+class HaskellProjectComponent(val project: Project) : ProjectComponent {
     companion object {
         val GHC_PATH_NOT_FOUND = "ghc not found in PATH. It can cause issues."+
                                  " Please spicify haskell SDK for project."
@@ -30,21 +30,21 @@ public class HaskellProjectComponent(val project: Project) : ProjectComponent {
             override fun run() {
                 block()
             }
-        });
+        })
     }
 
     fun getHaskellModules(): List<Module> {
         val moduleManager = ModuleManager.getInstance(project)!!
-        return moduleManager.getModules().filter { ModuleType.get(it) == HaskellModuleType.INSTANCE }
+        return moduleManager.modules.filter { ModuleType.get(it) == HaskellModuleType.INSTANCE }
     }
 
     override fun projectOpened() {
         if (!getHaskellModules().isEmpty()) {
             val paths = System.getenv("PATH")!!.split(File.pathSeparator.toRegex()).toTypedArray().toMutableList()
 
-            val sdk = ProjectRootManager.getInstance(project).getProjectSdk()
-            if (sdk != null && sdk.getSdkType() is HaskellSdkType) {
-                paths.add(sdk.getHomePath() + File.separator + "bin")
+            val sdk = ProjectRootManager.getInstance(project).projectSdk
+            if (sdk != null && sdk.sdkType is HaskellSdkType) {
+                paths.add(sdk.homePath + File.separator + "bin")
             }
 
             if (OSUtil.isMac) {

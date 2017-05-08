@@ -6,4 +6,4 @@ import com.intellij.lang.ASTNode
 /**
  * Created by atsky on 20/11/14.
  */
-public class StringLiteral(node : ASTNode) : ASTWrapperPsiElement(node)
+class StringLiteral(node : ASTNode) : ASTWrapperPsiElement(node)

@@ -11,17 +11,17 @@ import com.intellij.lang.PsiBuilder.Marker
 import com.intellij.lang.ASTNode
 
 
-public class LuciusParser : PsiParser {
+class LuciusParser : PsiParser {
     override fun parse(root: IElementType, psiBuilder: PsiBuilder): ASTNode {
         val rootmMarker = psiBuilder.mark()
         parseText(psiBuilder)
         rootmMarker.done(root)
-        return psiBuilder.getTreeBuilt()
+        return psiBuilder.treeBuilt
     }
 
-    public fun parseText(psiBuilder: PsiBuilder) {
+    fun parseText(psiBuilder: PsiBuilder) {
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token === LuciusTokenTypes.COMMENT_START) {
                 parseCommentWithEnd(psiBuilder)
             } else if (token === LuciusTokenTypes.STRING) {
@@ -52,10 +52,10 @@ public class LuciusParser : PsiParser {
         }
     }
 
-    public fun parseCommentWithEnd(psiBuilder: PsiBuilder) {
+    fun parseCommentWithEnd(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token === LuciusTokenTypes.COMMENT_END) {
                 psiBuilder.advanceLexer()
                 break
@@ -65,31 +65,31 @@ public class LuciusParser : PsiParser {
         tagMarker.done(LuciusTokenTypes.COMMENT)
     }
 
-    public fun parseAny(psiBuilder: PsiBuilder) {
+    fun parseAny(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.ANY)
     }
 
-    public fun parseHyperlink(psiBuilder: PsiBuilder) {
+    fun parseHyperlink(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.HYPERLINK)
     }
 
-    public fun parseString(psiBuilder: PsiBuilder) {
+    fun parseString(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.STRING)
     }
 
-    public fun parseInterpolation(psiBuilder: PsiBuilder) {
+    fun parseInterpolation(psiBuilder: PsiBuilder) {
         val tagMarker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         tagMarker.done(LuciusTokenTypes.INTERPOLATION)
 
         while (!psiBuilder.eof()) {
-            val token = psiBuilder.getTokenType()
+            val token = psiBuilder.tokenType
             if (token === LuciusTokenTypes.END_INTERPOLATION) {
                 parseEndInterpolation(psiBuilder)
                 break
@@ -98,58 +98,58 @@ public class LuciusParser : PsiParser {
         }
     }
 
-    public fun parseEndInterpolation(psiBuilder: PsiBuilder) {
+    fun parseEndInterpolation(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.END_INTERPOLATION)
     }
 
-    public fun parseDotIdentifier(psiBuilder: PsiBuilder) {
+    fun parseDotIdentifier(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.DOT_IDENTIFIER)
     }
 
-    public fun parseNumber(psiBuilder: PsiBuilder) {
+    fun parseNumber(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.NUMBER)
     }
 
-    public fun parseFunction(psiBuilder: PsiBuilder) {
+    fun parseFunction(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.FUNCTION)
     }
 
-    public fun parseSharpIdentifier(psiBuilder: PsiBuilder) {
+    fun parseSharpIdentifier(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.SHARP_IDENTIFIER)
     }
 
-    public fun parseColonIdentifier(psiBuilder: PsiBuilder) {
+    fun parseColonIdentifier(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.COLON_IDENTIFIER)
     }
 
-    public fun parseAtIdentifier(psiBuilder: PsiBuilder) {
+    fun parseAtIdentifier(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.AT_IDENTIFIER)
     }
 
-    public fun parseCCIdentifier(psiBuilder: PsiBuilder) {
+    fun parseCCIdentifier(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
         marker.done(LuciusTokenTypes.CC_IDENTIFIER)
     }
 
-    public fun parseAttribute(psiBuilder: PsiBuilder) {
+    fun parseAttribute(psiBuilder: PsiBuilder) {
         val marker = psiBuilder.mark()
         psiBuilder.advanceLexer()
-        val next = psiBuilder.getTokenType()
+        val next = psiBuilder.tokenType
         if (next === LuciusTokenTypes.COLON) {
             marker.done(LuciusTokenTypes.ATTRIBUTE)
         } else {

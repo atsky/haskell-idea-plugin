@@ -10,18 +10,16 @@ import java.util.zip.Inflater
 /**
  * Created by atsky on 5/23/14.
  */
-class ScionBrowser {
-
-}
+class ScionBrowser
 
 
 fun main(args : Array<String>) {
     val path = "/home/atsky/.cabal/bin/scion-browser"
     val processBuilder: ProcessBuilder = ProcessBuilder(path)
     val process = processBuilder.start()
-    val streamWriter = OutputStreamWriter(process.getOutputStream()!!)
-    val input: InputStream = process.getInputStream()!!
-    val error = InputStreamReader(process.getErrorStream()!!)
+    val streamWriter = OutputStreamWriter(process.outputStream!!)
+    val input: InputStream = process.inputStream!!
+    val error = InputStreamReader(process.errorStream!!)
 
     System.out.println(run("{ \"command\" : \"load-local-db\", \"filepath\" : \"local.db\", \"rebuild\" : true }\n", streamWriter, input, error))
 

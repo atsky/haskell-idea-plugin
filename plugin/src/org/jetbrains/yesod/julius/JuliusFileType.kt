@@ -10,7 +10,7 @@ import org.jetbrains.haskell.icons.HaskellIcons
 
 import javax.swing.*
 
-public class JuliusFileType private constructor() : LanguageFileType(JuliusLanguage.INSTANCE) {
+class JuliusFileType private constructor() : LanguageFileType(JuliusLanguage.INSTANCE) {
 
     private val myIcon: Icon
 
@@ -39,8 +39,8 @@ public class JuliusFileType private constructor() : LanguageFileType(JuliusLangu
     }
 
     companion object {
-        public val INSTANCE: JuliusFileType = JuliusFileType()
+        val INSTANCE: JuliusFileType = JuliusFileType()
 
-        public val DEFAULT_EXTENSION: String = "julius"
+        val DEFAULT_EXTENSION: String = "julius"
     }
 }

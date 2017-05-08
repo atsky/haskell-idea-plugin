@@ -6,7 +6,7 @@ import java.util.ArrayList
 /**
  * Created by atsky on 03/05/14.
  */
-public class ModuleScope(val module : Module) {
+class ModuleScope(val module : Module) {
 
     fun getVisibleSignatureDeclaration() : List<SignatureDeclaration> {
         val list = ArrayList(module.getSignatureDeclarationsList())

@@ -1,4 +1,4 @@
-package org.jetbrains.haskell.psi;
+package org.jetbrains.haskell.psi
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
@@ -11,7 +11,7 @@ import java.util.ArrayList
 /**
  * @author Evgeny.Kurbatsky
  */
-public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
+class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
 
     companion object {
 
@@ -19,7 +19,7 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
             var topLevel = element
 
             while (!(topLevel is PsiFile || topLevel is Module)) {
-                topLevel = topLevel.getParent()!!
+                topLevel = topLevel.parent!!
             }
             if (topLevel is Module) {
                 return topLevel
@@ -29,10 +29,10 @@ public class Module(node : ASTNode) : ASTWrapperPsiElement(node) {
         }
     }
 
-    public fun getModuleName() : ModuleName? =
+    fun getModuleName() : ModuleName? =
             findChildByClass(ModuleName::class.java)
 
-    public fun getImportList(): List<Import> {
+    fun getImportList(): List<Import> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, Import::class.java)
     }
 

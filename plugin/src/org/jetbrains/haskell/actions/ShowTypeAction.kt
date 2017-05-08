@@ -17,7 +17,7 @@ import com.intellij.openapi.application.ModalityState
 /**
  * Created by atsky on 5/30/14.
  */
-public class ShowTypeAction : AnAction() {
+class ShowTypeAction : AnAction() {
 
     private data class TypeInfo(
         val startLine: Int,
@@ -51,19 +51,19 @@ public class ShowTypeAction : AnAction() {
             return
         }
 
-        val offset = editor.getCaretModel().getOffset();
-        val selectionStartOffset = editor.getSelectionModel().getSelectionStart()
-        val selectionEndOffset = editor.getSelectionModel().getSelectionEnd()
+        val offset = editor.caretModel.offset
+        val selectionStartOffset = editor.selectionModel.selectionStart
+        val selectionEndOffset = editor.selectionModel.selectionEnd
         val range = if (selectionStartOffset != selectionEndOffset) {
             Pair(selectionStartOffset, selectionEndOffset)
         } else {
             val element = psiFile.findElementAt(offset)
 
-            val textRange = element?.getTextRange()
+            val textRange = element?.textRange
             if (textRange == null) {
                 return
             }
-            Pair(textRange.getStartOffset(), textRange.getEndOffset())
+            Pair(textRange.startOffset, textRange.endOffset)
         }
 
         ApplicationManager.getApplication()!!.invokeAndWait(object : Runnable {
@@ -77,9 +77,9 @@ public class ShowTypeAction : AnAction() {
 
         val lineColPosition = LineColPosition.fromOffset(psiFile, range.first)!!
 
-        val ghcModi = psiFile.getProject().getComponent(GhcModi::class.java)!!
-        val basePath = psiFile.getProject().getBasePath()!!
-        val relativePath = getRelativePath(basePath, psiFile.getVirtualFile()!!.getPath())
+        val ghcModi = psiFile.project.getComponent(GhcModi::class.java)!!
+        val basePath = psiFile.project.basePath!!
+        val relativePath = getRelativePath(basePath, psiFile.virtualFile!!.path)
 
         val line = lineColPosition.myLine
         val column = lineColPosition.myColumn

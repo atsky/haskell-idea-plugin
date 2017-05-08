@@ -64,21 +64,21 @@ import org.jetbrains.haskell.repl.HaskellConsole
  * @see org.jetbrains.haskell.debugger.HaskellDebugProcess#isReadyForNextCommand
  */
 
-public class HaskellDebugProcess(session: XDebugSession,
+class HaskellDebugProcess(session: XDebugSession,
                                  val executionConsole: ExecutionConsole,
                                  val _processHandler: HaskellDebugProcessHandler,
                                  val stopAfterTrace: Boolean) : XDebugProcess(session) {
 
     //public val historyManager: HistoryManager = HistoryManager(session , this)
-    public var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
+    var exceptionBreakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>? = null
         private set
-    public val debugger: ProcessDebugger
+    val debugger: ProcessDebugger
 
     private val debugRespondent: DebugRespondent = DefaultRespondent(this)
     private val contexts: Deque<XSuspendContext> = ArrayDeque()
     private val debugProcessStateUpdater: DebugProcessStateUpdater
     private val _editorsProvider: XDebuggerEditorsProvider = HaskellDebuggerEditorsProvider()
-    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = arrayOf(HaskellLineBreakpointHandler(getSession()!!.getProject(), HaskellLineBreakpointType::class.java, this),
+    private val _breakpointHandlers: Array<XBreakpointHandler<*>> = arrayOf(HaskellLineBreakpointHandler(getSession()!!.project, HaskellLineBreakpointType::class.java, this),
             HaskellExceptionBreakpointHandler(this)
     )
     private val registeredBreakpoints: MutableMap<BreakpointPosition, BreakpointEntry> = hashMapOf()
@@ -86,7 +86,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     private val BREAK_BY_INDEX_ERROR_MSG = "Only remote debugger supports breakpoint setting by index"
 
     init {
-        val debuggerIsGHCi = HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.GHCI
+        val debuggerIsGHCi = HaskellDebugSettings.getInstance().state.debuggerType == DebuggerType.GHCI
         if (debuggerIsGHCi) {
             debugProcessStateUpdater = GHCiDebugProcessStateUpdater()
             debugger = GHCiDebugger(debugRespondent, _processHandler,
@@ -119,7 +119,7 @@ public class HaskellDebugProcess(session: XDebugSession,
     override fun startStepOut() {
         val msg = "'Step out' not implemented"
         Notifications.Bus.notify(Notification("", "Debug execution error", msg, NotificationType.WARNING))
-        getSession()!!.positionReached(getSession()!!.getSuspendContext()!!)
+        session!!.positionReached(session!!.suspendContext!!)
     }
 
     override fun stop() {
@@ -132,12 +132,12 @@ public class HaskellDebugProcess(session: XDebugSession,
 
     override fun runToPosition(position: XSourcePosition) =
             debugger.runToPosition(
-                    HaskellUtils.getModuleName(getSession()!!.getProject(), position.getFile()),
-                    HaskellUtils.zeroBasedToHaskellLineNumber(position.getLine()))
+                    HaskellUtils.getModuleName(session!!.project, position.file),
+                    HaskellUtils.zeroBasedToHaskellLineNumber(position.line))
 
     override fun sessionInitialized() {
-        super<XDebugProcess>.sessionInitialized()
-        val currentSession = getSession()
+        super.sessionInitialized()
+        val currentSession = session
         currentSession?.addSessionListener(HsDebugSessionListener(currentSession))
         debugger.prepareDebugger()
         if (stopAfterTrace) {
@@ -157,7 +157,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         //temporary code for removal of unused actions from debug panel
         var stepOut: StepOutAction? = null
         var forceStepInto: ForceStepIntoAction? = null
-        for (action in topToolbar.getChildActionsOrStubs()) {
+        for (action in topToolbar.childActionsOrStubs) {
             if (action is StepOutAction) {
                 stepOut = action
             }
@@ -172,9 +172,9 @@ public class HaskellDebugProcess(session: XDebugSession,
     }
 
     // Class' own methods
-    public fun startTrace(line: String?) {
+    fun startTrace(line: String?) {
         //historyManager.saveState()
-        val context = getSession()!!.getSuspendContext()
+        val context = session!!.suspendContext
         if (context != null) {
             contexts.add(context)
         }
@@ -182,7 +182,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         debugger.trace(line)
     }
 
-    public fun traceFinished() {
+    fun traceFinished() {
         /*
         if (historyManager.hasSavedStates()) {
             historyManager.loadState()
@@ -197,38 +197,38 @@ public class HaskellDebugProcess(session: XDebugSession,
         */
     }
 
-    public fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
+    fun isReadyForNextCommand(): Boolean = debugger.isReadyForNextCommand()
 
-    public fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+    fun addExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         exceptionBreakpoint = breakpoint
-        debugger.setExceptionBreakpoint(breakpoint.getProperties()!!.getState().exceptionType ==
+        debugger.setExceptionBreakpoint(breakpoint.properties!!.state.exceptionType ==
                 HaskellExceptionBreakpointProperties.ExceptionType.ERROR)
     }
 
-    public fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
+    fun removeExceptionBreakpoint(breakpoint: XBreakpoint<HaskellExceptionBreakpointProperties>) {
         assert(breakpoint == exceptionBreakpoint)
         exceptionBreakpoint = null
         debugger.removeExceptionBreakpoint()
     }
 
-    public fun setBreakpointNumberAtLine(breakpointNumber: Int, module: String, line: Int) {
+    fun setBreakpointNumberAtLine(breakpointNumber: Int, module: String, line: Int) {
         val entry = registeredBreakpoints.get(BreakpointPosition(module, line))
         if (entry != null) {
             entry.breakpointNumber = breakpointNumber
         }
     }
 
-    public fun getBreakpointAtPosition(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? =
+    fun getBreakpointAtPosition(module: String, line: Int): XLineBreakpoint<XBreakpointProperties<*>>? =
             registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpoint
 
-    public fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+    fun addBreakpoint(module: String, line: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
         registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(null, breakpoint))
         debugger.setBreakpoint(module, line)
     }
 
-    public fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
-            val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.getLine())
+    fun addBreakpointByIndex(module: String, index: Int, breakpoint: XLineBreakpoint<XBreakpointProperties<*>>) {
+        if (HaskellDebugSettings.getInstance().state.debuggerType == DebuggerType.REMOTE) {
+            val line = HaskellUtils.zeroBasedToHaskellLineNumber(breakpoint.line)
             registeredBreakpoints.put(BreakpointPosition(module, line), BreakpointEntry(index, breakpoint))
             val command = SetBreakpointByIndexCommand(module, index, SetBreakpointCommand.Companion.StandardSetBreakpointCallback(module, debugRespondent))
             debugger.enqueueCommand(command)
@@ -237,7 +237,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun removeBreakpoint(module: String, line: Int) {
+    fun removeBreakpoint(module: String, line: Int) {
         val breakpointNumber: Int? = registeredBreakpoints.get(BreakpointPosition(module, line))?.breakpointNumber
         if (breakpointNumber != null) {
             registeredBreakpoints.remove(BreakpointPosition(module, line))
@@ -245,7 +245,7 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun forceSetValue(localBinding: LocalBinding) {
+    fun forceSetValue(localBinding: LocalBinding) {
         if (localBinding.name != null) {
             val syncObject: Lock = ReentrantLock()
             val bindingValueIsSet: Condition = syncObject.newCondition()
@@ -268,8 +268,8 @@ public class HaskellDebugProcess(session: XDebugSession,
         }
     }
 
-    public fun syncBreakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
-        if (HaskellDebugSettings.getInstance().getState().debuggerType == DebuggerType.REMOTE) {
+    fun syncBreakListForLine(moduleName: String, lineNumber: Int): ArrayList<BreakInfo> {
+        if (HaskellDebugSettings.getInstance().state.debuggerType == DebuggerType.REMOTE) {
             val syncObject = SyncObject()
             val resultArray: ArrayList<BreakInfo> = ArrayList()
             val callback = BreakpointListCommand.Companion.DefaultCallback(resultArray)

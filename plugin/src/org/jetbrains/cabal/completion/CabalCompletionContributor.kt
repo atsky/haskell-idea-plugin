@@ -18,8 +18,8 @@ open class CabalCompletionContributor : CompletionContributor() {
         if (parameters.completionType == CompletionType.BASIC) {
 
             val values = ArrayList<String>()
-            val current = parameters.getPosition()
-            val parent = current.getParent()
+            val current = parameters.position
+            val parent = current.parent
             if (parent == null) {
                 return
             }
@@ -52,7 +52,7 @@ open class CabalCompletionContributor : CompletionContributor() {
                 is Path -> {
                     val grandParent = parent.getParent()
                     if (grandParent is PathsField) {
-                        val originalRootDir = parameters.getOriginalFile().getVirtualFile()!!.getParent()!!
+                        val originalRootDir = parameters.originalFile.virtualFile!!.parent!!
                         values.addAll(grandParent.getNextAvailableFile(parent, originalRootDir))
                     }
                 }
@@ -62,7 +62,7 @@ open class CabalCompletionContributor : CompletionContributor() {
                         parentField = parentField.parent
                     }
                     if (parentField is BuildDependsField) {
-                        val project = current.getProject()
+                        val project = current.project
                         values.addAll(CabalInterface(project).getInstalledPackagesList().map({ it.name }))
                     }
                 }

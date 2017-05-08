@@ -23,7 +23,7 @@ import org.jetbrains.yesod.lucius.psi.CCIdentifier
 import org.jetbrains.yesod.lucius.psi.ColonIdentifier
 
 
-public class LuciusParserDefinition : ParserDefinition {
+class LuciusParserDefinition : ParserDefinition {
     override fun createLexer(project: Project): Lexer {
         return LuciusLexer()
     }
@@ -49,43 +49,43 @@ public class LuciusParserDefinition : ParserDefinition {
     }
 
     override fun createElement(astNode: ASTNode): PsiElement {
-        if (astNode.getElementType() === LuciusTokenTypes.DOT_IDENTIFIER) {
+        if (astNode.elementType === LuciusTokenTypes.DOT_IDENTIFIER) {
             return org.jetbrains.yesod.lucius.psi.DotIdentifier(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.NUMBER) {
+        if (astNode.elementType === LuciusTokenTypes.NUMBER) {
             return org.jetbrains.yesod.lucius.psi.Number(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.FUNCTION) {
+        if (astNode.elementType === LuciusTokenTypes.FUNCTION) {
             return org.jetbrains.yesod.lucius.psi.Function(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.AT_IDENTIFIER) {
+        if (astNode.elementType === LuciusTokenTypes.AT_IDENTIFIER) {
             return org.jetbrains.yesod.lucius.psi.AtRule(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.COLON_IDENTIFIER) {
+        if (astNode.elementType === LuciusTokenTypes.COLON_IDENTIFIER) {
             return org.jetbrains.yesod.lucius.psi.ColonIdentifier(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.CC_IDENTIFIER) {
+        if (astNode.elementType === LuciusTokenTypes.CC_IDENTIFIER) {
             return org.jetbrains.yesod.lucius.psi.CCIdentifier(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.STRING) {
+        if (astNode.elementType === LuciusTokenTypes.STRING) {
             return org.jetbrains.yesod.lucius.psi.String(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.INTERPOLATION) {
+        if (astNode.elementType === LuciusTokenTypes.INTERPOLATION) {
             return org.jetbrains.yesod.lucius.psi.Interpolation(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.COMMENT) {
+        if (astNode.elementType === LuciusTokenTypes.COMMENT) {
             return org.jetbrains.yesod.lucius.psi.Comment(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.ATTRIBUTE) {
+        if (astNode.elementType === LuciusTokenTypes.ATTRIBUTE) {
             return org.jetbrains.yesod.lucius.psi.Attribute(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.SHARP_IDENTIFIER) {
+        if (astNode.elementType === LuciusTokenTypes.SHARP_IDENTIFIER) {
             return org.jetbrains.yesod.lucius.psi.SharpIdentifier(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.END_INTERPOLATION) {
+        if (astNode.elementType === LuciusTokenTypes.END_INTERPOLATION) {
             return org.jetbrains.yesod.lucius.psi.Interpolation(astNode)
         }
-        if (astNode.getElementType() === LuciusTokenTypes.HYPERLINK) {
+        if (astNode.elementType === LuciusTokenTypes.HYPERLINK) {
             return org.jetbrains.yesod.lucius.psi.Hyperlink(astNode)
         }
         return ASTWrapperPsiElement(astNode)
@@ -101,6 +101,6 @@ public class LuciusParserDefinition : ParserDefinition {
 
     companion object {
 
-        public var LUCIUS_FILE: IFileElementType = IFileElementType(LuciusLanguage.INSTANCE)
+        var LUCIUS_FILE: IFileElementType = IFileElementType(LuciusLanguage.INSTANCE)
     }
 }

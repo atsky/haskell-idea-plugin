@@ -18,14 +18,14 @@ import com.intellij.openapi.vfs.LocalFileSystem
 /**
  * Created by atsky on 12/9/14.
  */
-public object GlobalScope {
+object GlobalScope {
     val cache = HashMap<String, HaskellFile>()
 
     val tarCache = HashMap<String, TarGzArchive>()
 
     fun getModule(project: Project, name: String): HaskellFile? {
         if (cache.containsKey(name)) {
-            return cache[name];
+            return cache[name]
         }
 
         //val source = findSource(project, name)
@@ -57,26 +57,26 @@ public object GlobalScope {
 
     fun findSource(directory: File, project: Project, name: String) : VirtualFile? {
         for (file in directory.listFiles()) {
-            if (file.isDirectory()) {
+            if (file.isDirectory) {
                 val result = findSource(file, project, name)
                 if (result != null) {
                     return result
                 }
             } else {
-                val fileName = file.getName()
+                val fileName = file.name
                 if (fileName.endsWith(".tar.gz")) {
-                    val filePath = file.getAbsolutePath()
+                    val filePath = file.absolutePath
                     if (!tarCache.contains(filePath)) {
                         tarCache[filePath] = TarGzArchive(file)
                     }
                     val result = findInArchive(tarCache[filePath]!!, name)
                     if (result != null) {
-                        return TarGzFile(LocalFileSystem.getInstance().findFileByIoFile(file)!!, result);
+                        return TarGzFile(LocalFileSystem.getInstance().findFileByIoFile(file)!!, result)
                     }
                 }
             }
         }
-        return null;
+        return null
     }
 
     fun findInArchive(tarGzArchive: TarGzArchive, name: String) : String? {

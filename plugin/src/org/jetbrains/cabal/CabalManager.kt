@@ -21,8 +21,8 @@ import org.jetbrains.cabal.util.*
 import java.net.URL
 
 
-public class CabalManager()
-        : ExternalSystemManager<CabalProjectSettings, CabalSettingsListener, CabalSettings, CabalLocalSettings, ExternalSystemExecutionSettings> {
+class CabalManager
+    : ExternalSystemManager<CabalProjectSettings, CabalSettingsListener, CabalSettings, CabalLocalSettings, ExternalSystemExecutionSettings> {
 
     override fun getSystemId(): ProjectSystemId {
         return SYSTEM_ID
@@ -43,7 +43,7 @@ public class CabalManager()
     @Throws(ExecutionException::class)
     override fun enhanceRemoteProcessing(parameters: SimpleJavaParameters) {
         val kotlinJarPath = PathUtil.getJarPathForClass(kotlin.Unit.javaClass)
-        parameters.getClassPath().add(kotlinJarPath)
+        parameters.classPath.add(kotlinJarPath)
     }
 
     override fun enhanceLocalProcessing(urls: List<URL>) {  }

@@ -12,7 +12,7 @@ import org.jetbrains.haskell.debugger.parser.JSONConverter
 /**
  * @author Habibullin Marat
  */
-public class ForceCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>) :
+class ForceCommand(private val bindingName: String, callback: CommandCallback<LocalBinding?>) :
         RealTimeCommand<LocalBinding?>(callback) {
     override fun getText(): String = ":force $bindingName\n"
 
@@ -24,7 +24,7 @@ public class ForceCommand(private val bindingName: String, callback: CommandCall
     }
 
 
-    public class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
+    class StandardForceCallback(val localBinding: LocalBinding, val syncObject: Lock, val bindingValueIsSet: Condition,
                                        val debugProcess: HaskellDebugProcess)
     : CommandCallback<LocalBinding?>() {
         override fun execAfterParsing(result: LocalBinding?) {

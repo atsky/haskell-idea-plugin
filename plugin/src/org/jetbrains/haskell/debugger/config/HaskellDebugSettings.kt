@@ -13,25 +13,24 @@ import org.jetbrains.haskell.util.*
         name = "HaskellDebugConfiguration",
         storages = arrayOf(Storage(id = "default", file = StoragePathMacros.APP_CONFIG + "/haskelldebug.xml")
         )
-)
-public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSettings.Companion.State> {
+) class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSettings.Companion.State> {
     companion object {
 
-        public class State {
-            public var debuggerType: DebuggerType = DebuggerType.REMOTE
-            public var remoteDebuggerPath: String? = null
-            public var traceOff: Boolean = false
-            public var printDebugOutput: Boolean = false
+        class State {
+            var debuggerType: DebuggerType = DebuggerType.REMOTE
+            var remoteDebuggerPath: String? = null
+            var traceOff: Boolean = false
+            var printDebugOutput: Boolean = false
         }
 
-        public fun getInstance(): HaskellDebugSettings {
+        fun getInstance(): HaskellDebugSettings {
             val persisted = ServiceManager.getService(HaskellDebugSettings::class.java)
             if (persisted == null) {
                 val settings = HaskellDebugSettings()
-                settings.update();
+                settings.update()
                 return settings
             }
-            persisted.update();
+            persisted.update()
             return persisted
         }
     }
@@ -53,12 +52,12 @@ public class HaskellDebugSettings : PersistentStateComponent<HaskellDebugSetting
 
     private fun update() {
         if (myState.remoteDebuggerPath == null || myState.remoteDebuggerPath == "") {
-            myState.remoteDebuggerPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("remote-debugger");
+            myState.remoteDebuggerPath = OSUtil.getDefaultCabalBin() + File.separator + OSUtil.getExe("remote-debugger")
         }
     }
 }
 
-public enum class DebuggerType {
+enum class DebuggerType {
     GHCI,
     REMOTE
 }

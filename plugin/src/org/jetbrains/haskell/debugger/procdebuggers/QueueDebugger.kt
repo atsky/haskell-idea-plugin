@@ -13,14 +13,14 @@ import com.intellij.execution.ui.ConsoleView
 import com.intellij.execution.process.ProcessHandler
 import org.jetbrains.haskell.debugger.config.HaskellDebugSettings
 
-public abstract class QueueDebugger(private val debugProcessHandler: ProcessHandler,
+abstract class QueueDebugger(private val debugProcessHandler: ProcessHandler,
                                     private val consoleView: ConsoleView?) : ProcessDebugger {
 
     protected val executedCommands: BlockingDeque<AbstractCommand<out ParseResult?>> = LinkedBlockingDeque()
     protected var debugStarted: Boolean = false
         private set
 
-    private val printCommands: Boolean = HaskellDebugSettings.getInstance().getState().printDebugOutput
+    private val printCommands: Boolean = HaskellDebugSettings.getInstance().state.printDebugOutput
     private val writeLock = ReentrantLock()
     private val queue: CommandQueue
 
@@ -76,7 +76,7 @@ public abstract class QueueDebugger(private val debugProcessHandler: ProcessHand
     }
 
     private fun sendCommandToProcess(text: String) {
-        val os = debugProcessHandler.getProcessInput()!!
+        val os = debugProcessHandler.processInput!!
         os.write(text.toByteArray())
         os.flush()
     }

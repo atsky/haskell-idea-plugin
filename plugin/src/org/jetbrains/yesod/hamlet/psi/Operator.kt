@@ -7,4 +7,4 @@ package org.jetbrains.yesod.hamlet.psi
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import com.intellij.lang.ASTNode
 
-public class Operator(node: ASTNode) : ASTWrapperPsiElement(node)
+class Operator(node: ASTNode) : ASTWrapperPsiElement(node)

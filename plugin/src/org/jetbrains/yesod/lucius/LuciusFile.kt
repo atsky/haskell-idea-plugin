@@ -11,7 +11,7 @@ import com.intellij.psi.FileViewProvider
 import org.jetbrains.yesod.lucius.LuciusFileType
 import org.jetbrains.yesod.lucius.LuciusLanguage
 
-public class LuciusFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LuciusLanguage.INSTANCE) {
+class LuciusFile(viewProvider: FileViewProvider) : PsiFileBase(viewProvider, LuciusLanguage.INSTANCE) {
 
     override fun getFileType(): FileType {
         return LuciusFileType.INSTANCE

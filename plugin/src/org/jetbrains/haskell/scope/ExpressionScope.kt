@@ -21,9 +21,9 @@ import org.jetbrains.haskell.psi.BindStatement
 /**
  * Created by atsky on 11/21/14.
  */
-public class ExpressionScope(val expression: Expression) {
+class ExpressionScope(val expression: Expression) {
     fun getVisibleVariables(): List<QVar> {
-        val parent = expression.getParent()
+        val parent = expression.parent
         val result = ArrayList<QVar>()
 
         if (parent is Expression) {
@@ -42,8 +42,8 @@ public class ExpressionScope(val expression: Expression) {
             val caseAlternative = parent.getParent() as? CaseAlternative
             if (caseAlternative != null) {
                 traverseExpression(caseAlternative.getExpressions().firstOrNull(), result)
-                result.addAll(ExpressionScope(caseAlternative.getParent() as Expression).getVisibleVariables())
-                return result;
+                result.addAll(ExpressionScope(caseAlternative.parent as Expression).getVisibleVariables())
+                return result
             }
         } else if (parent is RightHandSide) {
             addRightHandSide(parent, result)
@@ -51,16 +51,16 @@ public class ExpressionScope(val expression: Expression) {
             if (letStatement != null) {
                 return getStatementScopedDeclarations(letStatement)
             } else {
-                return getModuleScopedDeclarations(result);
+                return getModuleScopedDeclarations(result)
             }
         }
 
-        return getModuleScopedDeclarations(result);
+        return getModuleScopedDeclarations(result)
     }
 
     fun getStatementScopedDeclarations(statement: Statement): List<QVar> {
         val result = ArrayList<QVar>()
-        val parent = statement.getParent()
+        val parent = statement.parent
         if (parent is DoExpression) {
             val statementList = parent.getStatementList()
             val index = statementList.indexOf(statement)
@@ -82,19 +82,19 @@ public class ExpressionScope(val expression: Expression) {
         } else if (parent is Guard) {
             addRightHandSide(parent.getParent() as RightHandSide, result)
         }
-        return getModuleScopedDeclarations(result);
+        return getModuleScopedDeclarations(result)
     }
 
     fun getModuleScopedDeclarations(result: ArrayList<QVar>): List<QVar> {
         val module = Module.findModule(expression)
         if (module == null) {
-            return listOf();
+            return listOf()
         }
         val signatureDeclaration = ModuleScope(module).getVisibleSignatureDeclaration()
         result.addAll(signatureDeclaration.map({ it.getQNameExpression()?.getQVar() }).filterNotNull())
         val foreignDeclaration = ModuleScope(module).getVisibleForeignDeclarations()
         result.addAll(foreignDeclaration.map({ it.getQVar() }).filterNotNull())
-        return result;
+        return result
     }
 
     private fun addRightHandSide(rhs: RightHandSide, result: ArrayList<QVar>) {
@@ -106,9 +106,9 @@ public class ExpressionScope(val expression: Expression) {
             val list2 = where.getValueDefinitionList()
             result.addAll(list2.map({ it.getQNameExpression()?.getQVar() }).filterNotNull())
         }
-        val parent = rhs.getParent()
+        val parent = rhs.parent
         if (parent is ValueDefinition) {
-            val valueDefinition: ValueDefinition = parent;
+            val valueDefinition: ValueDefinition = parent
             traverseExpression(valueDefinition.getExpression(), result)
         }
     }

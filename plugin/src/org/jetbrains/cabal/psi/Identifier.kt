@@ -6,10 +6,10 @@ import org.jetbrains.cabal.psi.Checkable
 import org.jetbrains.cabal.psi.PropertyValue
 import org.jetbrains.cabal.highlight.ErrorMessage
 
-public class Identifier(node: ASTNode) : PropertyValue(node), Checkable {
+class Identifier(node: ASTNode) : PropertyValue(node), Checkable {
 
-    public override fun check(): List<ErrorMessage> {
-        if (!getNode().getText().matches("^[a-zA-Z](\\w|[.-])*$".toRegex())) {
+    override fun check(): List<ErrorMessage> {
+        if (!node.text.matches("^[a-zA-Z](\\w|[.-])*$".toRegex())) {
             return listOf(ErrorMessage(this, "invalid identifier", "error"))
         }
         return listOf()

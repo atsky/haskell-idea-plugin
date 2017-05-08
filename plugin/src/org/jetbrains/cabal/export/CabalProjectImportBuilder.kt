@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.LocalFileSystem
 
 
-public class CabalProjectImportBuilder(dataManager: ProjectDataManager)
+class CabalProjectImportBuilder(dataManager: ProjectDataManager)
         : AbstractExternalProjectImportBuilder<ImportFromCabalControl>(dataManager, ImportFromCabalControl(), SYSTEM_ID) {
 
     override fun getName(): String = "Cabal"
@@ -49,12 +49,12 @@ public class CabalProjectImportBuilder(dataManager: ProjectDataManager)
 //    }
 
     override fun doPrepare(context: WizardContext) {
-        var pathToUse = getFileToImport()!!
+        var pathToUse = fileToImport!!
         val file = LocalFileSystem.getInstance()!!.refreshAndFindFileByPath(pathToUse)
-        if (file != null && file.isDirectory()) {
-            pathToUse = File(pathToUse).getAbsolutePath()
+        if (file != null && file.isDirectory) {
+            pathToUse = File(pathToUse).absolutePath
         }
-        getControl(context.getProject()).setLinkedProjectPath(pathToUse)
+        getControl(context.project).setLinkedProjectPath(pathToUse)
     }
 
     override fun beforeCommit(dataNode: DataNode<ProjectData>, project: Project) {
@@ -64,6 +64,6 @@ public class CabalProjectImportBuilder(dataManager: ProjectDataManager)
     }
 
     override fun getExternalProjectConfigToUse(file: File): File {
-        return if (file.isDirectory()) file else file.getParentFile()!!
+        return if (file.isDirectory) file else file.parentFile!!
     }
 }

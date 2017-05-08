@@ -7,21 +7,21 @@ import org.jetbrains.haskell.parser.token.*
 import org.jetbrains.grammar.HaskellLexerTokens
 
 
-public class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
+class Import(node : ASTNode) : ASTWrapperPsiElement(node) {
 
-    public fun hasHiding() : Boolean {
-        return getNode().getChildren(TokenSet.create(HaskellLexerTokens.HIDING)).size > 0
+    fun hasHiding() : Boolean {
+        return node.getChildren(TokenSet.create(HaskellLexerTokens.HIDING)).size > 0
     }
 
-    public fun getModuleName() : ModuleName? =
+    fun getModuleName() : ModuleName? =
         findChildByClass(ModuleName::class.java)
 
 
-    public fun getModuleExports() : ModuleExports? =
+    fun getModuleExports() : ModuleExports? =
         findChildByClass(ModuleExports::class.java)
 
-    public fun getImportAsPart() : ImportAsPart? =
+    fun getImportAsPart() : ImportAsPart? =
             findChildByClass(ImportAsPart::class.java)
 
-    public fun findModule() : Module? = getModuleName()?.findModuleFile()?.getModule()
+    fun findModule() : Module? = getModuleName()?.findModuleFile()?.getModule()
 }

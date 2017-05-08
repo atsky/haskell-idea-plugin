@@ -28,18 +28,18 @@ class BuildWrapper(val moduleRoot: String,
                    val cabalFile : String) {
     companion object {
 
-        public fun init(element : PsiElement) : BuildWrapper {
+        fun init(element : PsiElement) : BuildWrapper {
             val moduleRoot = BuildWrapper.getModuleContentDir(element)!!
             val virtualFile = CabalInterface.findCabal(element)!!
 
-            return BuildWrapper(moduleRoot.getPath(), virtualFile.getPath())
+            return BuildWrapper(moduleRoot.path, virtualFile.path)
         }
 
         fun getProgramPath(): String {
             throw UnsupportedOperationException()
         }
 
-        public fun check() : Boolean {
+        fun check() : Boolean {
             try {
                 ProcessRunner(null).executeOrFail(getProgramPath(), "-V")
                 return true
@@ -51,13 +51,13 @@ class BuildWrapper(val moduleRoot: String,
 
         fun getModuleContentDir(file: PsiElement): VirtualFile? {
             val module = ModuleUtilCore.findModuleForPsiElement(file)
-            return module?.getModuleFile()?.getParent()
+            return module?.moduleFile?.parent
         }
     }
 
     fun thingatpoint(file : VirtualFile, pos : LineColPosition): JSONObject? {
 
-        val relativePath = getRelativePath(moduleRoot, file.getPath())
+        val relativePath = getRelativePath(moduleRoot, file.path)
 
         try {
             val out = ProcessRunner(moduleRoot).executeOrFail(
@@ -101,7 +101,7 @@ class BuildWrapper(val moduleRoot: String,
     }
 
     fun build1(file : VirtualFile) : JSONArray? {
-        val relativePath = getRelativePath(moduleRoot, file.getPath())
+        val relativePath = getRelativePath(moduleRoot, file.path)
 
         val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "build1", "-t", ".buildwrapper", "--cabalfile=" + cabalFile, "-f", relativePath)
@@ -123,6 +123,6 @@ class BuildWrapper(val moduleRoot: String,
         val out = ProcessRunner(moduleRoot).executeNoFail(
                 getProgramPath(), "dependencies", "-t", ".buildwrapper", "--cabalfile=" + cabalFile)
 
-        return extractJsonArray(out);
+        return extractJsonArray(out)
     }
 }

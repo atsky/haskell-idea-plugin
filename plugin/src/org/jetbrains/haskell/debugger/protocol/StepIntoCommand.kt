@@ -6,7 +6,7 @@ import org.jetbrains.haskell.debugger.parser.HsStackFrameInfo
  * Created by vlad on 7/15/14.
  */
 
-public class StepIntoCommand(callback: CommandCallback<HsStackFrameInfo?>?) : StepCommand(callback) {
+class StepIntoCommand(callback: CommandCallback<HsStackFrameInfo?>?) : StepCommand(callback) {
 
     override fun getText(): String = ":step\n"
 }

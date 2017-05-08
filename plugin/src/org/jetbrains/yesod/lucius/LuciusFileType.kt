@@ -11,7 +11,7 @@ import org.jetbrains.yesod.lucius.LuciusLanguage
 
 import javax.swing.*
 
-public class LuciusFileType private constructor() : LanguageFileType(LuciusLanguage.INSTANCE) {
+class LuciusFileType private constructor() : LanguageFileType(LuciusLanguage.INSTANCE) {
 
     private val myIcon: Icon
 
@@ -40,7 +40,7 @@ public class LuciusFileType private constructor() : LanguageFileType(LuciusLangu
     }
 
     companion object {
-        public val INSTANCE: LuciusFileType = LuciusFileType()
-        public val DEFAULT_EXTENSION: String = "lucius"
+        val INSTANCE: LuciusFileType = LuciusFileType()
+        val DEFAULT_EXTENSION: String = "lucius"
     }
 }

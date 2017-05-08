@@ -7,9 +7,9 @@ import com.intellij.psi.util.PsiTreeUtil
 /**
  * Created by atsky on 11/21/14.
  */
-public class Application(node: ASTNode) : Expression(node) {
+class Application(node: ASTNode) : Expression(node) {
 
-    public fun getExpressions(): List<Expression> {
+    fun getExpressions(): List<Expression> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, Expression::class.java)
     }
 

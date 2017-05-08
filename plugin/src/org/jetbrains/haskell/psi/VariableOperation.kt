@@ -6,5 +6,4 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement
 /**
  * Created by atsky on 12/5/14.
  */
-public class VariableOperation(node : ASTNode) : ASTWrapperPsiElement(node) {
-}
+class VariableOperation(node : ASTNode) : ASTWrapperPsiElement(node)

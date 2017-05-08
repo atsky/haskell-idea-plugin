@@ -5,7 +5,7 @@ package org.jetbrains.generator.grammar
  */
 class RuleRef(val text : String, val isName : Boolean) {
     override fun toString(): String {
-        return if (isName) text else "'" + text + "'";
+        return if (isName) text else "'" + text + "'"
     }
 
     override fun hashCode(): Int {

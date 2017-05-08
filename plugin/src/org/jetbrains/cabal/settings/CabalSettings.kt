@@ -12,7 +12,7 @@ class CabalSettings(project: Project)
         : AbstractExternalSystemSettings<CabalSettings, CabalProjectSettings, CabalSettingsListener>(CabalSettingsListener.TOPIC, project) {
 
     override fun subscribe(listener: ExternalSystemSettingsListener<CabalProjectSettings>) {
-        getProject().getMessageBus().connect(getProject()).subscribe(CabalSettingsListener.TOPIC as Topic<ExternalSystemSettingsListener<CabalProjectSettings>>, listener)
+        project.messageBus.connect(project).subscribe(CabalSettingsListener.TOPIC as Topic<ExternalSystemSettingsListener<CabalProjectSettings>>, listener)
     }
 
     override fun copyExtraSettingsFrom(settings: CabalSettings) {

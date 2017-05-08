@@ -11,7 +11,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.DebugRespondent
  * @author Habibullin Marat
  */
 
-public class SetBreakpointCommand(val module: String,
+class SetBreakpointCommand(val module: String,
                                   val lineNumber: Int,
                                   callback: CommandCallback<BreakpointCommandResult?>?)
 : RealTimeCommand<BreakpointCommandResult?>(callback) {
@@ -24,7 +24,7 @@ public class SetBreakpointCommand(val module: String,
             if (JSONConverter.checkExceptionFromJSON(output) == null) JSONConverter.breakpointCommandResultFromJSON(output) else null
 
     companion object {
-        public class StandardSetBreakpointCallback(val module: String,
+        class StandardSetBreakpointCallback(val module: String,
                                                    val debugRespondent: DebugRespondent)
         : CommandCallback<BreakpointCommandResult?>() {
             override fun execAfterParsing(result: BreakpointCommandResult?) {
@@ -36,7 +36,7 @@ public class SetBreakpointCommand(val module: String,
     }
 }
 
-public class SetBreakpointByIndexCommand(val module: String,
+class SetBreakpointByIndexCommand(val module: String,
                                          val breakIndex: Int,
                                          callback: CommandCallback<BreakpointCommandResult?>?)
 : RealTimeCommand<BreakpointCommandResult?>(callback) {

@@ -11,13 +11,13 @@ import java.io.InputStream
 import com.intellij.execution.process.ProcessOutputTypes
 import org.junit.Assert
 
-public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
+class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
     companion object {
-        public val pathPropertyName: String = "ghciPath"
+        val pathPropertyName: String = "ghciPath"
 
-        public class TestGHCiProcessHandler(process: Process) : OSProcessHandler(process, null, CharsetToolkit.UTF8_CHARSET) {
+        class TestGHCiProcessHandler(process: Process) : OSProcessHandler(process, null, CharsetToolkit.UTF8_CHARSET) {
             companion object {
-                public class StreamReader(val stream: InputStream, val onTextAvailable: (String) -> Unit) : Thread() {
+                class StreamReader(val stream: InputStream, val onTextAvailable: (String) -> Unit) : Thread() {
                     private var running: Boolean = true
                     private var reader: InputStreamReader? = null
                     override fun run() {
@@ -35,7 +35,7 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
                         }
                     }
 
-                    public fun stopRunning() {
+                    fun stopRunning() {
                         running = false
                         reader?.close()
                     }
@@ -46,8 +46,8 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
             private val stderrReader: StreamReader
 
             init {
-                stdoutReader = StreamReader(process.getInputStream()!!, { notifyTextAvailable(it, ProcessOutputTypes.STDOUT) })
-                stderrReader = StreamReader(process.getErrorStream()!!, { notifyTextAvailable(it, ProcessOutputTypes.STDERR) })
+                stdoutReader = StreamReader(process.inputStream!!, { notifyTextAvailable(it, ProcessOutputTypes.STDOUT) })
+                stderrReader = StreamReader(process.errorStream!!, { notifyTextAvailable(it, ProcessOutputTypes.STDERR) })
                 stdoutReader.start()
                 stderrReader.start()
             }
@@ -64,7 +64,7 @@ public class GHCiDebuggerTest : DebuggerTest<GHCiDebugger>() {
     private var listener: GHCiDebugProcessStateUpdater? = null
 
     override fun createDebugger(file: File, respondent: DebugRespondent): GHCiDebugger {
-        val filePath = file.getAbsolutePath()
+        val filePath = file.absolutePath
         val ghciPath = DebuggerTest.properties?.getProperty(pathPropertyName)
         Assert.assertNotNull(ghciPath, "Path to ghci not found ($pathPropertyName property inside unittest.properties)")
         val command: ArrayList<String> = arrayListOf(ghciPath!!, filePath)

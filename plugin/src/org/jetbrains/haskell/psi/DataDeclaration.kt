@@ -7,7 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil
 /**
  * Created by atsky on 4/11/14.
  */
-public class DataDeclaration(node : ASTNode) : Declaration(node) {
+class DataDeclaration(node : ASTNode) : Declaration(node) {
 
     override fun getDeclarationName(): String? {
         return getNameElement()?.getNameText()

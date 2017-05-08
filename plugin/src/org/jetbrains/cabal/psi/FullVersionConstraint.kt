@@ -4,10 +4,10 @@ import com.intellij.lang.ASTNode
 import com.intellij.extapi.psi.ASTWrapperPsiElement
 import org.jetbrains.cabal.psi.PropertyValue
 
-public class FullVersionConstraint(node: ASTNode) : PropertyValue(node) {
+class FullVersionConstraint(node: ASTNode) : PropertyValue(node) {
 
-    public fun getBaseName() : String = getFirstChild()!!.getText()!!
+    fun getBaseName() : String = firstChild!!.text!!
 
-    public fun getConstraint() : ComplexVersionConstraint?
-            = (getChildren().firstOrNull { it is ComplexVersionConstraint }) as ComplexVersionConstraint?
+    fun getConstraint() : ComplexVersionConstraint?
+            = (children.firstOrNull { it is ComplexVersionConstraint }) as ComplexVersionConstraint?
 }

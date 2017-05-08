@@ -8,7 +8,7 @@ import org.jetbrains.haskell.debugger.procdebuggers.utils.RemoteDebugStreamHandl
  * Created by vlad on 7/30/14.
  */
 
-public class RemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler) : HaskellDebugProcessHandler(process) {
+class RemoteProcessHandler(process: Process, val streamHandler: RemoteDebugStreamHandler) : HaskellDebugProcessHandler(process) {
 
     init {
         streamHandler.processHandler = this
@@ -19,7 +19,7 @@ public class RemoteProcessHandler(process: Process, val streamHandler: RemoteDeb
     }
 
     override fun doDestroyProcess() {
-        super<HaskellDebugProcessHandler>.doDestroyProcess()
+        super.doDestroyProcess()
         streamHandler.stop()
     }
 }

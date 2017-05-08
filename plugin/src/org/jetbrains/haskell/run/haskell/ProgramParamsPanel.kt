@@ -22,31 +22,31 @@ class ProgramParamsPanel(modules: Array<Module>) : JPanel() {
     private var environmentVariables : EnvironmentVariablesComponent
 
 
-    public fun applyTo(s: CabalRunConfiguration): Unit {
-        s.setModule(moduleComboBox.getSelectedItem() as Module?)
-        s.setMyExecutableName(executableComponent.getText())
-        s.setProgramParameters(programParametersComponent.getText())
-        s.setWorkingDirectory(workingDirectoryComponent.getText())
-        s.setEnvs(environmentVariables.getEnvs())
+    fun applyTo(s: CabalRunConfiguration): Unit {
+        s.module = moduleComboBox.selectedItem as Module?
+        s.myExecutableName = executableComponent.text
+        s.programParameters = programParametersComponent.text
+        s.workingDirectory = workingDirectoryComponent.text
+        s.envs = environmentVariables.envs
     }
-    public fun reset(s: CabalRunConfiguration): Unit {
-        executableComponent.setText(s.getMyExecutableName())
-        programParametersComponent.setText(s.getProgramParameters())
-        workingDirectoryComponent.setText(s.getWorkingDirectory())
-        moduleComboBox.setSelectedItem(s.getModule())
-        environmentVariables.setEnvs(s.getEnvs())
+    fun reset(s: CabalRunConfiguration): Unit {
+        executableComponent.text = s.myExecutableName
+        programParametersComponent.text = s.programParameters
+        workingDirectoryComponent.setText(s.workingDirectory)
+        moduleComboBox.setSelectedItem(s.module)
+        environmentVariables.envs = s.envs
     }
 
     init {
-        this.setLayout(GridBagLayout())
-        executableComponent = JTextField();
+        this.layout = GridBagLayout()
+        executableComponent = JTextField()
         moduleComboBox = JComboBoxWrapper(JComboBox(DefaultComboBoxModel(modules)))
         moduleComboBox.setRenderer(ModuleComboBoxRenderer())
 
         programParametersComponent = RawCommandLineEditor()
         workingDirectoryComponent = TextFieldWithBrowseButton()
         environmentVariables = EnvironmentVariablesComponent()
-        environmentVariables.setLabelLocation(BorderLayout.WEST)
+        environmentVariables.labelLocation = BorderLayout.WEST
 
 
         val base : () -> GridBagConstraints = {
